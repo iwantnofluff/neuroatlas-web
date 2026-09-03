@@ -48,15 +48,12 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
   return { opacity, y };
 }
 
-// Shared by both halves of the sandwich below — was one two-line <span>
-// (see the "Split the Typography" note further down) with a single
-// className; splitting it into two separate elements just means this
-// needs to live in one place instead of being copy-pasted twice.
-// leading-none + tracking-tighter (was leading-[0.95]/tracking-tight) —
-// an editorial "monolithic, heavy" headline reads as one continuous mass
-// of type, not two lines with visible internal breathing room; tighter
-// tracking and a true 1-to-1 line-height are what actually sell that at
-// this size and weight.
+// Shared by the desktop sandwich AND the mobile stacked headline below —
+// one className, both markups. leading-none + tracking-tighter (was
+// leading-[0.95]/tracking-tight) — an editorial "monolithic, heavy"
+// headline reads as one continuous mass of type, not two lines with
+// visible internal breathing room; tighter tracking and a true 1-to-1
+// line-height are what actually sell that at this size and weight.
 //
 // text-gold-soft, not text-cream — pure cream read as too stark/harsh
 // against the Deep Navy at this size and weight per client feedback.
@@ -93,107 +90,102 @@ export function BuiltToReadYouSection() {
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
-        {/* Mobile-only upward shift for the WHOLE cluster (text layer +
-           Canvas + subtext, as one rigid unit — everything below shares
-           this one wrapper) — confirmed live: below md, "Built To"/"Read
-           You" meet at the exact same viewport-center seam as desktop
-           (by design, so the model still bridges both), but mobile's
-           headline text is so much smaller relative to the viewport
-           (~48px tall vs. desktop's ~160px) that the empty space in the
-           upper half above it reads as a big gap under the header,
-           rather than a balanced composition. Moving the model's own
-           on-screen position isn't possible via a CSS class (it's framed
-           by the Three.js camera, not positioned by this markup) — but
-           translating this ONE wrapper moves the Canvas's rendered
-           output right along with the text, since it's a real DOM box
-           like any other, so the whole assembly (including the model)
-           shifts up together with every internal relationship — text
-           meeting the model at the seam, subtext sitting below "Read
-           You" — completely unchanged. Reset to translate-y-0 at md so
-           desktop, which the client confirmed is "absolutely perfect",
-           stays byte-for-byte as before. */}
-        <div className="absolute inset-0 -translate-y-16 md:translate-y-0">
-          {/* Behind the canvas (z-index -1) — still paints in front of the
-              section's own bg-navy background (a negative z-index only
-              drops a child below its NORMAL-flow/z-0+ siblings, not below
-              its parent's own background). BuiltToReadYouScene's <Canvas>
-              carries an explicit z-0 specifically so this ordering is
-              guaranteed, not just an accident of paint order — the whole
-              point below is the model overlapping INTO this text.
+        {/* Two structurally DIFFERENT layouts below md vs. at/above it —
+           not the same markup nudged with a transform. A previous pass
+           tried shifting the desktop "sandwich" up as one rigid unit on
+           mobile (so the model still bridged both text halves), but the
+           client called it out as still too compressed: with the model
+           and both text halves squeezed toward the same center point,
+           the space above the whole cluster still read as a big gap
+           under the header. Splitting into two real layouts instead:
+           mobile gets an ordinary top-anchored two-line headline (no
+           split, no overlap, ordinary reading order) with the model
+           free to occupy the untouched middle of the screen on its own,
+           and subtext at the bottom; desktop keeps the split-open
+           "sandwich" sandwich exactly as the client separately confirmed
+           is "absolutely perfect", completely unmodified below other
+           than gaining a `hidden md:flex`/`md:hidden` toggle against its
+           mobile sibling. */}
 
-              "Sandwich" layout, take two: originally three rows (an equal
-              top/spacer/bottom third each) pushed "Built To"/"Read You" out
-              toward the extreme top/bottom edges with a large empty gap
-              around the model — closer to two separate floating elements
-              than one headline. Simplified to just TWO equal halves
-              instead: a flex-1 top half with the text pinned to ITS
-              bottom edge (items-end) and a flex-1 bottom half with the
-              text pinned to ITS top edge (items-start). Both edges land on
-              the exact same seam — the viewport's vertical center — so
-              "Built To" and "Read You" now sit back-to-back with no
-              programmatic gap between them at all, reading as one
-              monolithic headline that the model (see Band.tsx's enlarged
-              MODEL_SCALE_DESKTOP/MOBILE) physically splits open by
-              overlapping into both inner edges, rather than two blocks
-              each floating in their own third with the model lost in a
-              big empty gap between them (confirmed live, both before and
-              after this change). Both text rows still share the SAME
-              opacity/scale motion values (one scroll-driven fade+scale,
-              just applied to two elements) rather than each computing its
-              own — reusing an already-computed motion value across
-              multiple elements is safe; it's a SECOND independent
-              useTransform call on the SAME element that this codebase's
-              array-transform bug actually depends on. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-[-1] flex flex-col"
-          >
-            <motion.div
-              style={{ opacity: headline.opacity, scale: headline.scale }}
-              className="flex flex-1 items-end justify-center px-6 text-center"
-            >
-              <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
-            </motion.div>
-            <motion.div
-              style={{ opacity: headline.opacity, scale: headline.scale }}
-              className="flex flex-1 items-start justify-center px-6 text-center"
-            >
-              <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
-            </motion.div>
-          </div>
+        {/* MOBILE ONLY (< md) — ordinary stacked two-line headline,
+           top-anchored below the fixed header (which measures ~73px;
+           top-28 = 112px clears it with real breathing room), behind the
+           canvas (z-[-1]) same as the desktop version, but with no split
+           and no intentional model overlap — the model has the entire
+           middle of the screen to itself here. */}
+        <motion.div
+          style={{ opacity: headline.opacity, scale: headline.scale }}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-28 z-[-1] px-6 text-center md:hidden"
+        >
+          <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
+          <br />
+          <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
+        </motion.div>
 
-          <BuiltToReadYouScene
-            reduceMotion={reduceMotion}
-            progress={scrollYProgress}
-            isMobile={isMobile}
-          />
-
-          {/* In front of the canvas (z-index 10). text-gold-soft/70, not
-              text-cream/80 — same softened tint as the headline above,
-              but at a visibly lower opacity than its (fully solid)
-              gold-soft so the subtext recedes a step behind the
-              headline, a deliberate hierarchy rather than both reading
-              at the same visual weight. */}
+        {/* DESKTOP ONLY (>= md) — unchanged "sandwich": a flex-1 top half
+           with the text pinned to ITS bottom edge (items-end) and a
+           flex-1 bottom half pinned to ITS top edge (items-start). Both
+           edges land on the exact same seam — the viewport's vertical
+           center — so "Built To"/"Read You" sit back-to-back with no
+           programmatic gap, reading as one monolithic headline that the
+           model (see Band.tsx's MODEL_SCALE_DESKTOP) physically splits
+           open by overlapping into both inner edges. Both rows share the
+           SAME opacity/scale motion values (one scroll-driven fade+scale
+           applied to two elements) rather than each computing its own —
+           reusing an already-computed motion value across multiple
+           elements is safe; it's a SECOND independent useTransform call
+           on the SAME element that this codebase's array-transform bug
+           actually depends on. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[-1] hidden flex-col md:flex"
+        >
           <motion.div
-            style={{ opacity: subtext.opacity, y: subtext.y }}
-            className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-md px-6 text-center sm:bottom-20"
+            style={{ opacity: headline.opacity, scale: headline.scale }}
+            className="flex flex-1 items-end justify-center px-6 text-center"
           >
-            <p className="text-lg text-gold-soft/70">
-              A screenless band designed to read your stress, quietly and
-              precisely, throughout your day.
-            </p>
-            <div className="mt-6 flex justify-center">
-              <ShimmerLink
-                href="/band"
-                background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
-                shimmerColor="var(--color-cream)"
-                className="px-6 py-3 text-sm tracking-wide text-cream"
-              >
-                Learn More
-              </ShimmerLink>
-            </div>
+            <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
+          </motion.div>
+          <motion.div
+            style={{ opacity: headline.opacity, scale: headline.scale }}
+            className="flex flex-1 items-start justify-center px-6 text-center"
+          >
+            <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
           </motion.div>
         </div>
+
+        <BuiltToReadYouScene
+          reduceMotion={reduceMotion}
+          progress={scrollYProgress}
+          isMobile={isMobile}
+        />
+
+        {/* In front of the canvas (z-index 10). text-gold-soft/70, not
+            text-cream/80 — same softened tint as the headline above,
+            but at a visibly lower opacity than its (fully solid)
+            gold-soft so the subtext recedes a step behind the
+            headline, a deliberate hierarchy rather than both reading
+            at the same visual weight. */}
+        <motion.div
+          style={{ opacity: subtext.opacity, y: subtext.y }}
+          className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-md px-6 text-center sm:bottom-20"
+        >
+          <p className="text-lg text-gold-soft/70">
+            A screenless band designed to read your stress, quietly and
+            precisely, throughout your day.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <ShimmerLink
+              href="/band"
+              background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
+              shimmerColor="var(--color-cream)"
+              className="px-6 py-3 text-sm tracking-wide text-cream"
+            >
+              Learn More
+            </ShimmerLink>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
