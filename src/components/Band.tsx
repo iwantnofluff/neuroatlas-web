@@ -69,19 +69,26 @@ const HARDWARE_MATERIAL_PROPS = {
 // space ("a bit lost in the gap"). +22% is enough to intentionally
 // overlap both lines' inner edges without swallowing them.
 //
-// Mobile 8 (was 10, NOT the same +22% bump as desktop) — tried matching
-// desktop's ratio first (12), then even just holding the old value (10):
-// both rendered live as far too much overlap on real mobile viewports
-// (iPhone 14 and SE), the model covering enough of both lines that
-// "BUILT TO"/"READ YOU" stopped reading as words (confirmed via
-// screenshot, not assumed). Mobile's headline text is proportionally
-// much smaller relative to the viewport than desktop's is, so the same
-// world-scale bump reads as comparatively far bigger against it — a
-// smaller absolute scale here, tuned down from the previous value, not
-// up, is what actually gets a comparable "slight overlap, still legible"
-// result on a phone.
+// Mobile — NOTE this value's history only makes sense in light of
+// BuiltToReadYouSection.tsx's OWN history: 8 was tuned down from 10
+// specifically to stop the model overlapping/obscuring the old mobile
+// "sandwich" headline (confirmed live at the time: 10-12 swallowed
+// enough of both lines that "BUILT TO"/"READ YOU" stopped reading as
+// words). Mobile no longer uses that layout at all — it now gets an
+// ordinary top-anchored two-line headline with the model free in the
+// untouched middle of the screen (see that file's mobile-only block),
+// so there's nothing left for the model to avoid overlapping. At the
+// old value of 8 it read as too small and lost in that now-empty
+// middle (client feedback, live: "tighten up the space around the 3D
+// model, make it bigger, maybe it's too small on a narrow device").
+// 20 — well past the old text-avoidance ceiling — is what actually
+// reads as a confident focal object filling that space rather than a
+// small thing floating in a big void; checked live on iPhone 14 and SE
+// that it still clears the headline above and subtext below with no
+// overlap at any point in the scroll (position/rotation change, scale
+// doesn't).
 const MODEL_SCALE_DESKTOP = 22;
-const MODEL_SCALE_MOBILE = 8;
+const MODEL_SCALE_MOBILE = 20;
 
 /** The CAD export's own "up" axis doesn't match this scene's — the
  *  module renders standing on end (portrait) rather than lying flat
