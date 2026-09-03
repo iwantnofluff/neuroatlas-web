@@ -181,7 +181,10 @@ export function TheSpecs() {
                 whileHover={{ scale: reduceMotion ? 1 : 1.08 }}
                 whileTap={{ scale: reduceMotion ? 1 : 0.94 }}
                 transition={{ duration: 0.2 }}
-                className="flex flex-col items-center gap-2"
+                // gap-1.5, not the usual gap-2, below `sm` — pairs
+                // with the smaller circle just below: shrinking one
+                // without the other still reads as cramped.
+                className="flex flex-col items-center gap-1.5 sm:gap-2"
               >
                 <motion.span
                   animate={{
@@ -190,12 +193,18 @@ export function TheSpecs() {
                       : "color-mix(in oklab, var(--color-cream) 20%, transparent)",
                   }}
                   transition={{ duration: reduceMotion ? 0 : 0.3 }}
-                  className="flex size-14 items-center justify-center rounded-full border bg-white/5 backdrop-blur-sm"
+                  // size-11, not the usual size-14, below `sm` —
+                  // client feedback, live (screenshot at 425×748): the
+                  // full-size reticles read as too dense/tight at that
+                  // width even once the earlier overlap bug was fixed.
+                  // Smaller circle + smaller dot + smaller label below
+                  // together, not just one of the three.
+                  className="flex size-11 items-center justify-center rounded-full border bg-white/5 backdrop-blur-sm sm:size-14"
                 >
                   <motion.span
                     animate={{ scale: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
                     transition={{ duration: reduceMotion ? 0 : 0.25 }}
-                    className="size-2 rounded-full bg-gold"
+                    className="size-1.5 rounded-full bg-gold sm:size-2"
                   />
                 </motion.span>
                 <motion.span
@@ -205,18 +214,22 @@ export function TheSpecs() {
                       : "color-mix(in oklab, var(--color-cream) 40%, transparent)",
                   }}
                   transition={{ duration: reduceMotion ? 0 : 0.3 }}
-                  // Narrow + allowed to wrap mid-word (`w-16
-                  // break-words`) below `sm` only: at that width the
-                  // rail sits just 16px from the viewport edge
-                  // (`left-4`/`right-4`), and a longer single-word
-                  // label like "COMPATIBILITY" at its natural width
+                  // Narrow + smaller text + allowed to wrap mid-word
+                  // below `sm` only: at that width the rail sits just
+                  // 16px from the viewport edge (`left-4`/`right-4`),
+                  // and a longer single-word label like
+                  // "COMPATIBILITY" at its natural (larger) width
                   // visibly clipped off the edge of the screen —
-                  // confirmed live via screenshot. `sm:` and up gets
-                  // its usual single-line width back: the rail has
-                  // already moved out to `sm:left-8`/`right-8` (and
+                  // confirmed live via screenshot; the text size was
+                  // then dropped a step further on top of that fix,
+                  // matching the smaller circle above (client
+                  // feedback, live: full-size felt too dense/tight at
+                  // that width). `sm:` and up gets its usual size and
+                  // single-line width back: the rail has already moved
+                  // out to `sm:left-8`/`right-8` (and
                   // `lg:left-16`/`right-16`) by then, with real margin
                   // to spare.
-                  className="w-16 max-w-16 text-center text-[10px] font-medium tracking-[0.15em] break-words uppercase sm:w-24 sm:max-w-none sm:text-xs sm:whitespace-nowrap"
+                  className="w-14 max-w-14 text-center text-[9px] font-medium tracking-[0.15em] break-words uppercase sm:w-24 sm:max-w-none sm:text-xs sm:whitespace-nowrap"
                 >
                   {spec.label}
                 </motion.span>
