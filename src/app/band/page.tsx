@@ -1,7 +1,7 @@
 import { BandScrollShowcase } from "@/components/BandScrollShowcase";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
-import { SpecsPanel } from "@/components/SpecsPanel";
+import { TheSpecs } from "@/components/TheSpecs";
 import { OneSignalSection } from "@/components/OneSignalSection";
 import { DesignedToBlendInSection } from "@/components/DesignedToBlendInSection";
 import { SignalVsNoiseSection } from "@/components/SignalVsNoiseSection";
@@ -36,33 +36,18 @@ export default function BandPage() {
           h-[400vh] pinned track. See SignalVsNoiseSection.tsx. */}
       <SignalVsNoiseSection />
 
-      {/* 7. Technical specifications — an editorial hover showcase: a
-          left-column index of the five categories drives which one's
-          data displays in a single fixed-size glass panel on the right
-          (AnimatePresence crossfade + slide, panel size never changes).
-          Replaced the earlier bento grid (didn't feel editorial enough)
-          and, before that, a scroll-spy stack (too long to scroll
-          through) — this version is a standard-height section, adding
-          no extra page length. Every value is still a placeholder
-          pending the real spec doc; already in the right shape to swap
-          in real values with no restructuring. Wider max-w than the
-          rest of this page's centered text blocks — the two-column
-          split needs the room. */}
-      <section className="dark-glow bg-navy-soft text-cream">
-        <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
-          <Reveal y={20} className="mx-auto max-w-2xl text-center">
-            <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
-              The Specs
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-lg text-cream/70">
-              The detail for those who want it.
-            </p>
-          </Reveal>
-          <Reveal delay={0.1} y={20}>
-            <SpecsPanel />
-          </Reveal>
-        </div>
-      </section>
+      {/* 7. Technical specifications — the Interactive X-Ray: a real 3D
+          <Band> model dead center that physically rotates to a
+          category-specific angle when one of five reticles flanking it
+          is clicked, with a fixed-anchor glass panel showing that
+          category's data. Own min-h-screen section, not scroll-jacked —
+          no extra page length. Replaced the editorial hover showcase
+          (and, before that, a bento grid, and before that a scroll-spy
+          stack — all scrapped per direct feedback). Every value is
+          still a placeholder pending the real spec doc; already in the
+          right shape to swap in real values with no restructuring. See
+          TheSpecs.tsx. */}
+      <TheSpecs />
 
       {/* 8. Common concerns — copy option A */}
       <Reveal

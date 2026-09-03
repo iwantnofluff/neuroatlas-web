@@ -189,24 +189,38 @@ function sampleShowcasePose(p: number) {
  *    from the start (no rise — position.y stays 0 throughout), and
  *    rotation continuously eases through SHOWCASE_POSE_KEYFRAMES above
  *    instead.
+ *  - "xray" (TheSpecs): not scroll-driven at all — `scrollProgress` is
+ *    still accepted (kept required so every call site shares one prop
+ *    contract) but never read in this branch. Rotation instead damps
+ *    toward whatever `targetRotation` currently holds, every frame,
+ *    using the same `THREE.MathUtils.lerp` "smooth follow" already used
+ *    for BandModel.tsx's pointer-tilt above — no new dependency (no
+ *    react-spring/framer-motion-3d) needed for a physical-feeling ease
+ *    toward a moving target. reduceMotion snaps straight to the target
+ *    every frame (lerp factor 1) instead of easing, matching this
+ *    codebase's standing "still functions, just instant" convention.
  *
  *  `scale` overrides the isMobile-based MODEL_SCALE_DESKTOP/MOBILE
  *  ternary entirely when supplied — those two constants were tuned
  *  specifically for BuiltToReadYouSection's full-bleed canvas;
- *  BandScrollShowcase's model sits in a much smaller, differently-framed
- *  container and needs its own independently-tuned value. */
+ *  BandScrollShowcase's and TheSpecs' models each sit in their own
+ *  differently-framed container and need their own independently-tuned
+ *  value. */
 export function Band({
   scrollProgress,
   reduceMotion,
   isMobile = false,
   variant = "reveal",
   scale,
+  targetRotation,
 }: {
   scrollProgress: MotionValue<number>;
   reduceMotion: boolean;
   isMobile?: boolean;
-  variant?: "reveal" | "showcase";
+  variant?: "reveal" | "showcase" | "xray";
   scale?: number;
+  /** "xray" only — the Euler x/y the model should currently ease toward. */
+  targetRotation?: { x: number; y: number };
 }) {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -232,6 +246,15 @@ export function Band({
   useFrame(() => {
     const g = group.current;
     if (!g) return;
+
+    if (variant === "xray") {
+      g.position.y = 0;
+      const target = targetRotation ?? { x: 0.3, y: 0 };
+      const damp = reduceMotion ? 1 : 0.08;
+      g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, target.x, damp);
+      g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, target.y, damp);
+      return;
+    }
 
     if (variant === "showcase") {
       g.position.y = 0;
