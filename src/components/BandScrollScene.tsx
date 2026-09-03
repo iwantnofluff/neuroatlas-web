@@ -5,20 +5,19 @@ import { Canvas } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
 import { Band } from "@/components/Band";
 
-/** Model scale for THIS scene — Band.tsx's own MODEL_SCALE_DESKTOP/MOBILE
- *  constants were tuned for BuiltToReadYouSection's composition (model
- *  settling in a gap between two text halves); this scene's brief is the
- *  opposite — "grid-breaking", the model scaled "way up" so it
- *  intentionally overlaps and obscures parts of the centered headline
- *  behind it, physically breaking out of its own frame. The canvas is
- *  now full-bleed (`!absolute inset-0` over the ENTIRE pinned viewport,
- *  not a small square container as before), so unlike the previous
- *  version of this scene it DOES need an isMobile split — a full-
- *  viewport canvas has a genuinely different aspect/proportion at each
- *  breakpoint, the same reason BuiltToReadYouSection needed one. Both
- *  values tuned live against real screenshots, not assumed. */
-const SHOWCASE_MODEL_SCALE_DESKTOP = 46;
-const SHOWCASE_MODEL_SCALE_MOBILE = 26;
+/** Model scale for THIS scene. A previous pass scaled this "way up" to
+ *  deliberately overlap the CENTERED headline behind it — client
+ *  feedback: that made the headline illegible, not just artfully
+ *  overlapped. The headline has since moved to the top of the viewport
+ *  (see BandScrollShowcase.tsx) and this canvas is now confined to the
+ *  bottom ~72% of it (was full-bleed `inset-0`) so the model can
+ *  dominate the center/bottom without ever reaching the words. Scale
+ *  tuned down from the previous pass to match — a shorter canvas box
+ *  means the same world-space object occupies proportionally MORE of
+ *  its own (now smaller) vertical frame, confirmed live via screenshot
+ *  rather than assumed from the box's height ratio alone. */
+const SHOWCASE_MODEL_SCALE_DESKTOP = 30;
+const SHOWCASE_MODEL_SCALE_MOBILE = 17;
 
 /** The actual WebGL scene — kept in its own module so it can be lazy-loaded
  * client-only (see BandScrollShowcase), without pulling @react-three/fiber
@@ -40,12 +39,14 @@ export function BandScrollScene({
 }) {
   return (
     <Canvas
-      // z-0, explicit — guarantees this paints above the centered
-      // headline's z-[-1] regardless of default stacking order, the
-      // same reasoning as BuiltToReadYouScene's own Canvas: the model
-      // overlapping the text is the deliberate design here, not an
-      // accident of paint order.
-      className="!absolute inset-0 z-0"
+      // Confined to the bottom ~72% of the viewport (was full-bleed
+      // inset-0) — this is what actually keeps the model out of the
+      // headline's territory at the top, rather than relying on scale
+      // alone to avoid it. z-0 still explicit: guarantees this paints
+      // above the headline's z-[-1] regardless of default stacking
+      // order, so any deliberate slight overlap at the very bottom
+      // edge of the text still shows the model in front of it.
+      className="!absolute inset-x-0 bottom-0 z-0 h-[72%]"
       dpr={[1, 2]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
