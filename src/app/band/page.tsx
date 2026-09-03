@@ -36,16 +36,23 @@ export default function BandPage() {
           h-[400vh] pinned track. See SignalVsNoiseSection.tsx. */}
       <SignalVsNoiseSection />
 
-      {/* 7. Technical specifications — an interactive tab/detail panel
-          instead of a static grid, since every value is still a
-          placeholder pending the real spec doc; this is already in the
-          right shape to swap in real values with no restructuring. */}
+      {/* 7. Technical specifications — a cinematic scroll-spy layout
+          instead of a static grid: a sticky left-column index tracks
+          which massive detail card in the right column is passing the
+          center of the screen. Every value is still a placeholder
+          pending the real spec doc; already in the right shape to swap
+          in real values with no restructuring. Wider max-w than the rest
+          of this page's centered text blocks — the two-column layout
+          needs the room. */}
       <section className="dark-glow bg-navy-soft text-cream">
-        <div className="mx-auto max-w-3xl px-6 py-24 lg:px-10 lg:py-32">
-          <Reveal y={20} className="text-center">
+        <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
+          <Reveal y={20} className="mx-auto max-w-2xl text-center">
             <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
               The Specs
             </h2>
+            <p className="mx-auto mt-4 max-w-md text-lg text-cream/70">
+              The detail for those who want it.
+            </p>
           </Reveal>
           <Reveal delay={0.1} y={20}>
             <SpecsPanel />
