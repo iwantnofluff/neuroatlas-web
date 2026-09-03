@@ -60,13 +60,13 @@ export function BuiltToReadYouScene({
          less of it is what lets the kicker light below actually carve
          out deep shadow in its recesses instead of the fill washing
          them back out. */}
-      <ambientLight intensity={0.35} />
+      <ambientLight intensity={0.4} />
       <directionalLight position={[3, 4, 5]} intensity={1.2} color="#f4f0e9" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#8fb3d9" />
       {/* Straight down the Z-axis, facing the camera — specifically for
          the locked state, where the model faces front-on and the angled
          key/rim lights above leave the front face under-lit. */}
-      <directionalLight position={[0, 0, 5]} intensity={1.5} />
+      <directionalLight position={[0, 0, 5]} intensity={2.5} />
       {/* No explicit target — THREE.SpotLight's default target sits at
          world origin (0,0,0) already, which is exactly where the model
          settles once locked, so there's nothing to aim manually here. */}
@@ -77,26 +77,36 @@ export function BuiltToReadYouScene({
         intensity={2.2}
         color="#dac79e"
       />
-      {/* Dedicated "kicker" light for the front-face engraved logo — the
-         spotLight above is warm-tinted (#dac79e) and fairly soft-edged
-         (penumbra 0.6, angle 0.35), tuned for the gold hardware's broad
-         specular sheen, not for carving crisp micro-shadow/highlight
-         contrast into a shallow engraved relief — confirmed live, the
-         logo was reading as "completely lost" against the shell with
-         only that rig. This one is neutral white (no color tint to
-         compete with the logo's own contrast), much tighter (angle
-         0.15 vs 0.35, penumbra 0.15 vs 0.6 — a hard-edged, localized
-         beam rather than one that washes over the whole shell), and
-         higher intensity, positioned slightly above and to the side of
-         the model per real product-photography practice for revealing
-         engraved/embossed detail. Same no-explicit-target reasoning as
-         the spotLight above — world origin is already where the model
+      {/* Dedicated "kicker" light for the front-face engraved logo.
+         Positioned close to the CAMERA's own axis (camera is at
+         [0,0,4.2]; this sits just barely off it) rather than out at a
+         wide offset like [1,1,2] — confirmed live that the wide-offset
+         version worked for BandScrollScene's continuously-tumbling
+         model (some angle was always roughly toward it) but missed
+         this scene's "reveal" variant almost entirely: it LOCKS at one
+         specific rotation for the rest of the scroll (see Band.tsx's
+         LOCK_ROTATION_TURNS), and that locked face happened to point
+         away from a light sitting that far off-axis, leaving the logo
+         just as dark as before despite the light existing (confirmed
+         live via screenshot at the locked state, not assumed). A light
+         near the camera's own axis illuminates whatever surface is
+         actually facing the VIEWER by definition, regardless of the
+         model's specific rotation.y value — robust to both this
+         scene's single locked angle and the other scene's continuously
+         changing one. Still meaningfully off-axis (not dead-on with the
+         camera) so it keeps a real angle to cast the micro-shadow
+         contrast the relief needs, just not so wide it can miss the
+         model's front face entirely. Neutral white (no color tint to
+         compete with the logo's own contrast), tight angle/penumbra for
+         a hard-edged, localized beam rather than one that washes over
+         the whole shell. Same no-explicit-target reasoning as the
+         spotLight above — world origin is already where the model
          sits. */}
       <spotLight
-        position={[1, 1, 2]}
-        angle={0.15}
-        penumbra={0.15}
-        intensity={4}
+        position={[0.6, 0.7, 4.3]}
+        angle={0.25}
+        penumbra={0.2}
+        intensity={7}
         color="#ffffff"
       />
       <Suspense fallback={null}>

@@ -62,7 +62,14 @@ import * as THREE from "three";
 const SHELL_MATERIAL_PROPS = {
   color: "#1E2B4D",
   roughness: 0.3,
-  metalness: 0.3,
+  // 0.3->0.4 — a touch more metalness alongside the lower roughness
+  // above is what actually gives the shell real bright-highlight/deep-
+  // shadow contrast rather than an evenly-lit matte surface; a merely
+  // low-roughness, low-metalness material still doesn't have much to
+  // specularly reflect, which was part of why the shell (and the
+  // logo's relief riding on it) still read as flat and dark even after
+  // the roughness change and the new kicker light.
+  metalness: 0.4,
   side: THREE.DoubleSide,
 } as const;
 

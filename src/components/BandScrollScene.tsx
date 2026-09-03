@@ -56,10 +56,10 @@ export function BandScrollScene({
          which was flattening the engraved front-face logo's contrast;
          a touch less lets the new kicker light below actually carve
          out shadow instead of the fill washing it back out. */}
-      <ambientLight intensity={0.35} />
+      <ambientLight intensity={0.4} />
       <directionalLight position={[3, 4, 5]} intensity={1.2} color="#f4f0e9" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#8fb3d9" />
-      <directionalLight position={[0, 0, 5]} intensity={1.5} />
+      <directionalLight position={[0, 0, 5]} intensity={2.5} />
       <spotLight
         position={[2, 3, 3]}
         angle={0.35}
@@ -69,16 +69,22 @@ export function BandScrollScene({
       />
       {/* Dedicated "kicker" light for the front-face engraved logo — see
          BuiltToReadYouScene.tsx's own comment for the full reasoning.
-         Neutral white, tight angle/penumbra, positioned slightly above
-         and to the side, so it carves crisp micro-shadow/highlight
+         Positioned close to the CAMERA's own axis (not a wide [1,1,2]
+         offset) so it illuminates whatever surface is actually facing
+         the viewer regardless of the model's specific rotation.y value
+         at any scroll moment — robust to BOTH this scene's continuously
+         tumbling model and BuiltToReadYouScene's single locked angle,
+         confirmed live that the wide-offset version missed that other
+         scene's locked face entirely. Neutral white, tight angle/
+         penumbra, so it still carves crisp micro-shadow/highlight
          contrast into the logo's shallow relief rather than washing
          over the whole shell the way the warmer, softer-edged spotLight
          above does. */}
       <spotLight
-        position={[1, 1, 2]}
-        angle={0.15}
-        penumbra={0.15}
-        intensity={4}
+        position={[0.6, 0.7, 4.3]}
+        angle={0.25}
+        penumbra={0.2}
+        intensity={7}
         color="#ffffff"
       />
       <Suspense fallback={null}>
