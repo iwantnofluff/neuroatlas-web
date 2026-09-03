@@ -1,11 +1,10 @@
 import { BandScrollShowcase } from "@/components/BandScrollShowcase";
 import { HeroBoundary } from "@/components/HeroBoundary";
-import { Reveal } from "@/components/Reveal";
 import { TheSpecs } from "@/components/TheSpecs";
 import { OneSignalSection } from "@/components/OneSignalSection";
 import { DesignedToBlendInSection } from "@/components/DesignedToBlendInSection";
 import { SignalVsNoiseSection } from "@/components/SignalVsNoiseSection";
-import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { ClosingCurtainSection } from "@/components/ClosingCurtainSection";
 
 export const metadata = { title: "The NA·01 band — NeuroAtlas" };
 
@@ -49,41 +48,15 @@ export default function BandPage() {
           TheSpecs.tsx. */}
       <TheSpecs />
 
-      {/* 8. Common concerns — copy option A */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-        y={20}
-      >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          Another Device To Charge And Wear?
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          This isn&rsquo;t about tracking steps or workouts. It&rsquo;s
-          about catching the moments pressure builds quietly, in a meeting,
-          before a call, mid-afternoon, before they show up in a decision
-          you regret.
-        </p>
-      </Reveal>
-
-      {/* 9. Closing CTA */}
-      <section className="dark-glow bg-navy-soft text-cream">
-        <Reveal
-          className="mx-auto max-w-2xl px-6 py-24 text-center lg:px-10 lg:py-28"
-          y={20}
-        >
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
-            Join The London Pilot Program
-          </h2>
-          <ShimmerLink
-            href="/request-access"
-            background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
-            shimmerColor="var(--color-cream)"
-            className="mt-8 text-sm tracking-wide text-cream"
-          >
-            Request Access
-          </ShimmerLink>
-        </Reveal>
-      </section>
+      {/* 8+9. Common concerns + closing CTA — a cinematic curtain reveal:
+          the off-white "concerns" section scrolls normally in front; the
+          navy CTA sits pinned to the viewport's bottom edge behind it
+          for a held stretch of scroll, so it looks like the curtain
+          physically lifts away to reveal the CTA underneath. Replaced
+          two standard centered-text blocks (client feedback: "feels too
+          much like a standard template"). See ClosingCurtainSection.tsx
+          for the exact stacking mechanics. */}
+      <ClosingCurtainSection />
     </main>
   );
 }
