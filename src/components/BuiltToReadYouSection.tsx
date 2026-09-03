@@ -66,7 +66,12 @@ export function BuiltToReadYouSection() {
       ref={wrapperRef}
       className={cn(!reduceMotion && "h-[300vh]")}
     >
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-navy">
+      {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
+         explanation: `vh` assumes the browser's toolbar chrome is fully
+         hidden, so a real phone's actual visible area can be shorter than
+         100vh, clipping this pinned section's bottom against its own
+         overflow-hidden. `svh` is the small/guaranteed-visible size. */}
+      <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
         {/* Behind the canvas (z-index -1) — still paints in front of the
             section's own bg-navy background (a negative z-index only
             drops a child below its NORMAL-flow/z-0+ siblings, not below

@@ -108,7 +108,17 @@ export function MethodScrollCards() {
 
   return (
     <div id="the-method" ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-navy-soft pt-16 text-cream sm:pt-0">
+      {/* h-[100svh], not h-screen (100vh/100lvh) — on a real phone, `vh`
+         resolves to the LARGE viewport size (as if the address-bar/toolbar
+         chrome were fully hidden). Whenever that chrome is actually
+         visible, the real visible area is shorter than 100vh, and this
+         pinned section's own overflow-hidden clipped the bottom of the
+         third card against that shrunk viewport — invisible in headless
+         Playwright (no toolbar to simulate) but confirmed live via a real
+         device screenshot. `svh` is the SMALL viewport size — guaranteed
+         to fit even with the chrome fully expanded — matching Hero.tsx's
+         own `min-h-[100svh]` convention. */}
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden bg-navy-soft pt-16 text-cream sm:pt-0">
         <div className="mx-auto w-full max-w-6xl px-6 lg:px-10">
           <Reveal y={20}>
             {/* text-2xl on mobile, not text-3xl — at text-3xl this wrapped

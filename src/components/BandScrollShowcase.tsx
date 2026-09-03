@@ -190,7 +190,12 @@ export function BandScrollShowcase() {
       ref={wrapperRef}
       className={cn(!reduceMotion && "h-[520vh]")}
     >
-      <div className="sticky top-0 h-screen overflow-hidden bg-navy">
+      {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
+         explanation: `vh` assumes the browser's toolbar chrome is fully
+         hidden, so a real phone's actual visible area can be shorter than
+         100vh, clipping this pinned section's bottom against its own
+         overflow-hidden. `svh` is the small/guaranteed-visible size. */}
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-navy">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_16%,transparent),transparent_70%)]"
