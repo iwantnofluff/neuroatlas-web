@@ -62,8 +62,26 @@ const HARDWARE_MATERIAL_PROPS = {
   side: THREE.DoubleSide,
 } as const;
 
-const MODEL_SCALE_DESKTOP = 18;
-const MODEL_SCALE_MOBILE = 10;
+// Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
+// BuiltToReadYouSection.tsx) now closes its text blocks together at the
+// exact vertical center instead of leaving a large empty gap around the
+// model; at the old scale the model read as too small for that tighter
+// space ("a bit lost in the gap"). +22% is enough to intentionally
+// overlap both lines' inner edges without swallowing them.
+//
+// Mobile 8 (was 10, NOT the same +22% bump as desktop) — tried matching
+// desktop's ratio first (12), then even just holding the old value (10):
+// both rendered live as far too much overlap on real mobile viewports
+// (iPhone 14 and SE), the model covering enough of both lines that
+// "BUILT TO"/"READ YOU" stopped reading as words (confirmed via
+// screenshot, not assumed). Mobile's headline text is proportionally
+// much smaller relative to the viewport than desktop's is, so the same
+// world-scale bump reads as comparatively far bigger against it — a
+// smaller absolute scale here, tuned down from the previous value, not
+// up, is what actually gets a comparable "slight overlap, still legible"
+// result on a phone.
+const MODEL_SCALE_DESKTOP = 22;
+const MODEL_SCALE_MOBILE = 8;
 
 /** The CAD export's own "up" axis doesn't match this scene's — the
  *  module renders standing on end (portrait) rather than lying flat

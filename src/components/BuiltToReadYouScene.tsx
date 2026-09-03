@@ -41,7 +41,12 @@ export function BuiltToReadYouScene({
 }) {
   return (
     <Canvas
-      className="!absolute inset-0"
+      // z-0, explicit — guarantees this paints above the text layer's
+      // z-[-1] (BuiltToReadYouSection.tsx) regardless of default stacking
+      // order, since the model is now meant to visually overlap into
+      // both text blocks' inner edges rather than just sit in a gap
+      // between them.
+      className="!absolute inset-0 z-0"
       dpr={[1, 2]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
