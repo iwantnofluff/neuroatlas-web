@@ -1,11 +1,10 @@
-import Image from "next/image";
 import { BandScrollShowcase } from "@/components/BandScrollShowcase";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
-import { TextLink } from "@/components/TextLink";
 import { SpecsPanel } from "@/components/SpecsPanel";
 import { OneSignalSection } from "@/components/OneSignalSection";
 import { DesignedToBlendInSection } from "@/components/DesignedToBlendInSection";
+import { SignalVsNoiseSection } from "@/components/SignalVsNoiseSection";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "The NA·01 band — NeuroAtlas" };
@@ -13,14 +12,6 @@ export const metadata = { title: "The NA·01 band — NeuroAtlas" };
 // Copy: client's full pass over the /band page content doc. BandScrollShowcase
 // covers sections 1 ("Hero") and 2 ("What It Reads") together — see the
 // comment in that file for why. Sections 3–9 follow below in order.
-
-// band-bw-wrist.jpg moved to DesignedToBlendInSection's own expanding
-// billboard (see that component) — dropped from here so the same photo
-// doesn't appear twice in two adjacent sections.
-const gallery = [
-  { src: "/photos/band-ice-still.jpg", alt: "The NA·01 band, weatherproof against ice and stone" },
-  { src: "/photos/band-ice-splash.jpg", alt: "The NA·01 band splashing into water" },
-];
 
 export default function BandPage() {
   return (
@@ -38,63 +29,12 @@ export default function BandPage() {
           h-[300vh] pinned track. See DesignedToBlendInSection.tsx. */}
       <DesignedToBlendInSection />
 
-      {/* Real studio photography, supplied by the client — a visual break
-          between the design/build copy and the more technical sections
-          below, rather than replacing the stylized 3D model above. */}
-      <section className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
-        <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
-          {gallery.map((photo, i) => (
-            <Reveal
-              key={photo.src}
-              delay={i * 0.1}
-              className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-navy"
-            >
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                fill
-                sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. Accuracy and validation */}
-      <section className="dark-glow bg-navy text-cream">
-        <Reveal
-          className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-          y={20}
-        >
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
-            Precision, Not Guesswork
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75">
-            Every reading is checked against your own resting baseline, not
-            a general average, then filtered to separate real stress from
-            caffeine, a workout, or the cold. What shows up on your
-            dashboard is your signal, not noise.
-          </p>
-        </Reveal>
-      </section>
-
-      {/* 6. How the band and app work together */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-        y={20}
-      >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          The App Reads You
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          The band reads your signals. The app turns them into something
-          you can act on.
-        </p>
-        <div className="flex justify-center">
-          <TextLink href="/inside-the-app">Learn More</TextLink>
-        </div>
-      </Reveal>
+      {/* 5+6. Accuracy/validation + how the band and app work together —
+          "Signal vs. Noise": scrapped the static 2-photo grid and the two
+          separate plain text blocks ("Precision, Not Guesswork" / "The
+          App Reads You") in favor of one unified cinematic sequence, own
+          h-[400vh] pinned track. See SignalVsNoiseSection.tsx. */}
+      <SignalVsNoiseSection />
 
       {/* 7. Technical specifications — an interactive tab/detail panel
           instead of a static grid, since every value is still a
