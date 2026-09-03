@@ -108,10 +108,19 @@ export function MethodScrollCards() {
 
   return (
     <div id="the-method" ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-navy-soft text-cream">
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-navy-soft pt-16 text-cream sm:pt-0">
         <div className="mx-auto w-full max-w-6xl px-6 lg:px-10">
           <Reveal y={20}>
-            <h2 className="text-center font-serif text-3xl leading-tight lg:text-4xl">
+            {/* text-2xl on mobile, not text-3xl — at text-3xl this wrapped
+               to 2 lines at phone widths, and its top line sat mostly
+               behind the site's fixed 73px header (confirmed live: only
+               11px of clearance above it once the section's own
+               overflow-hidden clipping was fixed — a second, separate
+               bug from the one below). Fitting on one line here plus the
+               sticky container's own pt-16 (which reserves real space
+               for the header instead of relying on centering slack)
+               clears it properly. */}
+            <h2 className="text-center font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl">
               Measure. Intervene. Measure.
             </h2>
           </Reveal>
@@ -120,8 +129,9 @@ export function MethodScrollCards() {
              pinned h-screen section and got clipped at the top by its
              own overflow-hidden — confirmed live (content height 744px
              vs a 667px viewport). Tighter mt/gap/card-padding on mobile
-             claws back ~136px, comfortably clearing that overflow. */}
-          <div className="mt-6 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-8">
+             claws back that overflow; see the pt-16 above for the
+             separate header-clearance fix. */}
+          <div className="mt-4 grid gap-2 sm:mt-16 sm:grid-cols-3 sm:gap-8">
             {methodSteps.map((step, i) => (
               <MethodCard
                 key={`${step.label}-${i}`}
