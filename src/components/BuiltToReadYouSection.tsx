@@ -57,8 +57,17 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
 // of type, not two lines with visible internal breathing room; tighter
 // tracking and a true 1-to-1 line-height are what actually sell that at
 // this size and weight.
+//
+// text-gold-soft, not text-cream — pure cream read as too stark/harsh
+// against the Deep Navy at this size and weight per client feedback.
+// gold-soft (#e5dac2) is an existing token in this site's own palette
+// (see globals.css), a warmer champagne tint one step down from the
+// gold hardware color itself — reusing it here (rather than a bespoke
+// one-off hex) is what actually "echoes the gold hardware" the client
+// asked for, and keeps this in the same token system as the rest of
+// the site instead of introducing a color nothing else uses.
 const HEADLINE_TEXT_CLASSNAME =
-  "font-sans text-5xl leading-none font-black tracking-tighter text-cream uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]";
+  "font-sans text-5xl leading-none font-black tracking-tighter text-gold-soft uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]";
 
 export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
@@ -84,81 +93,107 @@ export function BuiltToReadYouSection() {
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
-        {/* Behind the canvas (z-index -1) — still paints in front of the
-            section's own bg-navy background (a negative z-index only
-            drops a child below its NORMAL-flow/z-0+ siblings, not below
-            its parent's own background). BuiltToReadYouScene's <Canvas>
-            carries an explicit z-0 specifically so this ordering is
-            guaranteed, not just an accident of paint order — the whole
-            point below is the model overlapping INTO this text.
+        {/* Mobile-only upward shift for the WHOLE cluster (text layer +
+           Canvas + subtext, as one rigid unit — everything below shares
+           this one wrapper) — confirmed live: below md, "Built To"/"Read
+           You" meet at the exact same viewport-center seam as desktop
+           (by design, so the model still bridges both), but mobile's
+           headline text is so much smaller relative to the viewport
+           (~48px tall vs. desktop's ~160px) that the empty space in the
+           upper half above it reads as a big gap under the header,
+           rather than a balanced composition. Moving the model's own
+           on-screen position isn't possible via a CSS class (it's framed
+           by the Three.js camera, not positioned by this markup) — but
+           translating this ONE wrapper moves the Canvas's rendered
+           output right along with the text, since it's a real DOM box
+           like any other, so the whole assembly (including the model)
+           shifts up together with every internal relationship — text
+           meeting the model at the seam, subtext sitting below "Read
+           You" — completely unchanged. Reset to translate-y-0 at md so
+           desktop, which the client confirmed is "absolutely perfect",
+           stays byte-for-byte as before. */}
+        <div className="absolute inset-0 -translate-y-16 md:translate-y-0">
+          {/* Behind the canvas (z-index -1) — still paints in front of the
+              section's own bg-navy background (a negative z-index only
+              drops a child below its NORMAL-flow/z-0+ siblings, not below
+              its parent's own background). BuiltToReadYouScene's <Canvas>
+              carries an explicit z-0 specifically so this ordering is
+              guaranteed, not just an accident of paint order — the whole
+              point below is the model overlapping INTO this text.
 
-            "Sandwich" layout, take two: originally three rows (an equal
-            top/spacer/bottom third each) pushed "Built To"/"Read You" out
-            toward the extreme top/bottom edges with a large empty gap
-            around the model — closer to two separate floating elements
-            than one headline. Simplified to just TWO equal halves
-            instead: a flex-1 top half with the text pinned to ITS
-            bottom edge (items-end) and a flex-1 bottom half with the
-            text pinned to ITS top edge (items-start). Both edges land on
-            the exact same seam — the viewport's vertical center — so
-            "Built To" and "Read You" now sit back-to-back with no
-            programmatic gap between them at all, reading as one
-            monolithic headline that the model (see Band.tsx's enlarged
-            MODEL_SCALE_DESKTOP/MOBILE) physically splits open by
-            overlapping into both inner edges, rather than two blocks
-            each floating in their own third with the model lost in a
-            big empty gap between them (confirmed live, both before and
-            after this change). Both text rows still share the SAME
-            opacity/scale motion values (one scroll-driven fade+scale,
-            just applied to two elements) rather than each computing its
-            own — reusing an already-computed motion value across
-            multiple elements is safe; it's a SECOND independent
-            useTransform call on the SAME element that this codebase's
-            array-transform bug actually depends on. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[-1] flex flex-col"
-        >
-          <motion.div
-            style={{ opacity: headline.opacity, scale: headline.scale }}
-            className="flex flex-1 items-end justify-center px-6 text-center"
+              "Sandwich" layout, take two: originally three rows (an equal
+              top/spacer/bottom third each) pushed "Built To"/"Read You" out
+              toward the extreme top/bottom edges with a large empty gap
+              around the model — closer to two separate floating elements
+              than one headline. Simplified to just TWO equal halves
+              instead: a flex-1 top half with the text pinned to ITS
+              bottom edge (items-end) and a flex-1 bottom half with the
+              text pinned to ITS top edge (items-start). Both edges land on
+              the exact same seam — the viewport's vertical center — so
+              "Built To" and "Read You" now sit back-to-back with no
+              programmatic gap between them at all, reading as one
+              monolithic headline that the model (see Band.tsx's enlarged
+              MODEL_SCALE_DESKTOP/MOBILE) physically splits open by
+              overlapping into both inner edges, rather than two blocks
+              each floating in their own third with the model lost in a
+              big empty gap between them (confirmed live, both before and
+              after this change). Both text rows still share the SAME
+              opacity/scale motion values (one scroll-driven fade+scale,
+              just applied to two elements) rather than each computing its
+              own — reusing an already-computed motion value across
+              multiple elements is safe; it's a SECOND independent
+              useTransform call on the SAME element that this codebase's
+              array-transform bug actually depends on. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[-1] flex flex-col"
           >
-            <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
-          </motion.div>
+            <motion.div
+              style={{ opacity: headline.opacity, scale: headline.scale }}
+              className="flex flex-1 items-end justify-center px-6 text-center"
+            >
+              <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
+            </motion.div>
+            <motion.div
+              style={{ opacity: headline.opacity, scale: headline.scale }}
+              className="flex flex-1 items-start justify-center px-6 text-center"
+            >
+              <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
+            </motion.div>
+          </div>
+
+          <BuiltToReadYouScene
+            reduceMotion={reduceMotion}
+            progress={scrollYProgress}
+            isMobile={isMobile}
+          />
+
+          {/* In front of the canvas (z-index 10). text-gold-soft/70, not
+              text-cream/80 — same softened tint as the headline above,
+              but at a visibly lower opacity than its (fully solid)
+              gold-soft so the subtext recedes a step behind the
+              headline, a deliberate hierarchy rather than both reading
+              at the same visual weight. */}
           <motion.div
-            style={{ opacity: headline.opacity, scale: headline.scale }}
-            className="flex flex-1 items-start justify-center px-6 text-center"
+            style={{ opacity: subtext.opacity, y: subtext.y }}
+            className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-md px-6 text-center sm:bottom-20"
           >
-            <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
+            <p className="text-lg text-gold-soft/70">
+              A screenless band designed to read your stress, quietly and
+              precisely, throughout your day.
+            </p>
+            <div className="mt-6 flex justify-center">
+              <ShimmerLink
+                href="/band"
+                background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
+                shimmerColor="var(--color-cream)"
+                className="px-6 py-3 text-sm tracking-wide text-cream"
+              >
+                Learn More
+              </ShimmerLink>
+            </div>
           </motion.div>
         </div>
-
-        <BuiltToReadYouScene
-          reduceMotion={reduceMotion}
-          progress={scrollYProgress}
-          isMobile={isMobile}
-        />
-
-        {/* In front of the canvas (z-index 10). */}
-        <motion.div
-          style={{ opacity: subtext.opacity, y: subtext.y }}
-          className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-md px-6 text-center sm:bottom-20"
-        >
-          <p className="text-lg text-cream/80">
-            A screenless band designed to read your stress, quietly and
-            precisely, throughout your day.
-          </p>
-          <div className="mt-6 flex justify-center">
-            <ShimmerLink
-              href="/band"
-              background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
-              shimmerColor="var(--color-cream)"
-              className="px-6 py-3 text-sm tracking-wide text-cream"
-            >
-              Learn More
-            </ShimmerLink>
-          </div>
-        </motion.div>
       </div>
     </div>
   );
