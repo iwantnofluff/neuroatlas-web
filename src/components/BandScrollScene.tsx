@@ -5,43 +5,47 @@ import { Canvas } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
 import { Band } from "@/components/Band";
 
-/** Model scale for THIS scene specifically — Band.tsx's own
- *  MODEL_SCALE_DESKTOP/MOBILE constants were tuned for
- *  BuiltToReadYouSection's full-bleed, viewport-spanning canvas; this
- *  scene's canvas is a compact, always-roughly-square container
- *  (280px up to 520px depending on breakpoint — see BandScrollShowcase's
- *  own wrapper). Because that container is square at every breakpoint
- *  and the camera's FOV/distance below are fixed, a single scale reads
- *  consistently across all of them (unlike BuiltToReadYouSection, whose
- *  full-viewport canvas has a genuinely different aspect/proportion at
- *  each breakpoint against a CSS-sized text overlay) — no isMobile
- *  branch needed here. Tuned by rendering it and comparing against the
- *  circular callout-line composition this scene already has, not
- *  assumed from BuiltToReadYouSection's own value.
- */
-const SHOWCASE_MODEL_SCALE = 24;
+/** Model scale for THIS scene — Band.tsx's own MODEL_SCALE_DESKTOP/MOBILE
+ *  constants were tuned for BuiltToReadYouSection's composition (model
+ *  settling in a gap between two text halves); this scene's brief is the
+ *  opposite — "grid-breaking", the model scaled "way up" so it
+ *  intentionally overlaps and obscures parts of the centered headline
+ *  behind it, physically breaking out of its own frame. The canvas is
+ *  now full-bleed (`!absolute inset-0` over the ENTIRE pinned viewport,
+ *  not a small square container as before), so unlike the previous
+ *  version of this scene it DOES need an isMobile split — a full-
+ *  viewport canvas has a genuinely different aspect/proportion at each
+ *  breakpoint, the same reason BuiltToReadYouSection needed one. Both
+ *  values tuned live against real screenshots, not assumed. */
+const SHOWCASE_MODEL_SCALE_DESKTOP = 46;
+const SHOWCASE_MODEL_SCALE_MOBILE = 26;
 
 /** The actual WebGL scene — kept in its own module so it can be lazy-loaded
  * client-only (see BandScrollShowcase), without pulling @react-three/fiber
  * into the server render at all.
  *
- * Renders the real <Band> GLTF model (was BandModel, a stylized procedural
- * loop-plus-boxes approximation) with the exact lighting rig
+ * Renders the real <Band> GLTF model with the exact lighting rig
  * BuiltToReadYouScene.tsx uses — copied verbatim rather than reinvented, so
  * the Champagne Gold hardware catches light the same way in both places.
  * <Band> needs its own <Suspense> boundary here (its useGLTF call is the
- * actual suspense trigger) — BandModel never needed one since it built its
- * geometry procedurally with nothing to load. */
+ * actual suspense trigger). */
 export function BandScrollScene({
   reduceMotion,
   progress,
+  isMobile,
 }: {
   reduceMotion: boolean;
   progress: MotionValue<number>;
+  isMobile: boolean;
 }) {
   return (
     <Canvas
-      className="!absolute inset-0"
+      // z-0, explicit — guarantees this paints above the centered
+      // headline's z-[-1] regardless of default stacking order, the
+      // same reasoning as BuiltToReadYouScene's own Canvas: the model
+      // overlapping the text is the deliberate design here, not an
+      // accident of paint order.
+      className="!absolute inset-0 z-0"
       dpr={[1, 2]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
@@ -62,7 +66,7 @@ export function BandScrollScene({
           scrollProgress={progress}
           reduceMotion={reduceMotion}
           variant="showcase"
-          scale={SHOWCASE_MODEL_SCALE}
+          scale={isMobile ? SHOWCASE_MODEL_SCALE_MOBILE : SHOWCASE_MODEL_SCALE_DESKTOP}
         />
       </Suspense>
     </Canvas>

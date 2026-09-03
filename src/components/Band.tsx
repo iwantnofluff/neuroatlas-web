@@ -111,28 +111,25 @@ const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
  *  component's own verification notes. */
 const LOCK_ROTATION_TURNS = 1.75;
 
-/** "showcase" variant only (see the `variant` prop below) — BandScrollShowcase
- *  pins THREE signal callouts (HRV, Breathing, Stress Load) to the ranges
- *  [0,0.34]/[0.33,0.67]/[0.66,1] and wants the model to settle into a
- *  distinct, readable pose for each one (front-on, ~90° side profile, a
- *  more pronounced tilt) rather than spinning continuously or freezing
- *  after an initial rise — a completely different narrative from the
- *  "reveal" variant's rise-then-lock, hence a separate keyframe set
- *  rather than reusing LOCK_ROTATION_TURNS' single target angle.
- *  {p, ry, rx} keyframes are sampled every frame (see sampleShowcasePose)
- *  by finding the surrounding pair for the current scroll progress and
- *  smoothstep-easing between them — flat "hold" pairs (two adjacent
- *  keyframes with identical ry/rx) are what keep the pose settled and
- *  readable through the middle of each signal's own range, rather than
- *  still visibly rotating while its callout text is trying to be read. */
+/** "showcase" variant only (see the `variant` prop below) — the model
+ *  should read as a continuous, fluid tumble across the WHOLE scroll
+ *  range now that the three signal callouts (HRV, Breathing, Stress
+ *  Load) are persistent, organically-scattered UI elements rather than
+ *  edge-pointing labels that needed the model to hold still at a
+ *  specific readable pose while each one was active — an earlier
+ *  version of this used flat "hold" pairs between poses for exactly
+ *  that reason, which is no longer needed now the callouts don't
+ *  depend on the model being static to be legible. {p, ry, rx}
+ *  keyframes are sampled every frame (see sampleShowcasePose) by
+ *  finding the surrounding pair for the current scroll progress and
+ *  smoothstep-easing between them, on BOTH rotation.y and rotation.x
+ *  simultaneously — a genuine multi-axis tumble, not a single-axis
+ *  spin with an incidental fixed tilt. */
 const SHOWCASE_POSE_KEYFRAMES: ReadonlyArray<{ p: number; ry: number; rx: number }> = [
-  { p: 0, ry: -0.35, rx: 0.15 },
-  { p: 0.17, ry: 0, rx: 0.3 }, // front-on, settled mid-HRV
-  { p: 0.34, ry: 0, rx: 0.3 }, // hold through end of HRV's range
-  { p: 0.5, ry: Math.PI / 2, rx: 0.3 }, // side profile, settled mid-Breathing
-  { p: 0.67, ry: Math.PI / 2, rx: 0.3 }, // hold through end of Breathing's range
-  { p: 0.83, ry: Math.PI * 0.58, rx: 0.55 }, // more pronounced tilt, settled mid-Stress Load
-  { p: 1, ry: Math.PI * 0.58, rx: 0.55 }, // hold through end
+  { p: 0, ry: -0.5, rx: -0.3 },
+  { p: 0.34, ry: 0.8, rx: 0.5 },
+  { p: 0.67, ry: 1.8, rx: 0.2 },
+  { p: 1, ry: 2.6, rx: 0.65 },
 ];
 
 function smoothstep(t: number) {
