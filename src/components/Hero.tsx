@@ -1,7 +1,6 @@
 "use client";
 
-import type { PointerEvent } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
@@ -11,6 +10,12 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 const HEADLINE = "The First Stress Management Band";
 const EMPHASIS_WORD = "First";
+const SUBHEAD = "Know when pressure is building, and reset before it takes over.";
+
+const DEFAULT_CTAS: HeroCta[] = [
+  { label: "Enquire Now", href: "/request-access" },
+  { label: "Book A Pilot", href: "/for-organisations" },
+];
 
 // Real footage isn't in yet — see HeroMedia.tsx. Set this to e.g.
 // "/video/hero-band.mp4" once it lands; everything else is already built
@@ -33,31 +38,42 @@ const wordItem = {
   },
 };
 
-export function Hero() {
-  const words = HEADLINE.split(" ");
+type HeroCta = { label: string; href: string };
+
+type HeroProps = {
+  eyebrow?: string;
+  headline?: string;
+  /** Which word in `headline` gets the italic-gold emphasis treatment.
+   *  Pass a word that isn't present (or omit entirely) to skip it. */
+  emphasisWord?: string;
+  subhead?: string;
+  /** Defaults to the homepage's own two buttons — pass `[]` to render
+   *  none (e.g. a page with its own closing CTA already doing that job,
+   *  see /how-it-works). */
+  ctas?: HeroCta[];
+};
+
+/**
+ * Shared full-bleed cinematic banner — used as-is (all defaults) on the
+ * homepage, and with page-specific copy elsewhere (see /how-it-works,
+ * which swaps in its own headline/subhead and drops the CTAs). The visual
+ * chrome (video/placeholder background, static lighting, dot pattern,
+ * scroll chevron) is what's actually "global" here; the words on top of
+ * it are just props.
+ */
+export function Hero({
+  eyebrow = "NeuroAtlas",
+  headline = HEADLINE,
+  emphasisWord = EMPHASIS_WORD,
+  subhead = SUBHEAD,
+  ctas = DEFAULT_CTAS,
+}: HeroProps = {}) {
+  const words = headline.split(" ");
   const reduceMotion = useSafeReducedMotion();
-
-  // Subtle cursor-parallax on the glow layered over the video — a quiet
-  // "alive" touch, not a gimmick: small amplitude, spring-smoothed, and
-  // skipped entirely for prefers-reduced-motion.
-  const glowX = useMotionValue(0);
-  const glowY = useMotionValue(0);
-  const springX = useSpring(glowX, { stiffness: 60, damping: 20 });
-  const springY = useSpring(glowY, { stiffness: 60, damping: 20 });
-
-  function handlePointerMove(e: PointerEvent<HTMLElement>) {
-    if (reduceMotion) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const relX = (e.clientX - rect.left) / rect.width - 0.5;
-    const relY = (e.clientY - rect.top) / rect.height - 0.5;
-    glowX.set(relX * 40);
-    glowY.set(relY * 40);
-  }
 
   return (
     <section
       id="hero"
-      onPointerMove={handlePointerMove}
       className="relative flex min-h-[100svh] flex-col items-center overflow-hidden bg-navy text-cream"
     >
       {/* Full-bleed background: real footage once HERO_VIDEO_SRC is set,
@@ -75,10 +91,24 @@ export function Hero() {
         className="absolute inset-0 bg-gradient-to-b from-navy/70 via-transparent to-navy/85"
       />
 
-      <motion.div
+      {/* Static "studio lighting" — replaces a previous cursor-tracking
+          glow (real interactivity, removed per client direction: this is
+          meant to read as premium ambient light, not a gimmick). Two
+          layered radial gradients, both fixed in place, no JS/motion
+          involved: a soft key light offset toward the top-left of center,
+          and a smaller, fainter fill light further toward the corner —
+          the same "light source up and to one side" cue real studio
+          photography uses. Kept deliberately faint (16%/10% mixes, down
+          from the old glow's 25%) so it stays in the background rather
+          than competing with the headline. */}
+      <div
         aria-hidden="true"
-        style={{ x: springX, y: springY }}
-        className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,color-mix(in_oklab,var(--color-gold)_25%,transparent),transparent_70%)]"
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 45% at 32% 0%, color-mix(in oklab, var(--color-gold) 16%, transparent), transparent 70%), " +
+            "radial-gradient(ellipse 40% 35% at 12% 12%, color-mix(in oklab, var(--color-cream) 10%, transparent), transparent 75%)",
+        }}
       />
       <DotPattern
         glow={false}
@@ -94,7 +124,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
           className="eyebrow"
         >
-          NeuroAtlas
+          {eyebrow}
         </motion.p>
 
         <motion.h1
@@ -107,7 +137,7 @@ export function Hero() {
             <motion.span
               key={`${word}-${i}`}
               variants={wordItem}
-              className={cn(word === EMPHASIS_WORD && "italic text-gold")}
+              className={cn(word === emphasisWord && "italic text-gold")}
             >
               {word}
             </motion.span>
@@ -120,32 +150,29 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mx-auto mt-6 whitespace-nowrap text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
         >
-          Know when pressure is building, and reset before it takes over.
+          {subhead}
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.65 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <ShimmerLink
-            href="/request-access"
-            background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
-            shimmerColor="var(--color-cream)"
-            className="px-6 py-3 text-sm tracking-wide text-cream"
+        {ctas.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.65 }}
+            className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
-            Enquire Now
-          </ShimmerLink>
-          <ShimmerLink
-            href="/for-organisations"
-            background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
-            shimmerColor="var(--color-cream)"
-            className="px-6 py-3 text-sm tracking-wide text-cream"
-          >
-            Book A Pilot
-          </ShimmerLink>
-        </motion.div>
+            {ctas.map((cta) => (
+              <ShimmerLink
+                key={cta.href}
+                href={cta.href}
+                background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
+                shimmerColor="var(--color-cream)"
+                className="px-6 py-3 text-sm tracking-wide text-cream"
+              >
+                {cta.label}
+              </ShimmerLink>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       <motion.div

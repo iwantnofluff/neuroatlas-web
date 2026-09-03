@@ -29,7 +29,8 @@ export function Header() {
   // background from the top, so it always gets the solid cream header; only
   // these get to start transparent and solidify on scroll (the one piece of
   // Nubo's interaction language worth borrowing).
-  const hasDarkHero = pathname === "/" || pathname === "/band";
+  const hasDarkHero =
+    pathname === "/" || pathname === "/band" || pathname === "/how-it-works";
   const scrolled = !hasDarkHero || scrolledPastHero;
   const headerHeight = 72; // matches h-18
 

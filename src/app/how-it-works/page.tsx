@@ -1,4 +1,7 @@
+import { Hero } from "@/components/Hero";
+import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
+import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works — NeuroAtlas" };
@@ -25,23 +28,19 @@ const loopSteps = [
 export default function HowItWorksPage() {
   return (
     <main>
-      {/* 1. Hero — headline A: "Most Apps Stop At Telling You" pairs
-          directly with the supporting line's "does not just tell you". No
-          dark hero here (Header.tsx only solidifies-on-scroll for "/" and
-          "/band"), so this stays a light, editorial-style opener. */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 pt-40 pb-20 text-center lg:px-10 lg:pt-48 lg:pb-24"
-        y={20}
-      >
-        <p className="eyebrow">How It Works</p>
-        <h1 className="mt-4 font-serif text-4xl leading-tight text-navy lg:text-5xl">
-          Most Apps Stop At Telling You
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          NeuroAtlas does not just tell you something changed, it makes sure
-          it does.
-        </p>
-      </Reveal>
+      {/* 1. Hero — now the shared cinematic banner (see Hero.tsx), with
+          this page's own headline/subhead in place of the homepage's, and
+          no CTAs (this page has its own closing CTA further down, so a
+          second pair of buttons up top would just be noise). Header.tsx's
+          transparent-over-dark treatment is opted into for this route
+          alongside "/" and "/band". */}
+      <Hero
+        eyebrow="How It Works"
+        headline="Most Apps Stop At Telling You"
+        subhead="NeuroAtlas does not just tell you something changed, it makes sure it does."
+        ctas={[]}
+      />
+      <HeroBoundary />
 
       {/* 2. The loop, in three steps — headline B: differentiates from the
           homepage's own "Measure. Intervene. Measure." heading rather than
@@ -77,127 +76,82 @@ export default function HowItWorksPage() {
 
       {/* 3. Measure — headline B: "What Your Body Already Knows" echoes the
           "before you'd notice yourself" line already used on /band, so the
-          two pages reinforce the same idea in the same words. */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-        y={20}
-      >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          What Your Body Already Knows
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          The band reads your nervous system throughout the day, picking up
-          on signals like heart rate variability and breathing before you
-          would notice anything yourself. These signals build a picture of
-          how pressure is actually moving through your day.
-        </p>
-      </Reveal>
+          two pages reinforce the same idea in the same words. First of the
+          six alternating 50/50 sections: text left, media right. */}
+      <FeatureSplitSection
+        heading="What Your Body Already Knows"
+        body="The band reads your nervous system throughout the day, picking up on signals like heart rate variability and breathing before you would notice anything yourself. These signals build a picture of how pressure is actually moving through your day."
+        imageSide="right"
+        background="cream"
+      />
 
       {/* 4. Intervene — headline A: keeps the site's recurring X-not-Y
           contrast pattern (see the closing CTA, and the homepage's "Other
-          Apps Notice. We Fix It." line). */}
-      <section className="dark-glow bg-navy-soft text-cream">
-        <Reveal
-          className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-          y={20}
-        >
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
-            A Reset, Not A Retreat
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75">
-            When pressure builds, the app gives you a short reset, right at
-            your desk. No stepping away, no blocking out your afternoon,
-            just a few minutes to bring things back into focus.
-          </p>
-        </Reveal>
-      </section>
+          Apps Notice. We Fix It." line). Text right, media left. */}
+      <FeatureSplitSection
+        heading="A Reset, Not A Retreat"
+        body="When pressure builds, the app gives you a short reset, right at your desk. No stepping away, no blocking out your afternoon, just a few minutes to bring things back into focus."
+        imageSide="left"
+        background="navy-soft"
+      />
 
       {/* 5. Measure again — headline A: "The Proof, Not The Promise" adds a
           new angle rather than repeating the body's own closing phrase.
-          Given real weight (navy, the one dark section on this page) since
-          this is the step that makes the loop's claim credible. The
-          HRV number is explicitly marked as an illustrative placeholder,
-          not real pilot data — same honesty convention as the /band specs
-          panel's "To be confirmed" values. */}
-      <section className="dark-glow bg-navy text-cream">
-        <div className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32">
-          <Reveal y={20}>
-            <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
-              The Proof, Not The Promise
-            </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75">
-              Once the reset is done, the band reads you again, so you see
-              the shift for yourself, shown as a number, not a feeling.
+          Given real weight (navy, the one bg-navy section on this page)
+          since this is the step that makes the loop's claim credible. The
+          HRV stat card already IS this section's visual — passed in as
+          `media` rather than buried behind a generic placeholder. The HRV
+          number stays marked as an illustrative placeholder, not real
+          pilot data — same honesty convention as the /band specs panel's
+          "To be confirmed" values. Text left, media right. */}
+      <FeatureSplitSection
+        heading="The Proof, Not The Promise"
+        body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
+        imageSide="right"
+        background="navy"
+        media={
+          <div className="card-glass flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
+            <p className="eyebrow">HRV</p>
+            <p className="font-serif text-4xl text-cream lg:text-5xl">
+              42 <span className="text-gold">→</span> 61
             </p>
-          </Reveal>
-          <Reveal delay={0.1} y={16} className="mt-12 flex justify-center">
-            <div className="card-glass px-10 py-6">
-              <p className="eyebrow">HRV</p>
-              <p className="mt-2 font-serif text-4xl text-cream lg:text-5xl">
-                42 <span className="text-gold">→</span> 61
-              </p>
-              <p className="mt-3 text-xs italic text-cream/50">
-                Illustrative example, pending real pilot data
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            <p className="mt-1 text-xs italic text-cream/50">
+              Illustrative example, pending real pilot data
+            </p>
+          </div>
+        }
+      />
 
       {/* 6. Pattern recognition — headline B: continues the "before you"
-          motif from section 3. */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-        y={20}
-      >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          It Sees The Pattern Before You Do
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          Over time, NeuroAtlas starts to notice when your pressure tends to
-          build, a hard stretch before a big call, a recurring point in your
-          week, and steps in earlier each time.
-        </p>
-      </Reveal>
+          motif from section 3. Text right, media left. */}
+      <FeatureSplitSection
+        heading="It Sees The Pattern Before You Do"
+        body="Over time, NeuroAtlas starts to notice when your pressure tends to build, a hard stretch before a big call, a recurring point in your week, and steps in earlier each time."
+        imageSide="left"
+        background="cream"
+      />
 
       {/* 7. A worked example — headline A: the concrete, specific version
           (a real time of day, a real outcome) rather than the more
-          abstract option. Set as a single narrative paragraph, styled a
-          touch larger to read like a short case rather than a claim. */}
-      <section className="dark-glow bg-navy-soft text-cream">
-        <Reveal
-          className="mx-auto max-w-2xl px-6 py-24 text-center lg:px-10 lg:py-32"
-          y={20}
-        >
-          <p className="eyebrow">A Worked Example</p>
-          <h2 className="mt-4 font-serif text-3xl leading-tight lg:text-4xl">
-            The 4pm Drop, Intercepted
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl font-serif text-xl leading-relaxed text-cream/85 lg:text-2xl">
-            It is late afternoon. Focus starts to slip, the kind of drop
-            that usually goes unnoticed until it costs you something. The
-            band picks it up. A short reset runs before the next meeting.
-            By the time you are back at your desk, the numbers show it
-            worked.
-          </p>
-        </Reveal>
-      </section>
+          abstract option. Text left, media right. */}
+      <FeatureSplitSection
+        eyebrow="A Worked Example"
+        heading="The 4pm Drop, Intercepted"
+        body="It is late afternoon. Focus starts to slip, the kind of drop that usually goes unnoticed until it costs you something. The band picks it up. A short reset runs before the next meeting. By the time you are back at your desk, the numbers show it worked."
+        imageSide="right"
+        background="navy-soft"
+      />
 
       {/* 8. What it does not claim to do — headline B: matches the body's
           own "will not promise" phrasing, which suits directness better
-          than a more editorial label for a limitations section. */}
-      <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
-        y={20}
-      >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          What NeuroAtlas Will Not Promise
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
-          NeuroAtlas will not make the pressure disappear. It will show you
-          exactly where it is landing, and give you a way to respond.
-        </p>
-      </Reveal>
+          than a more editorial label for a limitations section. Text
+          right, media left. */}
+      <FeatureSplitSection
+        heading="What NeuroAtlas Will Not Promise"
+        body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and give you a way to respond."
+        imageSide="left"
+        background="cream"
+      />
 
       {/* 9. Closing CTA */}
       <section className="dark-glow bg-navy-soft text-cream">
