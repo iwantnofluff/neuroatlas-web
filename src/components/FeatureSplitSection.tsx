@@ -95,10 +95,17 @@ export function FeatureSplitSection({
               className="relative aspect-square overflow-hidden rounded-3xl"
             >
               {media ?? (
+                // dark sections: .card-glass's tinted fill overridden away
+                // with bg-transparent, keeping only its border + inset
+                // glow — the same "floating outline, not a solid tile"
+                // treatment as the homepage's "Inside the app" float tiles
+                // and MethodScrollCards' cards. .card-glass-light is
+                // already transparent-fill by definition, so the cream
+                // variant needs no override.
                 <div
                   className={cn(
                     "flex size-full items-center justify-center",
-                    dark ? "card-glass" : "card-glass-light"
+                    dark ? "card-glass bg-transparent" : "card-glass-light"
                   )}
                 >
                   <ImageIcon

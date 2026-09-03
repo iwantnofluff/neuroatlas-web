@@ -110,7 +110,7 @@ export default function HowItWorksPage() {
         imageSide="right"
         background="navy"
         media={
-          <div className="card-glass flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
+          <div className="card-glass bg-transparent flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
             <p className="eyebrow">HRV</p>
             <p className="font-serif text-4xl text-cream lg:text-5xl">
               42 <span className="text-gold">→</span> 61
