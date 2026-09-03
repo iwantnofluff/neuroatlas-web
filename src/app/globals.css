@@ -146,9 +146,13 @@
   }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* No `scroll-behavior: smooth` here — Lenis (see SmoothScroll.tsx) is the
+   sole authority on scroll physics site-wide now. Native CSS smooth-scroll
+   running alongside it doesn't blend with Lenis's own rAF-driven position;
+   it fights it (this exact combination is what Next.js's own dev-mode
+   console warning about "scroll-behavior: smooth" on <html> was flagging).
+   Nothing on the site currently uses in-page `#anchor` links, so there's
+   no native-smooth-scroll behavior to preserve here. */
 
 /*
   Global button system. Every CTA on the site (the "Request Access"/
