@@ -214,7 +214,17 @@ export function BandScrollShowcase() {
           {/* Below xl: simple stacked hero. */}
           <div className="text-center xl:hidden">
             <p className="eyebrow">The NA·01 band</p>
-            <h1 className="mt-4 font-serif text-4xl leading-tight text-cream lg:text-5xl">
+            {/* font-bold + tracking-tight + text-gold-soft (was text-cream,
+               default serif weight) — the manifesto's "heavy, editorial,
+               tight tracking" standard for primary headings, same
+               champagne tint as BuiltToReadYou's headline. Kept font-serif
+               (not switched to that section's sans-serif/uppercase/
+               font-black treatment) since this headline sits inline
+               alongside real UI (CTA, model, callouts) at hero scale, not
+               as giant full-viewport background type — matching the rest
+               of this site's h1/h2 language rather than introducing a
+               third heading style. */}
+            <h1 className="mt-4 font-serif text-4xl leading-tight font-bold tracking-tight text-gold-soft lg:text-5xl">
               The <em className="italic text-gold">First</em> Band For Stress
             </h1>
             <p className="mx-auto mt-4 max-w-md text-lg text-cream/75">
@@ -244,7 +254,9 @@ export function BandScrollShowcase() {
               headline back under the fixed header. */}
           <div className="absolute top-28 left-6 hidden max-w-[300px] xl:block">
             <p className="eyebrow">The NA·01 band</p>
-            <h1 className="mt-4 font-serif text-4xl leading-tight text-cream 2xl:text-5xl">
+            {/* Same treatment as the mobile-stacked h1 above — see that
+               comment. */}
+            <h1 className="mt-4 font-serif text-4xl leading-tight font-bold tracking-tight text-gold-soft 2xl:text-5xl">
               The <em className="italic text-gold">First</em> Band For Stress
             </h1>
           </div>

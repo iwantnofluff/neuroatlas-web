@@ -111,28 +111,90 @@ const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
  *  component's own verification notes. */
 const LOCK_ROTATION_TURNS = 1.75;
 
+/** "showcase" variant only (see the `variant` prop below) — BandScrollShowcase
+ *  pins THREE signal callouts (HRV, Breathing, Stress Load) to the ranges
+ *  [0,0.34]/[0.33,0.67]/[0.66,1] and wants the model to settle into a
+ *  distinct, readable pose for each one (front-on, ~90° side profile, a
+ *  more pronounced tilt) rather than spinning continuously or freezing
+ *  after an initial rise — a completely different narrative from the
+ *  "reveal" variant's rise-then-lock, hence a separate keyframe set
+ *  rather than reusing LOCK_ROTATION_TURNS' single target angle.
+ *  {p, ry, rx} keyframes are sampled every frame (see sampleShowcasePose)
+ *  by finding the surrounding pair for the current scroll progress and
+ *  smoothstep-easing between them — flat "hold" pairs (two adjacent
+ *  keyframes with identical ry/rx) are what keep the pose settled and
+ *  readable through the middle of each signal's own range, rather than
+ *  still visibly rotating while its callout text is trying to be read. */
+const SHOWCASE_POSE_KEYFRAMES: ReadonlyArray<{ p: number; ry: number; rx: number }> = [
+  { p: 0, ry: -0.35, rx: 0.15 },
+  { p: 0.17, ry: 0, rx: 0.3 }, // front-on, settled mid-HRV
+  { p: 0.34, ry: 0, rx: 0.3 }, // hold through end of HRV's range
+  { p: 0.5, ry: Math.PI / 2, rx: 0.3 }, // side profile, settled mid-Breathing
+  { p: 0.67, ry: Math.PI / 2, rx: 0.3 }, // hold through end of Breathing's range
+  { p: 0.83, ry: Math.PI * 0.58, rx: 0.55 }, // more pronounced tilt, settled mid-Stress Load
+  { p: 1, ry: Math.PI * 0.58, rx: 0.55 }, // hold through end
+];
+
+function smoothstep(t: number) {
+  return t * t * (3 - 2 * t);
+}
+
+function sampleShowcasePose(p: number) {
+  const kf = SHOWCASE_POSE_KEYFRAMES;
+  if (p <= kf[0].p) return { ry: kf[0].ry, rx: kf[0].rx };
+  for (let i = 0; i < kf.length - 1; i++) {
+    const a = kf[i];
+    const b = kf[i + 1];
+    if (p <= b.p) {
+      const t = a.p === b.p ? 1 : smoothstep((p - a.p) / (b.p - a.p));
+      return {
+        ry: THREE.MathUtils.lerp(a.ry, b.ry, t),
+        rx: THREE.MathUtils.lerp(a.rx, b.rx, t),
+      };
+    }
+  }
+  const last = kf[kf.length - 1];
+  return { ry: last.ry, rx: last.rx };
+}
+
 /** `scrollProgress` is a Framer Motion MotionValue (0–1), read every
  *  frame via `.get()` rather than subscribed — same convention as
- *  BandModel.tsx. Position/rotation math is unchanged from the Torus
- *  placeholder it replaces: `t` ramps 0→1 across just the first 40% of
- *  the scroll range, then clamps at 1, so the model rises from off-
- *  screen while completing one full turn, then locks in place for the
- *  rest of the scroll (0.4–1.0) — the exact "position -5→0, rotation
- *  0→2π, then holds" sequence from the original plan. */
+ *  BandModel.tsx.
+ *
+ *  `variant` picks which narrative drives position/rotation:
+ *  - "reveal" (default, BuiltToReadYouSection's exact original behavior,
+ *    untouched): `t` ramps 0→1 across just the first 40% of the scroll
+ *    range then clamps at 1, so the model rises from off-screen while
+ *    completing one full turn, then locks in place for the rest of the
+ *    scroll — the "position -5→0, rotation 0→2π, then holds" sequence.
+ *  - "showcase" (BandScrollShowcase): the model is already fully visible
+ *    from the start (no rise — position.y stays 0 throughout), and
+ *    rotation continuously eases through SHOWCASE_POSE_KEYFRAMES above
+ *    instead.
+ *
+ *  `scale` overrides the isMobile-based MODEL_SCALE_DESKTOP/MOBILE
+ *  ternary entirely when supplied — those two constants were tuned
+ *  specifically for BuiltToReadYouSection's full-bleed canvas;
+ *  BandScrollShowcase's model sits in a much smaller, differently-framed
+ *  container and needs its own independently-tuned value. */
 export function Band({
   scrollProgress,
   reduceMotion,
   isMobile = false,
+  variant = "reveal",
+  scale,
 }: {
   scrollProgress: MotionValue<number>;
   reduceMotion: boolean;
   isMobile?: boolean;
+  variant?: "reveal" | "showcase";
+  scale?: number;
 }) {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
   };
   const group = useRef<THREE.Group>(null);
-  const modelScale = isMobile ? MODEL_SCALE_MOBILE : MODEL_SCALE_DESKTOP;
+  const modelScale = scale ?? (isMobile ? MODEL_SCALE_MOBILE : MODEL_SCALE_DESKTOP);
 
   const { shellMeshes, hardwareMeshes } = useMemo(() => {
     const meshes = Object.values(nodes).filter(
@@ -153,6 +215,23 @@ export function Band({
     const g = group.current;
     if (!g) return;
 
+    if (variant === "showcase") {
+      g.position.y = 0;
+      if (reduceMotion) {
+        // A representative settled front-on pose — there's no single
+        // "final" state in a 3-part narrative to freeze on, so this
+        // picks the first (front-facing) one rather than an arbitrary
+        // mid-rotation angle.
+        g.rotation.y = 0;
+        g.rotation.x = 0.3;
+        return;
+      }
+      const pose = sampleShowcasePose(scrollProgress.get());
+      g.rotation.y = pose.ry;
+      g.rotation.x = pose.rx;
+      return;
+    }
+
     if (reduceMotion) {
       g.position.y = 0;
       g.rotation.y = 0;
@@ -170,7 +249,12 @@ export function Band({
   });
 
   return (
-    <group ref={group} scale={modelScale} position={[0, -5, 0]} dispose={null}>
+    <group
+      ref={group}
+      scale={modelScale}
+      position={[0, variant === "showcase" ? 0 : -5, 0]}
+      dispose={null}
+    >
       <group rotation={BASE_ROTATION}>
         {shellMeshes.map((mesh, i) => (
           <mesh

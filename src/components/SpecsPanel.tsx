@@ -48,12 +48,32 @@ export function SpecsPanel() {
               aria-selected={isActive}
               onClick={() => setActive(i)}
               className={cn(
-                "flex shrink-0 items-center gap-2.5 rounded-xl px-4 py-3 text-left text-sm transition-colors",
-                isActive
-                  ? "bg-gold text-navy"
-                  : "text-cream/70 hover:bg-cream/10"
+                "relative flex shrink-0 items-center gap-2.5 rounded-xl px-4 py-3 text-left text-sm transition-colors",
+                isActive ? "text-gold" : "text-cream/70 hover:bg-cream/10"
               )}
             >
+              {/* The sliding active-background pill — a single shared
+                  layoutId across all five buttons, so whichever one is
+                  actually rendering it right now (only the active
+                  button ever mounts it) animates smoothly from its old
+                  position/size to its new one instead of the old fill
+                  just disappearing and a new one popping in elsewhere
+                  (a real, confirmed difference: framer-motion tracks
+                  layoutId'd elements across the whole tree, not just
+                  within one component). z-[-1] keeps it behind the
+                  icon/label text, which stays in normal flow rather
+                  than needing to be re-wrapped for stacking. */}
+              {isActive && (
+                <motion.span
+                  layoutId="specs-active-tab"
+                  className="absolute inset-0 z-[-1] rounded-xl bg-gold/15"
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { type: "spring", stiffness: 380, damping: 32 }
+                  }
+                />
+              )}
               <Icon className="size-4 shrink-0" />
               {spec.label}
             </button>
@@ -62,13 +82,21 @@ export function SpecsPanel() {
       </div>
 
       <div className="card-glass min-h-[200px] overflow-hidden px-8 py-10">
-        <AnimatePresence mode="wait" initial={false}>
+        {/* No `mode="wait"` — that sequences exit-then-enter (the old
+           pane fully fades out, THEN the new one fades in), which reads
+           as a visible gap/flicker rather than "seamless". Letting both
+           run at once (framer-motion's default) crossfades them instead
+           — safe here since every pane is the same shape/height, so an
+           instant of overlap during the crossfade never causes a layout
+           jump. */}
+        <AnimatePresence initial={false}>
           <motion.div
             key={active}
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className={cn(!reduceMotion && "absolute inset-0")}
           >
             <ActiveIcon className="size-6 text-gold" aria-hidden="true" />
             <h3 className="mt-4 font-serif text-2xl text-cream">
