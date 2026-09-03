@@ -1,26 +1,380 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+/*
+  ---break---
+*/
+@custom-variant dark (&:is(.dark *));
 
+/*
+  NeuroAtlas brand tokens.
+  Luxury, calm, whitespace-rich: deep navy + champagne gold on a warm cream field.
+  This is a fixed brand palette (not OS dark-mode adaptive) — the navy/gold/cream
+  pairing is the identity, the same way most premium editorial sites hold one look.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Real values read off the NeuroAtlas mobile-app Figma file (Local
+     Components master library + a live detail screen) — see the plan
+     at .claude/plans for the extraction notes and what was excluded
+     (a violet component-state stroke, not a brand color). */
+  --color-cream: #f4f0e9;
+  --color-cream-deep: #f0ead9;
+  --color-navy: #0b1016;
+  --color-navy-deep: #04121f;
+  --color-navy-soft: #1c1d23;
+  --color-ink: #1b2430;
+  --color-mist: #5c6773;
+  --color-gold: #dac79e;
+  --color-gold-deep: #c4b38e;
+  --color-gold-soft: #e5dac2;
+  --color-gold-muted: #998b6f;
+  --color-line: #e3dac2;
+  --color-line-dark: rgb(242 242 242 / 10%);
+  /* shadcn semantic tokens, reconciled to the brand palette above so
+     any shadcn component (Button, Dialog, Card, …) inherits the
+     navy/gold/cream look instead of generic Tailwind grayscale. */
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+  --card: var(--color-cream-deep);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-cream-deep);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-gold);
+  --primary-foreground: var(--color-navy);
+  --secondary: var(--color-navy);
+  --secondary-foreground: var(--color-cream);
+  --muted: var(--color-cream-deep);
+  --muted-foreground: var(--color-mist);
+  --accent: var(--color-gold-soft);
+  --accent-foreground: var(--color-navy);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: var(--color-line);
+  --input: var(--color-line);
+  --ring: var(--color-gold);
+  --chart-1: oklch(0.871 0.006 286.286);
+  --chart-2: oklch(0.552 0.016 285.938);
+  --chart-3: oklch(0.442 0.017 285.786);
+  --chart-4: oklch(0.37 0.013 285.805);
+  --chart-5: oklch(0.274 0.006 286.033);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-cream: var(--color-cream);
+  --color-cream-deep: var(--color-cream-deep);
+  --color-navy: var(--color-navy);
+  --color-navy-deep: var(--color-navy-deep);
+  --color-navy-soft: var(--color-navy-soft);
+  --color-ink: var(--color-ink);
+  --color-mist: var(--color-mist);
+  --color-gold: var(--color-gold);
+  --color-gold-deep: var(--color-gold-deep);
+  --color-gold-soft: var(--color-gold-soft);
+  --color-gold-muted: var(--color-gold-muted);
+  --color-line: var(--color-line);
+  --color-line-dark: var(--color-line-dark);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-serif: var(--font-fraunces);
+  --font-sans: var(--font-jakarta);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  @keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  @keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+    }
+  15%, 35% {
+    transform: translateZ(0) rotate(90deg);
+    }
+  65%, 85% {
+    transform: translateZ(0) rotate(270deg);
+    }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html {
+  scroll-behavior: smooth;
+}
+
+/*
+  Global button system. Every CTA on the site (the "Request Access"/
+  "Enquire Now"/etc. pills) is a <ShimmerButton>/<ShimmerLink> instance
+  (see ui/shimmer-button.tsx) rather than a plain CSS class — that
+  component is what actually produces glass-at-rest, fills-to-color-on-
+  hover, AND the thin line of light travelling around the border, since
+  the travelling light needs real sub-layers (a masked, spinning
+  conic-gradient) that a class on a plain <Link> can't add by itself.
+  `.btn-glass-icon` below is the one remaining CSS-only class, kept for
+  icon-only circular buttons (the header's hamburger, a sheet's close
+  button) where that travelling-light treatment would be too busy.
+*/
+@layer components {
+  /* Icon-only glass buttons (the header's mobile menu trigger, etc.) —
+     `currentColor`-based so it automatically matches whatever text color
+     the button already has (cream over a dark hero, navy once the header
+     solidifies) without a separate light/dark variant. */
+  .btn-glass-icon {
+    @apply relative inline-flex items-center justify-center rounded-full;
+    background: color-mix(in oklab, currentColor 8%, transparent);
+    border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+    backdrop-filter: blur(10px);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+  }
+  /* Same hover language as every CTA button (see ShimmerButton/ShimmerLink):
+     fills solid gold, icon flips to navy via currentColor for contrast —
+     not just a glow this time, so icon buttons read as part of the same
+     system rather than a lighter-touch exception. */
+  .btn-glass-icon:hover,
+  .btn-glass-icon:focus-visible {
+    background: var(--color-gold);
+    color: var(--color-navy);
+    border-color: color-mix(in oklab, var(--color-gold) 85%, transparent);
+    box-shadow: 0 0 20px 3px color-mix(in oklab, var(--color-gold) 45%, transparent);
+  }
+
+  /* Glass card — every bordered content card on a DARK section (the
+     pinned-scroll reveal cards, the /band specs detail panel, the
+     /how-it-works HRV stat box) shares this one recipe, rather than each
+     hand-rolling its own `border-cream/15 bg-cream/5`. It's the same
+     gloss finish the CTA buttons use (see ShimmerLayers' backdrop +
+     Highlight layers in ui/shimmer-button.tsx): a translucent cream tint
+     via color-mix (not a flat low-opacity fill), real backdrop-blur +
+     saturate, and the same two-layer inset highlight — a crisp 1px line
+     along the top edge plus a soft glow — that's what actually reads as
+     "glossy" rather than just "frosted". Cards have no hover-fill state
+     (they're not clickable the way buttons are), so this is the button's
+     rest-state gloss only, held constant. Several cards on top of this
+     (MethodScrollCards, the "Inside the app" float tiles, the toolkit
+     cards) additionally drop the fill with a `bg-transparent` utility,
+     keeping only the border + glow — see .card-glass-light below for the
+     light-section equivalent of that same "edge only" look. */
+  .card-glass {
+    @apply relative rounded-2xl;
+    border: 1px solid color-mix(in oklab, var(--color-cream) 40%, transparent);
+    background: color-mix(in oklab, var(--color-cream) 18%, transparent);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 -8px 10px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Light-section counterpart to .card-glass, for the privacy trust
+     points (the one card-style element that sits on the site's cream
+     background rather than navy). Same "transparent fill, edge glow
+     only" idea, but .card-glass's cream-tinted border and white
+     highlight are tuned for a dark backdrop — over cream-on-cream
+     they'd all but disappear. Border tint switches to navy (the same
+     tinting PlaceholderPage's ShimmerLink already uses for its own
+     light-section CTAs), and the highlight flips from an inset glow to
+     a soft outer shadow, which is what reads as "a floating edge" on a
+     light background instead of a dark one. */
+  .card-glass-light {
+    @apply relative rounded-2xl;
+    background: transparent;
+    border: 1px solid color-mix(in oklab, var(--color-navy) 16%, transparent);
+    box-shadow:
+      inset 0 -1px 0 0 color-mix(in oklab, var(--color-navy) 8%, transparent),
+      0 10px 24px -14px color-mix(in oklab, var(--color-navy) 25%, transparent);
+  }
+
+  /* Ambient glow for plain dark sections — Hero and BandScrollShowcase
+     each build their own layered radial-gradient background; every other
+     `bg-navy`/`bg-navy-soft` section on the site (the homepage's "How
+     It's Different"/"Privacy"/closing-CTA/"Beyond Heart Rate", most of
+     /band, /how-it-works, /inside-the-app) was left completely flat by
+     comparison. This generalizes the same warm cream/gold glow those
+     bespoke ones use, as a plain utility any section can add, restrained
+     to a lower intensity (10% vs. Hero's 25%) since these are ordinary
+     content sections, not full-viewport moments. `position: relative` so
+     the glow (an absolutely-positioned pseudo-element) has something to
+     anchor to; it paints before the section's real children in normal
+     stacking order, so it always sits behind them. */
+  .dark-glow {
+    position: relative;
+  }
+  .dark-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 60% 55% at 50% 35%,
+      color-mix(in oklab, var(--color-gold) 10%, transparent),
+      transparent 70%
+    );
+  }
+  .dark-glow > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    @apply text-xs tracking-[0.2em] text-gold uppercase;
+  }
+
+  /* Hero video placeholder — see HeroMedia.tsx. Two large, soft radial
+     blooms drifting slowly and independently, so it reads as an ambient
+     background rather than a static gradient while real footage is
+     pending. Static (no animation) under prefers-reduced-motion. */
+  .hero-ambient-a {
+    background: radial-gradient(
+      ellipse 70% 60% at 30% 20%,
+      color-mix(in oklab, var(--color-gold) 22%, transparent),
+      transparent 65%
+    );
+  }
+  .hero-ambient-b {
+    background: radial-gradient(
+      ellipse 60% 50% at 75% 80%,
+      color-mix(in oklab, var(--color-gold-deep) 20%, transparent),
+      transparent 70%
+    );
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-ambient-a {
+      animation: hero-drift-a 22s ease-in-out infinite;
+    }
+    .hero-ambient-b {
+      animation: hero-drift-b 26s ease-in-out infinite;
+    }
+  }
+  @keyframes hero-drift-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(4%, 3%) scale(1.08); }
+  }
+  @keyframes hero-drift-b {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-3%, -4%) scale(1.05); }
+  }
+
+  /* Bento glass — the "Beyond Heart Rate" bento grid's card recipe (see
+     BeyondHeartSection.tsx): the hero cell and all three metric cells
+     share this one class. A deliberately different, quieter recipe than
+     .card-glass above rather than reusing it — that one's cream-tinted
+     fill and bright inset-highlight gloss is built to match the CTA
+     buttons; this section asked specifically for "physical glass
+     embedded in the dark background", i.e. a visible dark tinted surface
+     with a subtle edge, not a glossy button-like sheen. Gold only shows
+     up on hover, as the accent it's meant to be rather than a constant
+     presence. */
+  .bento-glass {
+    @apply relative rounded-2xl border border-cream/10;
+    background: color-mix(in oklab, var(--color-navy) 40%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .bento-glass:hover {
+    border-color: color-mix(in oklab, var(--color-gold) 40%, transparent);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+      0 0 24px -8px color-mix(in oklab, var(--color-gold) 45%, transparent);
+  }
+}
+/*
+  ---break---
+*/
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --chart-1: oklch(0.871 0.006 286.286);
+  --chart-2: oklch(0.552 0.016 285.938);
+  --chart-3: oklch(0.442 0.017 285.786);
+  --chart-4: oklch(0.37 0.013 285.805);
+  --chart-5: oklch(0.274 0.006 286.033);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+/*
+  ---break---
+*/
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
