@@ -26,14 +26,14 @@ export default function BandPage() {
       <BandScrollShowcase />
       <HeroBoundary />
 
-      {/* 3. What it deliberately does not do — "Noise to Focus": scattered
-          fitness-app-clutter shapes dissolve as the headline sharpens
-          into view, own h-[250vh] pinned track. See OneSignalSection.tsx. */}
+      {/* 3. What it deliberately does not do — "Expand & Snap": a massive
+          gradient-masked headline scales down and locks into center, own
+          h-[200vh] pinned track. See OneSignalSection.tsx. */}
       <OneSignalSection />
 
-      {/* 4. Design and build — "Mix-Blend Parallax": glass panels slide
-          behind a mix-blend-difference headline, own h-[250vh] pinned
-          track. See DesignedToBlendInSection.tsx. */}
+      {/* 4. Design and build — "Expand & Snap": a cinematic letterbox
+          slit expands to fill the screen behind the headline, own
+          h-[300vh] pinned track. See DesignedToBlendInSection.tsx. */}
       <DesignedToBlendInSection />
 
       {/* Real studio photography, supplied by the client — a visual break

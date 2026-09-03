@@ -1,77 +1,43 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 /**
- * "Designed To Blend In" — "Mix-Blend Parallax": three tall glass panels
- * slide upward behind the pinned, centered headline at different speeds
- * (a classic parallax stagger) across this section's own h-[250vh]
- * pinned track, while the text itself carries `mix-blend-difference` +
- * white, so it dynamically inverts color depending on whichever panel
- * (or the flat navy background between them) happens to be passing
- * behind it at any given scroll moment.
+ * "Designed To Blend In" — "Expand & Snap": a cinematic container starts
+ * as a thin horizontal letterbox slit at the center of the screen and
+ * expands outward across this section's own h-[300vh] pinned track
+ * until it fills the entire viewport, acting as a full-bleed cinematic
+ * billboard behind the headline (which stays static and in front the
+ * whole time, simply last in DOM so it paints on top — no z-index
+ * needed). A premium glassmorphic/gradient fill stands in for the real
+ * lifestyle photo until one is dropped in.
  *
- * Stacking, not Framer Motion, is the actual risk here: mix-blend-mode
- * only blends against whatever is painted BEFORE it within the SAME
- * stacking context — an intermediate wrapper with its own z-index (a
- * new, but not necessarily isolated, stacking context) is exactly the
- * kind of thing that can make this unreliable across browsers. So the
- * three panels and the text block are kept as plain DOM SIBLINGS with
- * no z-index at all — the text is simply last in source order, which is
- * what puts it on top, and nothing between it and the panels creates an
- * isolation boundary.
+ * clip-path is built as a SINGLE function-transformer useTransform that
+ * returns the COMPLETE template string directly (inset(...% ...% ...%
+ * ...% round ...px)), computed from plain lerp() math over four inset
+ * values and a radius — rather than handing framer-motion two literal
+ * clip-path strings and relying on its own generic string-interpolation
+ * to mix between them. That generic path isn't a reliable fit for a
+ * value packing several differently-unit-ed numbers (percentages AND a
+ * trailing round-radius in px) into one template, so this sidesteps it
+ * entirely: one MotionValue<string>, computed by us, every frame — the
+ * same "compute the real value ourselves" defensiveness this codebase
+ * already applies to its numeric scroll-linked transforms.
  *
- * Each panel's own vertical parallax offset is a SEPARATE useTransform
- * (function-transformer form throughout — this codebase's established
- * defensive pattern, since the array-range form has a confirmed bug
- * once a second scroll-linked transform exists on the same element).
- * reduceMotion resolves each panel straight to y:0 (its settled,
- * centered position) rather than swapping prop shapes across renders —
- * the other confirmed failure mode, from Reveal.tsx's own history.
+ * reduceMotion resolves straight to the fully-expanded end state (a
+ * full-bleed panel is a complete, meaningful composition on its own;
+ * freezing on the thin starting slit would just look like a broken,
+ * unfinished layout) rather than the array-range form or a prop-shape
+ * swap — the two confirmed failure modes elsewhere in this codebase.
  */
-type Panel = {
-  className: string;
-  /** Total vertical travel (px) across the full scroll range — varied
-   *  per panel for the parallax stagger; sign controls direction. */
-  speed: number;
-};
+const START_INSET = { top: 45, right: 10, bottom: 45, left: 10, radius: 24 };
+const END_INSET = { top: 0, right: 0, bottom: 0, left: 0, radius: 0 };
 
-const PANELS: Panel[] = [
-  { className: "left-[10%] w-[20%]", speed: -140 },
-  { className: "left-1/2 w-[24%] -translate-x-1/2", speed: -260 },
-  { className: "right-[10%] w-[20%]", speed: -380 },
-];
-
-function useParallaxY(progress: MotionValue<number>, speed: number, reduceMotion: boolean) {
-  return useTransform(progress, (p) => (reduceMotion ? 0 : speed * p));
-}
-
-function ParallaxPanel({
-  panel,
-  progress,
-  reduceMotion,
-}: {
-  panel: Panel;
-  progress: MotionValue<number>;
-  reduceMotion: boolean;
-}) {
-  const y = useParallaxY(progress, panel.speed, reduceMotion);
-  return (
-    <motion.div
-      aria-hidden="true"
-      style={{ y }}
-      className={cn(
-        // h-[160%] + top-[-30%] — taller than the viewport and centered
-        // with slack on both ends, so the parallax travel above never
-        // exposes an empty gap at the top or bottom of the pinned frame.
-        "absolute top-[-30%] h-[160%] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-md",
-        panel.className
-      )}
-    />
-  );
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
 }
 
 export function DesignedToBlendInSection() {
@@ -82,29 +48,42 @@ export function DesignedToBlendInSection() {
     offset: ["start start", "end end"],
   });
 
-  return (
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[250vh]")}>
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
-        {PANELS.map((panel, i) => (
-          <ParallaxPanel
-            key={i}
-            panel={panel}
-            progress={scrollYProgress}
-            reduceMotion={reduceMotion}
-          />
-        ))}
+  const clipPath = useTransform(scrollYProgress, (p) => {
+    const t = reduceMotion ? 1 : Math.min(1, Math.max(0, p));
+    const top = lerp(START_INSET.top, END_INSET.top, t);
+    const right = lerp(START_INSET.right, END_INSET.right, t);
+    const bottom = lerp(START_INSET.bottom, END_INSET.bottom, t);
+    const left = lerp(START_INSET.left, END_INSET.left, t);
+    const radius = lerp(START_INSET.radius, END_INSET.radius, t);
+    return `inset(${top}% ${right}% ${bottom}% ${left}% round ${radius}px)`;
+  });
 
-        {/* No z-index, no wrapping wrapper with its own stacking context
-           — see the component doc comment above for why that matters
-           here specifically. mix-blend-difference + text-white via
-           Tailwind utilities (not an inline style) is what actually
-           lets this invert against whichever panel is currently behind
-           it. */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center mix-blend-difference">
-          <h2 className="font-serif text-3xl leading-tight text-white lg:text-4xl">
+  return (
+    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
+        {/* The cinematic slit — glassmorphic + a deep gradient fill
+           standing in for the real lifestyle photo ("for now until we
+           drop a real image in"). Gradient direction/tones (navy-soft
+           to navy, a faint gold sheen through the middle) are what read
+           as "premium" rather than a flat placeholder box. */}
+        <motion.div
+          aria-hidden="true"
+          style={{ clipPath }}
+          className="absolute inset-0 border border-white/10 bg-gradient-to-br from-navy-soft via-navy to-navy-deep backdrop-blur-md"
+        >
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"
+          />
+        </motion.div>
+
+        {/* Headline — simply last in source order (no z-index needed
+           to sit "on top of" the slit above it), perfectly centered. */}
+        <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
+          <h2 className="font-serif text-3xl leading-tight text-cream lg:text-4xl">
             Designed To Blend In
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-white">
+          <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75">
             Lightweight, screenless, and made to disappear into your day.
             Charges quickly, when it needs it.
           </p>
