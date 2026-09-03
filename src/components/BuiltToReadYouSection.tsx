@@ -48,6 +48,13 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
   return { opacity, y };
 }
 
+// Shared by both halves of the sandwich below — was one two-line <span>
+// (see the "Split the Typography" note further down) with a single
+// className; splitting it into two separate elements just means this
+// needs to live in one place instead of being copy-pasted twice.
+const HEADLINE_TEXT_CLASSNAME =
+  "font-sans text-5xl leading-[0.95] font-black tracking-tight text-cream uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]";
+
 export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
@@ -75,23 +82,70 @@ export function BuiltToReadYouSection() {
         {/* Behind the canvas (z-index -1) — still paints in front of the
             section's own bg-navy background (a negative z-index only
             drops a child below its NORMAL-flow/z-0+ siblings, not below
-            its parent's own background). */}
-        <motion.div
-          style={{ opacity: headline.opacity, scale: headline.scale }}
+            its parent's own background).
+
+            "Sandwich" layout: a full-bleed flex-col split into three EQUAL
+            rows (flex-1 each, so every row is exactly ⅓ of the viewport
+            regardless of screen size) rather than one two-line block
+            centered as a single unit — the previous version put "Built
+            To"/"Read You" together at dead-center, which left the entire
+            top third empty and crammed both lines plus the model into
+            the middle/lower-middle (confirmed live). Splitting them into
+            their own rows pushes "Built To" up into the top third and
+            "Read You" down into the bottom third, opening up the middle
+            row as genuine empty space — which is exactly where the
+            <Canvas> already renders the model (it's `!absolute inset-0`
+            with its camera aimed at world origin, so it was always
+            structurally dead-center; it just had no visual room to read
+            that way before). The middle row itself renders nothing —
+            it's pure spacing math, reserving that ⅓ so the two text rows
+            land in the outer thirds instead of drifting back toward
+            center. Both text rows share the SAME opacity/scale motion
+            values (still one scroll-driven fade+scale, just applied to
+            two elements instead of one) rather than each computing its
+            own — reusing an already-computed motion value across
+            multiple elements is safe; it's a SECOND independent
+            useTransform call on the SAME element that this codebase's
+            array-transform bug actually depends on. */}
+        <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[-1] flex items-center justify-center px-6 text-center"
+          className="pointer-events-none absolute inset-0 z-[-1] flex flex-col"
         >
-          {/* Was text-6xl straight to sm:text-8xl — a 60px→96px jump right
-             at the 640px breakpoint with no step between. Smoothed with
-             an sm/md pair, and the mobile base itself trimmed slightly
-             (was 6xl) to leave more room around the now-smaller (see
-             Band.tsx's isMobile scale) module. */}
-          <span className="font-sans text-5xl leading-[0.95] font-black tracking-tight text-cream uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]">
-            Built To
-            <br />
-            Read You
-          </span>
-        </motion.div>
+          <motion.div
+            style={{ opacity: headline.opacity, scale: headline.scale }}
+            className="flex flex-1 items-center justify-center px-6 text-center"
+          >
+            <span className={HEADLINE_TEXT_CLASSNAME}>Built To</span>
+          </motion.div>
+          {/* The middle spacer is intentionally NOT an equal flex-1 third
+             — it only exists to keep "Built To"/"Read You" from drifting
+             back toward the middle of the screen; the model itself is
+             rendered by the <Canvas> below (full-bleed absolute, camera
+             fixed at world origin), so it's already pinned to the exact
+             viewport center regardless of what happens to this div. That
+             decoupling is what leaves room to shrink this spacer (and
+             grow the row below) without moving the model at all: an
+             even 1/3 split left "Read You" (top-aligned in its own equal
+             third) ending only 148px above the true bottom edge — 6px
+             short of the independent subtext+button block's own ~154px
+             footprint even at zero bottom offset, confirmed live as a
+             direct overlap. Shrinking this middle share and handing the
+             difference to the row below buys "Read You" enough headroom
+             to clear the subtext with real breathing space. */}
+          <div className="flex-[0.6]" />
+          {/* items-start, not items-center — the independent subtext+
+             button block (absolute bottom-14/20, below) needs real room
+             beneath "Read You" before the true bottom edge; centering it
+             within this row left the two directly overlapping (confirmed
+             live). Top-aligning within this now-larger row is what
+             reserves that gap. */}
+          <motion.div
+            style={{ opacity: headline.opacity, scale: headline.scale }}
+            className="flex flex-[1.4] items-start justify-center px-6 text-center"
+          >
+            <span className={HEADLINE_TEXT_CLASSNAME}>Read You</span>
+          </motion.div>
+        </div>
 
         <BuiltToReadYouScene
           reduceMotion={reduceMotion}
