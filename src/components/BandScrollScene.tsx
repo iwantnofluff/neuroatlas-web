@@ -51,7 +51,12 @@ export function BandScrollScene({
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
     >
-      <ambientLight intensity={0.5} />
+      {/* Ambient trimmed 0.5->0.35 — see BuiltToReadYouScene.tsx's own
+         comment: a flat ambient fill lights shadow recesses evenly,
+         which was flattening the engraved front-face logo's contrast;
+         a touch less lets the new kicker light below actually carve
+         out shadow instead of the fill washing it back out. */}
+      <ambientLight intensity={0.35} />
       <directionalLight position={[3, 4, 5]} intensity={1.2} color="#f4f0e9" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#8fb3d9" />
       <directionalLight position={[0, 0, 5]} intensity={1.5} />
@@ -61,6 +66,20 @@ export function BandScrollScene({
         penumbra={0.6}
         intensity={2.2}
         color="#dac79e"
+      />
+      {/* Dedicated "kicker" light for the front-face engraved logo — see
+         BuiltToReadYouScene.tsx's own comment for the full reasoning.
+         Neutral white, tight angle/penumbra, positioned slightly above
+         and to the side, so it carves crisp micro-shadow/highlight
+         contrast into the logo's shallow relief rather than washing
+         over the whole shell the way the warmer, softer-edged spotLight
+         above does. */}
+      <spotLight
+        position={[1, 1, 2]}
+        angle={0.15}
+        penumbra={0.15}
+        intensity={4}
+        color="#ffffff"
       />
       <Suspense fallback={null}>
         <Band

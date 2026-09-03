@@ -53,8 +53,14 @@ export function BuiltToReadYouScene({
     >
       {/* alpha: true above + no <color attach="background"> here is what
          keeps this transparent, so the section's own Deep Navy
-         background shows through around/behind the model. */}
-      <ambientLight intensity={0.5} />
+         background shows through around/behind the model. Ambient
+         trimmed 0.5->0.35 — a flat ambient fill lights every surface
+         (including shadow recesses) evenly, which is exactly what was
+         flattening the engraved front-face logo's contrast; a touch
+         less of it is what lets the kicker light below actually carve
+         out deep shadow in its recesses instead of the fill washing
+         them back out. */}
+      <ambientLight intensity={0.35} />
       <directionalLight position={[3, 4, 5]} intensity={1.2} color="#f4f0e9" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#8fb3d9" />
       {/* Straight down the Z-axis, facing the camera — specifically for
@@ -70,6 +76,28 @@ export function BuiltToReadYouScene({
         penumbra={0.6}
         intensity={2.2}
         color="#dac79e"
+      />
+      {/* Dedicated "kicker" light for the front-face engraved logo — the
+         spotLight above is warm-tinted (#dac79e) and fairly soft-edged
+         (penumbra 0.6, angle 0.35), tuned for the gold hardware's broad
+         specular sheen, not for carving crisp micro-shadow/highlight
+         contrast into a shallow engraved relief — confirmed live, the
+         logo was reading as "completely lost" against the shell with
+         only that rig. This one is neutral white (no color tint to
+         compete with the logo's own contrast), much tighter (angle
+         0.15 vs 0.35, penumbra 0.15 vs 0.6 — a hard-edged, localized
+         beam rather than one that washes over the whole shell), and
+         higher intensity, positioned slightly above and to the side of
+         the model per real product-photography practice for revealing
+         engraved/embossed detail. Same no-explicit-target reasoning as
+         the spotLight above — world origin is already where the model
+         sits. */}
+      <spotLight
+        position={[1, 1, 2]}
+        angle={0.15}
+        penumbra={0.15}
+        intensity={4}
+        color="#ffffff"
       />
       <Suspense fallback={null}>
         <Band scrollProgress={progress} reduceMotion={reduceMotion} isMobile={isMobile} />
