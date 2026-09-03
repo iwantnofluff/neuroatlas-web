@@ -14,10 +14,12 @@ export const metadata = { title: "The NA·01 band — NeuroAtlas" };
 // covers sections 1 ("Hero") and 2 ("What It Reads") together — see the
 // comment in that file for why. Sections 3–9 follow below in order.
 
+// band-bw-wrist.jpg moved to DesignedToBlendInSection's own expanding
+// billboard (see that component) — dropped from here so the same photo
+// doesn't appear twice in two adjacent sections.
 const gallery = [
   { src: "/photos/band-ice-still.jpg", alt: "The NA·01 band, weatherproof against ice and stone" },
   { src: "/photos/band-ice-splash.jpg", alt: "The NA·01 band splashing into water" },
-  { src: "/photos/band-bw-wrist.jpg", alt: "The NA·01 band worn on the wrist" },
 ];
 
 export default function BandPage() {
@@ -40,7 +42,7 @@ export default function BandPage() {
           between the design/build copy and the more technical sections
           below, rather than replacing the stylized 3D model above. */}
       <section className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
           {gallery.map((photo, i) => (
             <Reveal
               key={photo.src}
@@ -51,7 +53,7 @@ export default function BandPage() {
                 src={photo.src}
                 alt={photo.alt}
                 fill
-                sizes="(min-width: 640px) 33vw, 100vw"
+                sizes="(min-width: 640px) 50vw, 100vw"
                 className="object-cover"
               />
             </Reveal>

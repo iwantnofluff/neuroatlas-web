@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -12,8 +13,10 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
  * until it fills the entire viewport, acting as a full-bleed cinematic
  * billboard behind the headline (which stays static and in front the
  * whole time, simply last in DOM so it paints on top — no z-index
- * needed). A premium glassmorphic/gradient fill stands in for the real
- * lifestyle photo until one is dropped in.
+ * needed). Real lifestyle photo (band-bw-wrist.jpg) now dropped in —
+ * was a glassmorphic/gradient placeholder; also removed from the photo
+ * gallery further down this page so the same shot doesn't appear twice
+ * in two adjacent sections.
  *
  * clip-path is built as a SINGLE function-transformer useTransform that
  * returns the COMPLETE template string directly (inset(...% ...% ...%
@@ -61,16 +64,26 @@ export function DesignedToBlendInSection() {
   return (
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
-        {/* The cinematic slit — glassmorphic + a deep gradient fill
-           standing in for the real lifestyle photo ("for now until we
-           drop a real image in"). Gradient direction/tones (navy-soft
-           to navy, a faint gold sheen through the middle) are what read
-           as "premium" rather than a flat placeholder box. */}
+        {/* The cinematic slit — the real photo, object-cover so it
+           always fills this box's current shape regardless of its
+           in-flight aspect ratio as the clip-path expands. A scrim (not
+           scroll-linked — needs to be there from the very first thin-
+           slit frame) plus the same faint gold ambient glow the
+           placeholder used keeps the headline legible throughout and
+           still reads as premium rather than a flat, unfiltered photo. */}
         <motion.div
           aria-hidden="true"
           style={{ clipPath }}
-          className="absolute inset-0 border border-white/10 bg-gradient-to-br from-navy-soft via-navy to-navy-deep backdrop-blur-md"
+          className="absolute inset-0 overflow-hidden border border-white/10"
         >
+          <Image
+            src="/photos/band-bw-wrist.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-navy/50" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"
