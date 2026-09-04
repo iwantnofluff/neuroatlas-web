@@ -48,38 +48,28 @@ import * as THREE from "three";
  * reading as a flat 2D silhouette rather than a lit 3D object; this
  * combination actually catches the rig's rim/fill lights.
  */
-// Roughness 0.4->0.3 — the front shell carries an engraved brand-mark
-// relief (visible face-on as the small circular emblem), and it was
-// reading as "completely lost" against the surrounding shell (client
-// feedback, live). The source model has no separate mesh or material for
-// it (see the no-semantic-names note above — it's baked into the same
-// shell geometry the rest of the housing uses), so it can't be given its
-// own, sharper material independently; sharpening the WHOLE shell's
-// roughness slightly is what actually lets its shallow relief catch a
-// specular highlight at all, paired with the new dedicated kicker light
-// in BuiltToReadYouScene.tsx/BandScrollScene.tsx that's aimed to reveal
-// it specifically.
+// Machined-metal pass: metalness 1 (was 0.4) + roughness 0.25 (was 0.3)
+// on BOTH materials below, per the client's own explicit spec — a
+// "premium, machined-metal product," not the part-plastic read
+// metalness 0.4 gave the shell. metalness 1 needs real reflections to
+// look like metal rather than flat-shaded black (a fully metallic
+// surface has no diffuse component left at all — everything it shows
+// is either a direct specular highlight from a light or a reflection of
+// its environment), which is what the new procedural <Environment> in
+// every scene that renders this component is for — see e.g.
+// BandScrollScene.tsx's own comment on why that isn't a `preset`.
+// Deep Navy shell / Champagne Gold hardware unchanged.
 const SHELL_MATERIAL_PROPS = {
   color: "#1E2B4D",
-  roughness: 0.3,
-  // 0.3->0.4 — a touch more metalness alongside the lower roughness
-  // above is what actually gives the shell real bright-highlight/deep-
-  // shadow contrast rather than an evenly-lit matte surface; a merely
-  // low-roughness, low-metalness material still doesn't have much to
-  // specularly reflect, which was part of why the shell (and the
-  // logo's relief riding on it) still read as flat and dark even after
-  // the roughness change and the new kicker light.
-  metalness: 0.4,
+  roughness: 0.25,
+  metalness: 1,
   side: THREE.DoubleSide,
 } as const;
 
-// Already at the brief's own suggested values (metalness 0.9, roughness
-// 0.15) — confirmed, not changed, when this component's lighting/shell
-// contrast was revisited for the front-face logo.
 const HARDWARE_MATERIAL_PROPS = {
   color: "#D4AF37",
-  roughness: 0.15,
-  metalness: 0.9,
+  roughness: 0.25,
+  metalness: 1,
   side: THREE.DoubleSide,
 } as const;
 

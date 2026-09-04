@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Sparkles } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import { BandModel } from "@/components/BandModel";
+import { StudioEnvironment } from "@/components/StudioEnvironment";
 
 /**
  * The hero's rotating 3D band — same BandModel used on /band, but with a
@@ -16,6 +17,12 @@ import { BandModel } from "@/components/BandModel";
  * in its own module so it can be lazy-loaded client-only (see
  * HeroBandClient), without pulling @react-three/fiber into the server
  * render at all.
+ *
+ * NOTE: this scene isn't currently mounted anywhere on the live site
+ * (confirmed via a repo-wide search — the homepage hero uses HeroMedia
+ * instead). <StudioEnvironment /> was still added below for consistency
+ * with BandModel.tsx's own metalness-1 material bump, in case this gets
+ * revived, but there's nothing live to verify it against right now.
  */
 export function HeroBandScene({
   reduceMotion,
@@ -36,6 +43,7 @@ export function HeroBandScene({
       <directionalLight position={[3, 3, 4]} intensity={1.4} color="#f4f0e9" />
       <directionalLight position={[-3, -1, -3]} intensity={0.7} color="#8fb3d9" />
       <directionalLight position={[0, -3, 2]} intensity={0.5} color="#dac79e" />
+      <StudioEnvironment />
       <BandModel
         scrollProgress={scrollProgress}
         reduceMotion={reduceMotion}

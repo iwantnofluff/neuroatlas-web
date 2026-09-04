@@ -28,6 +28,14 @@ import * as THREE from "three";
  * — the pinned /band showcase wants it barely-there (scroll is the real
  * driver there), the hero wants a continuous, clearly-visible turn since
  * there's no pinned scroll track to carry the motion.
+ *
+ * NOTE: this component isn't currently mounted anywhere on the live site
+ * (its only consumer, HeroBandScene.tsx, is itself unreferenced — the
+ * homepage hero uses HeroMedia instead) — confirmed via a repo-wide
+ * search, not assumed. Materials below were still brought up to the same
+ * machined-metal spec as the real GLTF model in Band.tsx (metalness 1,
+ * roughness 0.25) for consistency in case this gets revived, but there's
+ * nothing live to verify it against right now.
  */
 export function BandModel({
   scrollProgress,
@@ -75,7 +83,7 @@ export function BandModel({
           reads as a flat woven ribbon rather than a cord, matching the
           reference photo. */}
       <mesh geometry={loopGeometry} scale={[1, 1, 0.4]}>
-        <meshStandardMaterial color="#dac79e" metalness={0.5} roughness={0.4} />
+        <meshStandardMaterial color="#dac79e" metalness={1} roughness={0.25} />
       </mesh>
 
       {/* The sensor module — flush with the strap's width, per the
@@ -86,12 +94,12 @@ export function BandModel({
         smoothness={4}
         position={[0, 1.0, 0.08]}
       >
-        <meshStandardMaterial color="#b5bcc4" metalness={0.9} roughness={0.22} />
+        <meshStandardMaterial color="#b5bcc4" metalness={1} roughness={0.25} />
       </RoundedBox>
       {/* Emblem/button detail on the module face */}
       <mesh position={[0, 1.0, 0.16]}>
         <circleGeometry args={[0.05, 24]} />
-        <meshStandardMaterial color="#5c6773" metalness={0.6} roughness={0.35} />
+        <meshStandardMaterial color="#5c6773" metalness={1} roughness={0.25} />
       </mesh>
 
       {/* The slide clasp — narrower than the module but still flush with
@@ -102,7 +110,7 @@ export function BandModel({
         smoothness={4}
         position={[0, -1.0, 0.08]}
       >
-        <meshStandardMaterial color="#7c8791" metalness={0.85} roughness={0.28} />
+        <meshStandardMaterial color="#7c8791" metalness={1} roughness={0.25} />
       </RoundedBox>
     </group>
   );

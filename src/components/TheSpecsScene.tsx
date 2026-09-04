@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useMotionValue } from "framer-motion";
 import { Band } from "@/components/Band";
+import { StudioEnvironment } from "@/components/StudioEnvironment";
 
 const XRAY_MODEL_SCALE_DESKTOP = 34;
 const XRAY_MODEL_SCALE_MOBILE = 22;
@@ -58,6 +59,7 @@ export function TheSpecsScene({
         intensity={7}
         color="#ffffff"
       />
+      <StudioEnvironment />
       <Suspense fallback={null}>
         <Band
           scrollProgress={staticProgress}

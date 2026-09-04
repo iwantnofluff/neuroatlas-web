@@ -4,32 +4,36 @@ import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
 import { Band } from "@/components/Band";
+import { StudioEnvironment } from "@/components/StudioEnvironment";
 
 /** The actual WebGL scene, kept in its own module (see
  *  BuiltToReadYouSection's dynamic() import) so @react-three/fiber is
  *  never touched during the server render — the same split this
  *  codebase already uses for BandScrollScene/BandSignal.
  *
- *  No <Environment> here — it was fetching its HDRI from an external CDN
- *  (raw.githack.com, which is explicitly a dev/testing proxy, not a
- *  production asset host), and when that request hung, the whole page
- *  white-screened rather than just that one section going dark. Two
- *  compounding problems, both fixed: `<Band>` (whose useGLTF call is the
- *  actual Suspense trigger) now has its own `<Suspense fallback={null}>`
- *  boundary right here, so a slow/failed load only blanks the Canvas,
- *  never bubbles up past this component; and the CDN dependency itself
- *  is gone, replaced by a synthetic light rig below (no network fetch
- *  involved, nothing to hang on) — good practice regardless of the
- *  Suspense fix, since Environment's images CDN isn't meant for
- *  production traffic anyway.
+ *  No `<Environment preset="..."/>` (or `files`) here — it was fetching
+ *  its HDRI from an external CDN (raw.githack.com, which is explicitly a
+ *  dev/testing proxy, not a production asset host), and when that
+ *  request hung, the whole page white-screened rather than just that one
+ *  section going dark. `<Band>`'s own `<Suspense fallback={null}>` below
+ *  fixed the "bubbles up past this component" half of that; the CDN
+ *  dependency itself is handled by never using one — `<StudioEnvironment
+ *  />` (see that file) builds its reflection environment from procedural
+ *  <Lightformer> panels instead of a fetched HDRI, so there's nothing to
+ *  hang on regardless of Suspense. Necessary now that the client's own
+ *  brief asks for real metal (metalness 1 has no diffuse component left
+ *  to light with directional/ambient lights alone — only what an
+ *  environment map gives it to reflect), where the old metalness-0.4
+ *  shell got away without one.
  *
  *  The rig: a low ambient fill (so the Deep Navy shells don't go fully
  *  black on their shadow side) plus a bright key light and a softer
  *  rim/fill light for form definition, and a tight spotLight aimed at
  *  the model specifically for the gold hardware's specular highlight —
- *  a `meshStandardMaterial` at metalness 0.9 has essentially nothing to
- *  reflect without at least one concentrated, close light source, no
- *  matter how bright the ambient/directional lights are. */
+ *  a fully metallic `meshStandardMaterial` has essentially nothing to
+ *  show without at least one concentrated, close light source AND an
+ *  environment to reflect, no matter how bright the ambient/directional
+ *  lights are. */
 export function BuiltToReadYouScene({
   reduceMotion,
   progress,
@@ -109,6 +113,7 @@ export function BuiltToReadYouScene({
         intensity={7}
         color="#ffffff"
       />
+      <StudioEnvironment />
       <Suspense fallback={null}>
         <Band scrollProgress={progress} reduceMotion={reduceMotion} isMobile={isMobile} />
       </Suspense>

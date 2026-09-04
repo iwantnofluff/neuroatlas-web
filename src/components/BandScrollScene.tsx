@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
 import { Band } from "@/components/Band";
+import { StudioEnvironment } from "@/components/StudioEnvironment";
 
 /** Model scale for THIS scene. A previous pass scaled this "way up" to
  *  deliberately overlap the CENTERED headline behind it — client
@@ -23,9 +24,10 @@ const SHOWCASE_MODEL_SCALE_MOBILE = 17;
  * client-only (see BandScrollShowcase), without pulling @react-three/fiber
  * into the server render at all.
  *
- * Renders the real <Band> GLTF model with the exact lighting rig
- * BuiltToReadYouScene.tsx uses — copied verbatim rather than reinvented, so
- * the Champagne Gold hardware catches light the same way in both places.
+ * Renders the real <Band> GLTF model with the exact lighting rig (now
+ * including <StudioEnvironment /> — see that file) BuiltToReadYouScene.tsx
+ * uses — copied verbatim rather than reinvented, so the Champagne Gold
+ * hardware catches light and reflections the same way in both places.
  * <Band> needs its own <Suspense> boundary here (its useGLTF call is the
  * actual suspense trigger). */
 export function BandScrollScene({
@@ -87,6 +89,7 @@ export function BandScrollScene({
         intensity={7}
         color="#ffffff"
       />
+      <StudioEnvironment />
       <Suspense fallback={null}>
         <Band
           scrollProgress={progress}
