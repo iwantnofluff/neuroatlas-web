@@ -30,7 +30,10 @@ export function Header() {
   // these get to start transparent and solidify on scroll (the one piece of
   // Nubo's interaction language worth borrowing).
   const hasDarkHero =
-    pathname === "/" || pathname === "/band" || pathname === "/how-it-works";
+    pathname === "/" ||
+    pathname === "/band" ||
+    pathname === "/how-it-works" ||
+    pathname === "/the-science";
   const scrolled = !hasDarkHero || scrolledPastHero;
   const headerHeight = 72; // matches h-18
 

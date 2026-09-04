@@ -148,7 +148,16 @@ export function Hero({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="mx-auto mt-6 whitespace-nowrap text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
+          // No whitespace-nowrap (this used to force one line) — its
+          // clamp() floor (0.7rem) is a fixed minimum font size with no
+          // further room to shrink, so any subhead longer than the
+          // homepage's own (the one this was originally tuned against)
+          // simply overflowed off the edge of a narrow viewport instead
+          // of shrinking further. Confirmed live on /the-science and
+          // /how-it-works, both genuinely longer than the homepage's:
+          // real clipped text, not hypothetical. max-w-xl + wrapping is
+          // what every other subtext on this site already does safely.
+          className="mx-auto mt-6 max-w-xl text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
         >
           {subhead}
         </motion.p>

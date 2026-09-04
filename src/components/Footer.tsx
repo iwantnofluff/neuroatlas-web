@@ -67,6 +67,7 @@ const EXPLORE_HREFS = [
   "/how-it-works",
   "/band",
   "/inside-the-app",
+  "/the-science",
   "/toolkits",
   "/for-organisations",
   "/privacy",

@@ -18,6 +18,7 @@ export const footerNav: NavLink[] = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "The Band", href: "/band" },
   { label: "Inside The App", href: "/inside-the-app" },
+  { label: "The Science", href: "/the-science" },
   { label: "Toolkits", href: "/toolkits" },
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy And Your Data", href: "/privacy" },
