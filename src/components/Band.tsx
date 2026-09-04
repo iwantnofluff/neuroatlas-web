@@ -46,7 +46,9 @@ import * as THREE from "three";
  * black #0A0F1D this started with) at lower roughness/higher metalness
  * — #0A0F1D with roughness 0.8 absorbed essentially all incoming light,
  * reading as a flat 2D silhouette rather than a lit 3D object; this
- * combination actually catches the rig's rim/fill lights.
+ * combination actually catches the rig's rim/fill lights. #1E2B4D ->
+ * #1B2340 per a direct client color pick — close to the same hue/depth,
+ * still well clear of #0A0F1D's near-black floor.
  */
 // Machined-metal pass: metalness 1 (was 0.4) + roughness 0.25 (was 0.3)
 // on BOTH materials below, per the client's own explicit spec — a
@@ -60,7 +62,7 @@ import * as THREE from "three";
 // BandScrollScene.tsx's own comment on why that isn't a `preset`.
 // Deep Navy shell / Champagne Gold hardware unchanged.
 const SHELL_MATERIAL_PROPS = {
-  color: "#1E2B4D",
+  color: "#1B2340",
   roughness: 0.25,
   metalness: 1,
   side: THREE.DoubleSide,
