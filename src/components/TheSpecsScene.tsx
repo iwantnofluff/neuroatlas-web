@@ -37,7 +37,12 @@ export function TheSpecsScene({
   return (
     <Canvas
       className="!absolute inset-0"
-      dpr={[1, 2]}
+      // 2->1.5 — see BandScrollScene.tsx's own comment: the fully-
+      // metallic materials + <StudioEnvironment /> measurably raised
+      // per-pixel shading cost, and capping the DPR ceiling is the
+      // standard lever for that (quadratic cost — a Retina 2x display
+      // shades 4x the pixels of 1x).
+      dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
     >

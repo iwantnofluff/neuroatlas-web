@@ -34,7 +34,11 @@ export function HeroBandScene({
   return (
     <Canvas
       className="!absolute inset-0"
-      dpr={[1, 2]}
+      // 2->1.5 — see BandScrollScene.tsx's own comment: BandModel.tsx's
+      // materials got the same metalness-1 treatment, same DPR-ceiling
+      // mitigation for consistency (nothing live renders this scene to
+      // verify it against right now, see this file's own top comment).
+      dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.4], fov: 40 }}
       gl={{ alpha: true, antialias: true }}
     >

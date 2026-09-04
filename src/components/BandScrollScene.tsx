@@ -49,7 +49,19 @@ export function BandScrollScene({
       // order, so any deliberate slight overlap at the very bottom
       // edge of the text still shows the model in front of it.
       className="!absolute inset-x-0 bottom-0 z-0 h-[72%]"
-      dpr={[1, 2]}
+      // 2->1.5 — the fully-metallic materials + <StudioEnvironment />
+      // (see Band.tsx/StudioEnvironment.tsx) meaningfully raised the
+      // per-pixel shading cost of every frame, confirmed live: reported
+      // stutter on this exact scene after that change, and a measured
+      // ~40% relative frame-time regression even under identical
+      // (headless, software-rendered) test conditions before vs. after.
+      // Capping the upper end of the DPR range is the standard lever
+      // for "shading got more expensive" — it's a quadratic cost (a
+      // Retina 2x display shades 4x the pixels of 1x), so trimming the
+      // ceiling cuts real GPU work on exactly the higher-end/high-DPI
+      // devices most likely to hit this, for a difference that's hard
+      // to see on a canvas this size.
+      dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
     >
