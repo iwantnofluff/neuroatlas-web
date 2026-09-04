@@ -76,8 +76,18 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        // Fully opaque once solidified — not translucent-over-blur. A
+        // see-through header reads fine over the homepage (solid cream
+        // straight down the page behind it), but /band's later sections
+        // include real dark content (the curtain-reveal panel) directly
+        // behind the header once scrolled; blending WITH that dark
+        // content dragged the header's own effective background dark
+        // enough that gold-deep's hover/current-page color — tuned for
+        // contrast against plain cream — nearly disappeared. Solid
+        // bg-cream guarantees the header is always pure cream back
+        // there regardless of what's scrolling underneath it.
         scrolled
-          ? "border-b border-line/70 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/75"
+          ? "border-b border-line/70 bg-cream"
           : "border-b border-transparent bg-transparent"
       )}
     >
