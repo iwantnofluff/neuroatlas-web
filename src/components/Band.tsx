@@ -61,9 +61,21 @@ import * as THREE from "three";
 // every scene that renders this component is for — see e.g.
 // BandScrollScene.tsx's own comment on why that isn't a `preset`.
 // Deep Navy shell / Champagne Gold hardware unchanged.
+//
+// Shell roughness bumped 0.25 -> 0.32 specifically (hardware left at
+// 0.25) after this read as a near-black object in production with only
+// a couple of sharp gold glints — a razor-low roughness is a near-
+// mirror finish, which only reflects light back from the exact narrow
+// angle it's coming from; the shell's own broad, mostly-flat faces were
+// simply missing that one angle from most camera positions. A touch
+// more roughness blurs/spreads the reflection so the shell picks up
+// light across more of its surface instead of nothing-or-a-glint, while
+// staying well short of a matte/plastic look. Paired with
+// StudioEnvironment.tsx's new wraparound fill panels (same root cause,
+// see that file's comment) rather than relying on either fix alone.
 const SHELL_MATERIAL_PROPS = {
   color: "#1B2340",
-  roughness: 0.25,
+  roughness: 0.32,
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
