@@ -51,11 +51,22 @@ function AccordionPanel({
       role="button"
       aria-pressed={isActive}
       transition={{ layout: { duration: reduceMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] } }}
+      // card-glass, not a plain border-white/10 bg-white/5 pairing —
+      // that read noticeably flatter than every other glass panel on
+      // the site (confirmed live, side by side with /how-it-works'
+      // own HRV stat card), missing the real backdrop-blur + the
+      // inset top-edge highlight that's what actually reads as
+      // "glass" rather than just a tinted box. bg-transparent then
+      // drops card-glass's own cream-tinted fill, same override
+      // FeatureSplitSection's dark-section media panel already uses.
+      // At rest, card-glass's own default border shows through
+      // unmodified (matching every other glass panel exactly); only
+      // the active state overrides it to a gold tint, still via the
+      // same "utility class beats the component-layer border" override
+      // mechanism as the bg-transparent above.
       className={cn(
-        "relative flex min-w-0 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl border p-8 transition-[flex-grow,background-color,border-color] duration-500 ease-out",
-        isActive
-          ? "flex-[3] border-gold/30 bg-white/[0.07]"
-          : "flex-1 border-white/10 bg-white/5"
+        "card-glass relative flex min-w-0 cursor-pointer flex-col justify-end overflow-hidden bg-transparent p-8 transition-[flex-grow,border-color] duration-500 ease-out",
+        isActive ? "flex-[3] border-gold/40" : "flex-1"
       )}
     >
       <span className="eyebrow">{`0${index + 1}`}</span>
