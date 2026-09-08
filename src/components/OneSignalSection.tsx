@@ -66,7 +66,7 @@ export function OneSignalSection() {
           // absurd size on an ultra-wide monitor and undersizes on the
           // narrowest phones. Same defensive pattern Hero.tsx's own
           // subtext already uses.
-          className="signal-mask-gradient bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-black tracking-tighter text-transparent uppercase"
+          className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-black tracking-tighter text-transparent uppercase"
         >
           One Signal,
           <br />
@@ -74,7 +74,7 @@ export function OneSignalSection() {
         </motion.h2>
         <motion.p
           style={{ opacity: subtextOpacity, y: subtextY }}
-          className="mx-auto mt-8 max-w-xl text-lg text-mist"
+          className="mx-auto mt-8 max-w-xl text-pretty text-lg text-mist"
         >
           No step counts. No notifications. No sleep tracking. Just stress,
           read precisely, because that&rsquo;s the one signal that actually

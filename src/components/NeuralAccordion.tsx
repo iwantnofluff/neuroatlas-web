@@ -70,7 +70,7 @@ function AccordionPanel({
       )}
     >
       <span className="eyebrow">{`0${index + 1}`}</span>
-      <h3 className="mt-3 font-serif text-xl whitespace-normal text-cream sm:text-2xl">
+      <h3 className="mt-3 text-balance font-serif text-xl whitespace-normal text-cream sm:text-2xl">
         {system.label}
       </h3>
       <AnimatePresence>
@@ -80,7 +80,7 @@ function AccordionPanel({
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.35 }}
-            className="mt-4 max-w-sm text-base text-cream/70"
+            className="mt-4 max-w-sm text-pretty text-base text-cream/70"
           >
             {system.body}
           </motion.p>
@@ -135,7 +135,7 @@ export function NeuralAccordion() {
     <section className="dark-glow bg-navy-soft text-cream">
       <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center">
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Three Systems, One Method
           </h2>
         </Reveal>

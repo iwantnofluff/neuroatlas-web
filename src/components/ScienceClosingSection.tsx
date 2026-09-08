@@ -32,7 +32,7 @@ export function ScienceClosingSection() {
             className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_50%,color-mix(in_oklab,var(--color-gold)_20%,transparent),transparent_70%)]"
           />
           <div className="relative">
-            <h2 className="font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
+            <h2 className="text-balance font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
               Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
             </h2>
             <motion.div

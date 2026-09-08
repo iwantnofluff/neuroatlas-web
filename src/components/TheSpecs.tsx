@@ -132,8 +132,8 @@ export function TheSpecs() {
         y={20}
         className="relative z-10 mx-auto max-w-2xl px-6 pt-20 text-center lg:pt-28"
       >
-        <h2 className="font-serif text-3xl leading-tight lg:text-4xl">The Specs</h2>
-        <p className="mx-auto mt-4 max-w-md text-lg text-cream/70">
+        <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">The Specs</h2>
+        <p className="mx-auto mt-4 max-w-md text-pretty text-lg text-cream/70">
           The detail for those who want it.
         </p>
       </Reveal>
@@ -257,11 +257,11 @@ export function TheSpecs() {
             className="pointer-events-auto w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-md"
           >
             <ActiveIcon className="mx-auto size-8 text-gold" aria-hidden="true" />
-            <h3 className="mt-4 text-sm font-medium tracking-[0.2em] text-gold uppercase">
+            <h3 className="mt-4 text-balance text-sm font-medium tracking-[0.2em] text-gold uppercase">
               {activeSpec.label}
             </h3>
             <p className="mt-2 text-2xl text-cream">{activeSpec.value}</p>
-            <p className="mt-3 text-sm text-cream/60">{activeSpec.detail}</p>
+            <p className="mt-3 text-pretty text-sm text-cream/60">{activeSpec.detail}</p>
           </motion.div>
         </AnimatePresence>
       </div>

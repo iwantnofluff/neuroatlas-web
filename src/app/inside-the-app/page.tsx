@@ -37,10 +37,10 @@ export default function InsideTheAppPage() {
       <div className="mx-auto max-w-3xl px-6 pt-40 pb-16 text-center lg:px-10 lg:pt-48">
         <Reveal y={20}>
           <p className="eyebrow">Inside The App</p>
-          <h1 className="mt-4 font-serif text-4xl leading-tight text-navy lg:text-5xl">
+          <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
             Turns Into Action
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
+          <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
             Every reading turns into something you can act on.
           </p>
         </Reveal>
@@ -61,11 +61,11 @@ export default function InsideTheAppPage() {
         background="navy-soft"
         body={
           <>
-            <p>
+            <p className="text-pretty">
               Open the app and see exactly where you stand, before the day
               gets ahead of you.
             </p>
-            <p className="mt-4 text-base italic text-cream/50">
+            <p className="mt-4 text-pretty text-base italic text-cream/50">
               One reading. One number. No guesswork.
             </p>
           </>
@@ -92,11 +92,11 @@ export default function InsideTheAppPage() {
         background="cream"
         body={
           <>
-            <p>
+            <p className="text-pretty">
               Every toolkit and drill lives inside the NeuroLibrary, grouped
               so you can find what actually fits the moment.
             </p>
-            <p className="mt-4 text-base italic text-mist/80">
+            <p className="mt-4 text-pretty text-base italic text-mist/80">
               No scrolling through forty options to find the right one.
             </p>
           </>
@@ -132,12 +132,12 @@ export default function InsideTheAppPage() {
         background="navy"
         body={
           <>
-            <p>
+            <p className="text-pretty">
               A short priming protocol for the minutes before a negotiation,
               a board vote, or any moment you cannot afford to walk in
               unfocused.
             </p>
-            <p className="mt-4 text-base italic text-cream/50">
+            <p className="mt-4 text-pretty text-base italic text-cream/50">
               This is the one feature people come back to before every
               high-stakes moment.
             </p>
@@ -160,10 +160,10 @@ export default function InsideTheAppPage() {
          FeatureSplitSection treatment. */}
       <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
-          <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
+          <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
             One Minute
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-mist lg:mx-0">
+          <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
             A quick daily check-in, so what you&rsquo;re feeling sits right
             next to what the band is reading. Private by default.
           </p>
@@ -180,8 +180,8 @@ export default function InsideTheAppPage() {
         background="navy-soft"
         body={
           <>
-            <p>See how things shift over weeks, not just today.</p>
-            <p className="mt-4 text-base italic text-cream/50">
+            <p className="text-pretty">See how things shift over weeks, not just today.</p>
+            <p className="mt-4 text-pretty text-base italic text-cream/50">
               A single bad day means less when you can see the whole trend.
             </p>
           </>
@@ -201,8 +201,8 @@ export default function InsideTheAppPage() {
         background="cream"
         body={
           <>
-            <p>Connect NeuroAtlas with the health apps you already track.</p>
-            <p className="mt-4 text-base italic text-mist/80">
+            <p className="text-pretty">Connect NeuroAtlas with the health apps you already track.</p>
+            <p className="mt-4 text-pretty text-base italic text-mist/80">
               More context, without replacing anything you already rely on.
             </p>
           </>
@@ -228,13 +228,13 @@ export default function InsideTheAppPage() {
         className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
         y={20}
       >
-        <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
+        <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
           Available Now
         </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
+        <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
           NeuroAtlas is available on iOS and Android.
         </p>
-        <p className="mx-auto mt-4 max-w-xl text-base italic text-mist/80">
+        <p className="mx-auto mt-4 max-w-xl text-pretty text-base italic text-mist/80">
           The band is required for the full experience.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -255,7 +255,7 @@ export default function InsideTheAppPage() {
           className="mx-auto max-w-2xl px-6 py-24 text-center lg:px-10 lg:py-28"
           y={20}
         >
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink

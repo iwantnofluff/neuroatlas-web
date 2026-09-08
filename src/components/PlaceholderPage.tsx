@@ -16,10 +16,10 @@ export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center px-6 pt-32 pb-24 lg:px-10">
       <p className="eyebrow">{eyebrow}</p>
-      <h1 className="mt-4 font-serif text-4xl leading-tight text-navy lg:text-5xl">
+      <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
         {title}
       </h1>
-      <p className="mt-6 max-w-xl text-lg text-mist">{body}</p>
+      <p className="mt-6 max-w-xl text-pretty text-lg text-mist">{body}</p>
       <div className="mt-10 flex flex-wrap gap-4">
         <ShimmerLink
           href="/request-access"

@@ -168,7 +168,7 @@ export function FeatureSplitSection({
               {eyebrow && <p className="eyebrow">{eyebrow}</p>}
               <h2
                 className={cn(
-                  "font-serif text-3xl leading-tight lg:text-4xl",
+                  "text-balance font-serif text-3xl leading-tight lg:text-4xl",
                   eyebrow && "mt-4",
                   !dark && "text-navy"
                 )}
@@ -177,7 +177,7 @@ export function FeatureSplitSection({
               </h2>
               <div
                 className={cn(
-                  "mx-auto mt-6 max-w-xl text-lg lg:mx-0",
+                  "mx-auto mt-6 max-w-xl text-pretty text-lg lg:mx-0",
                   dark ? "text-cream/75" : "text-mist"
                 )}
               >

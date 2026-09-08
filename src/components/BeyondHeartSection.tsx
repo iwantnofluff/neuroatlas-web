@@ -45,7 +45,11 @@ function pointOnRing(radius: number, angleDeg: number) {
 // lands precisely on the ring despite the text rendering BEFORE it in
 // DOM order (see NODE_QUADRANTS' own comment) — that offset has to be a
 // single known constant, not one that silently changes per breakpoint.
-const NODE_WIDTH_REM = 11;
+// 12.5rem (200px) — widened from 11rem per an explicit typography-pass
+// request, paired with text-pretty below: a touch more width gives the
+// "no orphaned final word" balancing algorithm more room to distribute
+// across 2–3 genuinely even lines rather than fighting a narrower column.
+const NODE_WIDTH_REM = 12.5;
 const NODE_GAP_REM = 0.75;
 
 // radius/labelAngle/startAngle are all in the SVG's own unitless 0–100
@@ -231,10 +235,10 @@ export function BeyondHeartSection() {
          (deliberately asymmetric — pt only) padding above it. */}
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-24 pb-0 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-cream/75">
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
             Beyond heart rate, NeuroAtlas tracks three things most other
             tools miss.
           </p>
@@ -354,16 +358,16 @@ export function BeyondHeartSection() {
                     style={{ width: `${NODE_WIDTH_REM}rem` }}
                   >
                     <span className="eyebrow">{`0${i + 1}`}</span>
-                    <h3 className="mt-1 font-serif text-sm text-cream">{ring.label}</h3>
-                    <p className="mt-1 text-xs text-cream/65">{ring.body}</p>
+                    <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
+                    <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
                   </div>
                 )}
                 <span className="mt-1.5 size-2 shrink-0 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]" />
                 {!isLeft && (
                   <div className="pt-1" style={{ width: `${NODE_WIDTH_REM}rem` }}>
                     <span className="eyebrow">{`0${i + 1}`}</span>
-                    <h3 className="mt-1 font-serif text-sm text-cream">{ring.label}</h3>
-                    <p className="mt-1 text-xs text-cream/65">{ring.body}</p>
+                    <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
+                    <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
                   </div>
                 )}
               </div>
@@ -385,8 +389,8 @@ export function BeyondHeartSection() {
               className="bento-glass p-6 text-center"
             >
               <span className="eyebrow">{`0${i + 1}`}</span>
-              <h3 className="mt-3 font-serif text-xl text-cream">{ring.label}</h3>
-              <p className="mt-3 text-sm text-cream/70">{ring.body}</p>
+              <h3 className="mt-3 text-balance font-serif text-xl text-cream">{ring.label}</h3>
+              <p className="mt-3 text-pretty text-sm text-cream/70">{ring.body}</p>
             </Reveal>
           ))}
         </div>

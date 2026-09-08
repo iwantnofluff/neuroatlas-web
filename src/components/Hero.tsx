@@ -127,6 +127,15 @@ export function Hero({
           {eyebrow}
         </motion.p>
 
+        {/* No text-balance here — a real, confirmed no-op this note
+           replaces a silent one with: this h1's line-wrapping is driven
+           by `flex flex-wrap` (each word is its own flex item, for the
+           per-word stagger below), not by the browser's ordinary
+           text-wrapping algorithm. text-wrap:balance/pretty only affects
+           an element's OWN inline text content wrapping — it has no
+           defined effect on flex-item wrapping, so adding it here would
+           do nothing (confirmed: flex-wrap governs this, not text-wrap)
+           while looking like it had been handled. */}
         <motion.h1
           initial="hidden"
           animate="visible"
@@ -157,7 +166,7 @@ export function Hero({
           // /how-it-works, both genuinely longer than the homepage's:
           // real clipped text, not hypothetical. max-w-xl + wrapping is
           // what every other subtext on this site already does safely.
-          className="mx-auto mt-6 max-w-xl text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
+          className="mx-auto mt-6 max-w-xl text-pretty text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
         >
           {subhead}
         </motion.p>

@@ -190,7 +190,17 @@ export function BuiltToReadYouSection() {
              distributes the words evenly across however many lines it
              takes, rather than greedily filling each line until the
              next word doesn't fit; at this width that's reliably 2
-             even lines, never a dangling one. */}
+             even lines, never a dangling one.
+
+             Deliberately text-balance, not text-pretty (the site-wide
+             convention this typography pass otherwise uses for body
+             copy) — this is a short, 2-line block much closer in
+             length to a headline than a running paragraph, and
+             text-balance's "even out every line" algorithm was already
+             tested and confirmed to fix this exact orphan; switching it
+             to text-pretty's lighter "just avoid a lone final word"
+             heuristic for category-consistency alone risked undoing a
+             verified fix for an unverified one. */}
           <p className="text-lg text-balance text-gold-soft/70">
             A screenless band designed to read your stress, quietly and
             precisely, throughout your day.

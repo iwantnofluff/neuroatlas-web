@@ -104,7 +104,7 @@ export function LivingSignalHero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-6 font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            className="mt-6 text-balance font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
           >
             The Evidence Behind The Loop
           </motion.h1>
@@ -112,7 +112,7 @@ export function LivingSignalHero() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mx-auto mt-6 max-w-xl text-lg text-cream/75"
+            className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75"
           >
             Every protocol maps to established neuroscience, not a wellness
             trend.

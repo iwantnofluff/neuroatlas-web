@@ -109,8 +109,8 @@ function MethodCard({
       )}
     >
       <span className="eyebrow">{`0${index + 1}`}</span>
-      <h3 className="mt-3 font-serif text-xl text-cream">{step.label}</h3>
-      <p className="mt-3 text-base text-cream/70">{step.body}</p>
+      <h3 className="mt-3 text-balance font-serif text-xl text-cream">{step.label}</h3>
+      <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
     </motion.div>
   );
 }
@@ -127,7 +127,7 @@ export function MethodScrollCards() {
     <section id="the-method" className="dark-glow bg-navy-soft text-cream">
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
-          <h2 className="text-center font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl">
+          <h2 className="text-center text-balance font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl">
             Measure. Intervene. Measure.
           </h2>
         </Reveal>

@@ -56,11 +56,11 @@ export default function Home() {
               y={20}
               className="lg:flex lg:h-full lg:flex-col lg:justify-center"
             >
-              <h2 className="font-serif text-5xl leading-[1.05] text-navy sm:text-6xl lg:text-7xl xl:text-8xl">
+              <h2 className="text-balance font-serif text-5xl leading-[1.05] text-navy sm:text-6xl lg:text-7xl xl:text-8xl">
                 Your Body Knows You&rsquo;re Stressed.{" "}
                 <span className="whitespace-nowrap">Do You?</span>
               </h2>
-              <p className="mt-6 max-w-xl text-lg text-mist">
+              <p className="mt-6 max-w-xl text-pretty text-lg text-mist">
                 Stress has become so normal that most people stop noticing
                 their own body&rsquo;s warning signs, until it&rsquo;s
                 already shaped a decision, a meeting, or a moment.
@@ -140,10 +140,10 @@ export default function Home() {
                 grid-native way to center an item narrower than its track. */}
             <Reveal delay={0.1} y={20} className="max-w-md justify-self-center text-left">
               <p className="eyebrow">Inside the app</p>
-              <h2 className="mt-4 font-serif text-3xl leading-tight lg:text-4xl">
+              <h2 className="mt-4 text-balance font-serif text-3xl leading-tight lg:text-4xl">
                 See It. Act On It.
               </h2>
-              <p className="mt-6 text-lg text-cream/75">
+              <p className="mt-6 text-pretty text-lg text-cream/75">
                 The app turns what the band reads into something you can
                 use: a quick daily read of where you stand, short resets
                 when it&rsquo;s needed, and a way to prepare before moments
@@ -170,10 +170,10 @@ export default function Home() {
       <section id="privacy">
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-32">
           <Reveal y={20}>
-            <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
               We Believe In Privacy
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-mist">
+            <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
               We believe your data belongs to you, so we built NeuroAtlas
               that way.
             </p>
@@ -182,7 +182,7 @@ export default function Home() {
                 the paragraph above, where it was wrapping mid-sentence
                 ("Your data" / "is yours…") instead of reading as one
                 line. */}
-            <p className="mx-auto mt-4 max-w-xl text-base italic text-mist/80">
+            <p className="mx-auto mt-4 max-w-xl text-pretty text-base italic text-mist/80">
               Your data is yours. Never shared without your permission.
             </p>
           </Reveal>
@@ -226,10 +226,10 @@ export default function Home() {
               </Parallax>
             </Reveal>
             <Reveal delay={0.1} y={20} className="text-center lg:text-left">
-              <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
+              <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
                 Other Apps Notice. We Fix It, In Two Minutes.
               </h2>
-              <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75 lg:mx-0">
+              <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75 lg:mx-0">
                 Other wearables tell you your heart rate is up or your sleep
                 was disturbed, and stop there. NeuroAtlas gives you something
                 to do about it, and proves it worked, in two minutes.
@@ -252,10 +252,10 @@ export default function Home() {
               y={20}
               className="order-2 text-center lg:order-1 lg:text-left"
             >
-              <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
+              <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
                 Why NeuroAtlas Exists
               </h2>
-              <p className="mx-auto mt-6 max-w-xl text-lg text-mist lg:mx-0">
+              <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
                 Vanshika Dhoot founded NeuroAtlas after watching high
                 performers break under pressure with no real way to manage
                 it. NeuroAtlas is now live in pilot with corporate teams
@@ -286,7 +286,7 @@ export default function Home() {
           className="mx-auto max-w-3xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-28"
           y={20}
         >
-          <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink

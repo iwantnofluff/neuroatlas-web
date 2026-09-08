@@ -43,13 +43,13 @@ export function ClosingCurtainSection() {
       curtain={
         <>
           <Reveal y={20} className="mx-auto max-w-4xl">
-            <h2 className="font-serif text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] tracking-tight text-navy">
+            <h2 className="text-balance font-serif text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] tracking-tight text-navy">
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-xl text-lg text-mist"
+            className="mx-auto mt-8 max-w-xl text-pretty text-lg text-mist"
           >
             This isn&rsquo;t about tracking steps or workouts. It&rsquo;s about
             catching the moments pressure builds quietly, in a meeting,
@@ -66,7 +66,7 @@ export function ClosingCurtainSection() {
             className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_50%,color-mix(in_oklab,var(--color-gold)_20%,transparent),transparent_70%)]"
           />
           <div className="relative">
-            <h2 className="font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
+            <h2 className="text-balance font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
               Join The London Pilot Program
             </h2>
             <motion.div

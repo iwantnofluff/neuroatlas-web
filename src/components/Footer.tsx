@@ -143,7 +143,7 @@ export function Footer() {
               <LogoMark className="h-7 w-7" />
               NeuroAtlas
             </span>
-            <p className="mt-4 max-w-xs text-sm text-cream/60">
+            <p className="mt-4 max-w-xs text-pretty text-sm text-cream/60">
               Know when pressure is building, and reset before it takes over.
             </p>
           </div>
@@ -155,11 +155,11 @@ export function Footer() {
             <p className="text-xs tracking-[0.2em] text-cream/40 uppercase">
               Stay Ahead Of Stress
             </p>
-            <p className="mt-4 max-w-sm text-sm text-cream/60">
+            <p className="mt-4 max-w-sm text-pretty text-sm text-cream/60">
               One email a month. No noise, just what&rsquo;s useful.
             </p>
             {submitted ? (
-              <p className="mt-4 text-sm text-gold-soft">
+              <p className="mt-4 text-pretty text-sm text-gold-soft">
                 You are on the list. We will be in touch.
               </p>
             ) : (

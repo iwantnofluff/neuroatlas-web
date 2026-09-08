@@ -188,10 +188,10 @@ export function SignalVsNoiseSection() {
             <NoiseElement key={i} shape={shape} progress={scrollYProgress} reduceMotion={reduceMotion} />
           ))}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <h2 className="font-serif text-3xl leading-tight text-cream lg:text-4xl">
+            <h2 className="text-balance font-serif text-3xl leading-tight text-cream lg:text-4xl">
               Precision, Not Guesswork
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-cream/75">
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
               Every reading is checked against your own resting baseline, not
               a general average, then filtered to separate real stress from
               caffeine, a workout, or the cold. What shows up on your
@@ -215,10 +215,10 @@ export function SignalVsNoiseSection() {
           className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 pt-20 text-center"
         >
           <div>
-            <h2 className="font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
               The App Reads You
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-mist">
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
               The band reads your signals. The app turns them into something
               you can act on.
             </p>
