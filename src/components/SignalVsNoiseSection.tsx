@@ -173,7 +173,16 @@ export function SignalVsNoiseSection() {
   const appY = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 120 * (1 - appEased(p))));
 
   return (
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[400vh]")}>
+    // 400vh -> 260vh — per an explicit "too much scrolling to reveal"
+    // pass, kept more conservative than this codebase's other pinned
+    // tracks: this one sequences SIX staged beats across the same
+    // progress range (noise fade, gold line, wipe grow, scene swap,
+    // wipe fade, app card), including one deliberately tight window
+    // (SCENE_SWAP_START/END, a 0.02-wide near-instant cut) — a more
+    // aggressive cut risked compressing that swap into single-digit
+    // pixels. At 260vh it's still ~5vh (~47px), consistent with it
+    // already reading as a quick cut rather than a gradual fade.
+    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[260vh]")}>
       <motion.div
         style={{ backgroundColor }}
         className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden px-6 text-center"

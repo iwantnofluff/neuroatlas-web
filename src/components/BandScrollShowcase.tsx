@@ -146,7 +146,13 @@ export function BandScrollShowcase() {
   });
 
   return (
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[520vh]")}>
+    // 520vh -> 280vh — per an explicit "too much scrolling to reveal"
+    // pass: this track's own 3 signal windows are already spaced a full
+    // third of progress apart ([0,0.34]/[0.33,0.67]/[0.66,1]), so at
+    // 280vh each still gets ~92vh of real scroll distance, comfortably
+    // legible — 520vh was just excess dead scroll on top of that, not
+    // extra room any specific beat needed.
+    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[280vh]")}>
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully
          hidden, so a real phone's actual visible area can be shorter than

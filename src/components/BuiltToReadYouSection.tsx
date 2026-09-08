@@ -93,7 +93,12 @@ export function BuiltToReadYouSection() {
     <div
       id="the-band"
       ref={wrapperRef}
-      className={cn(!reduceMotion && "h-[300vh]")}
+      // 300vh -> 180vh — per an explicit "too much scrolling to reveal"
+      // pass: the headline (0.3-0.6) and subtext (0.6-0.8) windows still
+      // get ~54vh/~36vh of real scroll distance at this height, still
+      // legible — 300vh was excess dead scroll beyond what either beat
+      // actually needed.
+      className={cn(!reduceMotion && "h-[180vh]")}
     >
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully

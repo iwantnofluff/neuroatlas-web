@@ -36,7 +36,7 @@ type FeatureSplitSectionProps = {
  *  Deliberately NOT a scripted fade-out at the end — this codebase's
  *  established convention (MethodScrollCards, BuiltToReadYouSection) is
  *  "reveal, then hold fully visible", letting the sticky container's
- *  own natural unstick (as this wrapper's h-[200vh] scroll distance
+ *  own natural unstick (as this wrapper's h-[130vh] scroll distance
  *  runs out) BE the exit, rather than animating a separate release that
  *  would just fight that native browser behavior.
  *
@@ -93,7 +93,7 @@ function useMediaMotion(progress: MotionValue<number>, reduceMotion: boolean) {
 
 /**
  * Reusable 50/50 two-column section for /how-it-works: a pinned,
- * scroll-jacked cinematic beat (own h-[200vh] track, sticky h-[100svh]
+ * scroll-jacked cinematic beat (own h-[130vh] track, sticky h-[100svh]
  * viewport) rather than a plain scroll-into-view fade — heading + body
  * copy on one side, a focal visual (a placeholder for now, real media
  * later) on the other, each animating in tied to this section's own
@@ -143,7 +143,14 @@ export function FeatureSplitSection({
         : undefined;
 
   return (
-    <div id={id} ref={wrapperRef} className={cn(!reduceMotion && "h-[200vh]")}>
+    // 200vh -> 130vh — per an explicit "too much scrolling to reveal"
+    // pass: the enter window (0.15-0.45) still gets ~39vh of real
+    // scroll distance at this height, still legible for both halves'
+    // own motion — 200vh was excess dead scroll on top of that. This
+    // one component is reused across many pages (/how-it-works,
+    // /inside-the-app, etc.), so this single change tightens all of
+    // them at once.
+    <div id={id} ref={wrapperRef} className={cn(!reduceMotion && "h-[130vh]")}>
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx/
          BuiltToReadYouSection.tsx for the full explanation: `vh` assumes
          the browser's toolbar chrome is fully hidden, so a real phone's

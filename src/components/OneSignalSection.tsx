@@ -58,7 +58,11 @@ export function OneSignalSection() {
   const subtextY = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 16 * (1 - subtextEased(p))));
 
   return (
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[200vh]")}>
+    // 200vh -> 130vh — per an explicit "too much scrolling to reveal"
+    // pass: the headline scale (0-0.55) and subtext (0.35-0.7) windows
+    // still get real scroll distance at this height — 200vh was excess
+    // dead scroll beyond what either beat needed.
+    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[130vh]")}>
       <div className="sticky top-0 flex h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-cream px-6 text-center">
         <motion.h2
           style={{ scale }}

@@ -105,7 +105,12 @@ export function EditorialIndexSection() {
   });
 
   return (
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[300vh]")}>
+    // 300vh -> 180vh — per an explicit "too much scrolling to reveal"
+    // pass: each of the 3 stacked cards gets a ~0.23-wide progress
+    // window (index/total to (index+0.7)/total), which is still ~41vh
+    // of real scroll distance at 180vh — 300vh was excess dead scroll
+    // beyond what any card's own reveal needed.
+    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[180vh]")}>
       <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>

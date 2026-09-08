@@ -62,7 +62,12 @@ export function DesignedToBlendInSection() {
   });
 
   return (
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
+    // 300vh -> 180vh — per an explicit "too much scrolling to reveal"
+    // pass: the clip-path expansion is one continuous 0-1 transform
+    // with no internal staged sub-windows to protect, so shortening the
+    // track just makes the same expansion play out over less scroll
+    // distance, not a different animation.
+    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[180vh]")}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
         {/* The cinematic slit — the real photo, object-cover so it
            always fills this box's current shape regardless of its

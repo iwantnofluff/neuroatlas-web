@@ -20,19 +20,22 @@ export default function BandPage() {
 
       {/* 3. What it deliberately does not do — "Expand & Snap": a massive
           gradient-masked headline scales down and locks into center, own
-          h-[200vh] pinned track. See OneSignalSection.tsx. */}
+          h-[130vh] pinned track (tightened from 200vh per an explicit
+          "too much scrolling to reveal" pass). See OneSignalSection.tsx. */}
       <OneSignalSection />
 
       {/* 4. Design and build — "Expand & Snap": a cinematic letterbox
           slit expands to fill the screen behind the headline, own
-          h-[300vh] pinned track. See DesignedToBlendInSection.tsx. */}
+          h-[180vh] pinned track (tightened from 300vh). See
+          DesignedToBlendInSection.tsx. */}
       <DesignedToBlendInSection />
 
       {/* 5+6. Accuracy/validation + how the band and app work together —
           "Signal vs. Noise": scrapped the static 2-photo grid and the two
           separate plain text blocks ("Precision, Not Guesswork" / "The
           App Reads You") in favor of one unified cinematic sequence, own
-          h-[400vh] pinned track. See SignalVsNoiseSection.tsx. */}
+          h-[260vh] pinned track (tightened from 400vh). See
+          SignalVsNoiseSection.tsx. */}
       <SignalVsNoiseSection />
 
       {/* 7. Technical specifications — the Interactive X-Ray: a real 3D
