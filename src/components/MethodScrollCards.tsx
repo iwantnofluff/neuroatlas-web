@@ -38,10 +38,28 @@ const methodSteps = [
  *  — the array form hands scroll-linked transforms off to a native
  *  `animation-timeline: scroll()` optimization in this framer-motion
  *  version, and that path was computing the wrong values entirely once a
- *  second scroll-linked transform (the `y` below) existed on the same
- *  element — confirmed via the raw motion value being correct (.get()
- *  returned 1) while the actual rendered opacity did not. The function
- *  form always runs in plain JS, sidestepping that optimization.
+ *  second scroll-linked transform (a `y` slide, since removed — see
+ *  below) existed on the same element — confirmed via the raw motion
+ *  value being correct (.get() returned 1) while the actual rendered
+ *  opacity did not. The function form always runs in plain JS,
+ *  sidestepping that optimization; kept even now that `y` is gone, since
+ *  nothing about removing `y` makes the array form's other behavior any
+ *  more trustworthy than confirmed here.
+ *
+ *  Opacity-only now — no `y` slide. That per-card vertical drift (24px,
+ *  easing to 0 as each card settled) was the actual cause of a real,
+ *  confirmed bug: since the three cards' ranges don't overlap, at any
+ *  given scroll position at most one card is ever mid-transition while
+ *  its siblings are already fully settled at y:0 — and a card mid-
+ *  transition sits BELOW the settled ones (translated down, easing
+ *  toward 0 as it finishes). In a horizontal row that reads as one card
+ *  sagging below its neighbors' top edge, i.e. the row's top edge
+ *  visibly bows/steps rather than staying straight — reported live as
+ *  "the cards are forming like a half semi circle." A plain opacity
+ *  fade (no motion at all in position, just fading into a slot that was
+ *  always laid out in its final place) reveals each card in-place, so
+ *  the row's top edge stays straight throughout the whole scroll,
+ *  matching the brief's "another card joins" without a step/bow.
  *
  *  `reduceMotion` is baked in here rather than swapping the *whole* style
  *  prop between this and `undefined` at the call site — framer-motion
@@ -53,8 +71,8 @@ const methodSteps = [
  *  always computes with reduceMotion still false, writing opacity 0 to
  *  the DOM directly; flipping the style prop to undefined on the next
  *  render left that 0 permanently stuck, since nothing was updating it
- *  any more. Keeping the same {opacity, y} shape always, and only
- *  changing what they *compute*, avoids that teardown gap entirely. */
+ *  any more. Keeping the same {opacity} shape always, and only changing
+ *  what it *computes*, avoids that teardown gap entirely. */
 function useCardReveal(
   progress: MotionValue<number>,
   range: readonly [number, number],
@@ -64,8 +82,7 @@ function useCardReveal(
   const eased = (p: number) =>
     reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
   const opacity = useTransform(progress, (p) => eased(p));
-  const y = useTransform(progress, (p) => (reduceMotion ? 0 : 24 * (1 - eased(p))));
-  return { opacity, y };
+  return { opacity };
 }
 
 function MethodCard({
@@ -79,10 +96,10 @@ function MethodCard({
   progress: MotionValue<number>;
   reduceMotion: boolean;
 }) {
-  const { opacity, y } = useCardReveal(progress, step.range, reduceMotion);
+  const { opacity } = useCardReveal(progress, step.range, reduceMotion);
   return (
     <motion.div
-      style={{ opacity, y }}
+      style={{ opacity }}
       // .card-glass's own tinted fill read as a flat white/grey glow across
       // the whole card rather than glass — these three specifically drop
       // the fill (bg-transparent, a utility, wins over .card-glass's own
