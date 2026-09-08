@@ -43,8 +43,8 @@ type HeroCta = { label: string; href: string };
 type HeroProps = {
   eyebrow?: string;
   headline?: string;
-  /** Which word in `headline` gets the italic-gold emphasis treatment.
-   *  Pass a word that isn't present (or omit entirely) to skip it. */
+  /** Which word in `headline` gets the gold emphasis treatment. Pass a
+   *  word that isn't present (or omit entirely) to skip it. */
   emphasisWord?: string;
   subhead?: string;
   /** Defaults to the homepage's own two buttons — pass `[]` to render
@@ -137,7 +137,7 @@ export function Hero({
             <motion.span
               key={`${word}-${i}`}
               variants={wordItem}
-              className={cn(word === emphasisWord && "italic text-gold")}
+              className={cn(word === emphasisWord && "text-gold")}
             >
               {word}
             </motion.span>
