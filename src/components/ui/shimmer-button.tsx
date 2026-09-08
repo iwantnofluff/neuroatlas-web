@@ -69,7 +69,19 @@ const rootClassName = (className?: string) =>
     // line of light travelling around the border.
     "border [border-color:color-mix(in_oklab,var(--bg)_50%,transparent)]",
     "transform-gpu transition-[box-shadow,transform,color] duration-300 ease-in-out active:translate-y-px",
-    "shadow-[0_6px_18px_-10px_color-mix(in_oklab,var(--glow)_55%,transparent)]",
+    // Rest state is now a 2-shadow list (a fully transparent ring shadow
+    // + the original ambient shadow), matching hover's 2-shadow list
+    // entry-for-entry — a real, confirmed bug this replaces: box-shadow
+    // only interpolates smoothly when both lists have the SAME number of
+    // layers; a 1-shadow rest transitioning to a 2-shadow hover is
+    // "discrete" per spec, meaning the browser holds the rest shadow
+    // completely still for the first half of the 300ms, then snaps
+    // straight to the hover shadow — which is what read as "a delay,
+    // then it just changes" rather than a seamless glow-in. Padding rest
+    // with a same-position, zero-alpha version of hover's ring shadow
+    // costs nothing visually at rest (transparent) but lets both listed
+    // shadows tween their color/blur/spread continuously instead.
+    "shadow-[0_0_0_1px_transparent,0_6px_18px_-10px_color-mix(in_oklab,var(--glow)_55%,transparent)]",
     "hover:shadow-[0_0_0_1px_color-mix(in_oklab,var(--glow)_55%,transparent),0_0_32px_6px_color-mix(in_oklab,var(--glow)_70%,transparent)]",
     "focus-visible:shadow-[0_0_0_1px_color-mix(in_oklab,var(--glow)_55%,transparent),0_0_32px_6px_color-mix(in_oklab,var(--glow)_70%,transparent)]",
     className
@@ -121,23 +133,45 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
         )}
       />
 
-      {/* backdrop — the actual visible fill. Translucent glass tinted by
-          the button's own rest color (with a real backdrop-blur, so it
-          genuinely reads as glass rather than a flat tint); fills in to a
-          glossy, near-opaque version of `--hover-bg` (gold by default) on
-          hover/focus — a deliberately different color from the rest tint,
-          not just a more-opaque version of it, so every button converges
-          on the same hover look regardless of its own rest-state color. */}
+      {/* backdrop — the rest-state glass fill. Translucent, tinted by the
+          button's own rest color, with a real backdrop-blur so it
+          genuinely reads as glass. Deliberately has NO group-hover
+          variant of its own any more — see the fill overlay right below
+          for why — it just stays permanently visible underneath it. */}
       <div
         className={cn(
           "absolute inset-(--cut) -z-20 [border-radius:var(--radius)] backdrop-blur-lg backdrop-saturate-150",
           "[background:color-mix(in_oklab,var(--bg)_18%,transparent)]",
-          "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16)]",
-          "transition-[background,box-shadow] duration-300 ease-in-out",
-          "group-hover:[background:linear-gradient(180deg,color-mix(in_oklab,var(--hover-bg)_92%,white_16%),var(--hover-bg))]",
-          "group-hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]",
-          "group-focus-visible:[background:linear-gradient(180deg,color-mix(in_oklab,var(--hover-bg)_92%,white_16%),var(--hover-bg))]",
-          "group-focus-visible:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]"
+          "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16)]"
+        )}
+      />
+
+      {/* hover fill — a real, confirmed bug this replaces: the previous
+          version transitioned the `background` property directly, from a
+          solid color-mix (rest) to a linear-gradient (hover). Browsers
+          have no defined way to interpolate a solid fill into a gradient
+          — background-image transitions are "discrete", meaning the old
+          fill holds completely still for the first half of the 300ms,
+          then snaps straight to the gradient. That hold-then-jump is
+          exactly the "delay before the color changes" this was reported
+          as, confirmed by inspecting the computed background mid-
+          transition rather than just eyeballing it.
+
+          Fix: never transition the gradient value itself. This overlay
+          has the target hover look (gradient + brighter inset highlight)
+          baked in permanently, sitting on top of the rest backdrop above,
+          starting fully transparent and fading to fully opaque on
+          hover/focus. `opacity` is always continuously interpolable no
+          matter what's underneath it, so this is what actually gives a
+          seamless fade with no hold, instead of the old snap. */}
+      <div
+        aria-hidden
+        className={cn(
+          "absolute inset-(--cut) -z-20 [border-radius:var(--radius)] opacity-0",
+          "[background:linear-gradient(180deg,color-mix(in_oklab,var(--hover-bg)_92%,white_16%),var(--hover-bg))]",
+          "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]",
+          "transition-opacity duration-300 ease-in-out",
+          "group-hover:opacity-100 group-focus-visible:opacity-100"
         )}
       />
     </>
