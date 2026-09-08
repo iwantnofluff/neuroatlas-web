@@ -1,112 +1,112 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
-// Pinned scroll reveal, per the client's own sketch: scroll into the
-// section, the first card appears; scroll again, the second card joins it;
-// scroll again, the third. Unlike BandScrollShowcase's signals (which
-// cross-fade — only one visible at a time), these *accumulate* — once a
-// card is in, it stays, matching "then another scroll the next card will
-// come" (an addition, not a replacement). Once all three are in, further
-// scroll releases the pin and moves on to the next section normally.
+// Rebuilt per the client's own hand-drawn sketch: a "fanned" layout —
+// three overlapping cards, the outer two tilted outward like a hand of
+// cards, the center one straight, elevated, and stacked on top. This
+// replaces the previous upward-arc version (see this file's own git
+// history) — a different, more literal reading of "arc" than that one.
 const methodSteps = [
   {
     label: "Measure",
     body: "Reads what's happening in your body, from emotional regulation to stress age, to build a clear picture beneath the surface.",
-    range: [0.06, 0.24] as const,
   },
   {
     label: "Intervene",
     body: "A short, simple reset, right where you are.",
-    range: [0.38, 0.56] as const,
   },
   {
     label: "Measure",
     body: "A second reading proves the shift, not just the feeling.",
-    range: [0.7, 0.88] as const,
   },
 ];
 
-/** A card's reveal, not a cross-fade: sits at 0 before `start`, animates
- *  across [start, end], then holds at 1 forever after — never fades back
- *  out. Deliberately the function-transformer form of useTransform, not
- *  the array-range form (`useTransform(progress, [start, end], [0, 1])`)
- *  — the array form hands scroll-linked transforms off to a native
- *  `animation-timeline: scroll()` optimization in this framer-motion
- *  version, and that path was computing the wrong values entirely once a
- *  second scroll-linked transform (a `y` slide, since removed — see
- *  below) existed on the same element — confirmed via the raw motion
- *  value being correct (.get() returned 1) while the actual rendered
- *  opacity did not. The function form always runs in plain JS,
- *  sidestepping that optimization; kept even now that `y` is gone, since
- *  nothing about removing `y` makes the array form's other behavior any
- *  more trustworthy than confirmed here.
- *
- *  Opacity-only now — no `y` slide. That per-card vertical drift (24px,
- *  easing to 0 as each card settled) was the actual cause of a real,
- *  confirmed bug: since the three cards' ranges don't overlap, at any
- *  given scroll position at most one card is ever mid-transition while
- *  its siblings are already fully settled at y:0 — and a card mid-
- *  transition sits BELOW the settled ones (translated down, easing
- *  toward 0 as it finishes). In a horizontal row that reads as one card
- *  sagging below its neighbors' top edge, i.e. the row's top edge
- *  visibly bows/steps rather than staying straight — reported live as
- *  "the cards are forming like a half semi circle." A plain opacity
- *  fade (no motion at all in position, just fading into a slot that was
- *  always laid out in its final place) reveals each card in-place, so
- *  the row's top edge stays straight throughout the whole scroll,
- *  matching the brief's "another card joins" without a step/bow.
- *
- *  `reduceMotion` is baked in here rather than swapping the *whole* style
- *  prop between this and `undefined` at the call site — framer-motion
- *  writes motion-value-driven styles straight to the DOM node outside
- *  React's own reconciliation, and toggling the style prop's shape
- *  between "an object of motion values" and "undefined" across renders
- *  doesn't reliably tear down that direct write. Concretely: this hook's
- *  very first render (before useSafeReducedMotion's mount check resolves)
- *  always computes with reduceMotion still false, writing opacity 0 to
- *  the DOM directly; flipping the style prop to undefined on the next
- *  render left that 0 permanently stuck, since nothing was updating it
- *  any more. Keeping the same {opacity} shape always, and only changing
- *  what it *computes*, avoids that teardown gap entirely. */
-function useCardReveal(
-  progress: MotionValue<number>,
-  range: readonly [number, number],
-  reduceMotion: boolean
-) {
-  const [start, end] = range;
-  const eased = (p: number) =>
-    reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
-  const opacity = useTransform(progress, (p) => eased(p));
-  return { opacity };
-}
+// Per-card resting fan target (index 0 = left, 1 = center/hero card,
+// 2 = right) — rotate in degrees, y in px (translate-y-8 / -translate-y-4
+// equivalents), z stacking, and startX: how far this card sits from its
+// own resting spot in the pre-animation "closed fan" state (canceled
+// back to 0 as it fans open — see MethodCard's own comment).
+const FAN = [
+  { rotate: -8, y: 32, z: 0, startX: 96 },
+  { rotate: 0, y: -16, z: 10, startX: 0 },
+  { rotate: 8, y: 32, z: 0, startX: -96 },
+] as const;
+
+// Seconds between each card's own fan-open start — a real fan opens as
+// each rib follows the last, not all three snapping at once.
+const STAGGER = 0.08;
 
 function MethodCard({
   step,
   index,
-  progress,
+  isMobile,
   reduceMotion,
 }: {
   step: (typeof methodSteps)[number];
   index: number;
-  progress: MotionValue<number>;
+  isMobile: boolean;
   reduceMotion: boolean;
 }) {
-  const { opacity } = useCardReveal(progress, step.range, reduceMotion);
+  const fan = FAN[index];
+
+  // Resting state: the tilted fan on sm:+, a plain flat stack on mobile
+  // (rotate 0, no horizontal offset) — per the client's own mobile
+  // fallback spec. `y` (the vertical droop/elevation) is likewise only
+  // applied on sm:+; it's set via a plain `style` value below rather
+  // than animated — the brief's own "initial state" only calls out
+  // opacity/rotate/x as starting points, not y, so this card is already
+  // sitting at its final height even before it fans open.
+  const restRotate = isMobile ? 0 : fan.rotate;
+  const restY = isMobile ? 0 : fan.y;
+
+  // Entrance state: on sm:+, every card starts perfectly straight
+  // (rotate 0) and pulled in toward the center card's own x position
+  // (`startX`, canceled back to 0 as it settles) — reads as "closed",
+  // fanning open into its tilted resting spot as it scrolls into view.
+  // On mobile there's no fan to open FROM, so this is a plain fade (no
+  // rotate/x motion at all) — reduceMotion collapses it the same way,
+  // for the same reason (an initial state identical to the resting one
+  // means nothing actually animates, without conditionally omitting
+  // initial/whileInView's shape — see Reveal.tsx's own comment on why
+  // that specific pattern matters for this codebase).
+  const skipMotion = isMobile || reduceMotion;
+  const startRotate = skipMotion ? restRotate : 0;
+  const startX = skipMotion ? 0 : fan.startX;
+
   return (
     <motion.div
-      style={{ opacity }}
-      // .card-glass's own tinted fill read as a flat white/grey glow across
-      // the whole card rather than glass — these three specifically drop
-      // the fill (bg-transparent, a utility, wins over .card-glass's own
-      // `background` regardless of source order under Tailwind's cascade
-      // layers) and keep only its border and inset-highlight glow, so the
-      // "glow" reads as a thin line around the edges, not a filled panel.
-      className="card-glass bg-transparent p-4 text-center sm:p-8 sm:text-left"
+      initial={{ opacity: 0, rotate: startRotate, x: startX }}
+      whileInView={{ opacity: 1, rotate: restRotate, x: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={
+        reduceMotion
+          ? { duration: 0 }
+          : {
+              rotate: { type: "spring", stiffness: 260, damping: 20 },
+              x: { type: "spring", stiffness: 260, damping: 20 },
+              opacity: { duration: 0.4, ease: "easeOut" },
+              delay: index * STAGGER,
+            }
+      }
+      style={{ y: restY }}
+      // .card-glass's own tinted fill read as a flat white/grey glow
+      // across the whole card rather than glass on this dark section —
+      // these three specifically drop the fill (bg-transparent, a
+      // utility, wins over .card-glass's own `background` regardless of
+      // source order under Tailwind's cascade layers) and keep only its
+      // border and inset-highlight glow. index 1 (the hero card) gets a
+      // static z-10 — harmless at mobile's flat stack (nothing to
+      // overlap there), and what actually lets it render on top of the
+      // tilted side cards' inner edges on sm:+.
+      className={cn(
+        "card-glass w-full bg-transparent p-4 text-center sm:w-72 sm:p-8 sm:text-left",
+        index === 1 && "z-10"
+      )}
     >
       <span className="eyebrow">{`0${index + 1}`}</span>
       <h3 className="mt-3 font-serif text-xl text-cream">{step.label}</h3>
@@ -116,61 +116,35 @@ function MethodCard({
 }
 
 export function MethodScrollCards() {
+  // 639, not the default 767 (Tailwind's `md`) — this section's own
+  // mobile fallback is explicitly "sm and below" (below the 640px `sm:`
+  // breakpoint), one narrower than every other `useIsMobile()` caller
+  // on this site relies on. See useIsMobile.ts's own comment.
+  const isMobile = useIsMobile(639);
   const reduceMotion = useSafeReducedMotion();
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start start", "end end"],
-  });
 
   return (
-    <div id="the-method" ref={wrapperRef} className={cn(!reduceMotion && "h-[300vh]")}>
-      {/* h-[100svh], not h-screen (100vh/100lvh) — on a real phone, `vh`
-         resolves to the LARGE viewport size (as if the address-bar/toolbar
-         chrome were fully hidden). Whenever that chrome is actually
-         visible, the real visible area is shorter than 100vh, and this
-         pinned section's own overflow-hidden clipped the bottom of the
-         third card against that shrunk viewport — invisible in headless
-         Playwright (no toolbar to simulate) but confirmed live via a real
-         device screenshot. `svh` is the SMALL viewport size — guaranteed
-         to fit even with the chrome fully expanded — matching Hero.tsx's
-         own `min-h-[100svh]` convention. */}
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden bg-navy-soft pt-16 text-cream sm:pt-0">
-        <div className="mx-auto w-full max-w-6xl px-6 lg:px-10">
-          <Reveal y={20}>
-            {/* text-2xl on mobile, not text-3xl — at text-3xl this wrapped
-               to 2 lines at phone widths, and its top line sat mostly
-               behind the site's fixed 73px header (confirmed live: only
-               11px of clearance above it once the section's own
-               overflow-hidden clipping was fixed — a second, separate
-               bug from the one below). Fitting on one line here plus the
-               sticky container's own pt-16 (which reserves real space
-               for the header instead of relying on centering slack)
-               clears it properly. */}
-            <h2 className="text-center font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl">
-              Measure. Intervene. Measure.
-            </h2>
-          </Reveal>
-          {/* On short mobile viewports (iPhone SE/common Android heights),
-             the heading + three full-padding cards overflowed this
-             pinned h-screen section and got clipped at the top by its
-             own overflow-hidden — confirmed live (content height 744px
-             vs a 667px viewport). Tighter mt/gap/card-padding on mobile
-             claws back that overflow; see the pt-16 above for the
-             separate header-clearance fix. */}
-          <div className="mt-4 grid gap-2 sm:mt-16 sm:grid-cols-3 sm:gap-8">
-            {methodSteps.map((step, i) => (
-              <MethodCard
-                key={`${step.label}-${i}`}
-                step={step}
-                index={i}
-                progress={scrollYProgress}
-                reduceMotion={reduceMotion}
-              />
-            ))}
-          </div>
+    <section id="the-method" className="dark-glow bg-navy-soft text-cream">
+      <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+        <Reveal y={20}>
+          <h2 className="text-center font-serif text-2xl leading-tight sm:text-3xl lg:text-4xl">
+            Measure. Intervene. Measure.
+          </h2>
+        </Reveal>
+        {/* flex, not grid — "sit tightly together" (per spec) means the
+           outer two cards actually need to OVERLAP the center one, which
+           a plain grid's own column tracks don't allow; the negative
+           margin below does. sm:gap-0 clears the mobile gap-6 (mobile
+           has no overlap to make it redundant with) once the negative
+           margins take over. */}
+        <div className="mt-10 flex flex-col items-center gap-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-center sm:gap-0">
+          {methodSteps.map((step, i) => (
+            <div key={`${step.label}-${i}`} className={cn(i !== 1 && "sm:-mx-6")}>
+              <MethodCard step={step} index={i} isMobile={isMobile} reduceMotion={reduceMotion} />
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
