@@ -8,6 +8,7 @@ import { TextLink } from "@/components/TextLink";
 import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
+import { SpotlightPhoto } from "@/components/SpotlightPhoto";
 import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
@@ -70,12 +71,21 @@ export default function Home() {
                 offset={24}
                 className="relative aspect-square overflow-hidden rounded-3xl bg-navy lg:aspect-auto lg:h-full"
               >
-                <Image
-                  src="/photos/band-bw-wrist.jpg"
+                {/* Grayscale at rest; hovering reveals real color inside a
+                   circle that follows the cursor — a flashlight passing
+                   over the actual product, on this section's own "notice
+                   the stress signal" beat. See SpotlightPhoto.tsx for the
+                   mask/coordinate mechanics (same technique as Footer.tsx's
+                   spotlight wordmark). Radius scaled up from that
+                   component's 80px default — this photo fills a whole
+                   column here, not a small thumbnail. */}
+                <SpotlightPhoto
+                  srcGray="/photos/band-bw-wrist.jpg"
+                  srcColor="/photos/band-color-wrist.png"
                   alt="The NA·01 band worn on the wrist"
-                  fill
+                  radius={160}
                   sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover"
+                  className="h-full w-full"
                 />
               </Parallax>
             </Reveal>
