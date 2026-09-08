@@ -125,9 +125,20 @@ function NoiseElement({
 export function SignalVsNoiseSection() {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
+  // comment for the full mechanics: "start start" leaves scrollYProgress
+  // clamped at exactly 0 for the whole approach window while this
+  // taller-than-viewport wrapper is still scrolling up from below. This
+  // section's own primary content (the "old scene" heading) is already
+  // opacity:1 at progress 0 regardless, so this specifically isn't a
+  // blank-content fix here — it's for consistency with every other
+  // pinned section on the site, and it means the decorative noise
+  // shapes/wipe sequence start their own staged beats a bit earlier
+  // (during the approach, before the pin engages) rather than being
+  // artificially held back until the section is already fully pinned.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end end"],
   });
 
   // Beat 2 — the filtered-baseline line growing in horizontally.

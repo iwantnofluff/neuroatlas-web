@@ -46,9 +46,16 @@ function lerp(a: number, b: number, t: number) {
 export function DesignedToBlendInSection() {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
+  // comment for the full mechanics: "start start" leaves scrollYProgress
+  // clamped at exactly 0 for the whole approach window while this
+  // taller-than-viewport wrapper is still scrolling up from below (its
+  // content already on screen) — here that means the clip-path sits at
+  // its narrowest, least-open state for that whole stretch rather than
+  // starting to open as soon as the section is actually visible.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end end"],
   });
 
   const clipPath = useTransform(scrollYProgress, (p) => {

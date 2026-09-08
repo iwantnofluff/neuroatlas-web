@@ -140,9 +140,16 @@ export function BandScrollShowcase() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
+  // comment for the full mechanics: "start start" leaves scrollYProgress
+  // clamped at exactly 0 for the whole approach window while this
+  // taller-than-viewport wrapper is still scrolling up from below (its
+  // content already on screen), which for anything gated by progress
+  // rather than always-on renders as genuinely blank/frozen for that
+  // whole stretch, not just briefly.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end end"],
   });
 
   return (

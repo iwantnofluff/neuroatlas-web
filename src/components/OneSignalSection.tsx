@@ -35,9 +35,14 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 export function OneSignalSection() {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
+  // comment for the full mechanics: "start start" leaves scrollYProgress
+  // clamped at exactly 0 for the whole approach window while this
+  // taller-than-viewport wrapper is still scrolling up from below (its
+  // content already on screen).
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end end"],
   });
 
   // 1.5 -> 1.0 across the first ~55% of the pinned track, then holds —

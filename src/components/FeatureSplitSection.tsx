@@ -130,9 +130,31 @@ export function FeatureSplitSection({
 }: FeatureSplitSectionProps) {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // offset ["start end", "end end"], not ["start start", "end end"] —
+  // a real, confirmed bug this replaces, distinct from the opacity-hold
+  // bug fixed earlier: "start start" only starts counting progress once
+  // this wrapper's OWN top edge reaches the viewport's top edge — but
+  // this wrapper (130vh) is taller than the viewport (100vh), so there's
+  // a real ~30vh window where the wrapper has already scrolled well
+  // into view from the bottom (its cream background fully on screen)
+  // while its top edge STILL hasn't reached the viewport's top yet.
+  // scrollYProgress is mathematically clamped at exactly 0 for that
+  // entire window (by definition of the offset, not a rounding
+  // artifact), so eased(0) — whatever it is — is what renders that
+  // whole time. Confirmed live via screenshot: scrolled into this
+  // exact window and got a fully blank cream section, nothing
+  // rendered at all, not just faint. "start end" starts counting
+  // progress from the moment this wrapper's top edge enters the
+  // viewport's BOTTOM edge instead — i.e. the instant any part of it
+  // is first visible — so there's no scroll position left where the
+  // section is on screen but progress is still stuck at the pre-range
+  // value. The enter/hold breakpoints below (0–0.35 ramp, 0.35–1 hold)
+  // don't need rescaling for this — they just complete as a fraction of
+  // a now-larger 0–1 range (physically ~410px of scroll instead of
+  // ~95px), which reads as a touch more gradual, not broken.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end end"],
   });
 
   // The text half enters from whichever side is OPPOSITE the media —
