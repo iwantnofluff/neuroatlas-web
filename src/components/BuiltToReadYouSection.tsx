@@ -63,8 +63,19 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
 // one-off hex) is what actually "echoes the gold hardware" the client
 // asked for, and keeps this in the same token system as the rest of
 // the site instead of introducing a color nothing else uses.
+// xl:text-[10rem] is a FLAT cap — fine up through a normal laptop
+// screen, but on anything wider (a real, confirmed complaint: a ~2000px
+// viewport left visibly too much whitespace at both sides) the text
+// just stops growing forever past that one fixed size, while the
+// viewport itself keeps getting wider. 2xl: (1536px+) switches to a
+// vw-based clamp so it keeps scaling with the viewport instead of
+// flatlining — clamp's own floor (10rem) matches xl's own value almost
+// exactly at the 1536px breakpoint itself (11vw ≈ 10.56rem there), so
+// there's no visible jump at the breakpoint edge, just a smooth
+// continuation; the 16rem ceiling is a sanity cap for genuinely
+// ultra-wide displays, not a reintroduction of the same flat-cap bug.
 const HEADLINE_TEXT_CLASSNAME =
-  "font-sans text-5xl leading-none font-black tracking-tighter text-gold-soft uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]";
+  "font-sans text-5xl leading-none font-black tracking-tighter text-gold-soft uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[clamp(10rem,17vw,22rem)]";
 
 export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
