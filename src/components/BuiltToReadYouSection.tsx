@@ -169,9 +169,18 @@ export function BuiltToReadYouSection() {
             at the same visual weight. */}
         <motion.div
           style={{ opacity: subtext.opacity, y: subtext.y }}
-          className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-md px-6 text-center sm:bottom-20"
+          className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-2xl px-6 text-center sm:bottom-20"
         >
-          <p className="text-lg text-gold-soft/70">
+          {/* max-w-md (448px) wrapped this to 3 lines, the last one just
+             "day." on its own — an orphan, not a deliberate 2-line
+             break. Widened close to the headline's own span (max-w-2xl,
+             not full-bleed — text this size needs SOME line length cap
+             to stay readable) and added text-balance so the browser
+             distributes the words evenly across however many lines it
+             takes, rather than greedily filling each line until the
+             next word doesn't fit; at this width that's reliably 2
+             even lines, never a dangling one. */}
+          <p className="text-lg text-balance text-gold-soft/70">
             A screenless band designed to read your stress, quietly and
             precisely, throughout your day.
           </p>
