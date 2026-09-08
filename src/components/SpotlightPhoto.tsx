@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type PointerEvent as ReactPointerEvent } from "react";
+import { useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -49,6 +49,43 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
  * "revealed" state rather than the muted grayscale one, the same
  * judgment call Footer.tsx makes for its own wordmark (a meaningful
  * static state beats a permanently-dim "broken effect").
+ *
+ * `mask-size` is explicitly measured and set in real px — a real,
+ * confirmed bug this replaces: on any non-square panel (this one is
+ * ~548×511), the circle rendered as a visibly wider-than-tall ellipse,
+ * not a circle. `mask-image`'s own gradient has no intrinsic size or
+ * ratio, so `mask-size: auto` (the default) resolves to "100% 100% of
+ * the mask positioning area" per spec — each axis stretched
+ * independently to fill the box, which distorts even a `circle Rpx`
+ * (an explicitly circular, absolutely-sized gradient) into an ellipse
+ * whenever the box itself isn't square. A PERCENTAGE mask-size doesn't
+ * fix this either — it resolves to the exact same per-axis stretch,
+ * just spelled out explicitly instead of defaulted. What actually
+ * avoids it is an ABSOLUTE pixel size matching the box's own real
+ * rendered dimensions: an explicit `WxH`px size bypasses the "no
+ * natural size" auto-resolution entirely, so the gradient paints onto a
+ * canvas exactly as large as the box itself, with no additional
+ * per-axis scaling — the same px coordinate space `mouseX`/`mouseY`
+ * are already measured in, so the circle renders undistorted and
+ * exactly where the cursor is. Measured via ResizeObserver (not a
+ * one-time read) since this panel's size can change — a fixed-px
+ * wrapper is constant, but a `fill`-based one (percentage width/aspect-
+ * ratio, like #the-problem's own column) genuinely resizes with the
+ * viewport.
+ *
+ * `maskSize` starts as `null`, not `{width: 0, height: 0}` — a real,
+ * confirmed bug this replaces: a numeric default meant `mask-size: 0px
+ * 0px` was what actually got rendered (baked into the server-rendered
+ * HTML, too) for every instant before the layout effect's measurement
+ * resolved. A degenerate zero-size mask is invalid, and browsers don't
+ * agree on what to do with an invalid mask — some drop the mask
+ * entirely and show the color layer fully unmasked, which is
+ * indistinguishable from "the circle isn't a circle at all," not just
+ * briefly. The color layer now doesn't mount until a real measurement
+ * exists, so there's no zero/invalid state to ever hit — a real no-JS
+ * visitor simply sees the plain grayscale photo forever (a legitimate,
+ * fully-formed fallback, not a broken one), and everyone else gets it
+ * within the same layout-effect flush, before the first paint.
  */
 export function SpotlightPhoto({
   srcColor,
@@ -74,12 +111,31 @@ export function SpotlightPhoto({
 }) {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [maskSize, setMaskSize] = useState<{ width: number; height: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const update = () => setMaskSize({ width: el.clientWidth, height: el.clientHeight });
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Starts well off-canvas so nothing is revealed before the pointer has
   // actually moved over the photo.
   const mouseX = useMotionValue(-9999);
   const mouseY = useMotionValue(-9999);
-  const maskImage = useMotionTemplate`radial-gradient(circle ${radius}px at ${mouseX}px ${mouseY}px, black 0%, transparent 100%)`;
+  // black 0%->65% is a solid plateau (fully revealed, not fading yet) —
+  // black/transparent 0%->100% (the original version) linearly faded
+  // across the WHOLE radius, so the reveal was dimmest exactly at its
+  // center and never actually solid anywhere; a real, confirmed
+  // mismatch against the requested reference (a solid disc with a soft
+  // blurred rim, not a fade-throughout blob). The remaining 65%->100%
+  // band is where it actually feathers out to fully transparent.
+  const maskImage = useMotionTemplate`radial-gradient(circle ${radius}px at ${mouseX}px ${mouseY}px, black 0%, black 65%, transparent 100%)`;
+  const maskSizeValue = maskSize ? `${maskSize.width}px ${maskSize.height}px` : undefined;
 
   function handlePointerMove(e: ReactPointerEvent<HTMLDivElement>) {
     const rect = wrapperRef.current?.getBoundingClientRect();
@@ -111,13 +167,26 @@ export function SpotlightPhoto({
           className="object-cover"
         />
       ) : (
-        <motion.div
-          aria-hidden
-          style={{ WebkitMaskImage: maskImage, maskImage }}
-          className="absolute inset-0"
-        >
-          <Image src={srcColor} alt="" fill sizes={sizes} className="object-cover" />
-        </motion.div>
+        // maskSize is null until the ResizeObserver below resolves a
+        // real measurement — the color layer simply doesn't exist yet
+        // rather than existing with a degenerate mask-size (see this
+        // component's own doc comment for why that distinction matters).
+        maskSizeValue && (
+          <motion.div
+            aria-hidden
+            style={{
+              WebkitMaskImage: maskImage,
+              maskImage,
+              WebkitMaskSize: maskSizeValue,
+              maskSize: maskSizeValue,
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+            className="absolute inset-0"
+          >
+            <Image src={srcColor} alt="" fill sizes={sizes} className="object-cover" />
+          </motion.div>
+        )
       )}
     </div>
   );
