@@ -19,18 +19,20 @@ type RevealProps = {
  * Fade-and-rise-in wrapper, triggered once when scrolled into view.
  * Respects prefers-reduced-motion (content just appears, no motion).
  *
- * viewport is `{ amount: 0.1 }`, not the previous `{ margin: "-80px" }`
- * — a real, confirmed bug this replaces: a NEGATIVE rootMargin SHRINKS
- * the effective viewport before intersection is computed, which delays
- * the trigger rather than advancing it (it's easy to assume negative
- * means "starts earlier" — it's the opposite). Measured live: with
- * -80px, an element's fade didn't even START until it was already ~89%
- * scrolled into a 900px viewport (its own top edge at ~800px down) —
- * essentially already fully visible before any animation began, which
- * is exactly the "too much scrolling before it reveals" complaint this
- * whole pass exists to fix. `amount: 0.1` triggers as soon as just 10%
- * of the element's own area overlaps the viewport — as it's actually
- * arriving, not once it's already sitting there.
+ * viewport is `{ once: true, amount: 0.15 }`, not the previous
+ * `{ margin: "-80px" }` — a real, confirmed bug this replaces: a
+ * NEGATIVE rootMargin SHRINKS the effective viewport before
+ * intersection is computed, which delays the trigger rather than
+ * advancing it (it's easy to assume negative means "starts earlier" —
+ * it's the opposite). Measured live: with -80px, an element's fade
+ * didn't even START until it was already ~89% scrolled into a 900px
+ * viewport (its own top edge at ~800px down) — essentially already
+ * fully visible before any animation began. `amount: 0.15` triggers
+ * once 15% of the element's own area overlaps the viewport — as it's
+ * actually arriving, not once it's already sitting there. `once: true`
+ * throughout — scrolling back up past a revealed element never
+ * re-hides it, so scrolling up and back down never re-triggers a
+ * blank/re-hidden state either.
  *
  * `initial`/`whileInView` are ALWAYS the same shape here — never toggled
  * to `false`/`undefined` based on reduceMotion, only their VALUES change
@@ -68,7 +70,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
+      viewport={{ once: true, amount: 0.15 }}
       transition={{
         duration: reduceMotion ? 0 : 0.5,
         delay: reduceMotion ? 0 : delay,

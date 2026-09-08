@@ -23,15 +23,23 @@ type FeatureSplitSectionProps = {
   media?: ReactNode;
 };
 
-/** Enter → hold pacing shared by both halves below, per the site's
- *  "Vibe & Motion" manifesto: sections should feel pinned, deliberate,
- *  and cinematic, not a quick fade the instant they scroll into view.
+/** Enter → hold pacing shared by both halves below.
  *
- *  - 0.00–0.15: held, untouched — the pin locking into place with a
- *    beat before anything moves is part of what reads as deliberate
- *    rather than instant.
- *  - 0.15–0.45: enter (opacity 0→1, plus each half's own motion below).
- *  - 0.45–1.00: hold, fully settled, unchanging.
+ *  - 0.00–0.35: enter (opacity 0→1, plus each half's own motion below),
+ *    starting IMMEDIATELY at p=0 — no held/blank period first.
+ *  - 0.35–1.00: hold, fully settled, unchanging.
+ *
+ *  A real, confirmed bug this replaces: the previous version held
+ *  BOTH halves at opacity 0 from p=0 to p=0.15 first ("the pin locking
+ *  into place with a beat before anything moves is part of what reads
+ *  as deliberate"), on the theory that a brief pause read as
+ *  intentional pacing. In practice that 15%-of-progress window is a
+ *  genuinely BLANK pinned section — confirmed live via screenshot: a
+ *  user who scrolls into one of these (there are several per page) and
+ *  stops anywhere in that window sees nothing at all, just the page's
+ *  own background, which reads as broken rather than deliberate.
+ *  Starting the enter animation at p=0 directly means there is no
+ *  progress value at which the pinned section shows nothing.
  *
  *  Deliberately NOT a scripted fade-out at the end — this codebase's
  *  established convention (MethodScrollCards, BuiltToReadYouSection) is
@@ -52,7 +60,7 @@ type FeatureSplitSectionProps = {
  *  (an element can get permanently stuck mid-transition if its style
  *  prop's shape changes across renders — see Reveal.tsx's own history). */
 function useEnterHold(progress: MotionValue<number>, reduceMotion: boolean) {
-  const eased = (p: number) => (p <= 0.15 ? 0 : p >= 0.45 ? 1 : (p - 0.15) / 0.3);
+  const eased = (p: number) => (p >= 0.35 ? 1 : p / 0.35);
   const opacity = useTransform(progress, (p) => (reduceMotion ? 1 : eased(p)));
   return { eased, opacity };
 }

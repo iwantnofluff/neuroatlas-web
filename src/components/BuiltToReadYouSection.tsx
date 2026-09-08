@@ -19,7 +19,7 @@ const BuiltToReadYouScene = dynamic(
   { ssr: false }
 );
 
-/** Headline opacity/scale, both driven by the SAME 0.3–0.6 scroll window —
+/** Headline opacity/scale, both driven by the SAME 0–0.35 scroll window —
  *  the function-transformer form of useTransform, not the array-range
  *  form. This codebase hit a confirmed framer-motion bug where the array
  *  form hands scroll-linked transforms off to a native
@@ -29,20 +29,27 @@ const BuiltToReadYouScene = dynamic(
  *  reduceMotion resolves straight to the settled end-state rather than
  *  toggling which props are passed, since swapping prop shapes between
  *  renders is the OTHER documented failure mode here (an element can get
- *  permanently stuck mid-transition — see Reveal.tsx's own history). */
+ *  permanently stuck mid-transition — see Reveal.tsx's own history).
+ *
+ *  Starts at p=0 directly, not p=0.3 — a real, confirmed bug this
+ *  replaces: holding the headline at opacity 0 until 30% progress meant
+ *  a user who scrolled into this pinned section and stopped anywhere in
+ *  that window saw the 3D model with no heading at all, reading as
+ *  broken rather than a deliberate beat. */
 function useHeadlineMotion(progress: MotionValue<number>, reduceMotion: boolean) {
-  const eased = (p: number) => (p <= 0.3 ? 0 : p >= 0.6 ? 1 : (p - 0.3) / 0.3);
+  const eased = (p: number) => (p >= 0.35 ? 1 : p / 0.35);
   const opacity = useTransform(progress, (p) => (reduceMotion ? 1 : eased(p)));
   const scale = useTransform(progress, (p) => (reduceMotion ? 1 : 1.1 - 0.1 * eased(p)));
   return { opacity, scale };
 }
 
 /** Same reasoning as useHeadlineMotion, for the subtext + button's
- *  opacity/y over the 0.6–0.8 window. Holds fully visible for the rest
- *  of the scroll range past 0.8, matching this site's established
- *  "reveal, don't cross-fade back out" convention. */
+ *  opacity/y over the 0.35–0.55 window — starting right as the headline
+ *  finishes, not after an additional held gap. Holds fully visible for
+ *  the rest of the scroll range past 0.55, matching this site's
+ *  established "reveal, don't cross-fade back out" convention. */
 function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) {
-  const eased = (p: number) => (p <= 0.6 ? 0 : p >= 0.8 ? 1 : (p - 0.6) / 0.2);
+  const eased = (p: number) => (p <= 0.35 ? 0 : p >= 0.55 ? 1 : (p - 0.35) / 0.2);
   const opacity = useTransform(progress, (p) => (reduceMotion ? 1 : eased(p)));
   const y = useTransform(progress, (p) => (reduceMotion ? 0 : 20 * (1 - eased(p))));
   return { opacity, y };

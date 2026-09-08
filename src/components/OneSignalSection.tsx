@@ -48,12 +48,15 @@ export function OneSignalSection() {
     return 1.5 - 0.5 * eased;
   });
 
-  // Subtext fades in once the headline is mostly settled (0.35-0.7),
-  // then holds — matches this codebase's established "reveal, don't
-  // cross-fade back out" convention (see MethodScrollCards' own
-  // useCardReveal).
+  // Subtext fades in alongside the tail of the headline's own settle
+  // (0.15-0.6), then holds — matches this codebase's established
+  // "reveal, don't cross-fade back out" convention (see
+  // MethodScrollCards' own useCardReveal). Hold shrunk from 0.35 to
+  // 0.15 — a real, confirmed bug this replaces: a user who stopped
+  // scrolling anywhere before 35% progress saw the headline but no
+  // subtext at all, a partial-blank rather than a deliberate stagger.
   const subtextEased = (p: number) =>
-    reduceMotion ? 1 : p <= 0.35 ? 0 : p >= 0.7 ? 1 : (p - 0.35) / 0.35;
+    reduceMotion ? 1 : p <= 0.15 ? 0 : p >= 0.6 ? 1 : (p - 0.15) / 0.45;
   const subtextOpacity = useTransform(scrollYProgress, (p) => subtextEased(p));
   const subtextY = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 16 * (1 - subtextEased(p))));
 

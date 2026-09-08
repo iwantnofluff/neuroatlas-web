@@ -82,11 +82,11 @@ function MethodCard({
     <motion.div
       initial={{ opacity: 0, rotate: startRotate, x: startX }}
       whileInView={{ opacity: 1, rotate: restRotate, x: 0 }}
-      // amount: 0.1, not margin: "-80px" — see Reveal.tsx's own comment:
-      // a negative rootMargin delays the trigger rather than advancing
-      // it, confirmed live (an element didn't start fading in until it
-      // was already ~89% scrolled into the viewport).
-      viewport={{ once: true, amount: 0.1 }}
+      // amount: 0.15, not margin: "-80px" — see Reveal.tsx's own
+      // comment: a negative rootMargin delays the trigger rather than
+      // advancing it, confirmed live (an element didn't start fading
+      // in until it was already ~89% scrolled into the viewport).
+      viewport={{ once: true, amount: 0.15 }}
       transition={
         reduceMotion
           ? { duration: 0 }
