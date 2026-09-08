@@ -107,31 +107,65 @@ const RINGS = [
  *  `animate` target (startAngle + 360, which looks identical to
  *  startAngle), so each ring shows one static gold arc at its own
  *  offset angle: a meaningful, deliberately-still frame of the same
- *  animation, not a different, conditionally-rendered element. */
+ *  animation, not a different, conditionally-rendered element.
+ *
+ * The pulse itself is a real gradient "comet" now, not a solid-color
+ * dash — matching the client's own reference: the same travelling-light
+ * treatment ShimmerButton.tsx already uses (a masked, spinning conic
+ * gradient tracing the button's border). SVG strokes can't take a
+ * conic-gradient directly, so this is the closest equivalent: a
+ * `<linearGradient>` (transparent tail -> solid gold head) whose own
+ * vector is defined in this ring's LOCAL, pre-rotation coordinates
+ * (from the arc's tail point to its head point, both computed via
+ * pointOnRing) — since gradientUnits="userSpaceOnUse" resolves in the
+ * SAME user space the circle's own geometry is drawn in, rotating the
+ * element via the same CSS `rotate` transform carries the gradient
+ * around with it, tail-to-head, exactly as if it were painted onto a
+ * rigid physical arc. ARC_FRACTION (18% of this ring's own
+ * circumference) is deliberately much longer than a tiny dot-sized
+ * pulse — a real visible trailing sweep, closer to the button's own
+ * fairly long light-trail than a short blip. */
+const ARC_FRACTION = 0.18;
+
 function Ring({
   radius,
   startAngle,
+  gradientId,
   reduceMotion,
 }: {
   radius: number;
   startAngle: number;
+  gradientId: string;
   reduceMotion: boolean;
 }) {
   const circumference = 2 * Math.PI * radius;
-  const pulseDash = `6 ${circumference - 6}`;
+  const arcLength = circumference * ARC_FRACTION;
+  const pulseDash = `${arcLength} ${circumference - arcLength}`;
+  // Tail sits at this ring's own path-start point (angle 0); head is
+  // ARC_FRACTION of the way around from there — matching whichever
+  // direction strokeDasharray actually draws in for a <circle>, so the
+  // bright end leads and the transparent end trails as it spins.
+  const tail = pointOnRing(radius, 0);
+  const head = pointOnRing(radius, 360 * ARC_FRACTION);
 
   return (
     <>
-      <circle
-        cx={CX}
-        cy={CY}
-        r={radius}
-        fill="none"
-        stroke="#F4EFE6"
-        strokeOpacity={0.1}
-        strokeWidth={0.5}
-        strokeDasharray="1.4 1.4"
-      />
+      <defs>
+        <linearGradient
+          id={gradientId}
+          gradientUnits="userSpaceOnUse"
+          x1={tail.x}
+          y1={tail.y}
+          x2={head.x}
+          y2={head.y}
+        >
+          <stop offset="0%" stopColor="var(--color-gold)" stopOpacity={0} />
+          <stop offset="100%" stopColor="var(--color-gold)" stopOpacity={1} />
+        </linearGradient>
+      </defs>
+      {/* Base ring — a full, solid, faint circle (not dashed): the
+         "track" the pulse travels along. */}
+      <circle cx={CX} cy={CY} r={radius} fill="none" stroke="#F4EFE6" strokeOpacity={0.14} strokeWidth={0.5} />
       <motion.circle
         // key toggles a full remount on reduceMotion change — a real,
         // confirmed bug this replaces: useSafeReducedMotion() is always
@@ -153,7 +187,7 @@ function Ring({
         cy={CY}
         r={radius}
         fill="none"
-        stroke="var(--color-gold)"
+        stroke={`url(#${gradientId})`}
         strokeWidth={0.9}
         strokeLinecap="round"
         strokeDasharray={pulseDash}
@@ -221,6 +255,7 @@ export function BeyondHeartSection() {
                 key={ring.key}
                 radius={ring.radius}
                 startAngle={ring.startAngle}
+                gradientId={`pulse-gradient-${ring.key}`}
                 reduceMotion={reduceMotion}
               />
             ))}
