@@ -38,30 +38,37 @@ function pointOnRing(radius: number, angleDeg: number) {
   return { x: CX + radius * Math.cos(rad), y: CY + radius * Math.sin(rad) };
 }
 
+// Fixed text-column width for the label overlay (rem) — deliberately a
+// single fixed value, not the previous responsive max-w-[11rem]
+// lg:max-w-[14rem]. A left-side node needs to shift its WHOLE wrapper
+// leftward by exactly this width (+ the dot's own gap) so the dot still
+// lands precisely on the ring despite the text rendering BEFORE it in
+// DOM order (see NODE_QUADRANTS' own comment) — that offset has to be a
+// single known constant, not one that silently changes per breakpoint.
+const NODE_WIDTH_REM = 11;
+const NODE_GAP_REM = 0.75;
+
 // radius/labelAngle/startAngle are all in the SVG's own unitless 0–100
-// viewBox space. labelAngle places each ring's HTML label at a
-// DIFFERENT angle rather than all three at literally the same "3
-// o'clock" (0°) — three rings sharing that one exact point would stack
-// their labels on top of each other (they'd all sit at the same y
-// there, only x differs by radius). A real, confirmed bug this
-// replaces: a first pass used a gentle -25°/0°/25° fan, which reads
-// well on paper but the INNER ring's own radius (14 units) caps how
-// far up that can push its label — 14 * sin(25°) is only ~6 units,
-// nowhere near enough vertical clearance for an actual multi-line
-// label, and it visibly collided with the middle ring's. The inner
-// ring's angle is pushed much further (-70°, closer to "1 o'clock"
-// than "3") specifically because its small radius means even a steep
-// angle only buys ~13 units of clearance — the outer ring's much
-// larger radius (38) reaches similar clearance at a shallower angle
-// (45°). Confirmed via screenshot, not just computed. startAngle
-// offsets each ring's traveling pulse so they don't all begin aligned.
+// viewBox space. Per an explicit follow-up spec: each label now sits in
+// a DIFFERENT QUADRANT of its own ring (not all fanned along the right
+// side, which is what the previous version did) — node 01 top-left of
+// the inner ring, 02 bottom-right of the middle ring, 03 bottom-left of
+// the outer ring. A clean diagonal angle per quadrant (-135°/45°/135°)
+// keeps all three comfortably far apart (they're now in three
+// genuinely different regions of the box, not variations on the same
+// right-side arc), which is what actually avoids the earlier version's
+// collision risk — no per-ring angle tuning needed this time.
+// `side` drives which way its text reads (see the label-overlay
+// comment below); startAngle offsets each ring's traveling pulse so
+// they don't all begin aligned.
 const RINGS = [
   {
     key: "stress-age",
     label: "Stress Age",
     body: "How your body is responding to stress over time.",
     radius: 14,
-    labelAngle: -70,
+    labelAngle: -135,
+    side: "left",
     startAngle: 0,
   },
   {
@@ -69,7 +76,8 @@ const RINGS = [
     label: "Cognitive Load",
     body: "How much your mind is juggling before your focus starts to slip.",
     radius: 26,
-    labelAngle: 0,
+    labelAngle: 45,
+    side: "right",
     startAngle: 120,
   },
   {
@@ -77,7 +85,8 @@ const RINGS = [
     label: "Emotional Regulation",
     body: "How well you stay balanced under pressure, so your response matches the moment.",
     radius: 38,
-    labelAngle: 45,
+    labelAngle: 135,
+    side: "left",
     startAngle: 240,
   },
 ] as const;
@@ -210,7 +219,17 @@ export function BeyondHeartSection() {
 
   return (
     <section id="beyond-heart-rate" className="dark-glow bg-navy-soft text-cream">
-      <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
+      {/* min-h-screen + flex centering — a real, confirmed complaint
+         this replaces: the previous py-24/py-32 block, plus a big
+         mt-16 gap before the rings, plus an unconstrained aspect-square
+         infographic, could together run taller than a real laptop
+         screen's viewport, overflowing it rather than reading as one
+         self-contained, cohesive unit. pb-0 (no bottom padding at all)
+         + justify-center is what actually keeps this fitting inside a
+         single viewport — the flex column centers the heading+rings
+         group vertically inside min-h-screen regardless of the
+         (deliberately asymmetric — pt only) padding above it. */}
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-24 pb-0 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
           <h2 className="font-serif text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate
@@ -226,19 +245,43 @@ export function BeyondHeartSection() {
            means every coordinate here IS a percentage of the
            container, so the HTML label overlay can reuse the exact
            same numbers as plain CSS top/left percentages with no unit
-           conversion. Rings are truly centered (cx=cy=50) — max-w-2xl,
-           narrower than the section's own max-w-6xl, is deliberate:
-           the ~240px of margin that opens up on each side once this
-           box is centered via mx-auto within the wider section is
-           exactly where the outer ring's label overflows into (this
-           container's own overflow is never clipped — no
+           conversion. Rings are truly centered (cx=cy=50) — this box's
+           own max width (48rem, below) is narrower than the section's
+           own max-w-6xl, deliberate: the margin that opens up on each
+           side once this box is centered via mx-auto within the wider
+           section is exactly where the outer ring's label overflows
+           into (this container's own overflow is never clipped — no
            overflow-hidden anywhere in its ancestry), rather than
            shifting the rings themselves off-center to manufacture room
-           inside a wider box. */}
+           inside a wider box. mt-4, not a previous mt-16 — the heading
+           and the rings should read as one cohesive unit, not two
+           separate blocks with a big gap between them.
+           w-[min(48rem,70vh)], not a plain max-h-[70vh] alongside
+           max-w-3xl/w-full — a real, confirmed bug that replaces: this
+           element is a flex item (the section wrapper is `flex
+           flex-col items-center`) with NON-stretch cross-axis
+           alignment, so `aspect-ratio` only derives one dimension from
+           the other when the OTHER is genuinely auto. `w-full` is an
+           EXPLICIT width, not auto, so it won — aspect-ratio then
+           derived height=width from that explicit 768px, and
+           max-h-[70vh] clamped ONLY the height afterward, leaving a
+           768×630 box that isn't square at all (confirmed by measuring
+           the SVG's own rendered getBoundingClientRect() live: width
+           768, height 630) — which put every dot's computed
+           percentage-of-square position off its ring, worse the larger
+           the ring's own radius. Removing width entirely doesn't work
+           either — with no in-flow content and no explicit size, the
+           box collapses to 0×0 (also confirmed live). A single width
+           expressed as `min(48rem, 70vh)` sidesteps this entirely:
+           aspect-square then derives a MATCHING height from that one
+           real, explicit, already-fully-resolved value, so both
+           dimensions are always equal by construction — a true square
+           at every viewport size, no flex/aspect-ratio interaction
+           left to go wrong. */}
         <Reveal
           delay={0.1}
           y={20}
-          className="relative mx-auto mt-16 hidden aspect-square w-full max-w-3xl sm:block"
+          className="relative mx-auto mt-4 hidden aspect-square w-[min(48rem,70vh)] sm:block"
         >
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden="true">
             <defs>
@@ -263,20 +306,66 @@ export function BeyondHeartSection() {
 
           {RINGS.map((ring, i) => {
             const { x, y } = pointOnRing(ring.radius, ring.labelAngle);
+            const isLeft = ring.side === "left";
+            // Per an explicit follow-up spec: text reads OUTWARD from
+            // its dot — away from the ring's center — rather than
+            // always left-to-right regardless of quadrant. For a
+            // right-side node that's just normal reading order (dot,
+            // then text growing further right, left-aligned). For a
+            // left-side node, the text has to render BEFORE the dot in
+            // DOM/flex order so it grows further LEFT (right-aligned,
+            // hugging the dot's edge) — which means the wrapper's own
+            // `left` can no longer be the dot's own x; it has to be
+            // shifted left by the text column's fixed width + gap
+            // first, so that once the text (rendered first, at that
+            // shifted position) and the dot (rendered right after it)
+            // lay out left-to-right as normal, the DOT itself still
+            // lands exactly on the ring at x%, not the wrapper's own
+            // origin. calc() is what makes a single fixed-width text
+            // column (NODE_WIDTH_REM, not the previous responsive
+            // max-w) subtractable from a percentage in one CSS value.
+            const leftStyle = isLeft
+              ? `calc(${x}% - ${NODE_WIDTH_REM}rem - ${NODE_GAP_REM}rem)`
+              : `${x}%`;
             return (
               <div
                 key={ring.key}
-                className="absolute flex items-center gap-3"
-                style={{ left: `${x}%`, top: `${y}%`, transform: "translateY(-50%)" }}
+                className="absolute flex items-start gap-3"
+                // No translateY(-50%) here — a real, confirmed bug
+                // this replaces: that centers the WHOLE wrapper
+                // (dot + text) vertically on the anchor point, shifting
+                // it up by half the wrapper's OWN total height. Since
+                // each node's text wraps to a different number of
+                // lines, that "half height" differs per node — up to a
+                // 36px dot-position error, confirmed by measuring each
+                // dot's actual on-screen distance from the SVG's own
+                // center against its ring's real radius. The dot is the
+                // first flex item (`items-start`), so leaving the
+                // wrapper unshifted puts the dot's own top edge at the
+                // anchor's y% directly — a small, ~10px, node-
+                // independent offset (its own mt-1.5 nudge to align
+                // with the eyebrow's first line) instead of a large,
+                // node-dependent one.
+                style={{ left: leftStyle, top: `${y}%` }}
               >
-                <span className="size-2 shrink-0 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]" />
-                <div className="max-w-[11rem] lg:max-w-[14rem]">
-                  <span className="eyebrow">{`0${i + 1}`}</span>
-                  <h3 className="mt-1 font-serif text-sm text-cream lg:text-base">
-                    {ring.label}
-                  </h3>
-                  <p className="mt-1 text-xs text-cream/65 lg:text-sm">{ring.body}</p>
-                </div>
+                {isLeft && (
+                  <div
+                    className="pt-1 text-right"
+                    style={{ width: `${NODE_WIDTH_REM}rem` }}
+                  >
+                    <span className="eyebrow">{`0${i + 1}`}</span>
+                    <h3 className="mt-1 font-serif text-sm text-cream">{ring.label}</h3>
+                    <p className="mt-1 text-xs text-cream/65">{ring.body}</p>
+                  </div>
+                )}
+                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]" />
+                {!isLeft && (
+                  <div className="pt-1" style={{ width: `${NODE_WIDTH_REM}rem` }}>
+                    <span className="eyebrow">{`0${i + 1}`}</span>
+                    <h3 className="mt-1 font-serif text-sm text-cream">{ring.label}</h3>
+                    <p className="mt-1 text-xs text-cream/65">{ring.body}</p>
+                  </div>
+                )}
               </div>
             );
           })}
