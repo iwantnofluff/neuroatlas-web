@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { DotPattern } from "@/components/ui/dot-pattern";
@@ -57,6 +58,22 @@ type HeroProps = {
   /** Which word in `headline` gets the gold emphasis treatment. Pass a
    *  word that isn't present (or omit entirely) to skip it. */
   emphasisWord?: string;
+  /** Same "\n"-forces-a-break convention as `headline` above, rendered
+   *  as a literal `<br className="hidden sm:block" />` between segments
+   *  — hidden below `sm` specifically so a manual break tuned for a
+   *  wide line doesn't ALSO force an awkward extra stack on top of
+   *  mobile's own natural wrapping (which already handles a narrow
+   *  viewport fine on its own). Omit it and the subhead just wraps
+   *  normally inside max-w-xl, exactly as before this existed — this
+   *  codebase has multiple other Hero subheads (the homepage's own,
+   *  /the-science's) that are already confirmed safe wrapping that
+   *  way (see max-w-xl's own comment just below), so forcing them onto
+   *  this same manual-break path isn't warranted. A forced break DOES
+   *  drop max-w-xl for that render specifically, in favor of the
+   *  parent's own max-w-3xl — once a break point is chosen manually,
+   *  each resulting segment is short enough that the 576px cap was
+   *  only ever going to wrap it AGAIN unnecessarily, undoing the exact
+   *  break just inserted. */
   subhead?: string;
   /** Defaults to the homepage's own two buttons — pass `[]` to render
    *  none (e.g. a page with its own closing CTA already doing that job,
@@ -84,6 +101,9 @@ export function Hero({
   // so every other page's existing single-string headline renders
   // byte-for-byte the same as before this existed.
   const lines = headline.split("\n").map((line) => line.split(" "));
+  // Same convention, applied to the subhead below — see that prop's own
+  // doc comment for why a forced break also drops max-w-xl.
+  const subheadSegments = subhead.split("\n");
   const reduceMotion = useSafeReducedMotion();
 
   return (
@@ -193,9 +213,31 @@ export function Hero({
           // /how-it-works, both genuinely longer than the homepage's:
           // real clipped text, not hypothetical. max-w-xl + wrapping is
           // what every other subtext on this site already does safely.
-          className="mx-auto mt-6 max-w-xl text-pretty text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75"
+          // Dropped only when the subhead has a manual break (see that
+          // prop's own doc comment) — the parent's own max-w-3xl is
+          // still there as a real ceiling, this isn't unbounded.
+          className={cn(
+            "mx-auto mt-6 text-pretty text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75",
+            subheadSegments.length === 1 && "max-w-xl"
+          )}
         >
-          {subhead}
+          {subheadSegments.map((segment, i) => (
+            <Fragment key={i}>
+              {/* A real, confirmed bug this space fixes: the "\n" in
+                 the source string is consumed entirely by split(), so
+                 with nothing here the ONLY separator between segments
+                 was the <br/> itself — invisible below `sm` where it's
+                 hidden, collapsing "changed," and "it" together into
+                 "changed,it" with no space at all, confirmed live via
+                 screenshot. A literal space before every segment but
+                 the first is harmless at `sm:` and up too (trailing
+                 whitespace right before a visible line break is not
+                 rendered as a gap). */}
+              {i > 0 && <br className="hidden sm:block" />}
+              {i > 0 && " "}
+              {segment}
+            </Fragment>
+          ))}
         </motion.p>
 
         {ctas.length > 0 && (

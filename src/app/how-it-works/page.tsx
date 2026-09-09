@@ -44,7 +44,11 @@ export default function HowItWorksPage() {
         // reported live via screenshot. See Hero.tsx's own `headline`
         // prop doc comment for how this works.
         headline={"Most Apps Stop\nAt Telling You"}
-        subhead="NeuroAtlas does not just tell you something changed, it makes sure it does."
+        // "\n" forces the break right before "it" — a real, confirmed
+        // bug this replaces: wrapping on its own at common widths left
+        // "it does." dangling alone as a 3rd line. See Hero.tsx's own
+        // `subhead` prop doc comment for how this works.
+        subhead={"NeuroAtlas does not just tell you something changed,\nit makes sure it does."}
         ctas={[]}
       />
       <HeroBoundary />
