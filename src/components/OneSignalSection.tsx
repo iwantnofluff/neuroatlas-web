@@ -7,11 +7,11 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 /**
  * "One Signal, Just Stress" — "Expand & Snap": the headline renders
- * enormous with a slow-shifting Champagne Gold / deep grey / pure white
- * gradient masked INSIDE its own glyphs (bg-clip-text text-transparent
- * over .signal-mask-gradient, see globals.css) — the gradient reads as
- * fluid liquid/light moving through the letters rather than a static
- * fill. Scrolling through this section's own h-[200vh] pinned track
+ * enormous with a slow-shifting exact #1B2430 fade masked INSIDE its
+ * own glyphs (bg-clip-text text-transparent over .signal-mask-gradient,
+ * see globals.css) — the gradient reads as fluid light moving through
+ * the letters rather than a static fill. Scrolling through this
+ * section's own h-[200vh] pinned track
  * scales the headline down from 1.5x to its resting size as it locks
  * into the center, with the supporting line fading in cleanly beneath
  * it once mostly settled.
@@ -86,7 +86,11 @@ export function OneSignalSection() {
         </motion.h2>
         <motion.p
           style={{ opacity: subtextOpacity, y: subtextY }}
-          className="mx-auto mt-8 max-w-xl text-pretty text-lg text-mist"
+          // text-[#1B2430]/70 (was text-mist) — matches the headline's
+          // own exact literal color above at a lower opacity, rather
+          // than an unrelated grey-blue token, so the two read as one
+          // deliberate palette instead of two different colors.
+          className="mx-auto mt-8 max-w-xl text-pretty text-lg text-[#1B2430]/70"
         >
           No step counts. No notifications. No sleep tracking. Just stress,
           read precisely, because that&rsquo;s the one signal that actually
