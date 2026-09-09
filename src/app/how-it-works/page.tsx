@@ -36,7 +36,14 @@ export default function HowItWorksPage() {
           alongside "/" and "/band". */}
       <Hero
         eyebrow="How It Works"
-        headline="Most Apps Stop At Telling You"
+        // "\n" forces the line break after "Stop" (3+2 words, a
+        // near-equal 14-vs-14-character split) — a real, confirmed bug
+        // this replaces: left to wrap on its own at a common desktop
+        // width, this fell "Most Apps Stop At" / "Telling You" instead
+        // (4+2 words, a visibly lopsided 17-vs-11-character split),
+        // reported live via screenshot. See Hero.tsx's own `headline`
+        // prop doc comment for how this works.
+        headline={"Most Apps Stop\nAt Telling You"}
         subhead="NeuroAtlas does not just tell you something changed, it makes sure it does."
         ctas={[]}
       />

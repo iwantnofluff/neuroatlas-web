@@ -42,6 +42,17 @@ type HeroCta = { label: string; href: string };
 
 type HeroProps = {
   eyebrow?: string;
+  /** A literal "\n" forces a line break at that exact word boundary
+   *  (see the word-wrap comment further down for why plain
+   *  text-balance/pretty can't do this job here) — omit it and the
+   *  headline just wraps normally, responsive to viewport width like
+   *  any other text. Use it when a specific split reads noticeably
+   *  more balanced than whatever the natural flex-wrap happens to
+   *  produce at common viewport widths, e.g. `headline={"Most Apps
+   *  Stop\nAt Telling You"}` (3+2 words, near-equal line width) rather
+   *  than letting "Most Apps Stop At" / "Telling You" (4+2 words, a
+   *  visibly lopsided 17-vs-11-character split) wrap on its own —
+   *  reported live on /how-it-works at a common desktop width. */
   headline?: string;
   /** Which word in `headline` gets the gold emphasis treatment. Pass a
    *  word that isn't present (or omit entirely) to skip it. */
@@ -68,7 +79,11 @@ export function Hero({
   subhead = SUBHEAD,
   ctas = DEFAULT_CTAS,
 }: HeroProps = {}) {
-  const words = headline.split(" ");
+  // One entry per forced line (see the `headline` prop's own doc
+  // comment) — [headline] with no split at all when there's no "\n",
+  // so every other page's existing single-string headline renders
+  // byte-for-byte the same as before this existed.
+  const lines = headline.split("\n").map((line) => line.split(" "));
   const reduceMotion = useSafeReducedMotion();
 
   return (
@@ -135,21 +150,33 @@ export function Hero({
            an element's OWN inline text content wrapping — it has no
            defined effect on flex-item wrapping, so adding it here would
            do nothing (confirmed: flex-wrap governs this, not text-wrap)
-           while looking like it had been handled. */}
+           while looking like it had been handled. A headline with an
+           explicit "\n" (see that prop's own doc comment) instead gets
+           one nested flex-wrap row PER forced line — each row is its
+           own flex-wrap context, so words can still only wrap within
+           the line they were assigned to, never drift across the
+           forced break. */}
         <motion.h1
           initial="hidden"
           animate="visible"
           variants={wordContainer}
-          className="mt-6 flex flex-wrap justify-center gap-x-[0.28em] gap-y-1 font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+          className="mt-6 flex flex-col items-center gap-y-1 font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
         >
-          {words.map((word, i) => (
-            <motion.span
-              key={`${word}-${i}`}
-              variants={wordItem}
-              className={cn(word === emphasisWord && "text-gold")}
+          {lines.map((words, li) => (
+            <span
+              key={li}
+              className="flex flex-wrap justify-center gap-x-[0.28em] gap-y-1"
             >
-              {word}
-            </motion.span>
+              {words.map((word, i) => (
+                <motion.span
+                  key={`${word}-${i}`}
+                  variants={wordItem}
+                  className={cn(word === emphasisWord && "text-gold")}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </span>
           ))}
         </motion.h1>
 
