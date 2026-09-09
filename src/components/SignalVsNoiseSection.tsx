@@ -238,7 +238,13 @@ export function SignalVsNoiseSection() {
             <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
               The App Reads You
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
+            {/* max-w-lg (was max-w-xl) + text-balance (was text-pretty)
+               — a real, confirmed bug this replaces: at the wider max-
+               width this wrapped awkwardly (a short trailing line),
+               reported live. text-balance evens out the line lengths
+               within a tighter box instead of just trimming the last
+               line's widow the way text-pretty does. */}
+            <p className="mx-auto mt-6 max-w-lg text-balance text-lg text-mist">
               The band reads your signals. The app turns them into something
               you can act on.
             </p>

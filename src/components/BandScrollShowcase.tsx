@@ -79,9 +79,9 @@ function useSignalReveal(
  *  are what actually reads as "floating around the model" rather than
  *  "pinned to the corners of the viewport". */
 const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> = {
-  "upper-left": "left-[6%] top-[30%]",
-  "lower-right": "right-[6%] bottom-[16%] text-right",
-  "lower-left": "left-[6%] bottom-[30%]",
+  "upper-left": "left-[16%] top-[30%]",
+  "lower-right": "right-[16%] bottom-[16%] text-right",
+  "lower-left": "left-[16%] bottom-[30%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
@@ -215,21 +215,22 @@ export function BandScrollShowcase() {
           ))}
         </div>
 
-        {/* Subtext + CTA — editorial bottom-LEFT placement (was
-           dead-center), z-10, IN FRONT of the model. Kept as its own
-           element rather than folded into the top headline block — if
-           it lived there, the model's own overlap into that block could
-           end up visually covering (and since a WebGL canvas isn't
-           naturally click-through, potentially intercepting clicks on)
-           the CTA button. Kept static, not tied to scroll progress —
-           matching this hero's original always-visible-on-load
-           treatment; only the signals and the model's own rotation are
-           scroll-driven. */}
-        <div className="absolute bottom-8 left-6 z-10 max-w-xs text-left sm:bottom-10 xl:left-10">
+        {/* Subtext + CTA — centered directly under the model (was
+           editorial bottom-left, which read as too far from the model
+           it's actually describing), z-10, IN FRONT of the model. Kept
+           as its own element rather than folded into the top headline
+           block — if it lived there, the model's own overlap into that
+           block could end up visually covering (and since a WebGL
+           canvas isn't naturally click-through, potentially
+           intercepting clicks on) the CTA button. Kept static, not tied
+           to scroll progress — matching this hero's original always-
+           visible-on-load treatment; only the signals and the model's
+           own rotation are scroll-driven. */}
+        <div className="absolute inset-x-0 bottom-8 z-10 mx-auto max-w-xs text-center sm:bottom-10">
           <p className="text-pretty text-base text-cream/75 sm:text-lg">
             Because knowing your stress is the first step to managing it.
           </p>
-          <div className="mt-4 sm:mt-6">
+          <div className="mt-4 flex justify-center sm:mt-6">
             <ShimmerLink
               href="/request-access"
               background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
