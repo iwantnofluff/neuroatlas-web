@@ -56,6 +56,16 @@ type Spec = {
   side: Side;
   /** Which entry in SPEC_ANCHORS (specAnchors.ts) this spec targets. */
   key: SpecKey;
+  /** % down the rail's own box (top-[200px] to bottom-[100px], see
+   *  below) this spec's node sits at. Staggered by design, not an
+   *  even split per side — the 2 right-side nodes are deliberately
+   *  offset to land in the vertical GAPS between the 3 left-side
+   *  nodes (35%/65%, the midpoints of the 20-50 and 50-80 gaps)
+   *  rather than lining up evenly with them, so the two columns read
+   *  as an interleaved, balanced composition instead of a plain
+   *  side-by-side grid — a direct, explicit layout request, not a
+   *  cosmetic tweak inferred from a bug report. */
+  railPercent: number;
 };
 
 const specs: Spec[] = [
@@ -66,6 +76,7 @@ const specs: Spec[] = [
     rotation: { x: 0.25, y: Math.PI },
     side: "left",
     key: "sensors",
+    railPercent: 20,
   },
   {
     label: "Battery",
@@ -74,6 +85,7 @@ const specs: Spec[] = [
     rotation: { x: 1.3, y: 0.1 },
     side: "left",
     key: "battery",
+    railPercent: 50,
   },
   {
     label: "Connectivity",
@@ -82,6 +94,7 @@ const specs: Spec[] = [
     rotation: { x: 0.3, y: -0.9 },
     side: "left",
     key: "connectivity",
+    railPercent: 80,
   },
   {
     label: "Dimensions",
@@ -90,6 +103,7 @@ const specs: Spec[] = [
     rotation: { x: 0.15, y: Math.PI / 2 },
     side: "right",
     key: "dimensions",
+    railPercent: 35,
   },
   {
     label: "Compatibility",
@@ -98,6 +112,7 @@ const specs: Spec[] = [
     rotation: { x: 0.3, y: 0 },
     side: "right",
     key: "compatibility",
+    railPercent: 65,
   },
 ];
 
@@ -317,26 +332,101 @@ export function TheSpecs() {
          rather than tracing its literal silhouette. One rail per side —
          `top`+`bottom` (no explicit height) makes each rail's box always
          exactly fill the safe gap between the heading and the section's
-         own bottom edge, and `justify-between` spreads that side's
-         reticles evenly inside it. bottom-[100px] (was bottom-[330px]) —
-         that much larger inset existed solely to clear the old fixed
-         bottom data panel; with the panel gone (its content now lives in
-         each reticle's own expanding card instead) the rail can use
-         nearly the section's full height. */}
+         own bottom edge, which each spec's own `railPercent` (see the
+         Spec type's own comment) is a percentage OF. bottom-[100px]
+         (was bottom-[330px]) — that much larger inset existed solely to
+         clear the old fixed bottom data panel; with the panel gone (its
+         content now lives in each reticle's own expanding card instead)
+         the rail can use nearly the section's full height.
+         `justify-between` (evenly spreading whichever nodes happen to
+         share a side) is deliberately GONE, replaced with each node
+         positioning itself independently via its own `railPercent` —
+         justify-between can't produce a staggered layout where the 2
+         right-side nodes land in the GAPS between the 3 left-side ones
+         rather than lining up with them, since it only knows how to
+         space a side's own nodes relative to EACH OTHER, never relative
+         to the other rail. */}
       {(["left", "right"] as const).map((side) => (
         <div
           key={side}
-          className={cn(
-            "absolute top-[200px] bottom-[100px] z-20 flex flex-col items-center justify-between",
-            RAIL_SIDE_CLASSNAMES[side]
-          )}
+          className={cn("absolute top-[200px] bottom-[100px] z-20", RAIL_SIDE_CLASSNAMES[side])}
         >
           {specs.map((spec, i) => {
             if (spec.side !== side) return null;
             const isActive = i === active;
             const Icon = spec.icon;
             return (
-              <div key={spec.label} className="relative flex flex-col items-center">
+              <div
+                key={spec.label}
+                // No translateY here — the same real, confirmed bug
+                // this avoids as BeyondHeartSection.tsx's own ring dots
+                // (see that file's doc comment): centering this WHOLE
+                // wrapper vertically on railPercent would shift the
+                // CIRCLE's position by however tall the card currently
+                // is, since below `lg` the card is normal-flow content
+                // stacked inside this same wrapper (see the card's own
+                // className below) — meaning every node would visibly
+                // jump position the instant one of them activates.
+                // Leaving it unset means the circle (first child) just
+                // sits flush at the wrapper's own top edge, which is
+                // pinned at railPercent regardless of what mounts below
+                // it.
+                //
+                // No translateX(-50%) either — a real, confirmed bug
+                // this replaces: that classic "true center" idiom only
+                // works against a parent with a REAL width to be 50%
+                // of; this rail has none (only one of `left`/`right` is
+                // ever set, see RAIL_SIDE_CLASSNAMES, so it shrinks to
+                // fit its own content instead of spanning a fixed box).
+                // Against a shrink-to-fit parent, `left-1/2` resolves to
+                // ~0 and `-translate-x-1/2` then shifts this whole node
+                // left by HALF ITS OWN WIDTH regardless — on desktop a
+                // subtle ~28px drift, confirmed live via a before/after
+                // pixel comparison; at a narrow (below-`lg`) viewport
+                // that same shift pushed the stacked card half off the
+                // left edge of the screen, confirmed live via
+                // screenshot (its own label visibly clipped). Simply
+                // sitting flush against whichever edge the rail is
+                // itself anchored to — `left-0` here since the rail's
+                // own inset (left-4/sm:left-8/lg:left-80) IS that edge
+                // already — reproduces the exact pre-stagger horizontal
+                // position with no transform math needed at all.
+                //
+                // w-11/sm:w-14 — matches the circle's own size-11/
+                // sm:size-14 exactly, rather than leaving this wrapper
+                // to shrink-to-fit its content. Below `lg`, that content
+                // includes the stacked card (see its own className
+                // below), which is WIDER than the circle — a shrink-to-
+                // fit wrapper would grow to match it the instant this
+                // spec activates, which then shifts the CIRCLE sideways
+                // too (`items-center` would recentre it within whatever
+                // the wrapper's current width happens to be). A fixed
+                // width equal to the circle's own removes that risk
+                // entirely — the circle already fills the wrapper
+                // exactly, at any width.
+                //
+                // items-start (left rail) / items-end (right rail), not
+                // items-center — a real, confirmed bug this replaces:
+                // centering the wider stacked card within this now
+                // FIXED-width wrapper made it overflow symmetrically
+                // both directions, and on the left rail specifically
+                // (anchored just 16px from the viewport's own left
+                // edge) that pushed the card's left half straight past
+                // x=0, clipped by the section's own overflow-hidden —
+                // confirmed live via screenshot (the card's own text
+                // visibly cut off mid-word on every line). Aligning to
+                // whichever edge the circle itself sits flush against
+                // instead — same principle the `lg:` edge-anchored
+                // expansion already uses, just applied to a stacked
+                // instead of a sideways layout — means the card only
+                // ever grows INWARD, toward the safe center of the
+                // screen, never toward the edge it's already close to.
+                className={cn(
+                  "absolute flex w-11 flex-col sm:w-14",
+                  side === "left" ? "left-0 items-start" : "right-0 items-end"
+                )}
+                style={{ top: `${spec.railPercent}%` }}
+              >
                 <motion.button
                   type="button"
                   aria-pressed={isActive}
