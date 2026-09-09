@@ -271,9 +271,23 @@ export function Hero({
             ? { duration: 0.5, delay: 1 }
             : { opacity: { delay: 1, duration: 0.5 }, y: { repeat: Infinity, duration: 1.8, ease: "easeInOut" } }
         }
-        className="relative mb-8 flex justify-center text-cream/50"
+        className="relative mb-8 flex justify-center"
       >
-        <ChevronDown className="size-5" />
+        {/* A real, confirmed fidelity bug this replaces: a bare icon at
+           text-cream/50 with no container at all read as faded/washed
+           out rather than a deliberate, premium scroll cue — reported
+           live. Solid border-cream/40 (not the literal border-white/40
+           this was specced with — --color-cream is this site's own
+           near-white brand token, used everywhere else a crisp light
+           accent is needed, rather than introducing a one-off raw
+           white), no blur anywhere, and the chevron itself now plain
+           text-cream (fully opaque, was /50) inside the circle rather
+           than faded on its own. hover: proves it reads as interactive
+           even though it's still purely decorative (aria-hidden,
+           no onClick) — a visual affordance, not new behavior. */}
+        <div className="flex size-11 items-center justify-center rounded-full border border-cream/40 text-cream transition-all duration-300 hover:border-cream hover:bg-cream/5">
+          <ChevronDown className="size-5" />
+        </div>
       </motion.div>
     </section>
   );
