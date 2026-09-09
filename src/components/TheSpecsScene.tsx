@@ -10,7 +10,16 @@ import { StudioEnvironment } from "@/components/StudioEnvironment";
 import type { SpecKey } from "@/lib/specAnchors";
 
 const XRAY_MODEL_SCALE_DESKTOP = 34;
-const XRAY_MODEL_SCALE_MOBILE = 22;
+// 22 -> 30 — this value's old tuning was for a completely different
+// container shape: the full section-height box the pre-mobile-layout
+// stacked-card fallback used. TheSpecs.tsx's new confined h-[45vh]
+// mobile canvas is much shorter, and the same world-scale object reads
+// as small and lost floating in the middle of that shorter box at the
+// old value — confirmed live via screenshot, not assumed from the
+// box's height ratio alone (the same standard this codebase already
+// holds itself to for every other scene-specific scale constant, see
+// e.g. BandScrollScene.tsx's own comment on this exact point).
+const XRAY_MODEL_SCALE_MOBILE = 42;
 
 export type ProjectedPoint = { x: number; y: number } | null;
 
@@ -97,19 +106,27 @@ export function TheSpecsScene({
   targetRotation,
   activeAnchorKey,
   onProjected,
+  autoRotate = false,
 }: {
   reduceMotion: boolean;
   isMobile: boolean;
   targetRotation: { x: number; y: number };
-  /** Which spec's 3D anchor to render the glowing dot at and track. */
-  activeAnchorKey: SpecKey;
+  /** Which spec's 3D anchor to render the glowing dot at and track.
+   *  Undefined renders no dot at all — TheSpecs.tsx's mobile layout
+   *  passes undefined here (no leader line ever points at it there, so
+   *  a lone glowing dot with nothing explaining it would just read as
+   *  an unexplained detail rather than an annotation). */
+  activeAnchorKey?: SpecKey;
   /** Called every frame with the active anchor's current 2D screen
    *  position (relative to this canvas, which is the same box as the
    *  section — see TheSpecs.tsx), or null while it can't be resolved
    *  (not yet mounted, or behind the camera). Omit entirely (leave
    *  undefined) to skip tracking altogether — TheSpecs.tsx does this
-   *  below the `lg` breakpoint, where no leader line is ever drawn. */
+   *  below the `md` breakpoint, where no leader line is ever drawn. */
   onProjected?: (point: ProjectedPoint) => void;
+  /** Passed straight through to <Band>'s own identically-named prop —
+   *  see its doc comment. */
+  autoRotate?: boolean;
 }) {
   const staticProgress = useMotionValue(0);
   const anchorRef = useRef<THREE.Mesh>(null);
@@ -117,6 +134,28 @@ export function TheSpecsScene({
   return (
     <Canvas
       className="!absolute inset-0"
+      // touchAction/pointerEvents here, not as Tailwind classes on
+      // TheSpecs.tsx's own wrapper div — a real, confirmed bug those
+      // would otherwise be: R3F's <Canvas> renders its OWN wrapper div
+      // around the actual <canvas> element (this component's `style`
+      // prop lands on THAT div, not on the canvas tag itself, confirmed
+      // by inspecting the rendered DOM directly), and that div sets its
+      // own explicit inline `pointer-events: auto` regardless of
+      // whatever an ANCESTOR further up computes — CSS inheritance
+      // doesn't win against a more specific explicit value, so a
+      // `pointer-events-none` class on a div two levels further out
+      // (which is what TheSpecs.tsx's wrapper originally tried) never
+      // actually reached the canvas at all. Setting both directly here,
+      // where R3F actually applies them, is what reaches the real
+      // touch-receiving element. `pan-y` (not the stricter `none`)
+      // means a swipe over the model always scrolls the page — there's
+      // no drag-to-rotate/orbit control on this scene for a horizontal
+      // gesture to conflict with anyway; `pointerEvents: none` on
+      // mobile only is the belt-and-suspenders half of that same
+      // scroll-safety requirement (nothing on this scene is
+      // interactive there in the first place, so the canvas has no
+      // reason to intercept touch input at all).
+      style={{ touchAction: "pan-y", pointerEvents: isMobile ? "none" : "auto" }}
       // 2->1.5 — see BandScrollScene.tsx's own comment: the fully-
       // metallic materials + <StudioEnvironment /> measurably raised
       // per-pixel shading cost, and capping the DPR ceiling is the
@@ -154,6 +193,7 @@ export function TheSpecsScene({
           targetRotation={targetRotation}
           activeAnchorKey={activeAnchorKey}
           anchorRef={anchorRef}
+          autoRotate={autoRotate}
         />
       </Suspense>
       {onProjected && <AnchorProjector anchorRef={anchorRef} onProjected={onProjected} />}

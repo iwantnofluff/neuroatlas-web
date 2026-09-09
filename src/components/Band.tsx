@@ -221,13 +221,15 @@ export function Band({
   targetRotation,
   activeAnchorKey,
   anchorRef,
+  autoRotate = false,
 }: {
   scrollProgress: MotionValue<number>;
   reduceMotion: boolean;
   isMobile?: boolean;
   variant?: "reveal" | "showcase" | "xray";
   scale?: number;
-  /** "xray" only — the Euler x/y the model should currently ease toward. */
+  /** "xray" only — the Euler x/y the model should currently ease toward.
+   *  Ignored entirely when `autoRotate` is true. */
   targetRotation?: { x: number; y: number };
   /** "xray" only — which spec's anchor point to render the glowing dot
    *  at (see specAnchors.ts). Undefined renders no dot at all. */
@@ -238,6 +240,14 @@ export function Band({
    *  separate invisible marker, so the projected point and the visible
    *  dot can never drift apart — see specAnchors.ts's own comment. */
   anchorRef?: Ref<THREE.Mesh>;
+  /** "xray" only — TheSpecs.tsx's mobile layout has no click-driven
+   *  spec selection to steer the model toward (the whole annotation UI
+   *  is hidden below `md`, see that file's own comment), so it passes
+   *  this instead: a slow, continuous turntable spin, purely ambient,
+   *  just enough to still show off the hardware. Takes over the
+   *  rotation update entirely — `targetRotation` is read at all only
+   *  when this is false. */
+  autoRotate?: boolean;
 }) {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -260,12 +270,23 @@ export function Band({
     };
   }, [nodes]);
 
-  useFrame(() => {
+  useFrame((_state, delta) => {
     const g = group.current;
     if (!g) return;
 
     if (variant === "xray") {
       g.position.y = 0;
+      if (autoRotate) {
+        // A representative settled front-on tilt (matches the
+        // "showcase" variant's own reduceMotion pose just below) rather
+        // than 0 — a flat, un-tilted spin reads as a coin spinning edge-
+        // on more than a product turning to show itself off. reduceMotion
+        // holds it there entirely, same "still functions, just instant"
+        // convention as every other variant's own reduceMotion branch.
+        g.rotation.x = 0.3;
+        if (!reduceMotion) g.rotation.y += delta * 0.35;
+        return;
+      }
       const target = targetRotation ?? { x: 0.3, y: 0 };
       const damp = reduceMotion ? 1 : 0.08;
       g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, target.x, damp);

@@ -116,30 +116,26 @@ const specs: Spec[] = [
   },
 ];
 
-// lg:left-16/right-16 (64px) — this section's ORIGINAL inset, back when
-// the only thing living in the rail was a 56px circle — is a real,
-// confirmed bug once a w-64 (256px) card has to grow further outward
-// from there: 64px of margin can't hold a 256px card + a 1rem gap
-// (needs >=272px), so the card blew straight past the section's own
-// overflow-hidden edge and was clipped down to a sliver, confirmed live
-// via screenshot. lg:left-80/right-80 (320px) leaves a real 48px buffer
-// beyond that minimum at the narrowest width this still applies to
-// (1024px, the lg breakpoint itself) — sm and below are unaffected,
-// since the card is a normal-flow stacked block there, never absolutely
-// positioned against the viewport edge (see the per-spec card's own
-// doc comment).
+// The whole floating-node/leader-line system below (rail, anchors,
+// line) is only ever rendered at `md:` and up now — see the `isMobile`
+// check that wraps it further down, and MobileSpecList just below for
+// what renders instead. That means `left-8`/`right-8` (not `left-4`/
+// `sm:left-8` — those below-`sm` tiers are now dead code, unreachable
+// since nothing under `md` ever mounts this rail at all) is already the
+// SMALLEST width this ever needs to handle. lg:left-80/right-80
+// (320px) — up from lg:left-16/right-16 (64px), this section's
+// ORIGINAL inset back when the only thing living in the rail was a
+// 56px circle — is a real, confirmed bug fix once a w-64 (256px) card
+// has to grow further outward from there: 64px of margin can't hold a
+// 256px card + a 1rem gap (needs >=272px), so the card blew straight
+// past the section's own overflow-hidden edge and was clipped down to
+// a sliver, confirmed live via screenshot. 320px leaves a real 48px
+// buffer beyond that minimum at the narrowest width it applies to
+// (1024px, the lg breakpoint itself).
 const RAIL_SIDE_CLASSNAMES: Record<Side, string> = {
-  left: "left-4 sm:left-8 lg:left-80",
-  right: "right-4 sm:right-8 lg:right-80",
+  left: "left-8 lg:left-80",
+  right: "right-8 lg:right-80",
 };
-
-/** Below this width there's no real margin for a card to expand into (the
- *  rail sits only 16-32px from the viewport edge below `lg`) — see the
- *  per-spec card's own doc comment for the full reasoning and what
- *  happens instead. Matches Tailwind's own `lg` breakpoint (1024px) so
- *  the JS-driven branch here and the `lg:` CSS classes below never
- *  disagree about where the line falls. */
-const ANNOTATION_BREAKPOINT_PX = 1023;
 
 /** The card's own edge (nearest the model) — re-measured on activate and
  *  on resize, NOT every frame; unlike the model's target point, this
@@ -152,8 +148,16 @@ type CardEdge = { x: number; y: number };
 export function TheSpecs() {
   const [active, setActive] = useState(0);
   const reduceMotion = useSafeReducedMotion();
+  // Below `md` (768px, useIsMobile's own default): the entire floating-
+  // node/leader-line system is replaced outright by a dedicated mobile
+  // layout (a small auto-rotating model + a plain vertical spec list —
+  // see the JSX below) rather than trying to make the annotation system
+  // itself responsive down to phone widths. One flag now drives BOTH
+  // that swap AND the model's own scale prop — they used to be two
+  // separate `useIsMobile()` calls at two different breakpoints (768px
+  // for scale, 1024px for the annotation system), which is no longer
+  // needed now that both concerns share the same cutoff.
   const isMobile = useIsMobile();
-  const isNarrow = useIsMobile(ANNOTATION_BREAKPOINT_PX);
   const activeSpec = specs[active];
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -185,7 +189,7 @@ export function TheSpecs() {
   // AnchorProjector below, resize included, since it re-reads the live
   // canvas size every frame).
   useLayoutEffect(() => {
-    if (isNarrow) return;
+    if (isMobile) return;
     if (reduceMotion) measureCardEdge(active);
     function onResize() {
       measureCardEdge(active);
@@ -197,7 +201,7 @@ export function TheSpecs() {
       window.removeEventListener("resize", onResize);
       ro.disconnect();
     };
-  }, [active, isNarrow, reduceMotion]);
+  }, [active, isMobile, reduceMotion]);
 
   function selectSpec(index: number) {
     if (index === active) return;
@@ -237,7 +241,7 @@ export function TheSpecs() {
    *  whichever single frame the path hasn't mounted yet and succeeds
    *  every frame after. */
   function handleProjected(point: { x: number; y: number } | null) {
-    if (isNarrow) return;
+    if (isMobile) return;
     const edge = cardEdgeRef.current;
     if (!point || !edge) return;
     if (!lineVisible) setLineVisible(true);
@@ -247,105 +251,15 @@ export function TheSpecs() {
     path.setAttribute("d", `M ${edge.x} ${edge.y} L ${midX} ${edge.y} L ${point.x} ${point.y}`);
   }
 
-  return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-navy text-cream"
-    >
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"
-      />
-
-      <Reveal
-        y={20}
-        className="relative z-10 mx-auto max-w-2xl px-6 pt-20 text-center lg:pt-28"
-      >
-        <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">The Specs</h2>
-        <p className="mx-auto mt-4 max-w-md text-pretty text-lg text-cream/70">
-          The detail for those who want it.
-        </p>
-      </Reveal>
-
-      {/* The 3D core — dead center, first in the absolutely-positioned
-         layer so the reticles/line below simply paint on top with no
-         z-index arithmetic needed against it specifically (only against
-         each other, where it matters). The glowing anchor dot itself
-         lives INSIDE this scene, on the model (see Band.tsx) — real 3D
-         geometry, not a DOM overlay, so it rotates with the model for
-         free and correctly disappears behind the shell from angles that
-         put it on the model's far side. `onProjected` is only wired up
-         at `lg:` and up — below that no leader line is ever drawn (see
-         the per-spec card's own doc comment), so there's nothing for
-         the projection to feed. */}
-      <div className="absolute inset-0">
-        <TheSpecsSceneClient
-          reduceMotion={reduceMotion}
-          isMobile={isMobile}
-          targetRotation={activeSpec.rotation}
-          activeAnchorKey={activeSpec.key}
-          onProjected={isNarrow ? undefined : handleProjected}
-        />
-      </div>
-
-      {/* The leader line itself — a single dogleg path (a short flat
-         segment off the card's edge, then a straight run to the model's
-         live anchor point). `d` is never set via React/JSX — it's
-         written directly by handleProjected every frame (see that
-         function's own comment for why: a setState at 60fps would
-         re-render this whole section for one SVG attribute). The
-         stroke-dashoffset draw-in below is the one thing that DOES stay
-         React/framer-motion-driven, and deliberately doesn't use the
-         `pathLength` convenience prop — that trick measures the path's
-         total length ONCE (getTotalLength() at mount) and derives a
-         fixed dasharray/dashoffset pair from it, which would go stale
-         the instant `d` changes shape as the model keeps easing toward
-         its target rotation post-click. A fixed, generously-oversized
-         strokeDasharray (3000 — comfortably longer than this dogleg
-         could ever be at any realistic viewport width) sidesteps that:
-         animating `strokeDashoffset` from 3000 to 0 draws the line in
-         exactly the same way regardless of how the underlying `d`
-         keeps moving underneath it. `key={activeSpec.label}` remounts
-         the whole path on every switch so the draw-in restarts cleanly
-         at 0 rather than interpolating between two unrelated lines. */}
-      {!isNarrow && lineVisible && (
-        <svg
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
-        >
-          <motion.path
-            key={activeSpec.label}
-            ref={pathRef}
-            fill="none"
-            stroke="var(--color-gold)"
-            strokeWidth={1}
-            strokeOpacity={0.45}
-            strokeDasharray={3000}
-            initial={reduceMotion ? false : { strokeDashoffset: 3000 }}
-            animate={{ strokeDashoffset: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </svg>
-      )}
-
-      {/* The reticles — flanking left/right, loosely ringing the model
-         rather than tracing its literal silhouette. One rail per side —
-         `top`+`bottom` (no explicit height) makes each rail's box always
-         exactly fill the safe gap between the heading and the section's
-         own bottom edge, which each spec's own `railPercent` (see the
-         Spec type's own comment) is a percentage OF. bottom-[100px]
-         (was bottom-[330px]) — that much larger inset existed solely to
-         clear the old fixed bottom data panel; with the panel gone (its
-         content now lives in each reticle's own expanding card instead)
-         the rail can use nearly the section's full height.
-         `justify-between` (evenly spreading whichever nodes happen to
-         share a side) is deliberately GONE, replaced with each node
-         positioning itself independently via its own `railPercent` —
-         justify-between can't produce a staggered layout where the 2
-         right-side nodes land in the GAPS between the 3 left-side ones
-         rather than lining up with them, since it only knows how to
-         space a side's own nodes relative to EACH OTHER, never relative
-         to the other rail. */}
+  // Computed here rather than inline as `{!isMobile && (...)}` in the
+  // JSX below — functionally identical, but eslint's react-hooks/refs
+  // rule (a real false positive here, confirmed by testing: it only
+  // fires once this exact map is wrapped in a JSX-level conditional,
+  // not when it's unconditional, even though `selectSpec` closing over
+  // a ref is only ever invoked from an onClick handler either way,
+  // never during render) doesn't flag a plain JS variable the same way.
+  const desktopRail = !isMobile && (
+    <>
       {(["left", "right"] as const).map((side) => (
         <div
           key={side}
@@ -388,9 +302,9 @@ export function TheSpecs() {
                 // screenshot (its own label visibly clipped). Simply
                 // sitting flush against whichever edge the rail is
                 // itself anchored to — `left-0` here since the rail's
-                // own inset (left-4/sm:left-8/lg:left-80) IS that edge
-                // already — reproduces the exact pre-stagger horizontal
-                // position with no transform math needed at all.
+                // own inset (left-8/lg:left-80) IS that edge already —
+                // reproduces the exact pre-stagger horizontal position
+                // with no transform math needed at all.
                 //
                 // w-11/sm:w-14 — matches the circle's own size-11/
                 // sm:size-14 exactly, rather than leaving this wrapper
@@ -477,8 +391,7 @@ export function TheSpecs() {
                       // a normal-flow block stacked under the circle
                       // (centered, capped width) — there's no real
                       // margin for edge-anchored growth that close to
-                      // the viewport edge (see ANNOTATION_BREAKPOINT_PX's
-                      // own comment). At `lg:` and up it becomes
+                      // the viewport edge. At `lg:` and up it becomes
                       // absolutely positioned against THIS spec's own
                       // wrapper (`relative` above), pinned on the edge
                       // nearest the circle and growing away from it —
@@ -508,6 +421,184 @@ export function TheSpecs() {
           })}
         </div>
       ))}
+    </>
+  );
+
+  return (
+    <section
+      ref={sectionRef}
+      // md:min-h-[820px] — a real safety floor, not decorative: the
+      // rail's own top-[200px]/bottom-[100px] insets (see
+      // RAIL_SIDE_CLASSNAMES' sibling block below) need enough real
+      // vertical room between them for 3 staggered nodes to read as
+      // "staggered" rather than "cramped" — min-h-screen alone doesn't
+      // guarantee that on a short-but-wide "smaller laptop" display
+      // (e.g. a 1366×768 screen, common on budget/older laptops, where
+      // min-h-screen would only reserve 768px total). No matching
+      // max-width added alongside it — the annotation system's own
+      // horizontal margins (lg:left-80/right-80) were already verified
+      // safe at the narrowest width they apply to (1024px, see
+      // RAIL_SIDE_CLASSNAMES' own comment); constraining the SECTION's
+      // own width to "fix" a wide-screen case that isn't actually broken
+      // would just risk a new one — this section's background glow
+      // (the very next child below) would visibly stop at that max-
+      // width's edge on an ultra-wide monitor instead of filling it.
+      className="relative min-h-screen overflow-hidden bg-navy text-cream md:min-h-[820px]"
+    >
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"
+      />
+
+      <Reveal
+        y={20}
+        className="relative z-10 mx-auto max-w-2xl px-6 pt-20 text-center lg:pt-28"
+      >
+        <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">The Specs</h2>
+        <p className="mx-auto mt-4 max-w-md text-pretty text-lg text-cream/70">
+          The detail for those who want it.
+        </p>
+      </Reveal>
+
+      {/* The 3D core. Two completely different roles depending on
+         breakpoint, both from this ONE canvas (not two separate
+         mounts — a second WebGL context is real memory/GPU cost, not a
+         free alternative): below `md` it's a normal-flow block of its
+         own (h-[45vh], own real document height, sitting between the
+         heading and the mobile spec list below) with the model just
+         slowly auto-rotating for its own sake; at `md:` and up it
+         becomes the full-bleed absolutely-positioned backdrop the
+         reticles/line pin themselves against, exactly as before.
+         Tailwind's responsive classes (not a JS conditional swapping
+         between two different elements) do this switch — the browser's
+         own media query evaluation applies at first paint, with no
+         hydration-timing gap the way mounting a different component
+         based on the `isMobile` flag would have.
+         Scroll-safety (touch-action/pointer-events) is intentionally
+         NOT set as Tailwind classes on this div — a real, confirmed bug
+         that turned out to be: R3F's <Canvas> renders its own wrapper
+         div around the actual <canvas> element with an explicit inline
+         `pointer-events: auto`, which wins over whatever a class on an
+         ANCESTOR div (this one) computes via inheritance, confirmed by
+         inspecting the rendered DOM directly — a `pointer-events-none`
+         class here had no actual effect on the canvas at all. Both are
+         set correctly in TheSpecsScene.tsx's own `style` prop instead,
+         where R3F actually applies them to that inner wrapper. See that
+         file's own comment for the full mechanics. `activeAnchorKey`/
+         `onProjected` are both undefined on mobile — see
+         TheSpecsScene.tsx's own comment on why a dot with no line
+         pointing at it isn't rendered there at all. */}
+      <div className="relative h-[45vh] w-full md:absolute md:inset-0 md:h-auto">
+        <TheSpecsSceneClient
+          reduceMotion={reduceMotion}
+          isMobile={isMobile}
+          targetRotation={activeSpec.rotation}
+          activeAnchorKey={isMobile ? undefined : activeSpec.key}
+          onProjected={isMobile ? undefined : handleProjected}
+          autoRotate={isMobile}
+        />
+      </div>
+
+      {/* The leader line itself — a single dogleg path (a short flat
+         segment off the card's edge, then a straight run to the model's
+         live anchor point). `d` is never set via React/JSX — it's
+         written directly by handleProjected every frame (see that
+         function's own comment for why: a setState at 60fps would
+         re-render this whole section for one SVG attribute). The
+         stroke-dashoffset draw-in below is the one thing that DOES stay
+         React/framer-motion-driven, and deliberately doesn't use the
+         `pathLength` convenience prop — that trick measures the path's
+         total length ONCE (getTotalLength() at mount) and derives a
+         fixed dasharray/dashoffset pair from it, which would go stale
+         the instant `d` changes shape as the model keeps easing toward
+         its target rotation post-click. A fixed, generously-oversized
+         strokeDasharray (3000 — comfortably longer than this dogleg
+         could ever be at any realistic viewport width) sidesteps that:
+         animating `strokeDashoffset` from 3000 to 0 draws the line in
+         exactly the same way regardless of how the underlying `d`
+         keeps moving underneath it. `key={activeSpec.label}` remounts
+         the whole path on every switch so the draw-in restarts cleanly
+         at 0 rather than interpolating between two unrelated lines. */}
+      {!isMobile && lineVisible && (
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
+        >
+          <motion.path
+            key={activeSpec.label}
+            ref={pathRef}
+            fill="none"
+            stroke="var(--color-gold)"
+            strokeWidth={1}
+            strokeOpacity={0.45}
+            strokeDasharray={3000}
+            initial={reduceMotion ? false : { strokeDashoffset: 3000 }}
+            animate={{ strokeDashoffset: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </svg>
+      )}
+
+      {/* The reticles — flanking left/right, loosely ringing the model
+         rather than tracing its literal silhouette. One rail per side —
+         `top`+`bottom` (no explicit height) makes each rail's box always
+         exactly fill the safe gap between the heading and the section's
+         own bottom edge, which each spec's own `railPercent` (see the
+         Spec type's own comment) is a percentage OF. bottom-[100px]
+         (was bottom-[330px]) — that much larger inset existed solely to
+         clear the old fixed bottom data panel; with the panel gone (its
+         content now lives in each reticle's own expanding card instead)
+         the rail can use nearly the section's full height.
+         `justify-between` (evenly spreading whichever nodes happen to
+         share a side) is deliberately GONE, replaced with each node
+         positioning itself independently via its own `railPercent` —
+         justify-between can't produce a staggered layout where the 2
+         right-side nodes land in the GAPS between the 3 left-side ones
+         rather than lining up with them, since it only knows how to
+         space a side's own nodes relative to EACH OTHER, never relative
+         to the other rail. Hidden entirely below `md` (see MobileSpecList
+         just below this block for what renders there instead) — these
+         insets have no real margin to work with much below that already
+         (see RAIL_SIDE_CLASSNAMES' own comment), and a phone-width
+         screen has no room at all for a floating node beside the model
+         in the first place. */}
+      {desktopRail}
+
+      {/* Mobile's own layout — replacing the floating nodes/leader lines
+         above outright rather than trying to squeeze that system down to
+         phone width (there's no room beside the model for a floating
+         node at all below `md`, and the leader line's whole premise —
+         "point across the screen at the model" — doesn't hold at a width
+         where the model already fills most of it). A plain, always-
+         expanded vertical list, not an accordion — every spec's own
+         detail is already a single short sentence (see the `specs`
+         array above), so collapsing it behind a click would be adding
+         an interaction for content that never needed hiding in the
+         first place. relative z-10 — sits in NORMAL DOCUMENT FLOW below
+         the model canvas above (which is a normal-flow block of its own
+         on mobile too, see that div's own comment), simply because
+         that's the layout a plain list needs; it doesn't join the
+         absolutely-positioned layer the desktop annotation system
+         above lives in. */}
+      {isMobile && (
+        <div className="relative z-10 flex flex-col gap-4 px-6 pt-10 pb-16">
+          {specs.map((spec) => {
+            const Icon = spec.icon;
+            return (
+              <div
+                key={spec.label}
+                className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
+              >
+                <Icon className="size-5 text-gold" aria-hidden="true" />
+                <h3 className="mt-3 text-xs font-medium tracking-[0.2em] text-gold uppercase">
+                  {spec.label}
+                </h3>
+                <p className="mt-2 text-pretty text-sm text-cream/70">{spec.detail}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
