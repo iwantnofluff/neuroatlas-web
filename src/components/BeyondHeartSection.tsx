@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
+import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 // Concentric-rings "radar" infographic, replacing the previous bento
@@ -311,65 +312,36 @@ export function BeyondHeartSection() {
           {RINGS.map((ring, i) => {
             const { x, y } = pointOnRing(ring.radius, ring.labelAngle);
             const isLeft = ring.side === "left";
-            // Per an explicit follow-up spec: text reads OUTWARD from
-            // its dot — away from the ring's center — rather than
-            // always left-to-right regardless of quadrant. For a
-            // right-side node that's just normal reading order (dot,
-            // then text growing further right, left-aligned). For a
-            // left-side node, the text has to render BEFORE the dot in
-            // DOM/flex order so it grows further LEFT (right-aligned,
-            // hugging the dot's edge) — which means the wrapper's own
-            // `left` can no longer be the dot's own x; it has to be
-            // shifted left by the text column's fixed width + gap
-            // first, so that once the text (rendered first, at that
-            // shifted position) and the dot (rendered right after it)
-            // lay out left-to-right as normal, the DOT itself still
-            // lands exactly on the ring at x%, not the wrapper's own
-            // origin. calc() is what makes a single fixed-width text
-            // column (NODE_WIDTH_REM, not the previous responsive
-            // max-w) subtractable from a percentage in one CSS value.
-            const leftStyle = isLeft
-              ? `calc(${x}% - ${NODE_WIDTH_REM}rem - ${NODE_GAP_REM}rem)`
-              : `${x}%`;
+            const textBlock = (
+              <div style={{ width: `${NODE_WIDTH_REM}rem` }}>
+                <span className="eyebrow">{`0${i + 1}`}</span>
+                <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
+                <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
+              </div>
+            );
             return (
-              <div
-                key={ring.key}
-                className="absolute flex items-start gap-3"
-                // No translateY(-50%) here — a real, confirmed bug
-                // this replaces: that centers the WHOLE wrapper
-                // (dot + text) vertically on the anchor point, shifting
-                // it up by half the wrapper's OWN total height. Since
-                // each node's text wraps to a different number of
-                // lines, that "half height" differs per node — up to a
-                // 36px dot-position error, confirmed by measuring each
-                // dot's actual on-screen distance from the SVG's own
-                // center against its ring's real radius. The dot is the
-                // first flex item (`items-start`), so leaving the
-                // wrapper unshifted puts the dot's own top edge at the
-                // anchor's y% directly — a small, ~10px, node-
-                // independent offset (its own mt-1.5 nudge to align
-                // with the eyebrow's first line) instead of a large,
-                // node-dependent one.
-                style={{ left: leftStyle, top: `${y}%` }}
-              >
-                {isLeft && (
-                  <div
-                    className="pt-1 text-right"
-                    style={{ width: `${NODE_WIDTH_REM}rem` }}
-                  >
-                    <span className="eyebrow">{`0${i + 1}`}</span>
-                    <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
-                    <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
-                  </div>
-                )}
-                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]" />
-                {!isLeft && (
-                  <div className="pt-1" style={{ width: `${NODE_WIDTH_REM}rem` }}>
-                    <span className="eyebrow">{`0${i + 1}`}</span>
-                    <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
-                    <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
-                  </div>
-                )}
+              // A real, confirmed bug this replaces: the dot's exact
+              // position used to fall out of flex layout (order + a
+              // small mt-1.5 nudge), which put it up to ~10px off the
+              // ring depending on the text block's own line-height —
+              // close, but visibly not ON the ring, confirmed live via
+              // screenshot. This wrapper is now purely an ANCHOR (no
+              // size, no flex) at the exact ring point; the dot and the
+              // text are each independently absolutely positioned
+              // against that same anchor via transform, so the dot's
+              // position is never affected by how many lines the text
+              // wraps to.
+              <div key={ring.key} className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
+                <span
+                  aria-hidden
+                  className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
+                />
+                <div
+                  className={cn("absolute top-1/2 -translate-y-1/2", isLeft ? "text-right" : "text-left")}
+                  style={isLeft ? { right: `${NODE_GAP_REM}rem` } : { left: `${NODE_GAP_REM}rem` }}
+                >
+                  {textBlock}
+                </div>
               </div>
             );
           })}
