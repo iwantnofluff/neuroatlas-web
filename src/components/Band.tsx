@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useRef } from "react";
+import type { Ref } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
+import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAnchors";
 
 /**
  * Real gltfjsx export of the NA·01 sensor module (public/band.glb),
@@ -217,6 +219,8 @@ export function Band({
   variant = "reveal",
   scale,
   targetRotation,
+  activeAnchorKey,
+  anchorRef,
 }: {
   scrollProgress: MotionValue<number>;
   reduceMotion: boolean;
@@ -225,6 +229,15 @@ export function Band({
   scale?: number;
   /** "xray" only — the Euler x/y the model should currently ease toward. */
   targetRotation?: { x: number; y: number };
+  /** "xray" only — which spec's anchor point to render the glowing dot
+   *  at (see specAnchors.ts). Undefined renders no dot at all. */
+  activeAnchorKey?: SpecKey;
+  /** "xray" only — a ref TheSpecsScene.tsx reads every frame (via
+   *  `.getWorldPosition()`) to project this exact point to 2D for the
+   *  leader line. Attached directly to the dot mesh itself, not a
+   *  separate invisible marker, so the projected point and the visible
+   *  dot can never drift apart — see specAnchors.ts's own comment. */
+  anchorRef?: Ref<THREE.Mesh>;
 }) {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -323,6 +336,42 @@ export function Band({
             <meshStandardMaterial {...HARDWARE_MATERIAL_PROPS} />
           </mesh>
         ))}
+
+        {/* The leader line's target — a real 3D object living in the
+           SAME group as the mesh geometry above, so it inherits both
+           BASE_ROTATION and the outer group's live per-frame rotation
+           automatically, with no transform math of our own to keep in
+           sync. A real, confirmed bug this replaces: the previous
+           version pointed leader lines at a FIXED 2D screen percentage
+           that had no actual relationship to the model at all — correct
+           only by coincidence at whatever angle it was tuned against,
+           and visibly wrong (pointing at empty space) the moment the
+           model rotated to face a different spec. `anchorRef` is
+           attached directly to this mesh — TheSpecs.tsx reads its live
+           world position every frame via `.getWorldPosition()`, so the
+           dot rendered here and the leader line's endpoint can never
+           drift apart.
+           `depthTest={false}` + `renderOrder` — SPEC_ANCHORS' own
+           coordinates are a hand-picked, best-effort guess at each
+           feature's location (see that file's comment: there's no real
+           per-feature geometry to target), not measured against the
+           actual mesh surface, so a normal depth-tested sphere read as
+           invisible more often than not — confirmed live via a zoomed
+           screenshot on the Sensors pose, where the anchor should have
+           sat plainly on the visible front face and didn't render at
+           all, meaning it was landing fractionally inside the solid
+           shell rather than on top of it. Always rendering on top
+           trades away correct occlusion (a dot nominally on the far
+           side would, in principle, ideally hide behind the shell) for
+           actually being visible, which is what requirement #3 (a dot
+           that visibly "proves exactly what the line is pointing to")
+           depends on far more than strict physical correctness does. */}
+        {variant === "xray" && activeAnchorKey && (
+          <mesh ref={anchorRef} position={SPEC_ANCHORS[activeAnchorKey]} renderOrder={999}>
+            <sphereGeometry args={[SPEC_ANCHOR_DOT_RADIUS, 16, 16]} />
+            <meshBasicMaterial color="#D4AF37" toneMapped={false} depthTest={false} />
+          </mesh>
+        )}
       </group>
     </group>
   );

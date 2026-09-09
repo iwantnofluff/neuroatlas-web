@@ -1,13 +1,81 @@
 "use client";
 
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef } from "react";
+import type { RefObject } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useMotionValue } from "framer-motion";
+import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
+import type { SpecKey } from "@/lib/specAnchors";
 
 const XRAY_MODEL_SCALE_DESKTOP = 34;
 const XRAY_MODEL_SCALE_MOBILE = 22;
+
+export type ProjectedPoint = { x: number; y: number } | null;
+
+/** Lives INSIDE the Canvas specifically so it can read the live camera
+ *  and canvas size via useThree() and tick every frame via useFrame —
+ *  neither is available outside the R3F tree, which is the whole reason
+ *  this tracking has to happen in here rather than back in TheSpecs.tsx.
+ *
+ *  Reports the result through a plain callback, not React state — a
+ *  setState here would re-render the entire DOM tree up to 60 times a
+ *  second for a single line's coordinates. `onProjectedRef` (updated via
+ *  an effect, read inside useFrame) is the standard R3F pattern for
+ *  always calling the LATEST callback a parent passed down without
+ *  making useFrame's own closure stale across renders. TheSpecs.tsx
+ *  applies the result directly to a DOM node via a ref, bypassing React
+ *  entirely for the per-frame write. */
+function AnchorProjector({
+  anchorRef,
+  onProjected,
+}: {
+  anchorRef: RefObject<THREE.Object3D | null>;
+  onProjected: (point: ProjectedPoint) => void;
+}) {
+  // Two separate selectors, not one selector returning `{camera, size}`
+  // — that object literal is a new reference every store update (R3F's
+  // clock ticks the store every frame), which would defeat the point of
+  // selecting at all and re-render this on every frame regardless.
+  // Each of these two only re-renders when THAT specific field's own
+  // reference changes (camera: essentially never; size: on resize).
+  const camera = useThree((state) => state.camera);
+  const size = useThree((state) => state.size);
+  const vector = useMemo(() => new THREE.Vector3(), []);
+  const onProjectedRef = useRef(onProjected);
+  useEffect(() => {
+    onProjectedRef.current = onProjected;
+  });
+
+  useFrame(() => {
+    const anchor = anchorRef.current;
+    if (!anchor) {
+      onProjectedRef.current(null);
+      return;
+    }
+    anchor.getWorldPosition(vector);
+    // Vector3.project (NOT a "camera.project" method — THREE has no
+    // such method; projection is a Vector3 operation that takes the
+    // camera as its argument) converts world space to Normalized
+    // Device Coordinates: x/y in [-1, 1], z the depth. z > 1 means the
+    // point is behind the camera — guard against drawing a line to a
+    // mirrored/garbage 2D point in that case (not expected in normal
+    // use here, since the anchor always sits on the small centered
+    // model well within view, but real state, not assumed).
+    vector.project(camera);
+    if (vector.z > 1) {
+      onProjectedRef.current(null);
+      return;
+    }
+    onProjectedRef.current({
+      x: (vector.x * 0.5 + 0.5) * size.width,
+      y: (-vector.y * 0.5 + 0.5) * size.height,
+    });
+  });
+
+  return null;
+}
 
 /** The actual WebGL scene, kept in its own module so it can be lazy-loaded
  * client-only (see TheSpecsSceneClient), without pulling @react-three/fiber
@@ -27,12 +95,24 @@ export function TheSpecsScene({
   reduceMotion,
   isMobile,
   targetRotation,
+  activeAnchorKey,
+  onProjected,
 }: {
   reduceMotion: boolean;
   isMobile: boolean;
   targetRotation: { x: number; y: number };
+  /** Which spec's 3D anchor to render the glowing dot at and track. */
+  activeAnchorKey: SpecKey;
+  /** Called every frame with the active anchor's current 2D screen
+   *  position (relative to this canvas, which is the same box as the
+   *  section — see TheSpecs.tsx), or null while it can't be resolved
+   *  (not yet mounted, or behind the camera). Omit entirely (leave
+   *  undefined) to skip tracking altogether — TheSpecs.tsx does this
+   *  below the `lg` breakpoint, where no leader line is ever drawn. */
+  onProjected?: (point: ProjectedPoint) => void;
 }) {
   const staticProgress = useMotionValue(0);
+  const anchorRef = useRef<THREE.Mesh>(null);
 
   return (
     <Canvas
@@ -72,8 +152,11 @@ export function TheSpecsScene({
           variant="xray"
           scale={isMobile ? XRAY_MODEL_SCALE_MOBILE : XRAY_MODEL_SCALE_DESKTOP}
           targetRotation={targetRotation}
+          activeAnchorKey={activeAnchorKey}
+          anchorRef={anchorRef}
         />
       </Suspense>
+      {onProjected && <AnchorProjector anchorRef={anchorRef} onProjected={onProjected} />}
     </Canvas>
   );
 }

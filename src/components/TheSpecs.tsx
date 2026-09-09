@@ -15,6 +15,7 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { Reveal } from "@/components/Reveal";
 import { TheSpecsSceneClient } from "@/components/TheSpecsSceneClient";
+import type { SpecKey } from "@/lib/specAnchors";
 
 // Values are all placeholders pending the real spec doc — this exists to
 // give the section its real shape now (the Leader Line Annotation system)
@@ -37,18 +38,15 @@ import { TheSpecsSceneClient } from "@/components/TheSpecsSceneClient";
 // callout — this model (see Band.tsx) has no separate geometry for
 // charging contacts or a sensor window, so "Battery"/"Sensors" pick the
 // angle that would show that area on a real band (underside, back face)
-// rather than pointing at any actual mesh. `anchor` (the leader line's
-// target point) is the same kind of best-effort stylized placement — a
-// percentage position within the section's own box, chosen to land
-// somewhere plausible on the model's silhouette for that feature, not a
-// true 3D-to-2D projection onto real per-feature geometry (there isn't
-// any to project onto). This is deliberately simpler than wiring up
-// drei's <Html> + camera projection for exactly that reason: the model
-// doesn't move in screen space (camera and model position are both
-// fixed — only rotation changes when a spec is selected, see
-// TheSpecsScene.tsx), so a fixed 2D anchor is just as honest as a
-// projected one would be, at a fraction of the complexity and render
-// cost.
+// rather than pointing at any actual mesh. `key` maps to a REAL 3D
+// point on the model (see specAnchors.ts) that the leader line's target
+// end is projected from every frame, live — a real, confirmed bug this
+// replaces: a previous version pointed lines at a fixed 2D screen
+// percentage that had no actual relationship to the model, so it was
+// only correct by coincidence at whatever single angle it was tuned
+// against, and visibly wrong (pointing at empty space) the instant the
+// model turned to face a different spec. See TheSpecsScene.tsx's own
+// AnchorProjector for the projection itself.
 type Side = "left" | "right";
 type Spec = {
   label: string;
@@ -56,8 +54,8 @@ type Spec = {
   detail: string;
   rotation: { x: number; y: number };
   side: Side;
-  /** % position (of the section's own box) the leader line points to. */
-  anchor: { left: number; top: number };
+  /** Which entry in SPEC_ANCHORS (specAnchors.ts) this spec targets. */
+  key: SpecKey;
 };
 
 const specs: Spec[] = [
@@ -67,7 +65,7 @@ const specs: Spec[] = [
     detail: "The onboard sensor suite that reads the raw physiological signal.",
     rotation: { x: 0.25, y: Math.PI },
     side: "left",
-    anchor: { left: 44, top: 60 },
+    key: "sensors",
   },
   {
     label: "Battery",
@@ -75,7 +73,7 @@ const specs: Spec[] = [
     detail: "Rated runtime per charge, plus typical charging time.",
     rotation: { x: 1.3, y: 0.1 },
     side: "left",
-    anchor: { left: 58, top: 60 },
+    key: "battery",
   },
   {
     label: "Connectivity",
@@ -83,7 +81,7 @@ const specs: Spec[] = [
     detail: "How the band stays paired to the app, and how far it reaches.",
     rotation: { x: 0.3, y: -0.9 },
     side: "left",
-    anchor: { left: 49, top: 39 },
+    key: "connectivity",
   },
   {
     label: "Dimensions",
@@ -91,7 +89,7 @@ const specs: Spec[] = [
     detail: "Weight, module size, and strap sizing range.",
     rotation: { x: 0.15, y: Math.PI / 2 },
     side: "right",
-    anchor: { left: 63, top: 50 },
+    key: "dimensions",
   },
   {
     label: "Compatibility",
@@ -99,7 +97,7 @@ const specs: Spec[] = [
     detail: "Supported phones and operating system versions.",
     rotation: { x: 0.3, y: 0 },
     side: "right",
-    anchor: { left: 51, top: 51 },
+    key: "compatibility",
   },
 ];
 
@@ -128,7 +126,13 @@ const RAIL_SIDE_CLASSNAMES: Record<Side, string> = {
  *  disagree about where the line falls. */
 const ANNOTATION_BREAKPOINT_PX = 1023;
 
-type LinePoint = { x1: number; y1: number; x2: number; y2: number };
+/** The card's own edge (nearest the model) — re-measured on activate and
+ *  on resize, NOT every frame; unlike the model's target point, this
+ *  half of the line doesn't move continuously (the card sits in a fixed
+ *  editorial rail position; see its own doc comment below). Kept in a
+ *  ref, not state — it's read inside a 60fps callback (see
+ *  handleProjected) where a React re-render would be wasted work. */
+type CardEdge = { x: number; y: number };
 
 export function TheSpecs() {
   const [active, setActive] = useState(0);
@@ -138,44 +142,38 @@ export function TheSpecs() {
   const activeSpec = specs[active];
 
   const sectionRef = useRef<HTMLElement>(null);
-  const anchorRefs = useRef<Array<HTMLDivElement | null>>([]);
   const activeCardRef = useRef<HTMLDivElement | null>(null);
-  const [linePoint, setLinePoint] = useState<LinePoint | null>(null);
+  const cardEdgeRef = useRef<CardEdge | null>(null);
+  const pathRef = useRef<SVGPathElement | null>(null);
+  const [lineVisible, setLineVisible] = useState(false);
 
-  /** Measures the CURRENT active card's edge (nearest the model) and its
-   *  spec's anchor marker, both relative to the section's own box, and
-   *  stores the result as plain SVG coordinates — no live 3D projection,
-   *  no per-frame work, just two getBoundingClientRect() reads. Called
-   *  once the active card has finished animating INTO its resting
-   *  position (via the card's own onAnimationComplete below), not
-   *  during the transition — a line chasing a still-moving card reads as
-   *  janky, not "elegant"; settling first, then drawing the line in
-   *  cleanly on top of a static composition, is what actually reads as
-   *  deliberate. */
-  function measureLine(specIndex: number) {
+  function measureCardEdge(specIndex: number) {
     const sectionRect = sectionRef.current?.getBoundingClientRect();
     const cardRect = activeCardRef.current?.getBoundingClientRect();
-    const anchorRect = anchorRefs.current[specIndex]?.getBoundingClientRect();
-    if (!sectionRect || !cardRect || !anchorRect) return;
+    if (!sectionRect || !cardRect) {
+      cardEdgeRef.current = null;
+      return;
+    }
     const side = specs[specIndex].side;
-    const x1 = (side === "left" ? cardRect.right : cardRect.left) - sectionRect.left;
-    const y1 = cardRect.top + cardRect.height / 2 - sectionRect.top;
-    const x2 = anchorRect.left + anchorRect.width / 2 - sectionRect.left;
-    const y2 = anchorRect.top + anchorRect.height / 2 - sectionRect.top;
-    setLinePoint({ x1, y1, x2, y2 });
+    cardEdgeRef.current = {
+      x: (side === "left" ? cardRect.right : cardRect.left) - sectionRect.left,
+      y: cardRect.top + cardRect.height / 2 - sectionRect.top,
+    };
   }
 
   // Reduced motion skips the card's own enter transition entirely (see
   // the card's own initial/animate below), so there's no
-  // onAnimationComplete to hang the FIRST measurement off — this runs it
-  // directly instead. Also the one place that keeps the line in sync
-  // with a window resize/orientation change while a card is already
-  // settled (the active card and anchor haven't remounted, just moved).
+  // onAnimationComplete to hang the first measurement off — this runs it
+  // directly instead. Also the one place that keeps the CARD half of the
+  // line in sync with a window resize/orientation change while a card is
+  // already settled (the model's half tracks itself continuously via
+  // AnchorProjector below, resize included, since it re-reads the live
+  // canvas size every frame).
   useLayoutEffect(() => {
     if (isNarrow) return;
-    if (reduceMotion) measureLine(active);
+    if (reduceMotion) measureCardEdge(active);
     function onResize() {
-      measureLine(active);
+      measureCardEdge(active);
     }
     window.addEventListener("resize", onResize);
     const ro = new ResizeObserver(onResize);
@@ -189,15 +187,50 @@ export function TheSpecs() {
   function selectSpec(index: number) {
     if (index === active) return;
     setActive(index);
-    // Clears the OLD line immediately (same tick as the active change,
-    // so nothing stale ever paints) rather than leaving it pointing at
-    // the wrong anchor until the new card settles and remeasures.
-    setLinePoint(null);
+    // Hides the OLD line immediately (same tick as the active change) —
+    // the new one only reappears once handleProjected below has a fresh
+    // point for the NEWLY active spec, rather than leaving the outgoing
+    // line pointing at the wrong target for even one frame.
+    setLineVisible(false);
+    cardEdgeRef.current = null;
   }
 
-  const dogleg = linePoint
-    ? `M ${linePoint.x1} ${linePoint.y1} L ${(linePoint.x1 + linePoint.x2) / 2} ${linePoint.y1} L ${linePoint.x2} ${linePoint.y2}`
-    : "";
+  /** Called every frame from INSIDE the R3F canvas (see AnchorProjector
+   *  in TheSpecsScene.tsx) with the active spec's live 3D anchor,
+   *  already projected to a 2D point relative to this same section's
+   *  box. Writes straight to the path element's `d` attribute via a
+   *  plain DOM ref, bypassing React entirely — a setState here would
+   *  re-render this whole section up to 60 times a second for what's
+   *  ultimately just one SVG attribute. This is also the ONLY thing
+   *  that changes per frame: the card half of the line (cardEdgeRef)
+   *  is fixed once measured, so each call only has to recompute the
+   *  dogleg's model-facing segment, not remeasure anything.
+   *
+   *  The `setLineVisible`/`pathRef.current` ordering below is load-
+   *  bearing, not incidental — a real, confirmed deadlock this replaces:
+   *  the `<svg>`/`<path>` only exists in the DOM once `lineVisible` is
+   *  true, so on the very first frame with a valid point, `pathRef.
+   *  current` is STILL null (nothing has mounted yet). Bailing out
+   *  early whenever the path ref is missing — which seemed like the
+   *  obvious guard — meant `setLineVisible(true)` was never reached on
+   *  that first call, so the path never mounted, so the ref never
+   *  populated, forever: confirmed live via instrumented counters
+   *  (handleProjected firing every frame, always hitting the "no path"
+   *  branch, `lineVisible` never once flipping). The fix is to decide
+   *  visibility from `point`/`edge` ALONE; writing to the path is a
+   *  separate, independently-guarded step that simply no-ops for
+   *  whichever single frame the path hasn't mounted yet and succeeds
+   *  every frame after. */
+  function handleProjected(point: { x: number; y: number } | null) {
+    if (isNarrow) return;
+    const edge = cardEdgeRef.current;
+    if (!point || !edge) return;
+    if (!lineVisible) setLineVisible(true);
+    const path = pathRef.current;
+    if (!path) return;
+    const midX = (edge.x + point.x) / 2;
+    path.setAttribute("d", `M ${edge.x} ${edge.y} L ${midX} ${edge.y} L ${point.x} ${point.y}`);
+  }
 
   return (
     <section
@@ -220,73 +253,61 @@ export function TheSpecs() {
       </Reveal>
 
       {/* The 3D core — dead center, first in the absolutely-positioned
-         layer so the reticles/anchors/line below simply paint on top
-         with no z-index arithmetic needed against it specifically (only
-         against each other, where it matters). */}
+         layer so the reticles/line below simply paint on top with no
+         z-index arithmetic needed against it specifically (only against
+         each other, where it matters). The glowing anchor dot itself
+         lives INSIDE this scene, on the model (see Band.tsx) — real 3D
+         geometry, not a DOM overlay, so it rotates with the model for
+         free and correctly disappears behind the shell from angles that
+         put it on the model's far side. `onProjected` is only wired up
+         at `lg:` and up — below that no leader line is ever drawn (see
+         the per-spec card's own doc comment), so there's nothing for
+         the projection to feed. */}
       <div className="absolute inset-0">
         <TheSpecsSceneClient
           reduceMotion={reduceMotion}
           isMobile={isMobile}
           targetRotation={activeSpec.rotation}
+          activeAnchorKey={activeSpec.key}
+          onProjected={isNarrow ? undefined : handleProjected}
         />
       </div>
 
-      {/* Anchor markers — one per spec, an invisible measurement target
-         at rest (aria-hidden, no visual footprint of its own beyond the
-         dot below) sitting at that spec's stylized point on the model
-         (see the Spec type's own doc comment). Only the ACTIVE one shows
-         a small gold pulse, echoing the reticle's own active-state
-         treatment so the two ends of the leader line read as one
-         deliberate pair rather than two unrelated dots. Skipped below
-         `lg` entirely — no line ever points at these there, see the
-         per-spec card's own doc comment. */}
-      {!isNarrow &&
-        specs.map((spec, i) => (
-          <div
-            key={spec.label}
-            ref={(el) => {
-              anchorRefs.current[i] = el;
-            }}
-            aria-hidden="true"
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${spec.anchor.left}%`, top: `${spec.anchor.top}%` }}
-          >
-            <motion.span
-              animate={{ scale: i === active ? 1 : 0, opacity: i === active ? 1 : 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.25 }}
-              className="block size-2 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
-            />
-          </div>
-        ))}
-
       {/* The leader line itself — a single dogleg path (a short flat
-         segment off the card's edge, then a straight run to the model),
-         the same "elbow" shape real product-annotation lines use rather
-         than a plain diagonal. `pathLength` 0->1 is framer-motion's
-         built-in SVG line-draw trick (it manages the underlying
-         stroke-dasharray/-dashoffset math itself); `key={activeSpec.label}`
-         means switching specs unmounts the old path and mounts a
-         genuinely new one, so the draw-in restarts cleanly at 0 instead
-         of interpolating between two unrelated lines (which would sweep
-         across the model in a way that reads as broken, not
-         deliberate). No exit transition to protect — `linePoint` itself
-         is cleared the instant a new spec is selected (see selectSpec),
-         so the outgoing line simply disappears along with it rather
-         than needing its own animated handoff. */}
-      {!isNarrow && linePoint && (
+         segment off the card's edge, then a straight run to the model's
+         live anchor point). `d` is never set via React/JSX — it's
+         written directly by handleProjected every frame (see that
+         function's own comment for why: a setState at 60fps would
+         re-render this whole section for one SVG attribute). The
+         stroke-dashoffset draw-in below is the one thing that DOES stay
+         React/framer-motion-driven, and deliberately doesn't use the
+         `pathLength` convenience prop — that trick measures the path's
+         total length ONCE (getTotalLength() at mount) and derives a
+         fixed dasharray/dashoffset pair from it, which would go stale
+         the instant `d` changes shape as the model keeps easing toward
+         its target rotation post-click. A fixed, generously-oversized
+         strokeDasharray (3000 — comfortably longer than this dogleg
+         could ever be at any realistic viewport width) sidesteps that:
+         animating `strokeDashoffset` from 3000 to 0 draws the line in
+         exactly the same way regardless of how the underlying `d`
+         keeps moving underneath it. `key={activeSpec.label}` remounts
+         the whole path on every switch so the draw-in restarts cleanly
+         at 0 rather than interpolating between two unrelated lines. */}
+      {!isNarrow && lineVisible && (
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
         >
           <motion.path
             key={activeSpec.label}
-            d={dogleg}
+            ref={pathRef}
             fill="none"
             stroke="var(--color-gold)"
             strokeWidth={1}
             strokeOpacity={0.45}
-            initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
+            strokeDasharray={3000}
+            initial={reduceMotion ? false : { strokeDashoffset: 3000 }}
+            animate={{ strokeDashoffset: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
           />
         </svg>
@@ -353,7 +374,7 @@ export function TheSpecs() {
                     <motion.div
                       ref={activeCardRef}
                       key="card"
-                      onAnimationComplete={() => measureLine(i)}
+                      onAnimationComplete={() => measureCardEdge(i)}
                       initial={
                         reduceMotion
                           ? false
