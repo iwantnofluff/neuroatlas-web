@@ -38,6 +38,28 @@ const RESEARCH_CARDS = [
 const FAN_ROTATE = [-4, 2, 0];
 const FAN_X = [-14, 8, 0];
 
+// Per-card hold-then-reveal windows — index 0 (the base card) has none:
+// it's simply always settled, never fading in from hidden, which is
+// what actually lets progress start at exactly 0 (see this file's own
+// useScroll comment) without a blank first frame. Index 1 holds through
+// [0, 0.3] — genuinely nothing moves, so a reader who stops anywhere in
+// that window sees card 01 alone and fully readable, matching the
+// brief's own literal example — then slides in over [0.3, 0.5], and
+// holds again (card 01 + 02 both settled, nothing yet obscuring either)
+// through [0.5, 0.6]. Index 2 mirrors that a third of the way later:
+// holds through [0, 0.6], reveals over [0.6, 0.8], settles for the rest
+// of the track. A real, confirmed bug this replaces: the previous
+// version gave every card (including the base one) the same symmetric
+// entrance window scaled by index/total, which put card 02's own
+// reveal well underway by the time the section had barely scrolled
+// into view — reported live as "card 01 is already covered before it
+// can be read."
+const CARD_WINDOWS: ReadonlyArray<{ start: number; end: number } | null> = [
+  null,
+  { start: 0.3, end: 0.5 },
+  { start: 0.6, end: 0.8 },
+];
+
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -45,19 +67,20 @@ function clamp01(value: number) {
 function StackedResearchCard({
   progress,
   index,
-  total,
   reduceMotion,
   card,
 }: {
   progress: MotionValue<number>;
   index: number;
-  total: number;
   reduceMotion: boolean;
   card: (typeof RESEARCH_CARDS)[number];
 }) {
-  const start = index / total;
-  const end = (index + 0.7) / total;
-  const eased = (p: number) => (reduceMotion ? 1 : clamp01((p - start) / (end - start)));
+  const revealWindow = CARD_WINDOWS[index];
+  // No window (index 0) — always fully settled, nothing to hold or ease.
+  const eased = (p: number) =>
+    reduceMotion || !revealWindow
+      ? 1
+      : clamp01((p - revealWindow.start) / (revealWindow.end - revealWindow.start));
   const opacity = useTransform(progress, (p) => eased(p));
   const y = useTransform(progress, (p) => (reduceMotion ? 0 : 60 * (1 - eased(p))));
 
@@ -84,43 +107,62 @@ function StackedResearchCard({
 /**
  * "The Editorial Index" — a Swiss-style minimal split: plain text on
  * the left, a sticky stack of glassmorphic research cards on the
- * right, revealing one at a time (fading and sliding up into its
- * fanned resting position) as the reader scrolls through this
- * section's own h-[300vh] pinned track — the same "outer tall wrapper
- * + inner sticky viewport" pattern used throughout this codebase for a
- * scroll-driven reveal (see MethodScrollCards, OneSignalSection).
+ * right, card 01 already settled and readable as soon as the section
+ * pins, card 02 and 03 each holding out of view for their own reading
+ * beat before sliding in over the one before it — as the reader scrolls
+ * through this section's own h-[260vh] pinned track — the same "outer
+ * tall wrapper + inner sticky viewport" pattern used throughout this
+ * codebase for a scroll-driven reveal (see MethodScrollCards,
+ * OneSignalSection).
  *
  * Deliberately has NO outer <section> of its own and no min-height
  * background wrapper beyond its own internal sticky div — this
  * component is used as the `curtain` half of a CurtainReveal (see that
  * component and the page it's used on), which supplies its own wrapping
  * element and measures THIS component's actual rendered height
- * (including its h-[300vh] track) to compute the reveal's stacking
+ * (including its h-[260vh] track) to compute the reveal's stacking
  * math. Rendering an extra outer section here would just be redundant
  * nesting, not incorrect, but there's no reason to.
  */
 export function EditorialIndexSection() {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
-  // comment for the full mechanics: "start start" leaves scrollYProgress
-  // clamped at exactly 0 for the whole approach window while this
-  // taller-than-viewport wrapper is still scrolling up from below (its
-  // content already on screen) — here that means the FIRST card (whose
-  // own window starts at progress 0) sits fully invisible that whole
-  // stretch, not just briefly.
+  // offset ["start start", "end end"] — was ["start end", "end end"], a
+  // real, confirmed bug this replaces: "start end" starts counting
+  // progress the MOMENT any sliver of this wrapper enters the viewport
+  // from below, long before the sticky div actually pins in its
+  // readable, centered position (which only happens once the wrapper's
+  // own top edge reaches the viewport's top — "start start"). With a
+  // 180vh-tall wrapper and a ~100vh viewport, that's a real ~100vh
+  // stretch of progress already elapsed (over half the 0-1 range)
+  // before the section was even fully in view — confirmed live via
+  // screenshot: card 02 was already sliding over card 01 the instant
+  // the section appeared. "start start" fixes that by only counting
+  // progress once the section is genuinely pinned, but on its own it
+  // has its OWN documented failure mode (see FeatureSplitSection.tsx's
+  // own comment on this exact pair of offsets): progress sits clamped
+  // at exactly 0 for the whole time the wrapper is still scrolling up
+  // into view but hasn't reached the pin point yet, which is a real
+  // problem for content whose own entrance animation depends on
+  // progress leaving 0 to become visible at all. That's why card 01
+  // (index 0) no longer HAS an entrance window below (see CARD_WINDOWS)
+  // — it's simply always rendered settled, so there's nothing left that
+  // needs progress to move before it's visible.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start end", "end end"],
+    offset: ["start start", "end end"],
   });
 
   return (
-    // 300vh -> 180vh — per an explicit "too much scrolling to reveal"
-    // pass: each of the 3 stacked cards gets a ~0.23-wide progress
-    // window (index/total to (index+0.7)/total), which is still ~41vh
-    // of real scroll distance at 180vh — 300vh was excess dead scroll
-    // beyond what any card's own reveal needed.
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[180vh]")}>
+    // 180vh -> 260vh — the hold-then-reveal timeline below (see
+    // CARD_WINDOWS) needs genuine room to read as "deliberate" rather
+    // than rushed: with "start start"/"end end" now mapping the full
+    // 0-1 progress range across (wrapper height - viewport height) of
+    // real scroll, 180vh only gave ~80vh of actual pinned scroll
+    // distance for the whole 3-card sequence. 260vh gives ~160vh —
+    // roughly 30-45vh per hold-or-reveal beat, checked live rather than
+    // just computed, which reads as comfortable without dragging.
+    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[260vh]")}>
       {/* py-16 md:py-24 (was a flat py-24) — same progressive step the
          homepage's own sections already use (see page.tsx); a floor
          only (min-h-[100svh], not a fixed height), so this never risks
@@ -144,7 +186,6 @@ export function EditorialIndexSection() {
                 key={card.field}
                 progress={scrollYProgress}
                 index={i}
-                total={RESEARCH_CARDS.length}
                 reduceMotion={reduceMotion}
                 card={card}
               />
