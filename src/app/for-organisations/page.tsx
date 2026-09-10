@@ -1,8 +1,10 @@
 import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
-import { FeatureSplitSection } from "@/components/FeatureSplitSection";
-import { LabeledColumnsSection } from "@/components/LabeledColumnsSection";
+import { CountUp } from "@/components/CountUp";
+import { DataPrivacyToggle } from "@/components/DataPrivacyToggle";
+import { LeadershipDashboardSection } from "@/components/LeadershipDashboardSection";
+import { IlluminatedTimeline } from "@/components/IlluminatedTimeline";
 import { DownloadOverviewForm } from "@/components/DownloadOverviewForm";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
@@ -11,19 +13,15 @@ export const metadata = { title: "For organisations — NeuroAtlas" };
 // Copy: client's final pass over the /for-organisations content doc.
 // Section numbering below matches the doc's own 1–9 numbering.
 
-const PILOT_STEPS = [
-  {
-    label: "Scope",
-    body: "Agree the team, the size, and the timeline together.",
-  },
-  {
-    label: "Measure",
-    body: "The group uses NeuroAtlas through the pilot period, with a baseline reading at the start.",
-  },
-  {
-    label: "Review",
-    body: "An outcome report shows the shift, and where to take it next.",
-  },
+// Widely cited workplace-research averages, not a claim about any one
+// organisation's own numbers (see the caption rendered under them below)
+// — the same "real content, honestly framed" standard this codebase
+// already holds itself to elsewhere (e.g. EditorialIndexSection's own
+// placeholder research cards).
+const BURNOUT_STATS = [
+  { value: 33, suffix: "%", label: "Average cost to replace one employee, as a share of salary" },
+  { value: 7.8, decimals: 1, label: "Days lost per employee, per year, to sickness absence" },
+  { value: 50, suffix: "%", label: "Of employees report feeling burned out at work" },
 ];
 
 const SECURITY_ITEMS = [
@@ -51,89 +49,91 @@ export default function ForOrganisationsPage() {
       />
       <HeroBoundary />
 
-      {/* 2. The cost of burnout */}
+      {/* 2. The cost of burnout — Count-Up Kinetics on the three stat
+          cards below, each animating from 0 once it scrolls into view
+          (see CountUp.tsx). */}
       <section className="dark-glow bg-navy-soft text-cream">
-        <Reveal
-          className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
-          y={20}
-        >
-          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-            This Is Not Another Wellness Gimmick
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
-            Burnout is a business problem. It affects retention,
-            decision-making, productivity, and the cost of replacing people.
+        <div className="mx-auto max-w-4xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
+          <Reveal y={20}>
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              This Is Not Another Wellness Gimmick
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
+              Burnout is a business problem. It affects retention,
+              decision-making, productivity, and the cost of replacing people.
+            </p>
+            <p className="mx-auto mt-4 max-w-xl text-pretty text-lg font-medium text-cream/90">
+              NeuroAtlas turns that risk into something you can see and
+              address, before it turns into a resignation.
+            </p>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {BURNOUT_STATS.map((stat, i) => (
+              <Reveal
+                key={stat.label}
+                delay={i * 0.1}
+                className="card-glass rounded-2xl bg-transparent p-8"
+              >
+                <CountUp
+                  value={stat.value}
+                  suffix={stat.suffix}
+                  decimals={stat.decimals}
+                  className="font-serif text-4xl font-normal uppercase tracking-normal text-gold"
+                />
+                <p className="mt-3 text-pretty text-sm text-cream/70">{stat.label}</p>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-6 text-pretty text-xs text-cream/40">
+            Figures reflect widely cited workplace research, not a specific
+            claim about your organisation.
           </p>
-          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg font-medium text-cream/90">
-            NeuroAtlas turns that risk into something you can see and
-            address, before it turns into a resignation.
-          </p>
-        </Reveal>
+        </div>
       </section>
 
       {/* 3. Data privacy, explained first — the client's own final copy
           leads with this rather than saving it for a dedicated privacy
           page, so it's addressed head-on before the dashboard/pilot
-          content that follows. Shares LabeledColumnsSection with
-          /privacy's own boundary section (see that component's own
-          comment). */}
-      <LabeledColumnsSection
-        heading="Your Data Stays Yours"
-        body="Individuals own their personal NeuroAtlas data. Organizations only see anonymous, group-level trends and never an individual’s results."
-        columns={[
-          {
-            label: "Individual Sees",
-            items: ["Personal data", "Personal insights", "Personal results"],
-          },
-          {
-            label: "Organization Sees",
-            items: [
-              "Anonymous group trends",
-              "Organization-level patterns",
-              "Aggregate results",
-            ],
-          },
-        ]}
-        closingLine="This boundary is built into the platform architecture, not added as a policy or optional setting."
-        background="cream"
-      />
-
-      {/* 4. The leadership dashboard — media is a simple annotated
-          mockup of the four reported metrics, not a placeholder icon;
-          same "real content over a generic box" approach as
-          /how-it-works' own HRV stat card. */}
-      <FeatureSplitSection
-        heading="What Your Dashboard Shows"
-        body="Leadership gets a clear read on how pressure is moving through the organisation."
-        imageSide="right"
-        background="navy-soft"
-        media={
-          <div className="card-glass flex size-full flex-col justify-center gap-4 bg-transparent px-8 py-6">
-            <p className="eyebrow">The Dashboard Reports</p>
-            <ul className="space-y-3 text-pretty text-sm text-cream/80">
-              {[
-                "Composure trends across the group over time.",
-                "Where pressure is building, by team.",
-                "Platform engagement at a group level.",
-                "Movement since the last review period.",
-              ].map((item) => (
-                <li key={item} className="flex gap-2">
-                  <span
-                    aria-hidden="true"
-                    className="mt-2 size-1 shrink-0 rounded-full bg-gold/70"
-                  />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        }
-      />
-
-      {/* 5. How a pilot works */}
+          content that follows. The individual/organisation split is now
+          demonstrated directly via a tactile toggle (see
+          DataPrivacyToggle.tsx) rather than described in a static bullet
+          list. */}
       <section>
-        <div className="mx-auto max-w-6xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
+        <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
+              Your Data Stays Yours
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
+              Individuals own their personal NeuroAtlas data. Organizations
+              only see anonymous, group-level trends and never an
+              individual&rsquo;s results.
+            </p>
+          </Reveal>
+          <DataPrivacyToggle />
+          <Reveal delay={0.15} className="mt-10">
+            <p className="text-pretty text-base font-medium text-navy/80">
+              This boundary is built into the platform architecture, not
+              added as a policy or optional setting.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 4. The leadership dashboard — a pinned, scroll-jacked preview
+          with staggered floating annotations (see
+          LeadershipDashboardSection.tsx), replacing what used to be a
+          static split-panel bullet list. */}
+      <LeadershipDashboardSection />
+
+      {/* 5. How a pilot works — a vertical illuminated timeline (see
+          IlluminatedTimeline.tsx): a glowing track fills as the reader
+          scrolls, each of the four steps lifting into full opacity as
+          the fill reaches it. */}
+      <section>
+        <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <Reveal y={20} className="text-center">
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               How To Get Started
             </h2>
@@ -143,33 +143,9 @@ export default function ForOrganisationsPage() {
               results.
             </p>
           </Reveal>
-          {/* md:grid-cols-3, not sm: — see /how-it-works' own loop-steps
-             grid for why: a 640px foldable-open width is too narrow for 3
-             real columns, so this stays single-column through the whole
-             foldable tier and only splits at true tablet width. */}
-          <div className="mt-16 grid gap-12 md:grid-cols-3">
-            {PILOT_STEPS.map((step, i) => (
-              <Reveal
-                key={step.label}
-                delay={i * 0.1}
-                className="text-center md:text-left"
-              >
-                <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">
-                  {step.label}
-                </h3>
-                <p className="mt-3 text-pretty text-base text-mist">
-                  {step.body}
-                </p>
-              </Reveal>
-            ))}
+          <div className="mt-16">
+            <IlluminatedTimeline />
           </div>
-          <Reveal delay={0.3} className="mt-14">
-            <p className="mx-auto max-w-xl text-pretty text-base text-mist">
-              Your team gets a guided rollout, manager resources, and a
-              dedicated point of contact throughout.
-            </p>
-          </Reveal>
         </div>
       </section>
 
