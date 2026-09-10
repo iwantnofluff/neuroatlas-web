@@ -33,7 +33,9 @@ export function Header() {
     pathname === "/" ||
     pathname === "/band" ||
     pathname === "/how-it-works" ||
-    pathname === "/the-science";
+    pathname === "/the-science" ||
+    pathname === "/for-organisations" ||
+    pathname === "/privacy";
   const scrolled = !hasDarkHero || scrolledPastHero;
   const headerHeight = 72; // matches h-18
 
