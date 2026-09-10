@@ -140,6 +140,11 @@ export function NeuralAccordion() {
           <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Three Systems, One Method
           </h2>
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-cream/75">
+            NeuroAtlas draws on established neuroscience to understand how
+            the body and brain respond to stress, and to build
+            interventions around those responses.
+          </p>
         </Reveal>
         <div className="mt-16 flex h-[420px] flex-col gap-4 sm:flex-row">
           {SYSTEMS.map((system, i) => (

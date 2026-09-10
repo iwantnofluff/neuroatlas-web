@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 // Placeholder research AREAS, not fabricated citations — real papers
-// aren't sourced yet (see the page's own "Citations added as the
-// research is published" line), so these stay at the honest level of
-// "which field this maps to", echoing the same three pillars section 2
-// covers rather than inventing specific studies/authors.
+// aren't sourced yet, so these stay at the honest level of "which
+// field this maps to", echoing the same three pillars section 2
+// covers rather than inventing specific studies/authors. Kept
+// unchanged when this component's own heading/body were repurposed
+// from "Peer-Reviewed, Not Promised" to "Guided By Experts" (the
+// client's final copy for /the-science's section 6) — the cards
+// still read as the expert/research backing that heading refers to.
 const RESEARCH_CARDS = [
   {
     index: "01",
@@ -127,15 +130,11 @@ export function EditorialIndexSection() {
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>
             <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
-              Peer-Reviewed, Not Promised
+              Guided By Experts
             </h2>
             <p className="mt-6 max-w-md text-pretty text-lg text-mist">
-              Every protocol maps to peer-reviewed research on autonomic
-              regulation and nervous system training, not a single
-              in-house study.
-            </p>
-            <p className="mt-4 max-w-md text-pretty text-base italic text-mist/80">
-              Citations added as the research is published.
+              NeuroAtlas brings scientific thinking into the everyday
+              experience of understanding and managing stress.
             </p>
           </Reveal>
 

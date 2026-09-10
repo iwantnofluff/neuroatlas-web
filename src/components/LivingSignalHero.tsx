@@ -106,7 +106,7 @@ export function LivingSignalHero() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 text-balance font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
           >
-            The Evidence Behind The Loop
+            The Evidence Behind It
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 8 }}
