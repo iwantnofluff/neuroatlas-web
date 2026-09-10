@@ -56,7 +56,12 @@ export default function Home() {
               y={20}
               className="lg:flex lg:h-full lg:flex-col lg:justify-center"
             >
-              <h2 className="text-balance font-serif text-5xl leading-[1.05] text-navy sm:text-6xl lg:text-7xl xl:text-8xl">
+              {/* text-4xl/5xl/6xl/7xl/8xl — one dedicated step per named
+                 breakpoint (was 5xl/6xl/7xl/8xl, which left the 640–1023px
+                 range plateaued at 6xl) — same fix as Hero.tsx's own
+                 headline, applied here for the same reason: this is real
+                 wrapping multi-word text, not a giant display word. */}
+              <h2 className="text-balance font-serif text-4xl leading-[1.05] text-navy sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
                 Your Body Knows You&rsquo;re Stressed.{" "}
                 <span className="whitespace-nowrap">Do You?</span>
               </h2>
@@ -186,7 +191,10 @@ export default function Home() {
               Your data is yours. Never shared without your permission.
             </p>
           </Reveal>
-          <ul className="mx-auto mt-12 grid max-w-3xl gap-4 text-left sm:grid-cols-3">
+          {/* md:grid-cols-3, not sm: — 3 columns at a 640px foldable-open
+             width squeezes these cards; single column through the whole
+             foldable tier, splitting to 3 only at true tablet width. */}
+          <ul className="mx-auto mt-12 grid max-w-3xl gap-4 text-left md:grid-cols-3">
             {trustPoints.map((point, i) => (
               <Reveal
                 key={point}

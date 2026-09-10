@@ -61,12 +61,17 @@ export default function HowItWorksPage() {
               whether it made a difference.
             </p>
           </Reveal>
-          <div className="mt-16 grid gap-12 sm:grid-cols-3">
+          {/* md:grid-cols-3, not sm: — 3 short columns at a 640px
+             foldable-open width read as cramped and squished; delaying
+             the jump to md (768px) keeps this a clean single column
+             through the whole foldable tier instead of a premature
+             3-up split. */}
+          <div className="mt-16 grid gap-12 md:grid-cols-3">
             {loopSteps.map((step, i) => (
               <Reveal
                 key={step.label}
                 delay={i * 0.1}
-                className="text-center sm:text-left"
+                className="text-center md:text-left"
               >
                 <span className="eyebrow">{`0${i + 1}`}</span>
                 <h3 className="mt-3 text-balance font-serif text-xl">

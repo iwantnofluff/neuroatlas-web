@@ -186,7 +186,17 @@ export function Hero({
           initial="hidden"
           animate="visible"
           variants={wordContainer}
-          className="mt-6 flex flex-col items-center gap-y-1 font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+          // 4 distinct steps (text-4xl/5xl/6xl/7xl), one per breakpoint,
+          // not the previous 3 (5xl/6xl/7xl) spread across 4 — that left
+          // the 640–1023px range (foldables through tablets) plateaued at
+          // one size the whole way, then jumping straight to 7xl at lg.
+          // Reported live: the tablet-width (768px) render of this
+          // word-by-word flex-wrap headline (see the no-text-balance note
+          // above) wrapped awkwardly at that plateaued size. Giving md
+          // its own dedicated tier means every named breakpoint genuinely
+          // grows the text a step, rather than some breakpoints being a
+          // no-op carried over from the one before.
+          className="mt-6 flex flex-col items-center gap-y-1 font-serif text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
           {lines.map((words, li) => (
             <span

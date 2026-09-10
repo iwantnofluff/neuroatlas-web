@@ -292,7 +292,7 @@ export function BeyondHeartSection() {
         <Reveal
           delay={0.1}
           y={20}
-          className="relative mx-auto mt-4 hidden aspect-square w-[min(48rem,70vh)] sm:block"
+          className="relative mx-auto mt-4 hidden aspect-square w-[min(48rem,70vh)] md:block"
         >
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden="true">
             <defs>
@@ -353,12 +353,15 @@ export function BeyondHeartSection() {
           })}
         </Reveal>
 
-        {/* Mobile fallback (below sm:) — the rings get too cramped for
-           real label text at phone widths, so this drops the radar
-           entirely for a plain vertical stack, matching every other
-           card list on the site rather than a shrunk-down version of
-           a layout that needs real room to read. */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:hidden">
+        {/* Mobile + foldable fallback (below md:) — the rings get too
+           cramped for real label text below tablet width (a 640–767px
+           foldable-open screen included, not just phones), so this drops
+           the radar entirely for a plain vertical stack below md, matching
+           every other card list on the site rather than a shrunk-down
+           version of a layout that needs real room to read. Was `sm:`
+           (640px) — moved to `md:` (768px) so the circular layout only
+           ever engages at genuine tablet width and up. */}
+        <div className="mt-10 grid grid-cols-1 gap-4 md:hidden">
           {RINGS.map((ring, i) => (
             <Reveal
               key={ring.key}

@@ -54,17 +54,17 @@ function MethodCard({
 }) {
   const fan = FAN[index];
 
-  // Resting state: the tilted fan on sm:+, a plain flat stack on mobile
-  // (rotate 0, no horizontal offset) — per the client's own mobile
+  // Resting state: the tilted fan on min-[900px]:+, a plain flat stack on
+  // mobile (rotate 0, no horizontal offset) — per the client's own mobile
   // fallback spec. `y` (the vertical droop/elevation) is likewise only
-  // applied on sm:+; it's set via a plain `style` value below rather
+  // applied on min-[900px]:+; it's set via a plain `style` value below rather
   // than animated — the brief's own "initial state" only calls out
   // opacity/rotate/x as starting points, not y, so this card is already
   // sitting at its final height even before it fans open.
   const restRotate = isMobile ? 0 : fan.rotate;
   const restY = isMobile ? 0 : fan.y;
 
-  // Entrance state: on sm:+, every card starts perfectly straight
+  // Entrance state: on min-[900px]:+, every card starts perfectly straight
   // (rotate 0) and pulled in toward the center card's own x position
   // (`startX`, canceled back to 0 as it settles) — reads as "closed",
   // fanning open into its tilted resting spot as it scrolls into view.
@@ -123,9 +123,9 @@ function MethodCard({
       // border and inset-highlight glow. index 1 (the hero card) gets a
       // static z-10 — harmless at mobile's flat stack (nothing to
       // overlap there), and what actually lets it render on top of the
-      // tilted side cards' inner edges on sm:+.
+      // tilted side cards' inner edges on min-[900px]:+.
       className={cn(
-        "card-glass w-full bg-transparent p-4 text-center sm:w-72 sm:p-8 sm:text-left",
+        "card-glass w-full bg-transparent p-4 text-center min-[900px]:w-72 min-[900px]:p-8 min-[900px]:text-left",
         index === 1 && "z-10"
       )}
     >
@@ -137,11 +137,23 @@ function MethodCard({
 }
 
 export function MethodScrollCards() {
-  // 639, not the default 767 (Tailwind's `md`) — this section's own
-  // mobile fallback is explicitly "sm and below" (below the 640px `sm:`
-  // breakpoint), one narrower than every other `useIsMobile()` caller
-  // on this site relies on. See useIsMobile.ts's own comment.
-  const isMobile = useIsMobile(639);
+  // 899, not 639 (the previous value, one below Tailwind's `sm`) — a
+  // global responsiveness audit found this fan's own footprint (three
+  // sm:w-72 cards plus their -mx-6 overlap and ±8° rotation) measures a
+  // fixed ~845px regardless of viewport, confirmed live via
+  // getBoundingClientRect: real horizontal page overflow (up to 105px at
+  // a 640px foldable width, still 41px at 768px tablet width) the whole
+  // width the previous sm-based threshold claimed was "desktop". 899 is
+  // the empirically-verified point this fixed-size fan first clears the
+  // viewport with real breathing room either side (confirmed clean at
+  // 850px already; 899 keeps a margin rather than cutting it exactly at
+  // the edge) — below it, this stays the same already-correct flat
+  // mobile stack every phone already renders. The CSS below is keyed to
+  // the same custom breakpoint via Tailwind's `min-[900px]:` arbitrary
+  // variant (900, not 899 — CSS min-width and this hook's max-width are
+  // complementary, so the pair still switches together with no 1px gap
+  // where neither applies).
+  const isMobile = useIsMobile(899);
   const reduceMotion = useSafeReducedMotion();
 
   return (
@@ -155,12 +167,13 @@ export function MethodScrollCards() {
         {/* flex, not grid — "sit tightly together" (per spec) means the
            outer two cards actually need to OVERLAP the center one, which
            a plain grid's own column tracks don't allow; the negative
-           margin below does. sm:gap-0 clears the mobile gap-6 (mobile
-           has no overlap to make it redundant with) once the negative
-           margins take over. */}
-        <div className="mt-10 flex flex-col items-center gap-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-center sm:gap-0">
+           margin below does. min-[900px]:gap-0 clears the mobile gap-6
+           (mobile has no overlap to make it redundant with) once the
+           negative margins take over. min-[900px], not sm: — see this
+           component's own `useIsMobile(899)` comment above for why. */}
+        <div className="mt-10 flex flex-col items-center gap-6 min-[900px]:mt-24 min-[900px]:flex-row min-[900px]:items-center min-[900px]:justify-center min-[900px]:gap-0">
           {methodSteps.map((step, i) => (
-            <div key={`${step.label}-${i}`} className={cn(i !== 1 && "sm:-mx-6")}>
+            <div key={`${step.label}-${i}`} className={cn(i !== 1 && "min-[900px]:-mx-6")}>
               <MethodCard step={step} index={i} isMobile={isMobile} reduceMotion={reduceMotion} />
             </div>
           ))}

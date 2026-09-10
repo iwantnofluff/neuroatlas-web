@@ -143,12 +143,16 @@ export default function ForOrganisationsPage() {
               results.
             </p>
           </Reveal>
-          <div className="mt-16 grid gap-12 sm:grid-cols-3">
+          {/* md:grid-cols-3, not sm: — see /how-it-works' own loop-steps
+             grid for why: a 640px foldable-open width is too narrow for 3
+             real columns, so this stays single-column through the whole
+             foldable tier and only splits at true tablet width. */}
+          <div className="mt-16 grid gap-12 md:grid-cols-3">
             {PILOT_STEPS.map((step, i) => (
               <Reveal
                 key={step.label}
                 delay={i * 0.1}
-                className="text-center sm:text-left"
+                className="text-center md:text-left"
               >
                 <span className="eyebrow">{`0${i + 1}`}</span>
                 <h3 className="mt-3 text-balance font-serif text-xl text-navy">
