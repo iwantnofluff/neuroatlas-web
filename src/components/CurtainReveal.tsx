@@ -53,21 +53,33 @@ const HOLD_RATIO = 0.3;
  * in a plain `<div>` deliberately taller than the reveal itself, with a
  * negative top margin pulling that wrapper's document position up into
  * the curtain's tail (so the two genuinely overlap, rather than the
- * reveal simply appearing after the curtain with no overlap at all).
- * The wrapper's required extra height is MEASURED, not guessed — an
- * earlier fixed/guessed value under-provisioned it and whatever
- * followed on the page visibly intruded before the curtain had even
- * finished lifting. It depends on the curtain's actual rendered height
- * (which varies with viewport width and with whatever content the
- * caller passes in), plus how long the lift itself takes, plus the
- * desired hold:
+ * reveal simply appearing after the curtain with no overlap at all):
  *
- *   extraHeight = curtainHeight + overlap + hold
+ *   extraHeight = overlap + hold
  *
- * (derived from the sticky spec: the wrapper's bottom must not be
- * reached until the curtain has fully departed AND the hold has
- * played out, or whatever comes next starts showing through the gap
- * early).
+ * Bug #3 — a real, confirmed bug this replaces: extraHeight used to
+ * ALSO add the curtain's own full rendered height on top of overlap +
+ * hold. That's a genuine double-count, not just an oversized value —
+ * work through the actual scroll position where the sticky reveal
+ * releases (bottom of this wrapper minus the sticky child's own
+ * viewport-height, in absolute page coordinates counting from the
+ * curtain's own start) and it comes out to `2×curtainHeight + hold`,
+ * not the intended `curtainHeight + hold` (curtain fully scrolled past,
+ * plus a hold). The extra, erroneous `+curtainHeight` went unnoticed
+ * while every caller's curtain was roughly one viewport tall (~900px) —
+ * a barely-noticeable extra viewport of dead pinned scroll — but once
+ * /the-science reused this component with a curtain that has its OWN
+ * long internal scroll-jacked track (EditorialIndexSection, several
+ * viewports tall), the same bug added that entire height a second time
+ * as pure dead scroll on the CTA behind it, confirmed live: this pair
+ * of sections alone was eating roughly 60% of the whole page's total
+ * scroll length, reported as the footer being unreachable — not
+ * literally impossible to reach (a direct scrollTo() proved it
+ * technically still could), but long enough that a real person
+ * scrolling normally reasonably gave up and called it stuck. Dropping
+ * curtainHeight from the formula entirely fixes both callers at once:
+ * /band's curtain (~1 viewport) loses one viewport of unnecessary dead
+ * scroll it never needed either; /the-science's now loses several.
  *
  * reduceMotion skips the whole mechanism (no inline margin/height —
  * the two blocks just stack in normal sequence) rather than trying to
@@ -99,27 +111,22 @@ export function CurtainReveal({
   const [metrics, setMetrics] = useState<{ overlap: number; height: number } | null>(null);
 
   useEffect(() => {
-    const curtainEl = curtainRef.current;
-    if (!curtainEl) return;
-
+    // No longer reads curtainEl's own height at all (see Bug #3 above) —
+    // the metrics only depend on viewport height now, so a window
+    // resize is the only thing that can actually change them. The
+    // ResizeObserver on the curtain element is gone with it; nothing
+    // here needs to know when the curtain itself resizes any more.
     function recompute() {
-      const curtainHeight = curtainEl!.getBoundingClientRect().height;
       const viewportHeight = window.innerHeight;
       const overlap = viewportHeight * OVERLAP_RATIO;
       const hold = viewportHeight * HOLD_RATIO;
-      const extra = curtainHeight + overlap + hold;
-      setMetrics({ overlap, height: viewportHeight + extra });
+      setMetrics({ overlap, height: viewportHeight + overlap + hold });
     }
 
     recompute();
-    const ro = new ResizeObserver(recompute);
-    ro.observe(curtainEl);
     window.addEventListener("resize", recompute);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", recompute);
-    };
-  }, [curtainRef]);
+    return () => window.removeEventListener("resize", recompute);
+  }, []);
 
   // Undefined (no inline style at all) until measured, or when reduced
   // motion is preferred — the wrapper then simply renders at its
