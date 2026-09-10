@@ -13,12 +13,17 @@ export const primaryNav: NavLink[] = [
   { label: "About", href: "/about" },
 ];
 
-// Full footer site menu — Title Case per Copy V2.
+// Full footer site menu — Title Case per Copy V2. This list is the
+// client's own final, complete enumeration (see the "Final Copy for
+// Home Page" doc's own footer section) — "The Science" used to be
+// listed here too, but the final copy's own list doesn't include it,
+// so it's gone from the footer nav specifically (the /the-science page
+// itself is untouched — this only removes the footer LINK to it, which
+// wasn't asked for).
 export const footerNav: NavLink[] = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "The Band", href: "/band" },
   { label: "Inside The App", href: "/inside-the-app" },
-  { label: "The Science", href: "/the-science" },
   { label: "Toolkits", href: "/toolkits" },
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy And Your Data", href: "/privacy" },
