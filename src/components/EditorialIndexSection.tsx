@@ -72,10 +72,10 @@ function StackedResearchCard({
       }}
       className="absolute inset-0 flex flex-col justify-center rounded-3xl border border-navy/10 bg-white/50 p-8 shadow-[0_20px_45px_-25px_rgba(11,16,22,0.35)] backdrop-blur-md"
     >
-      <span className="text-xs font-medium tracking-[0.2em] text-gold-deep uppercase">
+      <span className="text-xs font-medium tracking-[-0.04em] text-gold-deep uppercase">
         {card.index}
       </span>
-      <h3 className="mt-3 text-balance font-serif text-xl text-navy">{card.field}</h3>
+      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">{card.field}</h3>
       <p className="mt-3 text-pretty text-sm text-mist">{card.note}</p>
     </motion.div>
   );
@@ -129,7 +129,7 @@ export function EditorialIndexSection() {
       <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-16 md:py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               Guided By Experts
             </h2>
             <p className="mt-6 max-w-md text-pretty text-lg text-mist">

@@ -43,7 +43,7 @@ export function LabeledColumnsSection({
         <Reveal y={20}>
           <h2
             className={cn(
-              "text-balance font-serif text-3xl leading-tight lg:text-4xl",
+              "text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl",
               !dark && "text-navy"
             )}
           >

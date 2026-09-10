@@ -22,7 +22,7 @@ export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) 
     // room, never less.
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center px-6 pt-20 pb-16 md:pt-28 md:pb-20 lg:px-10 lg:pt-32 lg:pb-24">
       <p className="eyebrow">{eyebrow}</p>
-      <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
+      <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-navy lg:text-5xl">
         {title}
       </h1>
       <p className="mt-6 max-w-xl text-pretty text-lg text-mist">{body}</p>

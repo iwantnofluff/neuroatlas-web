@@ -17,7 +17,7 @@ export function LimitsOfWearablesSection() {
     <section>
       <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
-          <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
             The Limits Of Wearables
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">

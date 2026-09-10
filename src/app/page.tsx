@@ -61,7 +61,7 @@ export default function Home() {
                  range plateaued at 6xl) — same fix as Hero.tsx's own
                  headline, applied here for the same reason: this is real
                  wrapping multi-word text, not a giant display word. */}
-              <h2 className="text-balance font-serif text-4xl leading-[1.05] text-navy sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] text-navy sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
                 Your Body Knows You&rsquo;re Stressed.{" "}
                 <span className="whitespace-nowrap">Do You?</span>
               </h2>
@@ -145,7 +145,7 @@ export default function Home() {
                 grid-native way to center an item narrower than its track. */}
             <Reveal delay={0.1} y={20} className="max-w-md justify-self-center text-left">
               <p className="eyebrow">Inside the app</p>
-              <h2 className="mt-4 text-balance font-serif text-3xl leading-tight lg:text-4xl">
+              <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
                 See It. Act On It.
               </h2>
               <p className="mt-6 text-pretty text-lg text-cream/75">
@@ -175,7 +175,7 @@ export default function Home() {
       <section id="privacy">
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-32">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               We Believe In Privacy
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
@@ -234,7 +234,7 @@ export default function Home() {
               </Parallax>
             </Reveal>
             <Reveal delay={0.1} y={20} className="text-center lg:text-left">
-              <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
                 Other Apps Notice. We Fix It, In Two Minutes.
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75 lg:mx-0">
@@ -260,7 +260,7 @@ export default function Home() {
               y={20}
               className="order-2 text-center lg:order-1 lg:text-left"
             >
-              <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
                 Why NeuroAtlas Exists
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
@@ -294,7 +294,7 @@ export default function Home() {
           className="mx-auto max-w-3xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-28"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink

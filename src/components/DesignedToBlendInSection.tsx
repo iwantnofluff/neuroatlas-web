@@ -105,7 +105,7 @@ export function DesignedToBlendInSection() {
         {/* Headline — simply last in source order (no z-index needed
            to sit "on top of" the slit above it), perfectly centered. */}
         <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
-          <h2 className="text-balance font-serif text-3xl leading-tight text-cream lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
             Designed To Blend In
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">

@@ -196,7 +196,7 @@ export function Hero({
           // its own dedicated tier means every named breakpoint genuinely
           // grows the text a step, rather than some breakpoints being a
           // no-op carried over from the one before.
-          className="mt-6 flex flex-col items-center gap-y-1 font-serif text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+          className="mt-6 flex flex-col items-center gap-y-1 font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
         >
           {lines.map((words, li) => (
             <span

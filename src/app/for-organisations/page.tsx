@@ -57,7 +57,7 @@ export default function ForOrganisationsPage() {
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             This Is Not Another Wellness Gimmick
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
@@ -134,7 +134,7 @@ export default function ForOrganisationsPage() {
       <section>
         <div className="mx-auto max-w-6xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               How To Get Started
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-mist">
@@ -155,7 +155,7 @@ export default function ForOrganisationsPage() {
                 className="text-center md:text-left"
               >
                 <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-3 text-balance font-serif text-xl text-navy">
+                <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">
                   {step.label}
                 </h3>
                 <p className="mt-3 text-pretty text-base text-mist">
@@ -179,7 +179,7 @@ export default function ForOrganisationsPage() {
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             What Inaction Actually Costs You
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
@@ -205,7 +205,7 @@ export default function ForOrganisationsPage() {
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
             Security And Compliance
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
@@ -238,7 +238,7 @@ export default function ForOrganisationsPage() {
       <section id="download-overview" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               Download The Overview
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
@@ -259,7 +259,7 @@ export default function ForOrganisationsPage() {
       <section className="dark-glow bg-navy text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               Ready To See It For Your Team?
             </h2>
             <ShimmerLink
@@ -276,7 +276,7 @@ export default function ForOrganisationsPage() {
             delay={0.15}
             className="mt-16 border-t border-cream/10 pt-12"
           >
-            <h3 className="text-balance font-serif text-xl leading-tight text-cream/90 lg:text-2xl">
+            <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl leading-tight text-cream/90 lg:text-2xl">
               Exploring This For Yourself?
             </h3>
             <ShimmerLink

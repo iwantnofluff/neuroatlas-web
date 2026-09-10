@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
            step the homepage's own sections already use (see page.tsx). */}
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20} className="text-center">
-            <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               The Part Every Other App Skips
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-cream/75">
@@ -74,7 +74,7 @@ export default function HowItWorksPage() {
                 className="text-center md:text-left"
               >
                 <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-3 text-balance font-serif text-xl">
+                <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl">
                   {step.label}
                 </h3>
                 <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
@@ -122,7 +122,7 @@ export default function HowItWorksPage() {
         media={
           <div className="card-glass bg-transparent flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
             <p className="eyebrow">HRV</p>
-            <p className="font-serif text-4xl text-cream lg:text-5xl">
+            <p className="font-serif font-normal uppercase tracking-normal text-4xl text-cream lg:text-5xl">
               42 <span className="text-gold">→</span> 61
             </p>
             <p className="mt-1 text-pretty text-xs italic text-cream/50">
@@ -166,7 +166,7 @@ export default function HowItWorksPage() {
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink

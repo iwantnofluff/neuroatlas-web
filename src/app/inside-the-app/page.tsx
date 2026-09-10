@@ -43,7 +43,7 @@ export default function InsideTheAppPage() {
       <div className="mx-auto max-w-3xl px-6 pt-24 pb-16 text-center md:pt-32 lg:px-10 lg:pt-48">
         <Reveal y={20}>
           <p className="eyebrow">Inside The App</p>
-          <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
+          <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-navy lg:text-5xl">
             This Is Where It Actually Happens
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
@@ -141,7 +141,7 @@ export default function InsideTheAppPage() {
                 // it; solid white is what actually makes the lift +
                 // shadow read as one tile floating above another,
                 // rather than two overlapping translucent layers.
-                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white px-3 py-3 text-center text-xs font-medium tracking-wide text-navy/70 uppercase transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-black/10 hover:shadow-xl hover:shadow-black/5 md:py-4"
+                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white px-3 py-3 text-center text-xs font-medium text-navy/70 uppercase tracking-[-0.04em] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-black/10 hover:shadow-xl hover:shadow-black/5 md:py-4"
               >
                 {category}
               </div>
@@ -194,7 +194,7 @@ export default function InsideTheAppPage() {
          step every other section on this page now uses. */}
       <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
-          <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
             A Minute To Check In
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
@@ -269,7 +269,7 @@ export default function InsideTheAppPage() {
         className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
         y={20}
       >
-        <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+        <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
           NeuroAtlas Available Now
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
@@ -297,7 +297,7 @@ export default function InsideTheAppPage() {
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28"
           y={20}
         >
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink

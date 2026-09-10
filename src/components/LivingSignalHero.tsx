@@ -107,7 +107,7 @@ export function LivingSignalHero() {
             // Same 4-step progression as Hero.tsx's own headline (see its
             // comment) — text-4xl/5xl/6xl/7xl, one dedicated size per
             // breakpoint, rather than 640–1023px plateauing at one value.
-            className="mt-6 text-balance font-serif text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+            className="mt-6 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
           >
             The Evidence Behind It
           </motion.h1>

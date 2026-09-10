@@ -125,7 +125,7 @@ function OrganicSignalCallout({
         POSITION_CLASSNAMES[signal.position]
       )}
     >
-      <p className="text-balance font-serif text-2xl leading-snug text-cream">{signal.label}</p>
+      <p className="text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-snug text-cream">{signal.label}</p>
       <p className="mt-1 text-pretty text-sm text-cream/70">{signal.body}</p>
     </motion.div>
   );
@@ -150,7 +150,7 @@ function MobileSignalCard({
       style={{ opacity, y }}
       className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md"
     >
-      <p className="text-balance font-serif text-base leading-snug text-cream">{signal.label}</p>
+      <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
       <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
     </motion.div>
   );
@@ -201,7 +201,7 @@ export function BandScrollShowcase() {
            original hero used before this redesign. */}
         <div className="pointer-events-none absolute inset-x-0 top-16 z-[-1] px-6 text-center xl:top-20">
           <p className="eyebrow">The NA·01 band</p>
-          <h1 className="mt-4 text-balance font-serif text-5xl leading-[0.95] font-bold tracking-tight text-gold-soft sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-5xl leading-[0.95] text-gold-soft sm:text-6xl md:text-7xl lg:text-8xl">
             The <em className="italic text-gold">First</em> Band
             <br />
             For Stress

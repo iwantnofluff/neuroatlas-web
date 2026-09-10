@@ -43,7 +43,7 @@ export function ClosingCurtainSection() {
       curtain={
         <>
           <Reveal y={20} className="mx-auto max-w-4xl">
-            <h2 className="text-balance font-serif text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] tracking-tight text-navy">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] text-navy">
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
@@ -73,7 +73,7 @@ export function ClosingCurtainSection() {
             className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_50%,color-mix(in_oklab,var(--color-gold)_20%,transparent),transparent_70%)]"
           />
           <div className="relative">
-            <h2 className="text-balance font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-gold-soft lg:text-5xl">
               Join Our Pilot Project
             </h2>
             <p className="mx-auto mt-4 max-w-md text-pretty text-cream/75">

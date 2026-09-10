@@ -208,7 +208,7 @@ export function SignalVsNoiseSection() {
             <NoiseElement key={i} shape={shape} progress={scrollYProgress} reduceMotion={reduceMotion} />
           ))}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <h2 className="text-balance font-serif text-3xl leading-tight text-cream lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
               Precision, Not Guesswork
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
@@ -235,7 +235,7 @@ export function SignalVsNoiseSection() {
           className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 pt-20 text-center"
         >
           <div>
-            <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               The App Reads You
             </h2>
             {/* max-w-lg (was max-w-xl) + text-balance (was text-pretty)

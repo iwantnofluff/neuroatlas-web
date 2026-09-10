@@ -409,7 +409,7 @@ export function TheSpecs() {
                           : "lg:absolute lg:top-1/2 lg:left-[calc(100%+1rem)] lg:mt-0 lg:w-64 lg:-translate-y-1/2 lg:text-left"
                       )}
                     >
-                      <h3 className="text-xs font-medium tracking-[0.2em] text-gold uppercase">
+                      <h3 className="text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                         {spec.label}
                       </h3>
                       <p className="mt-2 text-pretty text-sm text-cream/70">{spec.detail}</p>
@@ -454,7 +454,7 @@ export function TheSpecs() {
         y={20}
         className="relative z-10 mx-auto max-w-2xl px-6 pt-20 text-center lg:pt-28"
       >
-        <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">The Specs</h2>
+        <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">The Specs</h2>
         <p className="mx-auto mt-4 max-w-md text-pretty text-lg text-cream/70">
           The detail for those who want it.
         </p>
@@ -590,7 +590,7 @@ export function TheSpecs() {
                 className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
               >
                 <Icon className="size-5 text-gold" aria-hidden="true" />
-                <h3 className="mt-3 text-xs font-medium tracking-[0.2em] text-gold uppercase">
+                <h3 className="mt-3 text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                   {spec.label}
                 </h3>
                 <p className="mt-2 text-pretty text-sm text-cream/70">{spec.detail}</p>

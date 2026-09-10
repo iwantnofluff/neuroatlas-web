@@ -118,7 +118,11 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
           at rest and on hover). Moving it onto this wrapping span — a
           genuine descendant of the root `.group` — is what actually
           makes it work. */}
-      <span className="relative z-10 transition-colors duration-300 group-hover:text-navy group-focus-visible:text-navy">
+      {/* font-medium — every CTA on the site renders through this one
+          shared span, so this is the single place the brand book's "Mont
+          Medium for buttons/emphasis" rule needs to live, rather than
+          repeating a weight utility at each of the ~20 call sites. */}
+      <span className="relative z-10 font-medium transition-colors duration-300 group-hover:text-navy group-focus-visible:text-navy">
         {children}
       </span>
 

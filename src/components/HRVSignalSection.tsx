@@ -63,7 +63,7 @@ export function HRVSignalSection() {
       </svg>
 
       <Reveal y={20} className="relative mx-auto max-w-3xl">
-        <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
+        <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
           The Signal That Does Not Lie
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">

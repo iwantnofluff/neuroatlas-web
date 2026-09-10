@@ -242,7 +242,7 @@ export function BeyondHeartSection() {
          MORE room, never less. */}
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-0 md:pt-24 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
-          <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
+          <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
@@ -321,7 +321,7 @@ export function BeyondHeartSection() {
             const textBlock = (
               <div style={{ width: `${NODE_WIDTH_REM}rem` }}>
                 <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-1 text-balance font-serif text-sm text-cream">{ring.label}</h3>
+                <h3 className="mt-1 text-balance font-serif font-normal uppercase tracking-normal text-sm text-cream">{ring.label}</h3>
                 <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
               </div>
             );
@@ -370,7 +370,7 @@ export function BeyondHeartSection() {
               className="bento-glass p-6 text-center"
             >
               <span className="eyebrow">{`0${i + 1}`}</span>
-              <h3 className="mt-3 text-balance font-serif text-xl text-cream">{ring.label}</h3>
+              <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-cream">{ring.label}</h3>
               <p className="mt-3 text-pretty text-sm text-cream/70">{ring.body}</p>
             </Reveal>
           ))}

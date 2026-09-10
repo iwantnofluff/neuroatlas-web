@@ -275,8 +275,15 @@
     z-index: 1;
   }
 
+  /* tracking-[-0.04em], not the previous tracking-[0.2em] — the brand
+     book specifies -40 tracking (i.e. -0.04em) for capitalized Mont
+     labels/eyebrows specifically, the opposite direction from the old
+     wide-spaced value. font-medium added alongside it per the same
+     brand pass: Mont's Book cut is for body copy, Medium is for
+     emphasis/labels, and this is the site's one shared small-label
+     class used everywhere (23 call sites) that qualifies. */
   .eyebrow {
-    @apply text-xs tracking-[0.2em] text-gold uppercase;
+    @apply text-xs font-medium tracking-[-0.04em] text-gold uppercase;
   }
 
   /* Hero video placeholder — see HeroMedia.tsx. Two large, soft radial

@@ -225,7 +225,7 @@ export function FeatureSplitSection({
               {eyebrow && <p className="eyebrow">{eyebrow}</p>}
               <h2
                 className={cn(
-                  "text-balance font-serif text-3xl leading-tight lg:text-4xl",
+                  "text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl",
                   eyebrow && "mt-4",
                   !dark && "text-navy"
                 )}
