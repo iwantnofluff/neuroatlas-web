@@ -83,25 +83,26 @@ function useSignalReveal(
  *  are what actually reads as "floating around the model" rather than
  *  "pinned to the corners of the viewport". */
 const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> = {
-  // top-[36%], not the original top-[30%] — a real, confirmed collision
-  // this avoids: at 24% horizontal (tightened from 16% per the client's
-  // "bring the cards closer to the model" request), this card's own
-  // right edge lands underneath the "For Stress" headline at every xl+
-  // width up to ~1800px (confirmed via a Range measurement of that
-  // specific text run, not just eyeballing — real overlap, both axes).
-  // Nudging the card down clears the headline's second line with real
-  // margin at the narrowest xl width (1280, the worst case), which is
-  // what actually lets the horizontal tightening happen safely, rather
-  // than reverting it back out to avoid the collision.
-  "upper-left": "left-[24%] top-[36%]",
-  "lower-right": "right-[24%] bottom-[16%] text-right",
-  // bottom-[24%], not the original bottom-[30%] — a second, smaller
-  // collision this avoids: pushing "upper-left" down to clear the
-  // headline (see that entry's own comment) brought it close enough to
-  // this card's own top edge that the two overlapped by a few px at
-  // some widths, confirmed live via getBoundingClientRect. Nudging this
-  // one down in turn restores a real gap between them.
-  "lower-left": "left-[24%] bottom-[24%]",
+  // 20%, not the 24% a previous pass tightened this to — reported live
+  // as reading too tight/bleeding into the model at that value; this
+  // splits the difference between that and the original 16% ("too far
+  // from the model") for real breathing room on both sides.
+  //
+  // top-[36%] (not the original top-[30%]) stays — a real, confirmed
+  // collision this avoids, independent of the horizontal value: this
+  // card's own right edge lands underneath the "For Stress" headline at
+  // every xl+ width up to ~1800px (confirmed via a Range measurement of
+  // that specific text run) unless it has this much clearance from the
+  // top. Nudging the card down clears the headline's second line with
+  // real margin at the narrowest xl width (1280, the worst case).
+  "upper-left": "left-[20%] top-[36%]",
+  "lower-right": "right-[20%] bottom-[16%] text-right",
+  // bottom-[24%] (not the original bottom-[30%]) stays too — a second,
+  // smaller collision this avoids: pushing "upper-left" down to clear
+  // the headline (see that entry's own comment) brought it close enough
+  // to this card's own top edge that the two overlapped by a few px at
+  // some widths, confirmed live via getBoundingClientRect.
+  "lower-left": "left-[20%] bottom-[24%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,

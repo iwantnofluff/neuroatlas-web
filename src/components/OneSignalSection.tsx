@@ -73,13 +73,40 @@ export function OneSignalSection() {
     // still get real scroll distance at this height — 200vh was excess
     // dead scroll beyond what either beat needed.
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[130vh]")}>
-      <div className="sticky top-0 flex h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-cream px-6 text-center">
+      {/* min-h-[100svh], not the previous fixed h-[100svh] — a real,
+         confirmed bug this replaces: the giant headline (up to 3 lines
+         at a clamp()-ed size approaching 13rem) plus the six-sentence
+         paragraph below it, both centered together via justify-center,
+         could add up to more height than a real (often shorter-than-
+         1440×900) viewport actually has — confirmed live, the
+         paragraph's own last line sat clipped against the bottom edge.
+         A hard h-[100svh] cap had nowhere for that excess to go; min-h
+         is a floor, not a cap, so this section simply grows past 100svh
+         (and its `sticky` naturally releases a touch earlier) on a
+         viewport too short to fit both, rather than truncating either
+         one. pb-12 adds real breathing room under the paragraph on top
+         of that.
+
+         overflow-x-hidden, not a bare overflow-hidden (which would also
+         re-clip vertically and reintroduce the exact bug above) — but
+         NOT dropped entirely either: the headline's own scroll-driven
+         `scale` (see this component's top comment) intentionally
+         renders it at 1.5x before shrinking to its resting 1x size, and
+         at 1.5x it is genuinely wider than the viewport by design
+         (confirmed: 1313px at rest vs. ~2000px+ mid-animation at 1440px
+         wide — both measured live). That transient overflow needs
+         clipping on the X axis only; the Y axis is what actually needed
+         to stop being clipped. */}
+      <div className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pb-12 text-center">
         <motion.h2
           style={{ scale }}
           // clamp(), not a bare text-[12vw] — 12vw alone runs away to an
           // absurd size on an ultra-wide monitor and undersizes on the
           // narrowest phones. Same defensive pattern Hero.tsx's own
-          // subtext already uses.
+          // subtext already uses. leading-none is deliberate here too —
+          // it's the tightest option, so it's already minimizing this
+          // headline's own contribution to the total stacked height
+          // above, not something loosened further.
           className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-black tracking-tighter text-transparent uppercase"
         >
           Built For One Focus:
@@ -88,15 +115,16 @@ export function OneSignalSection() {
         </motion.h2>
         <motion.p
           style={{ opacity: subtextOpacity, y: subtextY }}
-          // text-[#1B2430]/70 (was text-mist) — matches the headline's
-          // own exact literal color above at a lower opacity, rather
-          // than an unrelated grey-blue token, so the two read as one
-          // deliberate palette instead of two different colors.
-          // max-w-2xl (was max-w-xl) — the client's final copy for this
-          // section is six sentences, not one; the old, narrower cap
-          // (tuned for a single short line) would wrap this into a much
-          // taller, cramped column than the paragraph needs.
-          className="mx-auto mt-8 max-w-2xl text-pretty text-lg text-[#1B2430]/70"
+          // text-[#1B2430]/80 (was /70) — a touch more contrast per the
+          // client's own re-pass on this section, still the headline's
+          // exact literal color rather than an unrelated grey-blue
+          // token, just less faded than before.
+          // max-w-3xl (was max-w-2xl) and an explicit text-center (this
+          // section's own outer div already centers everything, but the
+          // client asked for it stated directly on the paragraph too) —
+          // reads as one curated editorial block rather than a pasted-
+          // in wall of text.
+          className="mx-auto mt-8 max-w-3xl text-center text-pretty text-lg text-[#1B2430]/80"
         >
           NA·01 looks at more than individual health signals. It connects
           them to help you understand how stress is affecting you. Your
@@ -105,7 +133,7 @@ export function OneSignalSection() {
           active you were today. It&rsquo;s to help you understand
           what&rsquo;s shaping how you feel, think, and respond. Because
           understanding stress means seeing the whole picture, not just your
-          heart rate.
+          heart&nbsp;rate.
         </motion.p>
       </div>
     </div>
