@@ -38,26 +38,20 @@ const RESEARCH_CARDS = [
 const FAN_ROTATE = [-4, 2, 0];
 const FAN_X = [-14, 8, 0];
 
-// Per-card hold-then-reveal windows — index 0 (the base card) has none:
-// it's simply always settled, never fading in from hidden, which is
-// what actually lets progress start at exactly 0 (see this file's own
-// useScroll comment) without a blank first frame. Index 1 holds through
-// [0, 0.3] — genuinely nothing moves, so a reader who stops anywhere in
-// that window sees card 01 alone and fully readable, matching the
-// brief's own literal example — then slides in over [0.3, 0.5], and
-// holds again (card 01 + 02 both settled, nothing yet obscuring either)
-// through [0.5, 0.6]. Index 2 mirrors that a third of the way later:
-// holds through [0, 0.6], reveals over [0.6, 0.8], settles for the rest
-// of the track. A real, confirmed bug this replaces: the previous
-// version gave every card (including the base one) the same symmetric
-// entrance window scaled by index/total, which put card 02's own
-// reveal well underway by the time the section had barely scrolled
-// into view — reported live as "card 01 is already covered before it
-// can be read."
+// Per-card hold-then-reveal windows, evenly split into thirds — index 0
+// (the base card) has none: it's simply always settled, never fading in
+// from hidden, which is what actually lets progress start at exactly 0
+// (see this file's own useScroll comment) without a blank first frame.
+// Index 1 holds through [0, 0.33] — genuinely nothing moves, so a
+// reader who stops anywhere in that window sees card 01 alone and fully
+// readable — then reveals over the next third, [0.33, 0.66]. Index 2
+// holds through [0, 0.66] (i.e. through card 01's whole read AND card
+// 02's own reveal) and takes the final third, [0.66, 1], to slide in
+// and settle exactly as the track ends.
 const CARD_WINDOWS: ReadonlyArray<{ start: number; end: number } | null> = [
   null,
-  { start: 0.3, end: 0.5 },
-  { start: 0.6, end: 0.8 },
+  { start: 0.33, end: 0.66 },
+  { start: 0.66, end: 1 },
 ];
 
 function clamp01(value: number) {
@@ -110,7 +104,7 @@ function StackedResearchCard({
  * right, card 01 already settled and readable as soon as the section
  * pins, card 02 and 03 each holding out of view for their own reading
  * beat before sliding in over the one before it — as the reader scrolls
- * through this section's own h-[260vh] pinned track — the same "outer
+ * through this section's own h-[300vh] pinned track — the same "outer
  * tall wrapper + inner sticky viewport" pattern used throughout this
  * codebase for a scroll-driven reveal (see MethodScrollCards,
  * OneSignalSection).
@@ -120,7 +114,7 @@ function StackedResearchCard({
  * component is used as the `curtain` half of a CurtainReveal (see that
  * component and the page it's used on), which supplies its own wrapping
  * element and measures THIS component's actual rendered height
- * (including its h-[260vh] track) to compute the reveal's stacking
+ * (including its h-[300vh] track) to compute the reveal's stacking
  * math. Rendering an extra outer section here would just be redundant
  * nesting, not incorrect, but there's no reason to.
  */
@@ -154,20 +148,24 @@ export function EditorialIndexSection() {
   });
 
   return (
-    // 180vh -> 260vh — the hold-then-reveal timeline below (see
-    // CARD_WINDOWS) needs genuine room to read as "deliberate" rather
-    // than rushed: with "start start"/"end end" now mapping the full
-    // 0-1 progress range across (wrapper height - viewport height) of
-    // real scroll, 180vh only gave ~80vh of actual pinned scroll
-    // distance for the whole 3-card sequence. 260vh gives ~160vh —
-    // roughly 30-45vh per hold-or-reveal beat, checked live rather than
-    // just computed, which reads as comfortable without dragging.
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[260vh]")}>
-      {/* py-16 md:py-24 (was a flat py-24) — same progressive step the
-         homepage's own sections already use (see page.tsx); a floor
-         only (min-h-[100svh], not a fixed height), so this never risks
-         clipping taller content — just tightens the minimum gap on a
-         narrow phone. */}
+    // 260vh -> 300vh — a further "give it more deliberate room" pass on
+    // top of the earlier 180vh->260vh one: with "start start"/"end end"
+    // mapping the full 0-1 progress range across (wrapper height -
+    // viewport height) of real scroll, 300vh gives ~200vh of actual
+    // pinned scroll distance across the 3-card sequence, comfortably
+    // more per hold-or-reveal third than 260vh's ~160vh did.
+    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[300vh]")}>
+      {/* min-h-[100svh], not h-screen — h-screen (100vh) assumes the
+         browser's own toolbar chrome is fully hidden, which isn't true
+         on a real phone; the established fix throughout this codebase
+         (see MethodScrollCards/BuiltToReadYouSection's own comments) is
+         h-[100svh]/min-h-[100svh], the small/guaranteed-visible size,
+         specifically to avoid clipping this pinned section's own bottom
+         edge against a shorter real viewport. min- (a floor, not a
+         fixed cap) rather than a bare h- so taller content on a narrow
+         phone still never gets clipped either. py-16 md:py-24 (was a
+         flat py-24) — same progressive step the homepage's own
+         sections already use (see page.tsx). */}
       <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-16 md:py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>
