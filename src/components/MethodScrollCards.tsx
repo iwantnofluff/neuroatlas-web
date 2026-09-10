@@ -12,9 +12,13 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 // than intentional. This version keeps the same outward-tilt-on-the-
 // ends/straight-in-the-middle idea, but the cards sit in a plain gapped
 // flex row with real space between them (no negative margin, no
-// absolute positioning, no elevated z-index) and the ends are pushed
-// DOWN while the center is pushed UP, so the three together read as an
-// arch rather than an interlocking hand.
+// absolute positioning, no elevated z-index).
+//
+// All three sit level with each other (no Y-translation at all) — an
+// earlier pass here dropped the ends by 64px and lifted the center by
+// 16px, which read as a sports podium rather than a subtle arch,
+// reported live. The dynamic feel now comes from the ±6° tilt on the
+// ends alone, not a height difference.
 const methodSteps = [
   {
     label: "Measure",
@@ -31,16 +35,16 @@ const methodSteps = [
 ];
 
 // Per-card resting arch target (index 0 = left, 1 = center, 2 = right)
-// — rotate in degrees, y in px (translate-y-16/-translate-y-4
-// equivalents), and startX: how far this card sits from its own resting
-// spot in the pre-animation "closed" state (canceled back to 0 as it
-// settles into the arch — see MethodCard's own comment). The two ends
-// share the same +64px (translate-y-16) drop to form the arch's base;
-// the center's -16px (-translate-y-4) lift forms the peak.
+// — rotate in degrees, y in px, and startX: how far this card sits from
+// its own resting spot in the pre-animation "closed" state (canceled
+// back to 0 as it settles into the arch — see MethodCard's own
+// comment). y is 0 across the board — see this file's own top comment
+// for why — so all three sit on the same horizontal axis; only rotate
+// varies between the ends and the center.
 const FAN = [
-  { rotate: -6, y: 64, startX: 96 },
-  { rotate: 0, y: -16, startX: 0 },
-  { rotate: 6, y: 64, startX: -96 },
+  { rotate: -6, y: 0, startX: 96 },
+  { rotate: 0, y: 0, startX: 0 },
+  { rotate: 6, y: 0, startX: -96 },
 ] as const;
 
 // Seconds between each card's own fan-open start — a real fan opens as
