@@ -13,15 +13,15 @@ export const metadata = { title: "How it works — NeuroAtlas" };
 const loopSteps = [
   {
     label: "Measure",
-    body: "Reads what is happening in your body, quietly and continuously.",
+    body: "Reads signals from your body to understand what is happening in the moment.",
   },
   {
     label: "Intervene",
-    body: "Gives you something to do about it, right where you are.",
+    body: "Guides you through a short, neuroscience-based exercise designed for what you are experiencing.",
   },
   {
     label: "Measure Again",
-    body: "Shows you it worked, not just tells you.",
+    body: "Checks your signals again so you can see the change after the intervention.",
   },
 ];
 
@@ -36,19 +36,9 @@ export default function HowItWorksPage() {
           alongside "/" and "/band". */}
       <Hero
         eyebrow="How It Works"
-        // "\n" forces the line break after "Stop" (3+2 words, a
-        // near-equal 14-vs-14-character split) — a real, confirmed bug
-        // this replaces: left to wrap on its own at a common desktop
-        // width, this fell "Most Apps Stop At" / "Telling You" instead
-        // (4+2 words, a visibly lopsided 17-vs-11-character split),
-        // reported live via screenshot. See Hero.tsx's own `headline`
-        // prop doc comment for how this works.
-        headline={"Most Apps Stop\nAt Telling You"}
-        // "\n" forces the break right before "it" — a real, confirmed
-        // bug this replaces: wrapping on its own at common widths left
-        // "it does." dangling alone as a 3rd line. See Hero.tsx's own
-        // `subhead` prop doc comment for how this works.
-        subhead={"NeuroAtlas does not just tell you something changed,\nit makes sure it does."}
+        headline="Here Is What Tracking Never Fixed"
+        subhead="Most tools stop at showing you the data. NeuroAtlas closes the loop by measuring what is happening, helping you intervene, and measuring again to see what changed."
+        tagline="Measure → Intervene → Measure Again"
         ctas={[]}
       />
       <HeroBoundary />
@@ -66,7 +56,9 @@ export default function HowItWorksPage() {
               The Part Every Other App Skips
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-cream/75">
-              Three steps, repeated every time pressure builds.
+              NeuroAtlas doesn&rsquo;t stop at telling you what&rsquo;s
+              happening. It helps you do something about it, then checks
+              whether it made a difference.
             </p>
           </Reveal>
           <div className="mt-16 grid gap-12 sm:grid-cols-3">
@@ -87,23 +79,23 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* 3. Measure — headline B: "What Your Body Already Knows" echoes the
-          "before you'd notice yourself" line already used on /band, so the
-          two pages reinforce the same idea in the same words. First of the
-          six alternating 50/50 sections: text left, media right. */}
+      {/* 3. Measure — heading option A ("The First Read") over B ("Where
+          It Starts") — echoes the body's own emphasis on "reads" rather
+          than a narrative-sequencing framing. First of the six
+          alternating 50/50 sections: text left, media right. */}
       <FeatureSplitSection
-        heading="What Your Body Already Knows"
-        body="The band reads your nervous system throughout the day, picking up on signals like heart rate variability and breathing before you would notice anything yourself. These signals build a picture of how pressure is actually moving through your day."
+        heading="The First Read"
+        body="The band reads your heart rate, breathing and more, all day, picking up pressure before you’d notice it yourself."
         imageSide="right"
         background="cream"
       />
 
-      {/* 4. Intervene — headline A: keeps the site's recurring X-not-Y
-          contrast pattern (see the closing CTA, and the homepage's "Other
-          Apps Notice. We Fix It." line). Text right, media left. */}
+      {/* 4. Intervene — heading option A ("Built With Neuroscience") over
+          B ("The Reset That Works") — echoes the body's own "built on
+          neuroscience" phrase directly. Text right, media left. */}
       <FeatureSplitSection
-        heading="A Reset, Not A Retreat"
-        body="When pressure builds, the app gives you a short reset, right at your desk. No stepping away, no blocking out your afternoon, just a few minutes to bring things back into focus."
+        heading="Built With Neuroscience"
+        body="When pressure builds, the app runs a short exercise, built on neuroscience, right at your desk. No stepping away, just a few minutes to bring things back into focus."
         imageSide="left"
         background="navy-soft"
       />
@@ -135,33 +127,30 @@ export default function HowItWorksPage() {
         }
       />
 
-      {/* 6. Pattern recognition — headline B: continues the "before you"
-          motif from section 3. Text right, media left. */}
+      {/* 6. Pattern recognition. Text right, media left. */}
       <FeatureSplitSection
-        heading="It Sees The Pattern Before You Do"
-        body="Over time, NeuroAtlas starts to notice when your pressure tends to build, a hard stretch before a big call, a recurring point in your week, and steps in earlier each time."
+        heading="Pattern Recognition Technology"
+        body="Over time, NeuroAtlas learns when and where your stress tends to build. This helps it recognise recurring patterns and support you before pressure reaches its peak."
         imageSide="left"
         background="cream"
       />
 
-      {/* 7. A worked example — headline A: the concrete, specific version
-          (a real time of day, a real outcome) rather than the more
-          abstract option. Text left, media right. */}
+      {/* 7. A worked example — eyebrow kept (it's this section's own
+          name), heading updated to the client's final copy, body
+          unchanged (already matched verbatim). Text left, media
+          right. */}
       <FeatureSplitSection
         eyebrow="A Worked Example"
-        heading="The 4pm Drop, Intercepted"
+        heading="Here’s How It Works"
         body="It is late afternoon. Focus starts to slip, the kind of drop that usually goes unnoticed until it costs you something. The band picks it up. A short reset runs before the next meeting. By the time you are back at your desk, the numbers show it worked."
         imageSide="right"
         background="navy-soft"
       />
 
-      {/* 8. What it does not claim to do — headline B: matches the body's
-          own "will not promise" phrasing, which suits directness better
-          than a more editorial label for a limitations section. Text
-          right, media left. */}
+      {/* 8. What it does not claim to do. Text right, media left. */}
       <FeatureSplitSection
-        heading="What NeuroAtlas Will Not Promise"
-        body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and give you a way to respond."
+        heading="What We Won’t Promise"
+        body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and help you manage it."
         imageSide="left"
         background="cream"
       />

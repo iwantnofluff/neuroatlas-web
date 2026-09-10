@@ -75,6 +75,11 @@ type HeroProps = {
    *  only ever going to wrap it AGAIN unnecessarily, undoing the exact
    *  break just inserted. */
   subhead?: string;
+  /** Optional short line rendered between the subhead and the CTAs —
+   *  e.g. /how-it-works' own "Measure → Intervene → Measure Again".
+   *  Omit entirely for the default (no tagline at all); every other
+   *  Hero caller is unaffected. */
+  tagline?: string;
   /** Defaults to the homepage's own two buttons — pass `[]` to render
    *  none (e.g. a page with its own closing CTA already doing that job,
    *  see /how-it-works). */
@@ -94,6 +99,7 @@ export function Hero({
   headline = HEADLINE,
   emphasisWord = EMPHASIS_WORD,
   subhead = SUBHEAD,
+  tagline,
   ctas = DEFAULT_CTAS,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
@@ -239,6 +245,21 @@ export function Hero({
             </Fragment>
           ))}
         </motion.p>
+
+        {tagline && (
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.58 }}
+            // Reuses the same small-caps/gold treatment as the eyebrow
+            // above the headline (`.eyebrow`, see globals.css) rather
+            // than a bespoke style — this tagline reads as the same
+            // KIND of short label, just positioned lower.
+            className="eyebrow mt-6"
+          >
+            {tagline}
+          </motion.p>
+        )}
 
         {ctas.length > 0 && (
           <motion.div
