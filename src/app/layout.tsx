@@ -52,7 +52,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn("h-full", "antialiased", boowie.variable, mont.variable)}
     >
-      <body className="min-h-full flex flex-col bg-cream font-sans text-ink">
+      {/* overscroll-x-none — a diagonal/horizontal trackpad scroll
+         gesture (easy to trigger by accident on this site's own
+         scroll-jacked pinned sections, e.g. MethodScrollCards' fan,
+         BandScrollShowcase) was reaching past the page's own edge and
+         triggering the browser's native swipe-to-go-back/forward
+         history navigation instead of just stopping. overscroll-x-none
+         (not the broader overscroll-none) scopes this to the X axis
+         only, matching the actual reported gesture — Y-axis
+         overscroll (pull-to-refresh, rubber-banding) is untouched. */}
+      <body className="min-h-full flex flex-col overscroll-x-none bg-cream font-sans text-ink">
         <SmoothScroll />
         <Header />
         <div className="flex-1">{children}</div>
