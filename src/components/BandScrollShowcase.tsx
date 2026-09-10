@@ -23,27 +23,31 @@ const BandScrollScene = dynamic(
 );
 
 // Doubles as both the page's hero (headline/supporting line/CTA) and the
-// "What It Reads" section from the copy doc (the three signals) — all
-// three eventually appear TOGETHER and stay, each pinned to a fixed spot
-// floating around the model rather than swapping in and out of one shared
-// position. `position` is a real spot in the composition (see
-// POSITION_CLASSNAMES), not a left/right side relative to the model.
+// "Beyond Heart Rate" section from the client's final copy pass (the
+// three signals — was "What It Reads": Heart Rate Variability/
+// Breathing/Stress Load, replaced wholesale with the same three metrics
+// the homepage's own BeyondHeartSection.tsx already uses, word-for-word,
+// per that final copy) — all three eventually appear TOGETHER and stay,
+// each pinned to a fixed spot floating around the model rather than
+// swapping in and out of one shared position. `position` is a real spot
+// in the composition (see POSITION_CLASSNAMES), not a left/right side
+// relative to the model.
 const signals = [
   {
-    label: "Heart Rate Variability",
-    body: "Shows how your body is handling pressure, before you'd notice yourself.",
+    label: "Stress Age",
+    body: "How your body is responding to stress over time.",
     range: [0, 0.34] as const,
     position: "upper-left" as const,
   },
   {
-    label: "Breathing",
-    body: "Small shifts that reveal tension building.",
+    label: "Cognitive Load",
+    body: "How much your mind is juggling before your focus starts to slip.",
     range: [0.33, 0.67] as const,
     position: "lower-right" as const,
   },
   {
-    label: "Stress Load",
-    body: "How pressure adds up across your day.",
+    label: "Emotional Regulation",
+    body: "How well you stay balanced under pressure, so your response matches the moment.",
     range: [0.66, 1] as const,
     position: "lower-left" as const,
   },

@@ -47,14 +47,21 @@ export function ClosingCurtainSection() {
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
+          {/* max-w-2xl (was max-w-xl) — the client's final copy for this
+             body is three sentences, not one; the old, narrower cap
+             (tuned for the previous shorter line) wrapped this into a
+             cramped, unnecessarily tall column. */}
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-xl text-pretty text-lg text-mist"
+            className="mx-auto mt-8 max-w-2xl text-pretty text-lg text-mist"
           >
-            This isn&rsquo;t about tracking steps or workouts. It&rsquo;s about
-            catching the moments pressure builds quietly, in a meeting,
-            before a call, mid-afternoon, before they show up in a decision
-            you regret.
+            If you&rsquo;re serious about managing stress, NA·01 gives you
+            more than another set of health metrics to check. It connects
+            signals from your body and mind to show you how stress is
+            affecting your focus, reactions, and ability to stay regulated.
+            So instead of simply telling you that you&rsquo;re stressed, it
+            helps you understand what&rsquo;s driving it and how it shows up
+            in your day.
           </motion.p>
         </>
       }
@@ -67,8 +74,12 @@ export function ClosingCurtainSection() {
           />
           <div className="relative">
             <h2 className="text-balance font-serif text-4xl leading-tight text-gold-soft lg:text-5xl">
-              Join The London Pilot Program
+              Join Our Pilot Project
             </h2>
+            <p className="mx-auto mt-4 max-w-md text-pretty text-cream/75">
+              Be part of the NeuroAtlas pilot project and help us understand
+              how the product works in real-world settings.
+            </p>
             <motion.div
               whileHover={{ scale: reduceMotion ? 1 : 1.05 }}
               whileTap={{ scale: reduceMotion ? 1 : 0.97 }}

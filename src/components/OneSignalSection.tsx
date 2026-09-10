@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 /**
- * "One Signal, Just Stress" — "Expand & Snap": the headline renders
- * enormous with a slow-shifting exact #1B2430 fade masked INSIDE its
- * own glyphs (bg-clip-text text-transparent over .signal-mask-gradient,
- * see globals.css) — the gradient reads as fluid light moving through
- * the letters rather than a static fill. Scrolling through this
- * section's own h-[200vh] pinned track
+ * "Built For One Focus: Stress" (client's final copy — was "One
+ * Signal, Just Stress"; same section, same mechanics, new words) —
+ * "Expand & Snap": the headline renders enormous with a slow-shifting
+ * exact #1B2430 fade masked INSIDE its own glyphs (bg-clip-text
+ * text-transparent over .signal-mask-gradient, see globals.css) — the
+ * gradient reads as fluid light moving through the letters rather than
+ * a static fill. Scrolling through this section's own h-[200vh] pinned
+ * track
  * scales the headline down from 1.5x to its resting size as it locks
  * into the center, with the supporting line fading in cleanly beneath
  * it once mostly settled.
@@ -80,9 +82,9 @@ export function OneSignalSection() {
           // subtext already uses.
           className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-black tracking-tighter text-transparent uppercase"
         >
-          One Signal,
+          Built For One Focus:
           <br />
-          Just Stress
+          Stress
         </motion.h2>
         <motion.p
           style={{ opacity: subtextOpacity, y: subtextY }}
@@ -90,11 +92,20 @@ export function OneSignalSection() {
           // own exact literal color above at a lower opacity, rather
           // than an unrelated grey-blue token, so the two read as one
           // deliberate palette instead of two different colors.
-          className="mx-auto mt-8 max-w-xl text-pretty text-lg text-[#1B2430]/70"
+          // max-w-2xl (was max-w-xl) — the client's final copy for this
+          // section is six sentences, not one; the old, narrower cap
+          // (tuned for a single short line) would wrap this into a much
+          // taller, cramped column than the paragraph needs.
+          className="mx-auto mt-8 max-w-2xl text-pretty text-lg text-[#1B2430]/70"
         >
-          No step counts. No notifications. No sleep tracking. Just stress,
-          read precisely, because that&rsquo;s the one signal that actually
-          helps you.
+          NA·01 looks at more than individual health signals. It connects
+          them to help you understand how stress is affecting you. Your
+          sleep might be affecting your focus. Your heart&rsquo;s patterns
+          might reveal rising pressure. The goal isn&rsquo;t to tell you how
+          active you were today. It&rsquo;s to help you understand
+          what&rsquo;s shaping how you feel, think, and respond. Because
+          understanding stress means seeing the whole picture, not just your
+          heart rate.
         </motion.p>
       </div>
     </div>
