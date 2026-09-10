@@ -49,6 +49,16 @@ export function BandScrollScene({
       // order, so any deliberate slight overlap at the very bottom
       // edge of the text still shows the model in front of it.
       className="!absolute inset-x-0 bottom-0 z-0 h-[72%]"
+      // pan-y — a global responsiveness-audit finding, applied for
+      // consistency: R3F's <Canvas> renders its OWN wrapper div around
+      // the actual <canvas> element, which is where this `style` prop
+      // actually lands (see TheSpecsScene.tsx's own comment for the
+      // full mechanics, discovered and fixed there first). This scene
+      // has no drag/orbit control of its own, so there's no gesture
+      // for a vertical swipe to conflict with — allowing pan-y just
+      // guarantees a touch swipe over the model always reaches the
+      // page's own scroll.
+      style={{ touchAction: "pan-y" }}
       // 2->1.5 — the fully-metallic materials + <StudioEnvironment />
       // (see Band.tsx/StudioEnvironment.tsx) meaningfully raised the
       // per-pixel shading cost of every frame, confirmed live: reported

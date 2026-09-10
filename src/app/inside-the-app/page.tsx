@@ -34,7 +34,13 @@ export default function InsideTheAppPage() {
   return (
     <main>
       {/* 1. Hero */}
-      <div className="mx-auto max-w-3xl px-6 pt-40 pb-16 text-center lg:px-10 lg:pt-48">
+      {/* pt-24 md:pt-32 lg:pt-48 (was a flat pt-40, unprefixed — 160px
+         of top padding on every mobile screen regardless of width,
+         confirmed real via audit: this codebase's own homepage already
+         steps its section padding up progressively (py-16 md:py-24
+         lg:py-32, see page.tsx), this page's hero just hadn't been
+         brought in line with that same pattern). */}
+      <div className="mx-auto max-w-3xl px-6 pt-24 pb-16 text-center md:pt-32 lg:px-10 lg:pt-48">
         <Reveal y={20}>
           <p className="eyebrow">Inside The App</p>
           <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
@@ -102,7 +108,18 @@ export default function InsideTheAppPage() {
           </>
         }
         media={
-          <div className="card-glass-light grid size-full grid-cols-2 gap-3 p-8">
+          // grid-cols-1 md:grid-cols-2 — this panel is FeatureSplitSection's
+          // own fixed aspect-square/overflow-hidden media box, sitting
+          // inside a pinned h-[100svh] section: below `lg` that box's
+          // actual pixel size is genuinely small (a mobile viewport's own
+          // width, minus this section's own px-6), so a single column of
+          // 6 tiles needs real vertical room that 3 rows of 2 didn't —
+          // p-4/gap-2/py-3 (down from p-8/gap-3/py-4) below `md` is what
+          // actually keeps all 6 tiles inside that fixed box without the
+          // last one or two clipping against its own overflow-hidden,
+          // confirmed live via screenshot at a real mobile width, not
+          // assumed from the class change alone.
+          <div className="card-glass-light grid size-full grid-cols-1 gap-2 p-4 md:grid-cols-2 md:gap-3 md:p-8">
             {[
               "Breathing",
               "Focus Reset",
@@ -113,7 +130,16 @@ export default function InsideTheAppPage() {
             ].map((category) => (
               <div
                 key={category}
-                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white/60 px-3 py-4 text-center text-xs font-medium tracking-wide text-navy/70 uppercase"
+                // Premium tile popout — a real, confirmed fidelity gap
+                // this fixes: the tiles previously had no hover
+                // treatment at all, reading as flat/static rather than
+                // interactive. bg-white (was bg-white/60) — a
+                // translucent tile lifting with its own cast shadow
+                // read inconsistently against the glass panel behind
+                // it; solid white is what actually makes the lift +
+                // shadow read as one tile floating above another,
+                // rather than two overlapping translucent layers.
+                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white px-3 py-3 text-center text-xs font-medium tracking-wide text-navy/70 uppercase transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-black/10 hover:shadow-xl hover:shadow-black/5 md:py-4"
               >
                 {category}
               </div>
@@ -158,7 +184,9 @@ export default function InsideTheAppPage() {
       {/* 5. Journal and daily check-in — brief marks the screenshot
          optional; a plain non-pinned split rather than the full cinematic
          FeatureSplitSection treatment. */}
-      <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
+      {/* py-16 md:py-24 lg:py-32 (was a flat py-24) — same progressive
+         step every other section on this page now uses. */}
+      <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
           <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
             One Minute
@@ -225,7 +253,7 @@ export default function InsideTheAppPage() {
 
       {/* 8. Availability */}
       <Reveal
-        className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32"
+        className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
         y={20}
       >
         <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
@@ -252,7 +280,7 @@ export default function InsideTheAppPage() {
       {/* 9. Closing CTA */}
       <section className="dark-glow bg-navy-soft text-cream">
         <Reveal
-          className="mx-auto max-w-2xl px-6 py-24 text-center lg:px-10 lg:py-28"
+          className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28"
           y={20}
         >
           <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">

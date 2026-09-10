@@ -234,7 +234,13 @@ export function BeyondHeartSection() {
          single viewport — the flex column centers the heading+rings
          group vertically inside min-h-screen regardless of the
          (deliberately asymmetric — pt only) padding above it. */}
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-24 pb-0 lg:px-10 lg:pt-32">
+      {/* pt-16 md:pt-24 lg:pt-32 (was a flat pt-24) — same progressive
+         step used elsewhere (see page.tsx); still just the TOP inset,
+         pb-0 unchanged, so the min-h-screen + justify-center balance
+         this whole block's own comment describes is untouched — a
+         smaller top pad on mobile only ever gives the centered content
+         MORE room, never less. */}
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-0 md:pt-24 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
           <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate

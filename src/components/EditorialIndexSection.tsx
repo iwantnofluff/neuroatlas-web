@@ -118,7 +118,12 @@ export function EditorialIndexSection() {
     // of real scroll distance at 180vh — 300vh was excess dead scroll
     // beyond what any card's own reveal needed.
     <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[180vh]")}>
-      <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-24 lg:px-10">
+      {/* py-16 md:py-24 (was a flat py-24) — same progressive step the
+         homepage's own sections already use (see page.tsx); a floor
+         only (min-h-[100svh], not a fixed height), so this never risks
+         clipping taller content — just tightens the minimum gap on a
+         narrow phone. */}
+      <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-16 md:py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>
             <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">

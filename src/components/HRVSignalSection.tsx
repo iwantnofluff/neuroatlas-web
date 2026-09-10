@@ -42,7 +42,9 @@ export function HRVSignalSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-cream px-6 py-24 text-center lg:px-10 lg:py-32"
+      // py-16 md:py-24 lg:py-32 (was a flat py-24) — same progressive
+      // step the homepage's own sections already use (see page.tsx).
+      className="relative overflow-hidden bg-cream px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
     >
       <svg
         aria-hidden="true"

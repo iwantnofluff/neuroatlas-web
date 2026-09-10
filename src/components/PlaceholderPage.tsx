@@ -14,7 +14,13 @@ type PlaceholderPageProps = {
  */
 export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center px-6 pt-32 pb-24 lg:px-10">
+    // pt-20 pb-16 md:pt-28 md:pb-20 lg:pt-32 lg:pb-24 — was a flat
+    // pt-32 pb-24 with no responsive step at all (128px+96px of
+    // padding on every phone regardless of width); min-h-screen +
+    // justify-center still centers this content either way, so
+    // tapering the base down for mobile only ever gives it more
+    // room, never less.
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center px-6 pt-20 pb-16 md:pt-28 md:pb-20 lg:px-10 lg:pt-32 lg:pb-24">
       <p className="eyebrow">{eyebrow}</p>
       <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
         {title}

@@ -58,7 +58,9 @@ export default function HowItWorksPage() {
           repeating it, and sets up the page's competitive framing (section
           8 later makes the same "other apps" contrast explicit). */}
       <section className="dark-glow bg-navy-soft text-cream">
-        <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
+        {/* py-16 md:py-24 lg:py-32 (was a flat py-24) — same progressive
+           step the homepage's own sections already use (see page.tsx). */}
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20} className="text-center">
             <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">
               The Part Every Other App Skips
@@ -167,7 +169,7 @@ export default function HowItWorksPage() {
       {/* 9. Closing CTA */}
       <section className="dark-glow bg-navy-soft text-cream">
         <Reveal
-          className="mx-auto max-w-2xl px-6 py-24 text-center lg:px-10 lg:py-28"
+          className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28"
           y={20}
         >
           <h2 className="text-balance font-serif text-3xl leading-tight lg:text-4xl">

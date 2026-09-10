@@ -51,6 +51,16 @@ export function BuiltToReadYouScene({
       // both text blocks' inner edges rather than just sit in a gap
       // between them.
       className="!absolute inset-0 z-0"
+      // pan-y — a global responsiveness-audit finding, applied for
+      // consistency: R3F's <Canvas> renders its OWN wrapper div around
+      // the actual <canvas> element, which is where this `style` prop
+      // actually lands (see TheSpecsScene.tsx's own comment for the
+      // full mechanics, discovered and fixed there first). This scene
+      // has no drag/orbit control of its own, so there's no gesture
+      // for a vertical swipe to conflict with — allowing pan-y just
+      // guarantees a touch swipe over the model always reaches the
+      // page's own scroll.
+      style={{ touchAction: "pan-y" }}
       // 2->1.5 — see BandScrollScene.tsx's own comment: the fully-
       // metallic materials + <StudioEnvironment /> measurably raised
       // per-pixel shading cost, and capping the DPR ceiling is the

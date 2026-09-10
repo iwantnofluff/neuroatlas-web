@@ -80,6 +80,23 @@ function MethodCard({
 
   return (
     <motion.div
+      // key={skipMotion ...} — a real, confirmed bug this fixes, found
+      // during a global responsiveness audit: both `isMobile` and
+      // `reduceMotion` default to `false` on the server/first paint
+      // (see useIsMobile.ts/useSafeReducedMotion.ts's own
+      // getServerSnapshot) and only resolve to their real client value
+      // a tick later. framer-motion's `initial` prop is captured ONCE
+      // at mount, never re-read on a later prop change — so on an
+      // actual mobile device, this card could mount with `initial`
+      // baked in from the STALE isMobile=false pass (rotate/x from the
+      // desktop fan), and since whileInView hadn't fired yet, it just
+      // sat at that wrong offset until scrolled into view. Confirmed
+      // live: document.documentElement.scrollWidth read 72px wider
+      // than the viewport on page load, tracing to exactly this card's
+      // pre-animation x offset. Keying on `skipMotion` forces a clean
+      // remount the instant it resolves to its real value, so
+      // `initial` is always captured fresh and correct.
+      key={skipMotion ? "settled" : "fan"}
       initial={{ opacity: 0, rotate: startRotate, x: startX }}
       whileInView={{ opacity: 1, rotate: restRotate, x: 0 }}
       // amount: 0.15, not margin: "-80px" — see Reveal.tsx's own
