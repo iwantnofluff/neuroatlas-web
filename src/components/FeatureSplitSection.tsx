@@ -11,7 +11,7 @@ type FeatureSplitSectionProps = {
   eyebrow?: string;
   heading: string;
   body: ReactNode;
-  /** Which side the media panel sits on at the lg breakpoint. On mobile
+  /** Which side the media panel sits on at the md breakpoint. On mobile
    *  the media always shows first regardless — see the order-utility
    *  note below, matching every other image+text section on this site. */
   imageSide: "left" | "right";
@@ -108,16 +108,31 @@ function useMediaMotion(progress: MotionValue<number>, reduceMotion: boolean) {
  * scroll progress through its pin, then holding fully visible until the
  * pin naturally releases into the next section.
  *
- * DOM order is ALWAYS [text, media] — desktop left/right is controlled
- * purely with `order` utilities, not by swapping the JSX, which is what
- * keeps "media shows first on mobile" uniform regardless of which side it
- * ends up on at desktop: the text block carries a base `order-2` (so the
- * media panel, left at its default `order-0`, is always first once the
- * grid stacks to one column on mobile); `imageSide="right"` then adds
- * `lg:order-1` to flip text back in front at the two-column breakpoint,
- * with the media panel picking up the matching `lg:order-2`. `imageSide=
- * "left"` needs nothing extra — the media panel already defaults to first
- * at every breakpoint, mobile and desktop alike.
+ * DOM order is ALWAYS [text, media] — left/right is controlled purely
+ * with `order` utilities, not by swapping the JSX, which is what keeps
+ * "media shows first on mobile" uniform regardless of which side it ends
+ * up on at the two-column breakpoint: the text block carries a base
+ * `order-2` (so the media panel, left at its default `order-0`, is always
+ * first once the grid stacks to one column below md); `imageSide="right"`
+ * then adds `md:order-1` to flip text back in front once the two-column
+ * split engages, with the media panel picking up the matching
+ * `md:order-2`. `imageSide="left"` needs nothing extra — the media panel
+ * already defaults to first at every breakpoint, mobile and desktop
+ * alike.
+ *
+ * Two-column split engages at md (768px), not lg (1024px) — a real,
+ * confirmed bug this replaces: staying single-column through the whole
+ * 768–1023px tablet range meant the media panel's `aspect-square` sized
+ * itself off the FULL container width (~720px at a 768px viewport),
+ * producing a 720×720 square that, stacked above the text block inside
+ * this section's fixed h-[100svh] pinned viewport, pushed the text
+ * below the visible area entirely — confirmed live via
+ * getBoundingClientRect (text bottom edge past the viewport's own
+ * height). Splitting into two real columns at md instead of lg gives the
+ * media panel roughly half the container width, which is what actually
+ * keeps its aspect-square size reasonable — the `md:max-h-[55vh]` cap
+ * on the panel itself (see its own comment below) is a second,
+ * independent safety net for the same failure mode, not the primary fix.
  */
 export function FeatureSplitSection({
   id,
@@ -193,13 +208,18 @@ export function FeatureSplitSection({
           sectionClassName
         )}
       >
-        <div className="mx-auto w-full max-w-6xl px-6 lg:px-10">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
+        {/* px-6 md:px-8 lg:px-10 — was px-6 lg:px-10 with nothing between;
+           now that the split itself engages at md (see this component's
+           own doc comment), the gutter needed its own step at that same
+           breakpoint rather than jumping straight from mobile's 24px to
+           desktop's 40px. */}
+        <div className="mx-auto w-full max-w-6xl px-6 md:px-8 lg:px-10">
+          <div className="grid items-center gap-10 md:grid-cols-2 lg:gap-14">
             <motion.div
               style={{ opacity: text.opacity, x: text.x }}
               className={cn(
-                "order-2 text-center lg:text-left",
-                imageSide === "right" && "lg:order-1"
+                "order-2 text-center md:text-left",
+                imageSide === "right" && "md:order-1"
               )}
             >
               {eyebrow && <p className="eyebrow">{eyebrow}</p>}
@@ -214,7 +234,7 @@ export function FeatureSplitSection({
               </h2>
               <div
                 className={cn(
-                  "mx-auto mt-6 max-w-xl text-pretty text-lg lg:mx-0",
+                  "mx-auto mt-6 max-w-xl text-pretty text-lg md:mx-0",
                   dark ? "text-cream/75" : "text-mist"
                 )}
               >
@@ -222,11 +242,47 @@ export function FeatureSplitSection({
               </div>
             </motion.div>
 
+            {/* max-h caps below lg — a SECOND, independent bug this
+               fixes beyond the md:grid-cols-2 split above: below md, this
+               panel is still full-width and stacked ABOVE the text (see
+               the order-utility comment up top), so its aspect-square
+               size derives from the full container width — at a 640px
+               foldable width that's a ~590px-tall square, which combined
+               with the text block below it genuinely doesn't fit this
+               section's own h-[100svh] pinned viewport. Confirmed live
+               via getBoundingClientRect across a width/height sweep: the
+               media panel's top edge sat well ABOVE y=0 (items-center
+               distributing the overflow equally above and below) at
+               foldable widths down to a 700px-tall viewport — the exact
+               same "content taller than the pin" failure the md fix
+               addresses, just triggered by the STACKED layout's full
+               width rather than the two-column layout's lg-only split.
+               `max-md:max-h-[50vh]` caps it there; `md:max-h-[55vh]` is
+               the equivalent cap for the two-column case (in practice a
+               2-column square is already well under this, so it's a
+               ceiling for an unusually short md viewport, not something
+               that visibly changes the ordinary case); `lg:max-h-none`
+               cancels the cap again once there's a real two-column
+               desktop layout with plenty of vertical room, preserving
+               this panel's original, already-tuned lg+ size exactly.
+               Both max-md: and md: pair their cap with an explicit
+               w-full + mx-auto — a real, confirmed bug this avoids:
+               grid/flow items stretch to their container's width by
+               default with NO width class needed, but adding
+               aspect-ratio + max-height together overrides that default
+               stretch, collapsing the div down to the size of the tiny
+               ImageIcon placeholder inside it instead (confirmed live
+               via screenshot: a ~50×50px box floating in an otherwise
+               empty column). The explicit width restores the intended
+               full-width square; max-height only ever overrides it
+               downward on a viewport short enough to actually need it. */}
             <motion.div
               style={{ opacity: visual.opacity, scale: visual.scale }}
               className={cn(
                 "relative aspect-square overflow-hidden rounded-3xl",
-                imageSide === "right" && "lg:order-2"
+                "max-md:mx-auto max-md:w-full max-md:max-h-[50vh]",
+                "md:mx-auto md:w-full md:max-h-[55vh] lg:max-h-none",
+                imageSide === "right" && "md:order-2"
               )}
             >
               {media ?? (
