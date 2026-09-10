@@ -66,6 +66,7 @@ const SPOTLIGHT_RADIUS = 320; // px
 const EXPLORE_HREFS = [
   "/how-it-works",
   "/band",
+  "/the-science",
   "/inside-the-app",
   "/toolkits",
   "/for-organisations",

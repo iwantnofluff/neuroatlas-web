@@ -33,10 +33,23 @@ export default function HowItWorksPage() {
           no CTAs (this page has its own closing CTA further down, so a
           second pair of buttons up top would just be noise). Header.tsx's
           transparent-over-dark treatment is opted into for this route
-          alongside "/" and "/band". */}
+          alongside "/" and "/band".
+
+          headline's embedded "\n" forces the break after "Tracking" —
+          reported live as wrapping awkwardly into three lines otherwise,
+          stranding "Fixed" alone on its own row. This is Hero.tsx's own
+          established convention (see that component's `headline` prop
+          doc comment) for exactly this: the headline renders via
+          per-word flex-wrap for the stagger animation, not the browser's
+          native text layout, so plain `text-balance` has no effect on it
+          (Hero.tsx's own comment documents this as a confirmed no-op) —
+          "\n" is what actually controls where it breaks. Each forced
+          line is still its own flex-wrap row underneath, so this still
+          wraps further on narrow phones exactly as gracefully as an
+          unbroken headline would; nothing extra is needed for mobile. */}
       <Hero
         eyebrow="How It Works"
-        headline="Here Is What Tracking Never Fixed"
+        headline={"Here Is What Tracking\nNever Fixed"}
         subhead="Most tools stop at showing you the data. NeuroAtlas closes the loop by measuring what is happening, helping you intervene, and measuring again to see what changed."
         tagline="Measure → Intervene → Measure Again"
         ctas={[]}

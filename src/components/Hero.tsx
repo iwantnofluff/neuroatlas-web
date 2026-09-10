@@ -158,7 +158,20 @@ export function Hero({
         className="text-gold/10 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_35%,black,transparent)]"
       />
 
-      <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center lg:pt-24">
+      {/* max-w-4xl, not the previous max-w-3xl — a real, confirmed bug
+         this fixes: BOOWIE's letterforms render noticeably wider than
+         Fraunces (this wrapper's width was originally tuned against),
+         so a forced headline line that fit on one row before could now
+         overflow its own row by a small amount and wrap internally —
+         confirmed live on /how-it-works: "Here Is What Tracking" (one
+         forced line) needed ~776px at this breakpoint's font size but
+         only had 768px, wrapping into two sub-lines and turning an
+         intended two-line headline into three. 896px gives real margin
+         without needing a page-specific override — every other Hero
+         caller's shorter headlines/subheads just get a touch more room,
+         confirmed live across the homepage, /the-science,
+         /for-organisations, and /privacy. */}
+      <div className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center lg:pt-24">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

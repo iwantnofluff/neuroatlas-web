@@ -3,26 +3,31 @@ export type NavLink = {
   href: string;
 };
 
-// Primary header nav — Title Case per Copy V2.
+// Primary header nav — Title Case per Copy V2. "The Science" sits right
+// after "The Band" and before "Toolkits" per the client's own explicit
+// nav update — restored here (see footerNav's own comment on its
+// earlier removal from the footer specifically).
 export const primaryNav: NavLink[] = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "The Band", href: "/band" },
+  { label: "The Science", href: "/the-science" },
   { label: "Toolkits", href: "/toolkits" },
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy", href: "/privacy" },
   { label: "About", href: "/about" },
 ];
 
-// Full footer site menu — Title Case per Copy V2. This list is the
-// client's own final, complete enumeration (see the "Final Copy for
-// Home Page" doc's own footer section) — "The Science" used to be
-// listed here too, but the final copy's own list doesn't include it,
-// so it's gone from the footer nav specifically (the /the-science page
-// itself is untouched — this only removes the footer LINK to it, which
-// wasn't asked for).
+// Full footer site menu — Title Case per Copy V2. "The Science" was
+// previously removed from this list specifically (the "Final Copy for
+// Home Page" doc's own footer enumeration didn't include it, while the
+// /the-science page itself stayed untouched) — the client has since
+// explicitly asked for it back in the nav, in both places, so it's
+// restored here too, in the same "after The Band" position as
+// primaryNav above.
 export const footerNav: NavLink[] = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "The Band", href: "/band" },
+  { label: "The Science", href: "/the-science" },
   { label: "Inside The App", href: "/inside-the-app" },
   { label: "Toolkits", href: "/toolkits" },
   { label: "For Organisations", href: "/for-organisations" },
