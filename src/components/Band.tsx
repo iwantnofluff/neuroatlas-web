@@ -114,7 +114,7 @@ const HARDWARE_MATERIAL_PROPS = {
 // that it still clears the headline above and subtext below with no
 // overlap at any point in the scroll (position/rotation change, scale
 // doesn't).
-const MODEL_SCALE_DESKTOP = 22;
+const MODEL_SCALE_DESKTOP = 32;
 const MODEL_SCALE_MOBILE = 20;
 
 /** The CAD export's own "up" axis doesn't match this scene's — the
