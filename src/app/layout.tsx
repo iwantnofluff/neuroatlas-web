@@ -1,23 +1,43 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  axes: ["opsz", "SOFT"],
+// The real brand typefaces, replacing the Fraunces/Plus Jakarta Sans
+// Google Fonts stand-ins this site launched with (see this file's own
+// prior history for why those were chosen as substitutes). Both files
+// live in public/fonts/ — see that directory's own note on what's
+// actually present.
+//
+// BOOWIE ships as a single static weight — there is no bold/medium/light
+// cut to select between, which is also why the brand pass on this
+// site's headings (see globals.css's own font-serif-adjacent comments,
+// and every h1/h2 className across the app) forces font-normal rather
+// than leaving weight unset.
+const boowie = localFont({
+  src: "../../public/fonts/BOOWIE.ttf",
+  variable: "--font-boowie",
+  weight: "400",
+  display: "swap",
 });
 
-// Real app UI font is "Google Sans Flex" (Google's internal typeface, not
-// publicly self-hostable). Plus Jakarta Sans is used elsewhere in the same
-// Figma file and is the closest free, metrically-similar substitute.
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
+// Only Mont-Book (weight 400, "Book") was present in the asset drop this
+// was built from — Light, Medium, and Semibold were named in the brand
+// brief but no corresponding files exist yet. font-light/font-medium/
+// font-semibold utilities are still used deliberately throughout this
+// codebase per that brief (see .eyebrow and ShimmerButton's own
+// comments), but until those files are added below as additional `src`
+// entries, the browser can only synthesize them (faux bold/thin) from
+// this one real cut rather than rendering an actual distinct Mont
+// weight. Add each missing weight here the same way, e.g.:
+//   { path: "../../public/fonts/Mont-Medium.ttf", weight: "500", style: "normal" }
+const mont = localFont({
+  src: [{ path: "../../public/fonts/Mont-Book.ttf", weight: "400", style: "normal" }],
+  variable: "--font-mont",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", fraunces.variable, jakarta.variable)}
+      className={cn("h-full", "antialiased", boowie.variable, mont.variable)}
     >
       <body className="min-h-full flex flex-col bg-cream font-sans text-ink">
         <SmoothScroll />
