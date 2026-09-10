@@ -44,10 +44,11 @@ export default function InsideTheAppPage() {
         <Reveal y={20}>
           <p className="eyebrow">Inside The App</p>
           <h1 className="mt-4 text-balance font-serif text-4xl leading-tight text-navy lg:text-5xl">
-            Turns Into Action
+            This Is Where It Actually Happens
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
-            Every reading turns into something you can act on.
+            Every reading turns into something you can act on. The app reads
+            your data, runs the right reset, and shows you it worked.
           </p>
         </Reveal>
       </div>
@@ -62,7 +63,7 @@ export default function InsideTheAppPage() {
 
       {/* 2. The daily dashboard */}
       <FeatureSplitSection
-        heading="One Glance"
+        heading="Your Day At A Glance"
         imageSide="right"
         background="navy-soft"
         body={
@@ -93,17 +94,18 @@ export default function InsideTheAppPage() {
 
       {/* 3. The NeuroLibrary */}
       <FeatureSplitSection
-        heading="The Right Tool"
+        heading="Find What Fits"
         imageSide="left"
         background="cream"
         body={
           <>
             <p className="text-pretty">
-              Every toolkit and drill lives inside the NeuroLibrary, grouped
-              so you can find what actually fits the moment.
+              The NeuroLibrary brings together toolkits and drills designed
+              for different moments, so you can quickly find an intervention
+              that fits what you need.
             </p>
             <p className="mt-4 text-pretty text-base italic text-mist/80">
-              No scrolling through forty options to find the right one.
+              The right tool, right when you need it.
             </p>
           </>
         }
@@ -150,22 +152,26 @@ export default function InsideTheAppPage() {
 
       {/* 4. Boardroom Mode — the one flagship, full-navy section, same as
          the original pass: the copy itself calls this out as the feature
-         people come back to. */}
+         people come back to. Heading option A ("Composure On Demand")
+         over B ("On Call Before It Counts"). The client's final copy
+         drops "Boardroom Mode" as the H2 in favor of that punchier
+         option, but doesn't say to drop the name entirely — moved to
+         the eyebrow (was "The Standout Feature") so the actual feature
+         name stays visible rather than disappearing outright. */}
       <FeatureSplitSection
-        eyebrow="The Standout Feature"
-        heading="Boardroom Mode"
+        eyebrow="Boardroom Mode"
+        heading="Composure On Demand"
         imageSide="right"
         background="navy"
         body={
           <>
             <p className="text-pretty">
-              A short priming protocol for the minutes before a negotiation,
-              a board vote, or any moment you cannot afford to walk in
+              A short priming protocol for a defining moment, a negotiation,
+              a board vote, a decision you cannot afford to walk into
               unfocused.
             </p>
             <p className="mt-4 text-pretty text-base italic text-cream/50">
-              This is the one feature people come back to before every
-              high-stakes moment.
+              The feature for high-stakes moments.
             </p>
           </>
         }
@@ -189,11 +195,12 @@ export default function InsideTheAppPage() {
       <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
           <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
-            One Minute
+            A Minute To Check In
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
-            A quick daily check-in, so what you&rsquo;re feeling sits right
-            next to what the band is reading. Private by default.
+            A quick daily check-in lets you record how you&rsquo;re feeling
+            alongside what your band is measuring, giving you both sides of
+            the picture.
           </p>
         </Reveal>
         <Reveal delay={0.1} y={20}>
@@ -208,9 +215,12 @@ export default function InsideTheAppPage() {
         background="navy-soft"
         body={
           <>
-            <p className="text-pretty">See how things shift over weeks, not just today.</p>
+            <p className="text-pretty">
+              See how your stress patterns and responses change over weeks
+              and months, not just from one day to the next.
+            </p>
             <p className="mt-4 text-pretty text-base italic text-cream/50">
-              A single bad day means less when you can see the whole trend.
+              A clearer view of your progress.
             </p>
           </>
         }
@@ -224,14 +234,17 @@ export default function InsideTheAppPage() {
          on this site rather than fabricating a specific claimed partner
          list. */}
       <FeatureSplitSection
-        heading="Plays Well"
+        heading="Syncs With Your Other Apps"
         imageSide="right"
         background="cream"
         body={
           <>
-            <p className="text-pretty">Connect NeuroAtlas with the health apps you already track.</p>
+            <p className="text-pretty">
+              Connect NeuroAtlas with the health apps you already use to
+              bring more of your health data into one place.
+            </p>
             <p className="mt-4 text-pretty text-base italic text-mist/80">
-              More context, without replacing anything you already rely on.
+              More context, without replacing what you rely on.
             </p>
           </>
         }
@@ -257,13 +270,14 @@ export default function InsideTheAppPage() {
         y={20}
       >
         <h2 className="text-balance font-serif text-3xl leading-tight text-navy lg:text-4xl">
-          Available Now
+          NeuroAtlas Available Now
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
           NeuroAtlas is available on iOS and Android.
         </p>
         <p className="mx-auto mt-4 max-w-xl text-pretty text-base italic text-mist/80">
-          The band is required for the full experience.
+          The NA·01 band is required to access the full NeuroAtlas
+          experience.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           {["App Store", "Google Play"].map((store) => (
