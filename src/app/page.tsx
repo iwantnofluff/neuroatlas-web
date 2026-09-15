@@ -232,39 +232,86 @@ export default function Home() {
 
       <BeyondHeartSection />
 
-      {/* How it's different — image left, content right. No order-*
-          overrides needed: DOM order is already [image, text], which is
-          also the mobile convention every other image+text section on
-          this page follows (image first, text after), so it doubles as
-          the desktop order too here. */}
-      <section id="how-different" className="dark-glow bg-navy-soft text-cream">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <Reveal y={20}>
-              <Parallax
-                offset={24}
-                className="relative aspect-square overflow-hidden rounded-3xl bg-navy"
-              >
-                <Image
-                  src="/photos/band-ice-splash.jpg"
-                  alt="The NA·01 band splashing into water"
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </Parallax>
-            </Reveal>
-            <Reveal delay={0.1} y={20} className="text-center lg:text-left">
-              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-                Other Apps Notice. We Fix It, In Two Minutes.
-              </h2>
-              <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75 lg:mx-0">
-                Other wearables tell you your heart rate is up or your sleep
-                was disturbed, and stop there. NeuroAtlas gives you something
-                to do about it, and proves it worked, in two minutes.
-              </p>
-            </Reveal>
-          </div>
+      {/* How it's different — was a side-by-side card layout (image
+          left, text right in two even columns); now a full-bleed
+          cinematic banner instead, the photo filling the whole section
+          with the text sitting directly in its own negative space
+          rather than in a separate boxed-off column. No `dark-glow`
+          here any more — that class's own radial gold ambient glow
+          (see globals.css) was tuned for a plain flat dark section
+          background; layered over a real photo it would just tint the
+          image, fighting the cinematic-photo look rather than adding
+          to it. */}
+      <section
+        id="how-different"
+        // z-0, not just `relative` alone — a real, confirmed bug this
+        // fixes: `position: relative` with no explicit z-index does NOT
+        // establish a new stacking context on its own, so this section's
+        // `-z-10` background children (below) were being hoisted up to
+        // compare against the nearest ANCESTOR stacking context instead
+        // of this section's own — which put them BEHIND this section's
+        // own `bg-navy` fill (an ordinary in-flow paint layer, which
+        // sits in front of a hoisted negative-z-index descendant once
+        // it's no longer contained locally). Confirmed live: sampling
+        // pixel colors off the actual rendered page showed flat,
+        // uniform `#0b1016` (this site's own --color-navy token) across
+        // the whole section — the section's own background color, not
+        // a single pixel of real photo detail anywhere. `z-0` (any
+        // explicit z-index value, even 0) alongside `relative` is what
+        // actually creates a real stacking context here, containing the
+        // `-z-10` image/gradient layers inside it — where they correctly
+        // paint in FRONT of this section's own background, exactly as
+        // intended.
+        className="relative z-0 flex min-h-[80vh] items-center overflow-hidden bg-navy text-cream"
+      >
+        {/* Background layer — image, then the legibility gradient(s) on
+           top of it, all -z-10 so ordinary content (the text block
+           below, no z-index of its own needed) stacks above them by
+           default. Order matters here even though every layer shares
+           the same -z-10: with equal z-index, later DOM order paints on
+           top, so the gradients (added after the image) actually darken
+           it rather than sitting invisibly behind it. */}
+        <Image
+          src="/photos/homepage_bottom.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="-z-10 object-cover object-center"
+        />
+        {/* Left-to-right legibility gradient — transparent over the
+           hardware itself (photographed left-of-center), solid toward
+           the right where the text sits. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent to-navy/80"
+        />
+        {/* Supplemental scrim below `lg` — matches the text block's own
+           `lg:ml-auto` breakpoint below: until the text actually shifts
+           into the clear right-side negative space at `lg`, it sits
+           centered directly over the band itself (confirmed live: an
+           earlier `md:ml-auto` attempt still left the text overlapping
+           the strap at exactly 768px, not yet clear of it — reverted in
+           favor of holding the centered layout, with this scrim, all
+           the way to `lg`), so the horizontal gradient alone isn't
+           guaranteed enough contrast there. Gone at lg+, where the text
+           has real clear space of its own and the horizontal gradient
+           already does the job on its own. */}
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/45 lg:hidden" />
+
+        <div className="mx-auto flex w-full max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <Reveal
+            y={20}
+            className="mx-auto w-full max-w-xl text-center lg:mx-0 lg:ml-auto lg:text-left"
+          >
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              Other Apps Notice. We Fix It, In Two Minutes.
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75 lg:mx-0">
+              Other wearables tell you your heart rate is up or your sleep
+              was disturbed, and stop there. NeuroAtlas gives you something
+              to do about it, and proves it worked, in two minutes.
+            </p>
+          </Reveal>
         </div>
       </section>
 
