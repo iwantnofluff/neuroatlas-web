@@ -68,7 +68,7 @@ export default function HowItWorksPage() {
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               The Part Every Other App Skips
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-cream/75">
+            <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-cream/75">
               NeuroAtlas doesn&rsquo;t stop at telling you what&rsquo;s
               happening. It helps you do something about it, then checks
               whether it made a difference.
