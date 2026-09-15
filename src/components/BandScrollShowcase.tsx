@@ -77,32 +77,55 @@ function useSignalReveal(
 
 /** xl+ only — floating glass cards positioned within the center/bottom
  *  band where the model itself lives (the canvas is confined to the
- *  bottom ~72% of the viewport — see BandScrollScene.tsx), not shoved to
- *  the extreme screen margins the way the previous version's callouts
- *  were. Percentage-based insets (not fixed left-6/right-6 edge values)
- *  are what actually reads as "floating around the model" rather than
- *  "pinned to the corners of the viewport". */
+ *  bottom ~72% of the viewport — see BandScrollScene.tsx). Percentage-
+ *  based insets (not fixed left-6/right-6 edge values) are what actually
+ *  reads as "floating around the model" rather than "pinned to the
+ *  corners of the viewport".
+ *
+ * 20% -> 30% — a direct "bring them closer, let them overlap the model"
+ * request: at 20% (this whole comment block's own former reasoning —
+ * "too tight/bleeding into the model" was the complaint about a smaller
+ * PERCENTAGE back when these were mis-read as edge-margins to shrink;
+ * `left`/`right` here are insets FROM the edge, so a SMALLER number
+ * moves a card OUTWARD toward the screen edge, and a LARGER one moves it
+ * INWARD toward the model — the opposite of what "bring closer" needs)
+ * the cards sat with real daylight between them and the model at every
+ * scroll frame, confirmed live via screenshot. 30% is deep enough to
+ * genuinely overlap the model's own silhouette at its widest tumbled
+ * poses (confirmed the same way), which is the point — the cards are
+ * meant to read as layered in front of the 3D object, not floating
+ * beside it.
+ */
 const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> = {
-  // 20%, not the 24% a previous pass tightened this to — reported live
-  // as reading too tight/bleeding into the model at that value; this
-  // splits the difference between that and the original 16% ("too far
-  // from the model") for real breathing room on both sides.
+  // top-[36%] stays — a real, confirmed collision this avoids,
+  // independent of the horizontal value: this card's own right edge
+  // lands underneath the "For Stress" headline at every xl+ width up to
+  // ~1800px (confirmed via a Range measurement of that specific text
+  // run) unless it has this much clearance from the top.
+  "upper-left": "left-[30%] top-[36%]",
+  // bottom-[22%], not the original 16% — a real, confirmed collision
+  // the horizontal move introduced: at 16% this card's own bottom edge
+  // (now much closer to center) landed inside the "Because knowing your
+  // stress..." subtext's own box at every xl+ width tested (1280–1920),
+  // confirmed live via getBoundingClientRect on both elements. 22%
+  // clears the subtext's own top edge with real margin without needing
+  // to move the subtext itself.
   //
-  // top-[36%] (not the original top-[30%]) stays — a real, confirmed
-  // collision this avoids, independent of the horizontal value: this
-  // card's own right edge lands underneath the "For Stress" headline at
-  // every xl+ width up to ~1800px (confirmed via a Range measurement of
-  // that specific text run) unless it has this much clearance from the
-  // top. Nudging the card down clears the headline's second line with
-  // real margin at the narrowest xl width (1280, the worst case).
-  "upper-left": "left-[20%] top-[36%]",
-  "lower-right": "right-[20%] bottom-[16%] text-right",
-  // bottom-[24%] (not the original bottom-[30%]) stays too — a second,
+  // right-[27%], not the same 30% the other two cards use — a second,
+  // real collision this avoids: at 30% this card's own left edge landed
+  // flush against "lower-left"'s own right edge (a 0px gap, both cards
+  // sharing the same vertical band at the section's narrowest xl width,
+  // 1280), confirmed live. 3% less inward keeps this card's own overlap
+  // with the model while restoring real breathing room between the two
+  // bottom cards specifically — "upper-left" never shares a vertical
+  // band with either bottom card, so it doesn't need the same pull-back.
+  "lower-right": "right-[27%] bottom-[22%] text-right",
+  // bottom-[24%] (not the original bottom-[30%]) stays — a second,
   // smaller collision this avoids: pushing "upper-left" down to clear
   // the headline (see that entry's own comment) brought it close enough
   // to this card's own top edge that the two overlapped by a few px at
   // some widths, confirmed live via getBoundingClientRect.
-  "lower-left": "left-[20%] bottom-[24%]",
+  "lower-left": "left-[30%] bottom-[24%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
