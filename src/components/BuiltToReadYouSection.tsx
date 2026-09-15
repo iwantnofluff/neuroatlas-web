@@ -88,16 +88,38 @@ export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
-  // comment for the full mechanics: "start start" leaves scrollYProgress
-  // clamped at exactly 0 for the whole approach window while this
-  // taller-than-viewport wrapper is still scrolling up from below (its
-  // content already on screen), which for anything gated by progress
-  // rather than always-on renders as genuinely blank/frozen for that
-  // whole stretch, not just briefly.
+  // offset ["start start", "end end"] — was ["start end", "end end"], a
+  // real, confirmed bug this replaces: with a 180vh wrapper and a 100vh
+  // viewport, "start end" maps the full 0–1 progress range across the
+  // wrapper's own FULL height (180vh) of scroll, starting the instant its
+  // top sliver enters the viewport from below — but the sticky child
+  // doesn't actually PIN until 100vh of that has already scrolled by (the
+  // point where the wrapper's top reaches the viewport's top). That's
+  // progress ≈0.56 by the time pinning engages — well past the model's
+  // own rise/spin/lock sequence, which completes entirely by progress 0.4
+  // (see Band.tsx's `t = p / 0.4` for the "reveal" variant). The model
+  // was finishing its whole animation and locking into its final pose
+  // WHILE THE SECTION WAS STILL SCROLLING UP INTO VIEW, before it was
+  // even pinned — confirmed live: scrubbing to progress 0.4 showed the
+  // wrapper's top well below the viewport's top, nowhere near pinned yet.
+  // Once pinned, the remaining ~44% of the range was pure dead hold, on
+  // top of an approach that had already used up the interesting part.
+  //
+  // "start start" fixes this at the source: progress is mathematically
+  // clamped at exactly 0 for the entire approach (while the wrapper is
+  // still scrolling up but hasn't reached the pin point), and only starts
+  // advancing once the wrapper's own top hits the viewport's top — i.e.
+  // the exact instant `sticky top-0` engages. That's not the blank-
+  // content failure mode FeatureSplitSection's own comment warns about
+  // (this section's content is SUPPOSED to sit at its progress-0 state —
+  // model off-screen, headline invisible — for the whole approach; there's
+  // nothing here that needs to be visible before the pin engages, unlike
+  // that other case), so there's no downside to it here, and it removes
+  // the early-completion bug entirely: the model now rises, spins, and
+  // locks entirely within the section's own pinned scroll, not before it.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start end", "end end"],
+    offset: ["start start", "end end"],
   });
 
   const headline = useHeadlineMotion(scrollYProgress, reduceMotion);
@@ -107,12 +129,18 @@ export function BuiltToReadYouSection() {
     <div
       id="the-band"
       ref={wrapperRef}
-      // 300vh -> 180vh — per an explicit "too much scrolling to reveal"
-      // pass: the headline (0.3-0.6) and subtext (0.6-0.8) windows still
-      // get ~54vh/~36vh of real scroll distance at this height, still
-      // legible — 300vh was excess dead scroll beyond what either beat
-      // actually needed.
-      className={cn(!reduceMotion && "h-[180vh]")}
+      // 180vh -> 150vh, alongside the offset fix above. With "start
+      // start"/"end end" now the actual pinned-scroll distance is
+      // (wrapper height − viewport height): at 150vh that's 50vh of
+      // real scroll while pinned. The model's own lock point (progress
+      // 0.4) lands ~20vh into that, leaving ~30vh of settled hold before
+      // the section releases — enough to actually register the locked
+      // pose without the multi-screen dead scroll the previous, wrongly-
+      // offset 180vh produced. 150vh (not the 180vh this replaces) is
+      // the deliberately tighter end of that range — the brief this fix
+      // responds to specifically asked for the section to release "as
+      // soon as the model locks into place", not to keep a long hold.
+      className={cn(!reduceMotion && "h-[150vh]")}
     >
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully
