@@ -31,41 +31,81 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 // wrapper's own className below) is what actually fixes it — the
 // labels get their room from the surrounding section's own margin,
 // not from pushing the rings themselves off-center.
-const CX = 50;
-const CY = 50;
+//
+// VIEWBOX_SIZE 100 -> 124, CX/CY 50 -> 62 (still true center: 62 is
+// exactly half of 124), alongside adding the fourth ring below. The
+// three original rings (radius 14/26/38) always had exactly one
+// step's worth (12 units) of margin between the outermost ring and
+// the 100-unit box edge — the fourth ring's own radius (50, the same
+// +12 step) would land EXACTLY ON that old edge, leaving zero margin
+// and clipping the ring's own stroke at its cardinal points. Widening
+// the box by one more step in every direction (124 = 2 × (50 + 12))
+// restores that same margin for the new outermost ring, without
+// touching the three existing rings' own radii at all.
+const VIEWBOX_SIZE = 124;
+const CX = 62;
+const CY = 62;
 
 function pointOnRing(radius: number, angleDeg: number) {
   const rad = (angleDeg * Math.PI) / 180;
   return { x: CX + radius * Math.cos(rad), y: CY + radius * Math.sin(rad) };
 }
 
-// Fixed text-column width for the label overlay (rem) — deliberately a
-// single fixed value, not the previous responsive max-w-[11rem]
-// lg:max-w-[14rem]. A left-side node needs to shift its WHOLE wrapper
-// leftward by exactly this width (+ the dot's own gap) so the dot still
-// lands precisely on the ring despite the text rendering BEFORE it in
-// DOM order (see NODE_QUADRANTS' own comment) — that offset has to be a
-// single known constant, not one that silently changes per breakpoint.
+// The label overlay places a ring's dot/text at `${x}%`/`${y}%` of its
+// container — valid ONLY when the coordinate is first expressed as a
+// fraction of the viewBox's own total size, not used as a raw
+// unitless value (that only ever worked before because VIEWBOX_SIZE
+// was exactly 100, making "coordinate" and "percent" numerically
+// identical by coincidence — no longer true now that it's 124).
+function toPercent(value: number) {
+  return (value / VIEWBOX_SIZE) * 100;
+}
+
+// Text-column width for the label overlay (rem) — the dot and the text
+// block are each independently absolutely positioned against the same
+// anchor point (see the label-overlay's own comment further down), so
+// unlike an earlier version of this file, NODE_WIDTH_REM no longer has
+// any bearing on where a ring's DOT actually lands — only on how far
+// its text visually reaches out from that anchor. That's what makes it
+// safe to cap responsively below, where it wasn't before.
 // 12.5rem (200px) — widened from 11rem per an explicit typography-pass
 // request, paired with text-pretty below: a touch more width gives the
 // "no orphaned final word" balancing algorithm more room to distribute
 // across 2–3 genuinely even lines rather than fighting a narrower column.
+//
+// Used as `min(12.5rem, 20vw)` at the actual render site, not this bare
+// value — a real, confirmed overflow this caps: the ring box's own size
+// here is driven by viewport HEIGHT (see the infographic wrapper's own
+// w-[min(48rem,70vh)]), not width, so on a wide-but-short viewport the
+// box (and the side margin around it the labels rely on to spill into)
+// doesn't shrink to match a NARROW width the way it should. Confirmed
+// live at 768×900 (the exact width the ring diagram first turns on at):
+// the new, larger outer ring's label reached 8px past the viewport's
+// own right edge at the fixed 12.5rem width. `20vw` only ever binds at
+// exactly this kind of tight width — at any normal desktop width it's
+// comfortably wider than 12.5rem, so `min()` picks the unchanged
+// 12.5rem there and nothing about the already-approved wider layout
+// changes.
 const NODE_WIDTH_REM = 12.5;
 const NODE_GAP_REM = 0.75;
 
-// radius/labelAngle/startAngle are all in the SVG's own unitless 0–100
-// viewBox space. Per an explicit follow-up spec: each label now sits in
-// a DIFFERENT QUADRANT of its own ring (not all fanned along the right
-// side, which is what the previous version did) — node 01 top-left of
-// the inner ring, 02 bottom-right of the middle ring, 03 bottom-left of
-// the outer ring. A clean diagonal angle per quadrant (-135°/45°/135°)
-// keeps all three comfortably far apart (they're now in three
-// genuinely different regions of the box, not variations on the same
-// right-side arc), which is what actually avoids the earlier version's
-// collision risk — no per-ring angle tuning needed this time.
-// `side` drives which way its text reads (see the label-overlay
-// comment below); startAngle offsets each ring's traveling pulse so
-// they don't all begin aligned.
+// radius/labelAngle/startAngle are all in the SVG's own unitless
+// VIEWBOX_SIZE-wide space. Per an explicit follow-up spec: each label
+// now sits in a DIFFERENT QUADRANT of its own ring (not all fanned
+// along the right side, which is what the previous version did) —
+// node 01 top-left of the inner ring, 02 bottom-right of the middle
+// ring, 03 bottom-left of the outer ring, 04 top-right of the new
+// outermost ring — the one quadrant of the four still unused, so all
+// four labels sit in genuinely different regions of the box rather
+// than two of them competing for the same corner. A clean diagonal
+// angle per quadrant (-135°/45°/135°/-45°) keeps them all comfortably
+// far apart, which is what actually avoids a collision risk — no
+// per-ring angle tuning needed. `side` drives which way its text reads
+// (see the label-overlay comment below) — always matching whichever
+// HALF of the box (left/right of center) the dot itself falls in, so
+// the text always extends further toward that same outer margin
+// rather than back in across the diagram; startAngle offsets each
+// ring's traveling pulse so they don't all begin aligned.
 const RINGS = [
   {
     key: "stress-age",
@@ -93,6 +133,17 @@ const RINGS = [
     labelAngle: 135,
     side: "left",
     startAngle: 240,
+  },
+  {
+    key: "recovery-capacity",
+    label: "Recovery Capacity",
+    body: "Copy to be added.",
+    // 38 + 12 — the same step as every other consecutive pair above
+    // (14→26→38), per an explicit "match the existing spacing" spec.
+    radius: 50,
+    labelAngle: -45,
+    side: "right",
+    startAngle: 60,
   },
 ] as const;
 
@@ -246,7 +297,7 @@ export function BeyondHeartSection() {
             Beyond Heart Rate
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
-            Beyond heart rate, NeuroAtlas tracks three things most other
+            Beyond heart rate, NeuroAtlas tracks four things most other
             tools miss.
           </p>
         </Reveal>
@@ -267,7 +318,7 @@ export function BeyondHeartSection() {
            inside a wider box. mt-4, not a previous mt-16 — the heading
            and the rings should read as one cohesive unit, not two
            separate blocks with a big gap between them.
-           w-[min(48rem,70vh)], not a plain max-h-[70vh] alongside
+           w-[min(48rem,70vh,88vw)], not a plain max-h-[70vh] alongside
            max-w-3xl/w-full — a real, confirmed bug that replaces: this
            element is a flex item (the section wrapper is `flex
            flex-col items-center`) with NON-stretch cross-axis
@@ -283,18 +334,35 @@ export function BeyondHeartSection() {
            the ring's own radius. Removing width entirely doesn't work
            either — with no in-flow content and no explicit size, the
            box collapses to 0×0 (also confirmed live). A single width
-           expressed as `min(48rem, 70vh)` sidesteps this entirely:
+           expressed as `min(48rem, 70vh, 88vw)` sidesteps this entirely:
            aspect-square then derives a MATCHING height from that one
            real, explicit, already-fully-resolved value, so both
            dimensions are always equal by construction — a true square
            at every viewport size, no flex/aspect-ratio interaction
-           left to go wrong. */}
+           left to go wrong.
+           The `88vw` term is new, added alongside the fourth ring: on a
+           narrow-but-TALL viewport (confirmed live at 768×1200), 70vh
+           alone can exceed the 48rem cap, growing the box out to the
+           full 48rem/768px — exactly this viewport's own width, leaving
+           literally zero side margin for any label to spill into
+           (see NODE_WIDTH_REM's own comment on the labels' own width
+           cap; that alone can't help once the BOX itself has no margin
+           left at all). 88vw guarantees the box always leaves at least
+           a small width-relative margin on both sides, regardless of
+           how tall the viewport is — it only ever binds in this narrow-
+           and-tall case; at any normal desktop aspect ratio 70vh or
+           48rem is still smaller, so nothing about the existing
+           approved sizing changes there. */}
         <Reveal
           delay={0.1}
           y={20}
-          className="relative mx-auto mt-4 hidden aspect-square w-[min(48rem,70vh)] md:block"
+          className="relative mx-auto mt-4 hidden aspect-square w-[min(48rem,70vh,88vw)] md:block"
         >
-          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden="true">
+          <svg
+            viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
+            className="absolute inset-0 h-full w-full"
+            aria-hidden="true"
+          >
             <defs>
               <filter id="pulse-glow" x="-60%" y="-60%" width="220%" height="220%">
                 <feGaussianBlur stdDeviation="1.4" result="blur" />
@@ -319,7 +387,7 @@ export function BeyondHeartSection() {
             const { x, y } = pointOnRing(ring.radius, ring.labelAngle);
             const isLeft = ring.side === "left";
             const textBlock = (
-              <div style={{ width: `${NODE_WIDTH_REM}rem` }}>
+              <div style={{ width: `min(${NODE_WIDTH_REM}rem, 20vw)` }}>
                 <span className="eyebrow">{`0${i + 1}`}</span>
                 <h3 className="mt-1 text-balance font-serif font-normal uppercase tracking-normal text-sm text-cream">{ring.label}</h3>
                 <p className="mt-1 text-pretty text-xs text-cream/65">{ring.body}</p>
@@ -337,7 +405,11 @@ export function BeyondHeartSection() {
               // against that same anchor via transform, so the dot's
               // position is never affected by how many lines the text
               // wraps to.
-              <div key={ring.key} className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
+              <div
+                key={ring.key}
+                className="absolute"
+                style={{ left: `${toPercent(x)}%`, top: `${toPercent(y)}%` }}
+              >
                 <span
                   aria-hidden
                   className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold shadow-[0_0_10px_2px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
