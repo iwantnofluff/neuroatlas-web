@@ -32,24 +32,37 @@ const BandScrollScene = dynamic(
 // swapping in and out of one shared position. `position` is a real spot
 // in the composition (see POSITION_CLASSNAMES), not a left/right side
 // relative to the model.
+// `depth` — a direct "make it look layered, not just stacked flat on
+// top of the model" request: with every card previously at the SAME
+// z-index (in front of the model, full stop), the composition read as
+// a deck of cards sitting ON the product rather than genuinely woven
+// through it. Alternating "back"/"front"/"back" (see OrganicSignalCallout's
+// own z-index handling below) puts the model's own opaque body between
+// the reader and two of the three cards — those two are now physically
+// occluded wherever the model overlaps them, exactly like a real object
+// sitting in front of some cards and behind others, while the middle
+// card (front) still reads clearly on top.
 const signals = [
   {
     label: "Stress Age",
     body: "How your body is responding to stress over time.",
     range: [0, 0.34] as const,
     position: "upper-left" as const,
+    depth: "back" as const,
   },
   {
     label: "Cognitive Load",
     body: "How much your mind is juggling before your focus starts to slip.",
     range: [0.33, 0.67] as const,
     position: "lower-right" as const,
+    depth: "front" as const,
   },
   {
     label: "Emotional Regulation",
     body: "How well you stay balanced under pressure, so your response matches the moment.",
     range: [0.66, 1] as const,
     position: "lower-left" as const,
+    depth: "back" as const,
   },
 ];
 
@@ -102,7 +115,15 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // lands underneath the "For Stress" headline at every xl+ width up to
   // ~1800px (confirmed via a Range measurement of that specific text
   // run) unless it has this much clearance from the top.
-  "upper-left": "left-[30%] top-[36%]",
+  //
+  // left-[25%], not the previous 30% — eased back out a touch alongside
+  // this card becoming a "back" card (see `depth` above): fully behind
+  // the model at the SAME depth of overlap that worked for an in-front
+  // card buries so much of it that there's nothing left to visibly read
+  // as "behind" — a sliver has to stay clear of the model's own
+  // silhouette for the occlusion to actually be legible as depth rather
+  // than the card just being darker.
+  "upper-left": "left-[25%] top-[36%]",
   // bottom-[22%], not the original 16% — a real, confirmed collision
   // the horizontal move introduced: at 16% this card's own bottom edge
   // (now much closer to center) landed inside the "Because knowing your
@@ -125,7 +146,12 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // the headline (see that entry's own comment) brought it close enough
   // to this card's own top edge that the two overlapped by a few px at
   // some widths, confirmed live via getBoundingClientRect.
-  "lower-left": "left-[30%] bottom-[24%]",
+  //
+  // left-[25%] — same easing-back reasoning as "upper-left" above: this
+  // is also a "back" card now, so it needs a visible sliver clear of the
+  // model's own silhouette rather than the deeper 30% overlap tuned for
+  // a card meant to sit in front.
+  "lower-left": "left-[25%] bottom-[24%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
@@ -145,7 +171,13 @@ function OrganicSignalCallout({
     <motion.div
       style={{ opacity, y }}
       className={cn(
-        "absolute z-10 hidden w-64 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
+        // z-10 (front) sits above the model's own z-0 canvas (see
+        // BandScrollScene.tsx); z-[-1] (back) sits below it, letting the
+        // model's own opaque body physically occlude whatever part of
+        // the card it overlaps — the alternating depth effect signals'
+        // own `depth` field drives (see that field's own comment).
+        signal.depth === "back" ? "z-[-1]" : "z-10",
+        "absolute hidden w-64 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
         POSITION_CLASSNAMES[signal.position]
       )}
     >
@@ -226,7 +258,7 @@ export function BandScrollShowcase() {
         <div className="pointer-events-none absolute inset-x-0 top-16 z-[-1] px-6 text-center xl:top-20">
           <p className="eyebrow">The NA·01 band</p>
           <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-5xl leading-[0.95] text-gold-soft sm:text-6xl md:text-7xl lg:text-8xl">
-            The <em className="italic text-gold">First</em> Band
+            The <em className="not-italic text-gold">First</em> Band
             <br />
             For Stress
           </h1>
