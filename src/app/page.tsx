@@ -56,13 +56,34 @@ export default function Home() {
               y={20}
               className="lg:flex lg:h-full lg:flex-col lg:justify-center"
             >
-              {/* text-4xl/5xl/6xl/7xl/8xl — one dedicated step per named
-                 breakpoint (was 5xl/6xl/7xl/8xl, which left the 640–1023px
-                 range plateaued at 6xl) — same fix as Hero.tsx's own
-                 headline, applied here for the same reason: this is real
-                 wrapping multi-word text, not a giant display word. */}
-              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] text-navy sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-                Your Body Knows You&rsquo;re Stressed.{" "}
+              {/* Four explicit lines (Your Body / Knows You're / Stressed.
+                 / Do You?), not text-balance's own auto-wrap — the client
+                 asked specifically for "Knows You're" to hold as one line
+                 rather than splitting into "Knows" / "You're" (5 lines
+                 total). whitespace-nowrap per line (not on the whole h2 —
+                 that would stop the <br />s themselves from being real
+                 line breaks) is what keeps each hand-authored line from
+                 ALSO wrapping internally.
+                 text-4xl/5xl/6xl/6xl/7xl — the lg: step deliberately
+                 repeats md's own 6xl rather than bumping to 7xl right at
+                 1024px: that's the exact viewport this section's grid
+                 first splits into two real columns (lg:grid-cols-2,
+                 below), and at 1024px specifically the resulting text
+                 column is only ~444px wide — "Knows You're" at 7xl
+                 measures ~476px there, wider than the column itself,
+                 confirmed live via measuring the rendered line against
+                 the column's own box (it visibly overlapped the image
+                 panel). 6xl fits with real margin at that exact width;
+                 by xl (1280px) the column has grown enough (~570px+)
+                 that 7xl fits safely, confirmed the same way, so that's
+                 where the size actually steps up. */}
+              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] text-navy sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
+                <span className="whitespace-nowrap">Your Body</span>
+                <br />
+                <span className="whitespace-nowrap">Knows You&rsquo;re</span>
+                <br />
+                <span className="whitespace-nowrap">Stressed.</span>
+                <br />
                 <span className="whitespace-nowrap">Do You?</span>
               </h2>
               <p className="mt-6 max-w-xl text-pretty text-lg text-mist">
