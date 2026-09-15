@@ -315,44 +315,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Founder and current status — the reverse of the section above:
-          content left, image right on desktop. DOM order stays [text,
-          image] (so mobile still shows the image first, matching the
-          same convention), with the same order-2/lg:order-1 +
-          lg:order-2 pairing "the-band" section uses for its own
-          image-right layout. */}
-      <section id="founder">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <Reveal
-              y={20}
-              className="order-2 text-center lg:order-1 lg:text-left"
-            >
-              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
-                Why NeuroAtlas Exists
-              </h2>
-              <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
-                Vanshika Dhoot founded NeuroAtlas after watching high
-                performers break under pressure with no real way to manage
-                it. NeuroAtlas is now live in pilot with corporate teams
-                across London.
-              </p>
-            </Reveal>
-            <Reveal delay={0.1} y={20} className="lg:order-2">
-              <Parallax
-                offset={24}
-                className="relative aspect-square overflow-hidden rounded-3xl bg-navy"
-              >
-                <Image
-                  src="/photos/band-ice-still.jpg"
-                  alt="The NA·01 band, weatherproof against ice and stone"
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </Parallax>
-            </Reveal>
-          </div>
+      {/* Founder and current status — was a 50/50 card layout (text one
+          side, the ice-still product photo the other); now a full-bleed
+          cinematic banner using the new dot-mesh texture as an
+          immersive backdrop instead, with the mission statement centred
+          directly over it. The dedicated product photo is dropped
+          entirely here (not tucked in as a smaller inset) — the texture
+          itself is the whole point of this pass, and this same photo
+          already appears elsewhere on the page (the "how it's
+          different" section above), so nothing about the band's own
+          hardware goes unseen by removing it from here specifically. */}
+      <section
+        id="founder"
+        // z-0, not just `relative` alone — see "how-different"'s own
+        // identical fix just above for the full mechanics: without an
+        // explicit z-index, `position: relative` doesn't create a real
+        // stacking context, so this section's own `-z-10` background
+        // (below) would get hoisted out to the nearest ANCESTOR
+        // stacking context and render BEHIND this section's plain
+        // bg-cream fill instead of in front of it.
+        className="relative z-0 flex min-h-[60vh] items-center overflow-hidden bg-cream text-navy"
+      >
+        {/* Background layer. Unlike the navy-toned banner above, this
+           texture is genuinely light throughout (confirmed by actually
+           looking at the file — the "dark" end of its own top-to-bottom
+           fade is a muted blue-grey, not a true dark tone; the bottom
+           half is close to pure white), so dark text stays the correct,
+           legible choice everywhere on it — not a white-vs-navy call
+           that changes by position. */}
+        <Image
+          src="/photos/homepage_last.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="-z-10 object-cover object-center"
+        />
+        {/* A light wash, not a dark one — the brief's own two options
+           ("bg-white/10 backdrop-blur-sm or a dark wash, depending on
+           which provides better contrast") resolve to the light one
+           here specifically because the photo itself is already light:
+           a dark scrim would fight the dark navy text this section
+           uses, where a soft white wash instead gives it a guaranteed
+           safety margin over the texture's own marginally denser,
+           bluer top band, without flattening the mesh pattern into
+           invisibility. */}
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-white/35" />
+
+        <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <Reveal
+            y={20}
+            className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center"
+          >
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              Why NeuroAtlas Exists
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
+              Vanshika Dhoot founded NeuroAtlas after watching high
+              performers break under pressure with no real way to manage
+              it. NeuroAtlas is now live in pilot with corporate teams
+              across London.
+            </p>
+          </Reveal>
         </div>
       </section>
 
