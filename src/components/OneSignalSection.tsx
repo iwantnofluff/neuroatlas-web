@@ -131,15 +131,28 @@ export function OneSignalSection() {
           // client's own re-pass on this section, still the headline's
           // exact literal color rather than an unrelated grey-blue
           // token, just less faded than before.
-          // No max-w cap any more (was max-w-3xl, then max-w-2xl before
-          // that) — a direct "match the heading's own width so the body
-          // copy takes fewer lines" request: the heading itself has no
-          // max-w of its own, just this same section's px-6 padding, so
-          // dropping the paragraph's separate (and much narrower) cap
-          // lets it use that identical width instead of a fraction of
-          // it — confirmed live, the heading measured 1392px wide at
-          // 1440px viewport, versus the paragraph's old 768px cap.
-          className="mx-auto mt-8 text-center text-pretty text-lg text-[#1B2430]/80"
+          // Was uncapped entirely (matching the heading's own width, which
+          // has no max-w of its own beyond this section's px-6 padding) —
+          // a direct "same width as the heading, fewer lines" request that
+          // did cut it from six lines down to three, but only at ONE
+          // specific viewport width. Uncapped, the paragraph's own width
+          // (and so its own line count) tracks the viewport directly:
+          // confirmed live via a sweep from 1024–2560px, it actually
+          // wrapped to 4 lines below 1440px and dropped to 2 lines past
+          // 2000px — "three lines" was a coincidence of one test width,
+          // not a stable target. max-w-[1800px] is the widest this
+          // paragraph can be while still reliably wrapping to exactly
+          // three lines at every desktop width that's wide enough to
+          // reach the cap at all (1440px and up, confirmed the same way);
+          // text-balance (not text-pretty) is what keeps those three
+          // lines reading evenly rather than a greedy fill with a short
+          // last line. Below 1440px the paragraph is narrower than the
+          // cap regardless, so it still uses the same full available
+          // width as the heading there — it just needs a fourth line at
+          // that point, the same way any wrapped text needs more lines
+          // in a narrower column; that's expected reflow, not a bug this
+          // is trying to prevent.
+          className="mx-auto mt-8 max-w-[1800px] text-center text-balance text-lg text-[#1B2430]/80"
         >
           NA·01 looks at more than individual health signals. It connects
           them to help you understand how stress is affecting you. Your
