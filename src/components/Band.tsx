@@ -138,6 +138,19 @@ const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
  *  component's own verification notes. */
 const LOCK_ROTATION_TURNS = 1.75;
 
+/** "reveal" variant only — how much of the scroll progress range the
+ *  rise + spin takes to complete, before holding at its locked pose for
+ *  whatever's left. Was 0.4 (locked by 40% progress, holding through the
+ *  remaining 60%) — reported live as feeling rushed: on a real scroll
+ *  gesture, that 40% slice flew by almost immediately, with barely any
+ *  chance to actually watch the model turn before it settled. 0.7 gives
+ *  the turn itself nearly double the scroll distance to play out across
+ *  (see BuiltToReadYouSection.tsx's own wrapper height, which this pairs
+ *  with), so the same physical scrolling now reads as a deliberate,
+ *  legible rotation rather than a near-instant snap, while still leaving
+ *  a real (just shorter) hold at the end to register the locked pose. */
+const REVEAL_RATIO = 0.7;
+
 /** "showcase" variant only (see the `variant` prop below) — the model
  *  should read as a continuous, fluid tumble across the WHOLE scroll
  *  range now that the three signal callouts (HRV, Breathing, Stress
@@ -187,7 +200,7 @@ function sampleShowcasePose(p: number) {
  *
  *  `variant` picks which narrative drives position/rotation:
  *  - "reveal" (default, BuiltToReadYouSection's exact original behavior,
- *    untouched): `t` ramps 0→1 across just the first 40% of the scroll
+ *    untouched): `t` ramps 0→1 across the first REVEAL_RATIO (70%) of the scroll
  *    range then clamps at 1, so the model rises from off-screen while
  *    completing one full turn, then locks in place for the rest of the
  *    scroll — the "position -5→0, rotation 0→2π, then holds" sequence.
@@ -319,7 +332,7 @@ export function Band({
     }
 
     const p = scrollProgress.get();
-    const t = THREE.MathUtils.clamp(p / 0.4, 0, 1);
+    const t = THREE.MathUtils.clamp(p / REVEAL_RATIO, 0, 1);
     g.position.y = THREE.MathUtils.lerp(-5, 0, t);
     g.rotation.y = t * Math.PI * LOCK_ROTATION_TURNS;
     // A gentle fixed tilt (not scroll-driven) so the module reads as a

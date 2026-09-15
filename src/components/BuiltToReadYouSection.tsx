@@ -19,17 +19,21 @@ const BuiltToReadYouScene = dynamic(
   { ssr: false }
 );
 
-/** Headline opacity/scale, both driven by the SAME 0–0.35 scroll window —
- *  the function-transformer form of useTransform, not the array-range
- *  form. This codebase hit a confirmed framer-motion bug where the array
- *  form hands scroll-linked transforms off to a native
- *  `animation-timeline: scroll()` optimization that computes wrong
- *  values once a *second* scroll-linked transform exists on the same
- *  element — exactly this case (opacity AND scale on one element).
- *  reduceMotion resolves straight to the settled end-state rather than
- *  toggling which props are passed, since swapping prop shapes between
- *  renders is the OTHER documented failure mode here (an element can get
- *  permanently stuck mid-transition — see Reveal.tsx's own history).
+/** Headline opacity/scale, both driven by the SAME 0–0.5 scroll window —
+ *  widened from 0–0.35 to stay paired with the model's own reveal, which
+ *  now takes 70% of progress to complete instead of 40% (see Band.tsx's
+ *  REVEAL_RATIO — reported live as feeling rushed, snapping into its
+ *  locked pose almost as soon as the section pinned). the function-
+ *  transformer form of useTransform, not the array-range form. This
+ *  codebase hit a confirmed framer-motion bug where the array form hands
+ *  scroll-linked transforms off to a native `animation-timeline:
+ *  scroll()` optimization that computes wrong values once a *second*
+ *  scroll-linked transform exists on the same element — exactly this
+ *  case (opacity AND scale on one element). reduceMotion resolves
+ *  straight to the settled end-state rather than toggling which props
+ *  are passed, since swapping prop shapes between renders is the OTHER
+ *  documented failure mode here (an element can get permanently stuck
+ *  mid-transition — see Reveal.tsx's own history).
  *
  *  Starts at p=0 directly, not p=0.3 — a real, confirmed bug this
  *  replaces: holding the headline at opacity 0 until 30% progress meant
@@ -37,19 +41,23 @@ const BuiltToReadYouScene = dynamic(
  *  that window saw the 3D model with no heading at all, reading as
  *  broken rather than a deliberate beat. */
 function useHeadlineMotion(progress: MotionValue<number>, reduceMotion: boolean) {
-  const eased = (p: number) => (p >= 0.35 ? 1 : p / 0.35);
+  const eased = (p: number) => (p >= 0.5 ? 1 : p / 0.5);
   const opacity = useTransform(progress, (p) => (reduceMotion ? 1 : eased(p)));
   const scale = useTransform(progress, (p) => (reduceMotion ? 1 : 1.1 - 0.1 * eased(p)));
   return { opacity, scale };
 }
 
 /** Same reasoning as useHeadlineMotion, for the subtext + button's
- *  opacity/y over the 0.35–0.55 window — starting right as the headline
- *  finishes, not after an additional held gap. Holds fully visible for
- *  the rest of the scroll range past 0.55, matching this site's
- *  established "reveal, don't cross-fade back out" convention. */
+ *  opacity/y over the 0.5–0.7 window (was 0.35–0.55, shifted to match
+ *  the model's own new, slower lock point at 0.7) — starting right as
+ *  the headline finishes, not after an additional held gap, and
+ *  finishing right as the model itself settles into its locked pose, so
+ *  text and model arrive together rather than the text sitting fully
+ *  settled while the model visibly keeps turning behind it. Holds fully
+ *  visible for the rest of the scroll range past 0.7, matching this
+ *  site's established "reveal, don't cross-fade back out" convention. */
 function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) {
-  const eased = (p: number) => (p <= 0.35 ? 0 : p >= 0.55 ? 1 : (p - 0.35) / 0.2);
+  const eased = (p: number) => (p <= 0.5 ? 0 : p >= 0.7 ? 1 : (p - 0.5) / 0.2);
   const opacity = useTransform(progress, (p) => (reduceMotion ? 1 : eased(p)));
   const y = useTransform(progress, (p) => (reduceMotion ? 0 : 20 * (1 - eased(p))));
   return { opacity, y };
@@ -129,18 +137,21 @@ export function BuiltToReadYouSection() {
     <div
       id="the-band"
       ref={wrapperRef}
-      // 180vh -> 150vh, alongside the offset fix above. With "start
-      // start"/"end end" now the actual pinned-scroll distance is
-      // (wrapper height − viewport height): at 150vh that's 50vh of
-      // real scroll while pinned. The model's own lock point (progress
-      // 0.4) lands ~20vh into that, leaving ~30vh of settled hold before
-      // the section releases — enough to actually register the locked
-      // pose without the multi-screen dead scroll the previous, wrongly-
-      // offset 180vh produced. 150vh (not the 180vh this replaces) is
-      // the deliberately tighter end of that range — the brief this fix
-      // responds to specifically asked for the section to release "as
-      // soon as the model locks into place", not to keep a long hold.
-      className={cn(!reduceMotion && "h-[150vh]")}
+      // 150vh -> 200vh — a follow-up "still too fast" report after the
+      // offset fix above: fixing the early-completion bug alone still
+      // left the actual rotation happening across only 50vh of real
+      // pinned scroll (150vh wrapper − 100vh viewport), and reported live
+      // as flying by too quickly to actually watch the model turn before
+      // it locked. Paired with Band.tsx's REVEAL_RATIO going from 0.4 to
+      // 0.7, at 200vh the pinned distance is 100vh, of which 70%
+      // (~70vh) is now the model's own rise+spin, twice the previous
+      // window's absolute scroll distance for the SAME rotation — the
+      // same physical scroll gesture now covers noticeably less of the
+      // turn per tick, reading as deliberate rather than instant.
+      // Remaining ~30vh is the settled hold before release, comparable
+      // to what the previous 150vh/0.4 pairing already held for, not a
+      // reintroduction of the original "way too tall" complaint.
+      className={cn(!reduceMotion && "h-[200vh]")}
     >
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully
