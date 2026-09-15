@@ -96,8 +96,20 @@ export function OneSignalSection() {
          (confirmed: 1313px at rest vs. ~2000px+ mid-animation at 1440px
          wide — both measured live). That transient overflow needs
          clipping on the X axis only; the Y axis is what actually needed
-         to stop being clipped. */}
-      <div className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pb-12 text-center">
+         to stop being clipped.
+
+         pt-24 — a real, confirmed bug this fixes: with `justify-center`
+         centering the headline+paragraph block as a whole, a viewport
+         short enough (or a block tall enough) that the block's own top
+         edge lands above the fixed header's own height (73px, measured
+         live) rendered the headline's top few px UNDER the header,
+         confirmed live via getBoundingClientRect (67px vs. the header's
+         73px). Padding-top on a flex container sets a real floor here —
+         `justify-center` centers within the space AFTER padding, so the
+         block's top edge can never sit above pt-24 (96px) regardless of
+         how little slack centering leaves, comfortably clearing the
+         header with margin to spare. */}
+      <div className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pt-24 pb-12 text-center">
         <motion.h2
           style={{ scale }}
           // clamp(), not a bare text-[12vw] — 12vw alone runs away to an
@@ -119,12 +131,15 @@ export function OneSignalSection() {
           // client's own re-pass on this section, still the headline's
           // exact literal color rather than an unrelated grey-blue
           // token, just less faded than before.
-          // max-w-3xl (was max-w-2xl) and an explicit text-center (this
-          // section's own outer div already centers everything, but the
-          // client asked for it stated directly on the paragraph too) —
-          // reads as one curated editorial block rather than a pasted-
-          // in wall of text.
-          className="mx-auto mt-8 max-w-3xl text-center text-pretty text-lg text-[#1B2430]/80"
+          // No max-w cap any more (was max-w-3xl, then max-w-2xl before
+          // that) — a direct "match the heading's own width so the body
+          // copy takes fewer lines" request: the heading itself has no
+          // max-w of its own, just this same section's px-6 padding, so
+          // dropping the paragraph's separate (and much narrower) cap
+          // lets it use that identical width instead of a fraction of
+          // it — confirmed live, the heading measured 1392px wide at
+          // 1440px viewport, versus the paragraph's old 768px cap.
+          className="mx-auto mt-8 text-center text-pretty text-lg text-[#1B2430]/80"
         >
           NA·01 looks at more than individual health signals. It connects
           them to help you understand how stress is affecting you. Your
