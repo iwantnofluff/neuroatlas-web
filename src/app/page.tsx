@@ -87,9 +87,9 @@ export default function Home() {
                 <span className="whitespace-nowrap">Do You?</span>
               </h2>
               <p className="mt-6 max-w-xl text-pretty text-lg text-mist">
-                Stress has become so normal that most people stop noticing
-                their own body&rsquo;s warning signs, until it&rsquo;s
-                already shaped a decision, a meeting, or a moment.
+                Stress has become so normal that most people stop noticing their
+                own body&rsquo;s warning signs, until it&rsquo;s already shaped
+                a decision, a meeting, or a moment.
               </p>
             </Reveal>
             <Reveal delay={0.1} y={20} className="lg:h-full">
@@ -143,7 +143,10 @@ export default function Home() {
                 floating outlines, not solid tiles. Scattered at slightly
                 different sizes/positions/rotations rather than a tidy
                 grid, which is what actually reads as "floating". */}
-            <Parallax offset={24} className="relative aspect-square w-full max-w-md justify-self-center">
+            <Parallax
+              offset={24}
+              className="relative aspect-square w-full max-w-md justify-self-center"
+            >
               {floatTiles.map((tile, i) => (
                 <Reveal
                   key={i}
@@ -151,7 +154,7 @@ export default function Home() {
                   y={16}
                   className={cn(
                     "card-glass absolute bg-transparent transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:bg-gold/10",
-                    tile.className
+                    tile.className,
                   )}
                 />
               ))}
@@ -164,18 +167,24 @@ export default function Home() {
                 that doesn't retroactively redistribute into the margins,
                 so mx-auto silently does nothing here. justify-self is the
                 grid-native way to center an item narrower than its track. */}
-            <Reveal delay={0.1} y={20} className="max-w-md justify-self-center text-left">
+            <Reveal
+              delay={0.1}
+              y={20}
+              className="max-w-md justify-self-center text-left"
+            >
               <p className="eyebrow">Inside the app</p>
               <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
                 See It. Act On It.
               </h2>
               <p className="mt-6 text-pretty text-lg text-cream/75">
-                The app turns what the band reads into something you can
-                use: a quick daily read of where you stand, short resets
-                when it&rsquo;s needed, and a way to prepare before moments
-                that matter. Every session shows you it worked.
+                The app turns what the band reads into something you can use: a
+                quick daily read of where you stand, short resets when
+                it&rsquo;s needed, and a way to prepare before moments that
+                matter. Every session shows you it worked.
               </p>
-              <TextLink href="/inside-the-app" tone="dark">Learn More</TextLink>
+              <TextLink href="/inside-the-app" tone="dark">
+                Learn More
+              </TextLink>
             </Reveal>
           </div>
         </div>
@@ -200,8 +209,8 @@ export default function Home() {
               We Believe In Privacy
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
-              We believe your data belongs to you, so we built NeuroAtlas
-              that way.
+              We believe your data belongs to you, so we built NeuroAtlas that
+              way.
             </p>
             {/* Split out as its own line (matching /inside-the-app's own
                 italic follow-up-line convention) rather than folded into
@@ -296,7 +305,10 @@ export default function Home() {
            guaranteed enough contrast there. Gone at lg+, where the text
            has real clear space of its own and the horizontal gradient
            already does the job on its own. */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/45 lg:hidden" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-navy/45 lg:hidden"
+        />
 
         <div className="mx-auto flex w-full max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal
@@ -307,9 +319,9 @@ export default function Home() {
               Other Apps Notice. We Fix It, In Two Minutes.
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75 lg:mx-0">
-              Other wearables tell you your heart rate is up or your sleep
-              was disturbed, and stop there. NeuroAtlas gives you something
-              to do about it, and proves it worked, in two minutes.
+              Other wearables tell you your heart rate is up or your sleep was
+              disturbed, and stop there. NeuroAtlas gives you something to do
+              about it, and proves it worked, in two minutes.
             </p>
           </Reveal>
         </div>
@@ -333,16 +345,18 @@ export default function Home() {
         // stacking context, so this section's own `-z-10` background
         // (below) would get hoisted out to the nearest ANCESTOR
         // stacking context and render BEHIND this section's plain
-        // bg-cream fill instead of in front of it.
-        className="relative z-0 flex min-h-[60vh] items-center overflow-hidden bg-cream text-navy"
+        // bg-navy fill instead of in front of it.
+        className="relative z-0 flex min-h-[60vh] items-center overflow-hidden bg-navy text-cream"
       >
-        {/* Background layer. Unlike the navy-toned banner above, this
-           texture is genuinely light throughout (confirmed by actually
-           looking at the file — the "dark" end of its own top-to-bottom
-           fade is a muted blue-grey, not a true dark tone; the bottom
-           half is close to pure white), so dark text stays the correct,
-           legible choice everywhere on it — not a white-vs-navy call
-           that changes by position. */}
+        {/* Background layer. The asset at this path was replaced after
+           this section was first built against a genuinely light
+           version of it (dark text, a light wash) — confirmed live via
+           a stale Turbopack image-cache dead end (`.next/dev/cache/
+           images`, a different path than the classic `.next/cache/
+           images`, cleared to get an honest read of the new file at
+           all): the CURRENT file is dark end to end instead, so the
+           text/overlay treatment below is built against that, not the
+           original light one. */}
         <Image
           src="/photos/homepage_last.png"
           alt=""
@@ -350,16 +364,16 @@ export default function Home() {
           sizes="100vw"
           className="-z-10 object-cover object-center"
         />
-        {/* A light wash, not a dark one — the brief's own two options
-           ("bg-white/10 backdrop-blur-sm or a dark wash, depending on
-           which provides better contrast") resolve to the light one
-           here specifically because the photo itself is already light:
-           a dark scrim would fight the dark navy text this section
-           uses, where a soft white wash instead gives it a guaranteed
-           safety margin over the texture's own marginally denser,
-           bluer top band, without flattening the mesh pattern into
-           invisibility. */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-white/35" />
+        {/* A dark wash, not the light one this section used against the
+           texture's previous, lighter version — cream text needs a dark
+           backdrop, and this asset already provides most of that on its
+           own; the wash just gives it a guaranteed safety margin over
+           the texture's own lighter mid-band, without flattening the
+           mesh pattern into invisibility. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-navy/45"
+        />
 
         <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal
@@ -369,11 +383,19 @@ export default function Home() {
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               Why NeuroAtlas Exists
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
-              Vanshika Dhoot founded NeuroAtlas after watching high
-              performers break under pressure with no real way to manage
-              it. NeuroAtlas is now live in pilot with corporate teams
-              across London.
+            {/* text-balance, not this site's usual text-pretty for body
+               copy — a real, confirmed "across London." orphan this
+               replaces, reported live: text-pretty only ever avoids a
+               single dangling word on the last line, so a two-word tail
+               like this one still fell onto its own short line.
+               text-balance's own "even out every line" algorithm (the
+               same fix BuiltToReadYouSection's subtext already uses for
+               this exact failure mode) reliably keeps it merged with the
+               line above at this column width instead. */}
+            <p className="mx-auto mt-6 max-w-xl text-balance text-lg text-cream/75">
+              Vanshika Dhoot founded NeuroAtlas after watching high performers
+              break under pressure with no real way to manage it. NeuroAtlas is
+              now live in pilot with corporate teams across London.
             </p>
           </Reveal>
         </div>
