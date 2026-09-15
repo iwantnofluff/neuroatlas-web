@@ -14,11 +14,13 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 // flex row with real space between them (no negative margin, no
 // absolute positioning, no elevated z-index).
 //
-// All three sit level with each other (no Y-translation at all) — an
-// earlier pass here dropped the ends by 64px and lifted the center by
-// 16px, which read as a sports podium rather than a subtle arch,
-// reported live. The dynamic feel now comes from the ±6° tilt on the
-// ends alone, not a height difference.
+// All three cards are the SAME height (see MethodScrollCards' own
+// items-stretch, below) and mathematically centered on the exact same
+// horizontal axis — an earlier pass here dropped the ends by 64px and
+// lifted the center by 16px, which read as a sports podium rather than
+// a subtle arch, reported live, so nothing here is a genuine height or
+// position difference between cards. The dynamic feel comes entirely
+// from the ±6° tilt on the ends.
 const methodSteps = [
   {
     label: "Measure",
@@ -38,13 +40,35 @@ const methodSteps = [
 // — rotate in degrees, y in px, and startX: how far this card sits from
 // its own resting spot in the pre-animation "closed" state (canceled
 // back to 0 as it settles into the arch — see MethodCard's own
-// comment). y is 0 across the board — see this file's own top comment
-// for why — so all three sit on the same horizontal axis; only rotate
-// varies between the ends and the center.
+// comment).
+//
+// y is NOT 0 on the rotated ends — a real, confirmed optical mismatch
+// this fixes: with items-stretch giving all three cards the exact same
+// height, centered on the exact same axis (mathematically confirmed
+// live via getBoundingClientRect: all three report the same centerY),
+// a rotated rectangle's own BOUNDING BOX is still visibly taller than
+// an unrotated one of the same size — rotating around the box's own
+// center swings its corners up and down past its un-rotated top/bottom
+// edge. At this card's actual rendered size (~288px wide, ~262px tall)
+// and a 6° tilt, that adds roughly 14px above (and again below) center
+// versus the flat, unrotated center card — confirmed live: the center
+// card's own top edge sat ~14px BELOW the tilted cards' own top
+// corners, reading as "dipped", even though every card's true center
+// and height were already identical. ROTATION_TOP_ALIGN_PX nudges the
+// two tilted cards down by that same amount, so their visual top edge
+// lines up with the flat center card's — the tradeoff (their bottoms
+// now sit further below center's than before) is the right one here:
+// a horizontal row of cards reads by its TOP edges first, not its
+// bottoms. This is a rotation-geometry correction, not a return to the
+// rejected "podium" height difference above — the two are unrelated:
+// removing it would leave the cards' true, pre-rotation position
+// identical again, just visibly mismatched at the top edge once more.
+const ROTATION_TOP_ALIGN_PX = 14;
+
 const FAN = [
-  { rotate: -6, y: 0, startX: 96 },
+  { rotate: -6, y: ROTATION_TOP_ALIGN_PX, startX: 96 },
   { rotate: 0, y: 0, startX: 0 },
-  { rotate: 6, y: 0, startX: -96 },
+  { rotate: 6, y: ROTATION_TOP_ALIGN_PX, startX: -96 },
 ] as const;
 
 // Seconds between each card's own fan-open start — a real fan opens as
