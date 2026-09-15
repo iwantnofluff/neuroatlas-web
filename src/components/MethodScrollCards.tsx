@@ -189,8 +189,17 @@ export function MethodScrollCards() {
            real, physical space from its neighbors regardless of
            breakpoint. gap-8 lg:gap-16 widens the gap again once there's
            real room for it; md:mt-24 keeps this section's own extra
-           top-clearance (unchanged from the previous fanned version). */}
-        <div className="mt-10 flex flex-col items-center gap-6 md:mt-24 md:flex-row md:items-center md:justify-center md:gap-8 lg:gap-16">
+           top-clearance (unchanged from the previous fanned version).
+           md:items-stretch, not md:items-center — a real, confirmed
+           mismatch this fixes: centering let each card size itself off
+           its OWN content, so card 01 (the longest body copy) stood
+           taller than 02 and 03, reading as uneven/misaligned rather
+           than a uniform set of three. Flex's own default cross-axis
+           behavior is stretch, so removing the override (rather than
+           setting a fixed height by hand) is what makes every card match
+           the row's tallest card automatically, including if the copy
+           ever changes later. */}
+        <div className="mt-10 flex flex-col items-center gap-6 md:mt-24 md:flex-row md:items-stretch md:justify-center md:gap-8 lg:gap-16">
           {methodSteps.map((step, i) => (
             <MethodCard key={`${step.label}-${i}`} step={step} index={i} isMobile={isMobile} reduceMotion={reduceMotion} />
           ))}
