@@ -378,7 +378,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal
             y={20}
-            className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center"
+            className="mx-auto flex max-w-5xl flex-col items-center justify-center text-center"
           >
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               Why NeuroAtlas Exists
@@ -392,7 +392,7 @@ export default function Home() {
                same fix BuiltToReadYouSection's subtext already uses for
                this exact failure mode) reliably keeps it merged with the
                line above at this column width instead. */}
-            <p className="mx-auto mt-6 max-w-xl text-balance text-lg text-cream/75">
+            <p className="mx-auto mt-6 max-w-4xl text-balance text-lg text-cream/75">
               Vanshika Dhoot founded NeuroAtlas after watching high performers
               break under pressure with no real way to manage it. NeuroAtlas is
               now live in pilot with corporate teams across London.
