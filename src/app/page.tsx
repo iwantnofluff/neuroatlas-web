@@ -27,7 +27,6 @@ const floatTiles = [
 const trustPoints = [
   "Nothing leaves your account without your permission.",
   "Enterprise dashboards show only aggregate trends, never individual results.",
-  "Aligned with UK GDPR from day one.",
 ];
 
 export default function Home() {
@@ -221,10 +220,14 @@ export default function Home() {
               Your data is yours. Never shared without your permission.
             </p>
           </Reveal>
-          {/* md:grid-cols-3, not sm: — 3 columns at a 640px foldable-open
-             width squeezes these cards; single column through the whole
-             foldable tier, splitting to 3 only at true tablet width. */}
-          <ul className="mx-auto mt-12 grid max-w-3xl gap-4 text-left md:grid-cols-3">
+          {/* md:grid-cols-2, not 3 — the copy update dropped the third
+             trust point (the GDPR line), and a 3-column grid with an
+             empty trailing cell reads as an unfinished row rather than
+             a deliberate 2-up layout; max-w-2xl (was max-w-3xl) keeps
+             the two remaining cards from stretching wide and thin. Still
+             single column through the whole foldable tier (640px),
+             splitting to 2 only at true tablet width. */}
+          <ul className="mx-auto mt-12 grid max-w-2xl gap-4 text-left md:grid-cols-2">
             {trustPoints.map((point, i) => (
               <Reveal
                 key={point}
@@ -370,10 +373,7 @@ export default function Home() {
            own; the wash just gives it a guaranteed safety margin over
            the texture's own lighter mid-band, without flattening the
            mesh pattern into invisibility. */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-navy/45"
-        />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/45" />
 
         <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal
@@ -384,7 +384,7 @@ export default function Home() {
               Why NeuroAtlas Exists
             </h2>
             {/* text-balance, not this site's usual text-pretty for body
-               copy — a real, confirmed "across London." orphan this
+               copy — a real, confirmed "across India." orphan this
                replaces, reported live: text-pretty only ever avoids a
                single dangling word on the last line, so a two-word tail
                like this one still fell onto its own short line.
@@ -395,7 +395,7 @@ export default function Home() {
             <p className="mx-auto mt-6 max-w-4xl text-balance text-lg text-cream/75">
               Vanshika Dhoot founded NeuroAtlas after watching high performers
               break under pressure with no real way to manage it. NeuroAtlas is
-              now live in pilot with corporate teams across London.
+              now live in pilot with corporate teams across India.
             </p>
           </Reveal>
         </div>
