@@ -62,7 +62,15 @@ const signals = [
     body: "How well you stay balanced under pressure, so your response matches the moment.",
     range: [0.66, 1] as const,
     position: "lower-left" as const,
-    depth: "back" as const,
+    // front, not back — a direct "it's behind the model, bring it to the
+    // front" request: after this card's own bottom inset moved up (see
+    // POSITION_CLASSNAMES' own comment on that), its top edge now sits
+    // right where the model's own body passes over it, and as a "back"
+    // card the model's opaque casing was painting over its heading,
+    // confirmed live via screenshot. Flipping it to "front" (the same
+    // depth "Cognitive Load" already uses) puts it back above the
+    // model's canvas instead.
+    depth: "front" as const,
   },
 ];
 
