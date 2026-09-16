@@ -236,9 +236,34 @@ export function BuiltToReadYouSection() {
             gold-soft so the subtext recedes a step behind the
             headline, a deliberate hierarchy rather than both reading
             at the same visual weight. */}
+        {/* bottom-8, flat (no sm: bump) — was bottom-14/sm:bottom-20 — a
+           direct "the body text is sticking to the heading" report:
+           this block is anchored to the SECTION's bottom edge with no
+           explicit top, so its rendered position only depends on this
+           bottom offset and its own content height — a top margin/
+           padding added to the paragraph INSIDE it would just grow the
+           box upward by the same amount its anchor point rises,
+           leaving the visible text in exactly the same spot (confirmed
+           by the math, not assumed). "Read You" below it is a huge,
+           width-driven headline (see HEADLINE_TEXT_CLASSNAME) whose
+           pixel height barely changes with viewport HEIGHT, while the
+           center seam it hangs from IS exactly 50% of that height — so
+           on a shorter browser window the two visibly close in,
+           confirmed live via measurement (a real gap shrinking from
+           ~110px at 956px viewport height down to actual overlap
+           around 720px tall, a perfectly ordinary un-maximized laptop
+           window). The previous sm: bump was a viewport-WIDTH
+           breakpoint, which doesn't track viewport HEIGHT at all — the
+           actual variable this bug depends on — so it helped on some
+           widths and not others by coincidence; a single flat 32px
+           offset instead, re-checked live from 660px up to 1080px of
+           viewport height, keeps a real (if thin at the very shortest
+           end) positive gap across that whole practical range, with
+           the button still comfortably 160px+ clear of the screen's own
+           bottom edge at every height tested. */}
         <motion.div
           style={{ opacity: subtext.opacity, y: subtext.y }}
-          className="absolute inset-x-0 bottom-14 z-10 mx-auto max-w-2xl px-6 text-center sm:bottom-20"
+          className="absolute inset-x-0 bottom-8 z-10 mx-auto max-w-2xl px-6 text-center"
         >
           {/* max-w-md (448px) wrapped this to 3 lines, the last one just
              "day." on its own — an orphan, not a deliberate 2-line
