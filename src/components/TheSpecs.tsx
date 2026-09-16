@@ -411,34 +411,37 @@ export function TheSpecs() {
                       // true in the literal sense: the side facing the
                       // model never moves, only the outer side grows.
                       className={cn(
-                        // lg:w-72, not the previous lg:w-64 — a direct
-                        // "fit the copy into exactly two lines" request:
-                        // at w-64 (256px, minus p-4's 32px of horizontal
-                        // padding = 224px of text width) the two longest
-                        // details ("Sensors"/"Connectivity") wrapped to
-                        // 3 lines; w-72 (288px, 256px of text width) is
-                        // the smallest step up that brings both down to
-                        // 2, confirmed live by measuring actual rendered
-                        // line rects at 16px increments. The other three
-                        // specs were already 2 lines at w-64 and stay 2
-                        // lines here too — a wider box only ever holds
-                        // MORE text per line, never less.
+                        // lg:w-max lg:max-w-[280px], not a fixed lg:w-72
+                        // — a direct "the box isn't hugging the text,
+                        // there's dead space on one edge" request: a
+                        // fixed width is the same for every spec
+                        // regardless of how long its own detail line
+                        // actually is, which is exactly what leaves
+                        // slack next to a short one. `w-max` sizes the
+                        // card to its content's own natural width (up to
+                        // the cap), so a short detail's card shrinks
+                        // with it instead of sitting inside a box sized
+                        // for the longest one. `max-w-[280px]` is the
+                        // safety cap that still forces the two longest
+                        // details ("Sensors"/"Connectivity") to wrap
+                        // instead of running out as one long line.
                         "z-10 mt-3 w-44 rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-md sm:w-52",
                         side === "left"
-                          ? "lg:absolute lg:top-1/2 lg:right-[calc(100%+1rem)] lg:mt-0 lg:w-72 lg:-translate-y-1/2 lg:text-right"
-                          : "lg:absolute lg:top-1/2 lg:left-[calc(100%+1rem)] lg:mt-0 lg:w-72 lg:-translate-y-1/2 lg:text-left"
+                          ? "lg:absolute lg:top-1/2 lg:right-[calc(100%+1rem)] lg:mt-0 lg:w-max lg:max-w-[280px] lg:-translate-y-1/2 lg:text-right"
+                          : "lg:absolute lg:top-1/2 lg:left-[calc(100%+1rem)] lg:mt-0 lg:w-max lg:max-w-[280px] lg:-translate-y-1/2 lg:text-left"
                       )}
                     >
                       <h3 className="text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                         {spec.label}
                       </h3>
-                      {/* text-balance, not text-pretty — text-pretty only
-                         ever fixes a single dangling last word; once
-                         every detail is a clean 2 lines (see the card's
-                         own width comment above), text-balance is what
-                         actually evens the two lines out against each
-                         other rather than leaving one long/one short. */}
-                      <p className="mt-2 text-balance text-sm leading-snug text-cream/70">{spec.detail}</p>
+                      {/* text-balance removed — with the card now sized
+                         to its own content (see the card's own width
+                         comment above) rather than a fixed box, the
+                         text should fill that content-driven width
+                         naturally on the way to wrapping, not have
+                         line-balancing re-shuffle it afterward; the two
+                         were fighting each other. */}
+                      <p className="mt-2 text-sm leading-snug text-cream/70">{spec.detail}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
