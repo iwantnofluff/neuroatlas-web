@@ -427,14 +427,27 @@ export function TheSpecs() {
   return (
     <section
       ref={sectionRef}
-      // md:min-h-[820px] — a real safety floor, not decorative: the
-      // rail's own top-[200px]/bottom-[100px] insets (see
-      // RAIL_SIDE_CLASSNAMES' sibling block below) need enough real
-      // vertical room between them for 3 staggered nodes to read as
-      // "staggered" rather than "cramped" — min-h-screen alone doesn't
-      // guarantee that on a short-but-wide "smaller laptop" display
-      // (e.g. a 1366×768 screen, common on budget/older laptops, where
-      // min-h-screen would only reserve 768px total). No matching
+      // min-h-[max(100svh,820px)] — a real, confirmed bug this replaces:
+      // `min-h-screen md:min-h-[820px]` doesn't combine the two the way
+      // it reads — at md+ the second rule fully REPLACES the first
+      // rather than raising it, so on any normal-height desktop viewport
+      // (900px, 1080px, whatever) the section's own floor dropped BACK
+      // DOWN to a flat 820px instead of staying at least the full
+      // viewport tall, confirmed live: the section measured 820px on a
+      // 900px-tall viewport, visibly shorter than the screen with the
+      // next section's own background bleeding into the gap rather than
+      // this one genuinely filling it. `max()` keeps both floors doing
+      // their own job at once: never shorter than the viewport (the
+      // "fill the screen" requirement `min-h-screen` was supposed to
+      // guarantee), AND never shorter than 820px regardless of how
+      // short the viewport itself is — the original, still-valid
+      // concern this section's own annotation rail needs enough real
+      // room to read as "staggered" rather than "cramped" on a short-
+      // but-wide "smaller laptop" display (e.g. 1366×768). `svh`, not a
+      // bare `vh` — this codebase's own established convention (see
+      // MethodScrollCards.tsx) for the same reason as everywhere else
+      // it's used: a real phone's visible area can be shorter than 100vh
+      // once the browser's own chrome is accounted for. No matching
       // max-width added alongside it — the annotation system's own
       // horizontal margins (lg:left-80/right-80) were already verified
       // safe at the narrowest width they apply to (1024px, see
@@ -443,7 +456,7 @@ export function TheSpecs() {
       // would just risk a new one — this section's background glow
       // (the very next child below) would visibly stop at that max-
       // width's edge on an ultra-wide monitor instead of filling it.
-      className="relative min-h-screen overflow-hidden bg-navy text-cream md:min-h-[820px]"
+      className="relative min-h-[max(100svh,820px)] overflow-hidden bg-navy text-cream"
     >
       <div
         aria-hidden="true"
