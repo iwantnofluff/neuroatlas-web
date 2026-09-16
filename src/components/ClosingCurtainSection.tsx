@@ -82,7 +82,7 @@ export function ClosingCurtainSection() {
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-gold-soft lg:text-5xl">
               Join Our Pilot Project
             </h2>
-            <p className="mx-auto mt-4 max-w-md text-pretty text-cream/75">
+            <p className="mx-auto mt-4 max-w-xl text-balance text-cream/75">
               Be part of the NeuroAtlas pilot project and help us understand
               how the product works in real-world settings.
             </p>
