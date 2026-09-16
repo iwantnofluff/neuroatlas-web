@@ -143,7 +143,15 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // 1280px specifically, confirmed the same way, while staying close
   // enough at 1366px+ that the wider gap there was never the problem in
   // the first place.
-  "upper-left": "left-[23%] top-[36%]",
+  // left-[21%], not 23% — the w-80->w-[336px] width bump (see this
+  // card's own base-className comment, the "Cognitive Load's first line
+  // has unnecessary empty space" fix) reopened the exact same class of
+  // collision this 23% value was already fixing: both this card and
+  // "lower-right" grew another 16px at the same two fixed insets,
+  // closing what was a real ~13px clear gap at 1280px back into overlap.
+  // Another 2% outward here (and the matching 2% on "lower-right", see
+  // that entry) restores real clearance, confirmed the same way.
+  "upper-left": "left-[21%] top-[36%]",
   // bottom-[22%], not the original 16% — a real, confirmed collision
   // the horizontal move introduced: at 16% this card's own bottom edge
   // (now much closer to center) landed inside the "Because knowing your
@@ -167,10 +175,10 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // not just one width. Vertically unchanged — top-[42%] still lands
   // level with the model's top gold side-button, unaffected by this
   // horizontal fix.
-  // right-[26%], not 28% — the other half of the same w-80-vs-1280px
+  // right-[24%], not 26% — the other half of the same width-vs-1280px
   // collision fix as "upper-left" above (see that entry's own comment
   // for the actual measured overlap this resolves).
-  "lower-right": "top-[42%] right-[26%] text-right",
+  "lower-right": "top-[42%] right-[24%] text-right",
   // left-[32%] (was left-[25%]) — the other half of the same "tight
   // anatomical callout" request: pulled inward so it sits snugly under
   // the left side of the model's gold sensors, in the lower-middle-left
@@ -238,18 +246,19 @@ function OrganicSignalCallout({
         // the card it overlaps — the alternating depth effect signals'
         // own `depth` field drives (see that field's own comment).
         signal.depth === "back" ? "z-[-1]" : "z-10",
-        // w-80, not the previous w-72 (before that w-64) — the earlier
-        // w-72 came from a "fewer body-copy lines" request alone, before
-        // headings picked up whitespace-nowrap (see the label <p> below,
-        // "force onto a single line" request): measured live, "Cognitive
-        // Load" and "Stress Age" only had ~2px of clearance against
-        // w-72's own 240px content width once nowrap was added — real,
-        // but too tight to trust across fonts/DPI. w-80 (320px, 272px of
-        // text width) gives real headroom instead, confirmed live, with
-        // no regression to body-copy line count (still 2 lines, same as
-        // w-72 — a wider box only ever holds MORE text per line, never
-        // less).
-        "absolute hidden w-80 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
+        // w-[336px], not the previous w-80 (320px) — a direct "Cognitive
+        // Load's first line is leaving unnecessary empty space, fit
+        // more words on it" request: its own body copy's first natural
+        // line break ("How much your mind is juggling" / "before...")
+        // is genuine, greedy word-wrap, not an artificial one — the
+        // very next word ("before") measured 273px against w-80's own
+        // 270px of content width, just 3px short of fitting. 336px
+        // (288px of content width once p-6's 48px is subtracted) clears
+        // that with real margin, confirmed live. Kept as ONE shared
+        // value for all three cards (not a per-card override) per the
+        // earlier "uniform width" request — every card gets the extra
+        // room, not just this one.
+        "absolute hidden w-[336px] rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
         POSITION_CLASSNAMES[signal.position]
       )}
     >
