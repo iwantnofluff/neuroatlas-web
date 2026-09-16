@@ -47,13 +47,19 @@ export function ClosingCurtainSection() {
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
-          {/* max-w-2xl (was max-w-xl) — the client's final copy for this
-             body is three sentences, not one; the old, narrower cap
-             (tuned for the previous shorter line) wrapped this into a
-             cramped, unnecessarily tall column. */}
+          {/* max-w-4xl (was max-w-2xl, before that max-w-xl) — a direct
+             "fewer lines" request: max-w-2xl held this to 6 lines at
+             every desktop width (confirmed live, 768–2560px all wrapped
+             identically at that cap), even though the heading right
+             above it sits in a much wider max-w-4xl column. Matching
+             that same width cuts it to 4, evenly balanced via
+             text-balance (not text-pretty, which only ever fixes a
+             single dangling last word, not the overall line count) —
+             confirmed the same way, stable across that whole width
+             range rather than shifting with the viewport. */}
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-2xl text-pretty text-lg text-mist"
+            className="mx-auto mt-8 max-w-4xl text-balance text-lg text-mist"
           >
             If you&rsquo;re serious about managing stress, NA·01 gives you
             more than another set of health metrics to check. It connects
