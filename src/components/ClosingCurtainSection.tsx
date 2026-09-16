@@ -47,42 +47,33 @@ export function ClosingCurtainSection() {
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
-          {/* max-w-5xl (was max-w-4xl, before that max-w-2xl/max-w-xl) —
-             widened one more step specifically so the manual pyramid
-             breaks below never additionally soft-wrap: the previous
-             max-w-4xl was tuned for text-balance's own automatic line
-             lengths, which are shorter than this longest explicit line
-             (line 1, ~90 characters) needs at `lg` (1024px, the first
-             width these <br>s take effect at) once its own px-6/centering
-             is accounted for.
-             text-balance removed — this is now a deliberate, explicit
-             inverted-pyramid shape (each line manually shorter than the
-             last, per client request), not organic wrapping for
-             text-balance to even out; the two would fight each other.
-             `hidden lg:block` on every <br>, not `md:block` — the
-             longest explicit line (~90 characters) still needs more
-             room than the 768–1023px `md` range gives it even at this
-             wider max-w-5xl; `lg:` (1024px) is the first width it holds
-             its intended shape at without an extra soft-wrap. Below
-             `lg` the <br>s are inert and the full sentence just wraps
-             normally, exactly like before this change. */}
+          {/* max-w-4xl, 4 explicit lines (was max-w-5xl/7 lines) — a
+             direct "the pyramid is too extreme, relax it" request: 7
+             narrow lines (the shortest just 3 words) read as choppy
+             rather than editorial. Line breaks chosen by measuring each
+             candidate line's actual rendered width (not word count) so
+             every line fits inside this max-w-4xl (896px) box with real
+             margin — 870/812/785/806px — a gentle, mostly-decreasing
+             taper rather than a sharp cone, with the last line landing
+             a hair wider than the third (806 vs 785, an ~20px/2%
+             difference, imperceptible) rather than dramatically
+             shorter: the sentence's own trailing clause is long enough
+             that forcing a genuinely short final line would have
+             pushed one of the other three lines over the container's
+             own width and caused an unwanted extra soft-wrap. `hidden
+             lg:block` on the <br>s, same as before — below `lg` they're
+             inert and the sentence just wraps normally. */}
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-5xl text-lg text-mist"
+            className="mx-auto mt-8 max-w-4xl text-lg text-mist"
           >
-            If you&rsquo;re serious about managing stress, NA·01 gives you more than another set of health
+            If you&rsquo;re serious about managing stress, NA·01 gives you more than another set of health metrics
             <br className="hidden lg:block" />
-            metrics to check. It connects signals from your body and mind to show
+            to check. It connects signals from your body and mind to show you how stress is affecting
             <br className="hidden lg:block" />
-            you how stress is affecting your focus, reactions, and ability
+            your focus, reactions, and ability to stay regulated. So instead of simply telling you that
             <br className="hidden lg:block" />
-            to stay regulated. So instead of simply telling you
-            <br className="hidden lg:block" />
-            that you&rsquo;re stressed, it helps you understand what&rsquo;s
-            <br className="hidden lg:block" />
-            driving it and how it shows
-            <br className="hidden lg:block" />
-            up in your day.
+            you&rsquo;re stressed, it helps you understand what&rsquo;s driving it and how it shows up in your day.
           </motion.p>
         </>
       }
