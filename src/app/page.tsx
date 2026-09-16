@@ -4,7 +4,6 @@ import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
-import { TextLink } from "@/components/TextLink";
 import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
@@ -181,9 +180,14 @@ export default function Home() {
                 it&rsquo;s needed, and a way to prepare before moments that
                 matter. Every session shows you it worked.
               </p>
-              <TextLink href="/inside-the-app" tone="dark">
+              <ShimmerLink
+                href="/inside-the-app"
+                background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
+                shimmerColor="var(--color-cream)"
+                className="mt-6 inline-block px-6 py-3 text-sm tracking-wide text-cream"
+              >
                 Learn More
-              </TextLink>
+              </ShimmerLink>
             </Reveal>
           </div>
         </div>
