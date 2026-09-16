@@ -381,7 +381,7 @@ export default function Home() {
             className="mx-auto flex max-w-5xl flex-col items-center justify-center text-center"
           >
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-              Why NeuroAtlas Exists
+              Why NeuroAtlas Exists?
             </h2>
             {/* text-balance, not this site's usual text-pretty for body
                copy — a real, confirmed "across India." orphan this
