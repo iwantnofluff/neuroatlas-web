@@ -132,26 +132,33 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // clears the subtext's own top edge with real margin without needing
   // to move the subtext itself.
   //
-  // right-[27%], not the same 30% the other two cards use — a second,
-  // real collision this avoids: at 30% this card's own left edge landed
-  // flush against "lower-left"'s own right edge (a 0px gap, both cards
-  // sharing the same vertical band at the section's narrowest xl width,
-  // 1280), confirmed live. 3% less inward keeps this card's own overlap
-  // with the model while restoring real breathing room between the two
-  // bottom cards specifically — "upper-left" never shares a vertical
-  // band with either bottom card, so it doesn't need the same pull-back.
-  "lower-right": "right-[27%] bottom-[22%] text-right",
-  // bottom-[24%] (not the original bottom-[30%]) stays — a second,
-  // smaller collision this avoids: pushing "upper-left" down to clear
-  // the headline (see that entry's own comment) brought it close enough
-  // to this card's own top edge that the two overlapped by a few px at
-  // some widths, confirmed live via getBoundingClientRect.
+  // top-[42%] right-[15%] (was bottom-[22%] right-[27%]) — a direct
+  // "act as a tight anatomical callout" request: this card now sits
+  // noticeably higher and closer to center, its own left edge landing
+  // roughly level with the model's top gold side-button rather than
+  // floating in the empty lower-right corner. It's still the "front"
+  // depth card (see `depth` above), so this deeper overlap reads as
+  // genuinely resting against the hardware rather than needing a
+  // visible-sliver pull-back the way the two "back" cards do.
+  "lower-right": "top-[42%] right-[15%] text-right",
+  // left-[32%] (was left-[25%]) — the other half of the same "tight
+  // anatomical callout" request: pulled inward so it sits snugly under
+  // the left side of the model's gold sensors, in the lower-middle-left
+  // space, rather than floating at the section's own bottom-left
+  // corner. Still a "back" depth card, so still eased back from the
+  // model's own edge enough to leave a real visible sliver clear of it
+  // (see "upper-left"'s own comment on why that matters) rather than
+  // the deeper reach "lower-right" affords a front card.
   //
-  // left-[25%] — same easing-back reasoning as "upper-left" above: this
-  // is also a "back" card now, so it needs a visible sliver clear of the
-  // model's own silhouette rather than the deeper 30% overlap tuned for
-  // a card meant to sit in front.
-  "lower-left": "left-[25%] bottom-[24%]",
+  // bottom-[22%] stays (not the 18% this move was first tried at) — a
+  // real, confirmed collision that introduced: pulling this card
+  // inward and up toward center also pulled it into the "Because
+  // knowing your stress..." subtext's own box, confirmed live via
+  // getBoundingClientRect at 1280–1920px (6px of vertical overlap, real
+  // horizontal overlap too). 22% is the same value "lower-right" already
+  // uses for the identical reason — restores a real ~30px margin above
+  // the subtext at every width tested.
+  "lower-left": "left-[32%] bottom-[22%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
