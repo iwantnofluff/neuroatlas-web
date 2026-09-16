@@ -52,10 +52,20 @@ export function DataPrivacyToggle() {
 
   return (
     <div className="mx-auto mt-12 w-full max-w-md">
+      {/* Glass & gold, replacing the previous flat bg-white/60 track and
+         plain bg-cream thumb — the frosted track (backdrop-blur-md +
+         bg-white/20 + a hairline black/5 border) is this brand's light-
+         mode glass treatment, the same "translucent, blurred, barely-
+         there edge" language .card-glass-light already uses elsewhere
+         on this page; the active thumb below carries the gold accent
+         every primary CTA on the site hovers to (see ShimmerButton's
+         own hoverBackground default), so the selected state reads as
+         unmistakably "the brand's own gold," not just a generic light
+         pill. */}
       <div
         role="tablist"
         aria-label="View NeuroAtlas data as"
-        className="relative mx-auto flex w-full max-w-xs rounded-full border border-navy/10 bg-white/60 p-1"
+        className="relative mx-auto flex w-full max-w-xs rounded-full border border-black/5 bg-white/20 p-1 shadow-[0_1px_2px_rgba(11,16,22,0.06)] backdrop-blur-md"
       >
         {(["individual", "organisation"] as const).map((option) => (
           <motion.button
@@ -66,8 +76,10 @@ export function DataPrivacyToggle() {
             onClick={() => setView(option)}
             whileTap={{ scale: reduceMotion ? 1 : 0.97 }}
             className={cn(
-              "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-medium capitalize transition-colors",
-              view === option ? "text-navy" : "text-mist"
+              "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-medium capitalize transition-colors duration-300",
+              view === option
+                ? "text-navy [text-shadow:0_0_10px_color-mix(in_oklab,var(--color-gold)_55%,transparent)]"
+                : "text-mist"
             )}
           >
             {option === "individual" ? "Individual" : "Organization"}
@@ -75,7 +87,7 @@ export function DataPrivacyToggle() {
               <motion.span
                 layoutId="privacy-toggle-thumb"
                 transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0 -z-10 rounded-full bg-cream shadow-[0_4px_14px_-6px_rgba(11,16,22,0.25)]"
+                className="absolute inset-0 -z-10 rounded-full border border-gold/50 bg-gradient-to-b from-white/90 to-gold/25 shadow-[0_4px_16px_-6px_color-mix(in_oklab,var(--color-gold-deep)_65%,transparent)]"
               />
             )}
           </motion.button>

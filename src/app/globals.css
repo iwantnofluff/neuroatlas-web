@@ -6,6 +6,52 @@
 */
 @custom-variant dark (&:is(.dark *));
 
+/* Global touch-device "sticky hover" fix — redefines Tailwind's own
+ * built-in `hover:` variant, site-wide, in one place, rather than
+ * hand-editing every one of this project's `hover:`/`group-hover:` call
+ * sites individually. A touch tap satisfies the CSS `:hover` pseudo-
+ * class the same way a mouseover does, but there's no pointer to
+ * "leave" afterward to clear it — every hover-triggered utility used
+ * anywhere on the site (nav link colors, the ShimmerButton CTA glass-
+ * to-gold fill, the privacy/inside-the-app tile lift-on-hover, etc.)
+ * was visibly getting stuck in its hover state after a single tap on a
+ * real touch device, confirmed live.
+ *
+ * `@media (hover: hover) and (pointer: fine)` only matches a device
+ * that actually HAS a hovering, precise pointer (a mouse/trackpad) —
+ * it's false on touch devices regardless of whether `:hover` itself
+ * would technically match, so wrapping the variant in it is what
+ * actually excludes touch rather than just relying on `:hover`'s own
+ * (broken, for this purpose) matching behavior.
+ *
+ * Confirmed via the actual compiled CSS output (not assumed): Tailwind
+ * v4 builds its compound variants like `group-hover:`/`peer-hover:` on
+ * top of this SAME `hover` variant definition, so redefining it once
+ * here cascades to every one of those automatically too — verified
+ * live, `group-hover:text-navy` (ShimmerButton's own hover text-color
+ * swap) came out wrapped in this exact media query in the build
+ * output, with zero changes needed to that component itself.
+ * `focus-visible:` is a separate, untouched variant — keyboard/
+ * assistive-tech focus styling still applies everywhere regardless of
+ * pointer type, as it should.
+ *
+ * This doesn't remove tactile feedback on touch — it shifts the job to
+ * `active:`/`whileTap`, which every real button on the site already
+ * carries (ShimmerButton's own `active:translate-y-px`, the shared
+ * shadcn Button's `active:...:translate-y-px`, and every framer-motion
+ * card/reticle button's own `whileTap` scale). Framer Motion's
+ * `whileHover` gesture needed no equivalent fix — confirmed by reading
+ * its own source (motion-dom's `hover.mjs`): it already explicitly
+ * rejects `pointerType === "touch"` before ever firing, so it was never
+ * part of this bug in the first place. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 /*
   NeuroAtlas brand tokens.
   Luxury, calm, whitespace-rich: deep navy + champagne gold on a warm cream field.
