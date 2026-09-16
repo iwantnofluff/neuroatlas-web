@@ -189,18 +189,30 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // clearance than 22% already had) and against "lower-right" above it
   // (no new overlap introduced at 1280-1920px).
   //
-  // w-96 — a direct "make this specific card wider so its body copy
-  // takes fewer lines" request, overriding the shared w-80 every other
-  // card uses (this value is listed after that base class in the same
-  // cn() call, and cn() runs everything through tailwind-merge, so the
-  // later, more specific width wins for this card only). This one's own
-  // body copy ("How well you stay balanced under pressure...") is the
-  // longest of the three, and stayed at 3 lines even at w-80 (320px) —
-  // w-96 (384px) is what actually brought it down to 2, confirmed live.
-  // Re-checked all three cards against each other and against the
-  // headline/subtext at 1280–1920px with this wider box in place — no
-  // new collisions introduced.
-  "lower-left": "left-[32%] bottom-[28%] w-96",
+  // No per-card width override here anymore (was w-96) — a direct
+  // "standardize the three cards to one uniform width, they should look
+  // like a cohesive set" request: this card's own body copy being the
+  // longest of the three was previously solved by making THIS card
+  // wider than the other two, which is exactly the inconsistency this
+  // removes. Un-widening it back down to the shared w-80 means its body
+  // copy goes back to wrapping across 3 lines instead of 2 — an
+  // accepted tradeoff of "uniform width" over "every card's copy fits
+  // in 2 lines," per this request's own priority.
+  //
+  // bottom-[26%], not 28% — that extra 3-line body copy also grew this
+  // card's own height (taller box than the previous w-96/2-line
+  // version), which at 28% left it a real, confirmed 4px vertical
+  // overlap with "lower-right" above it at 1280-1440px (getBoundingClientRect-
+  // confirmed). `bottom` moves the box DOWN as the percentage
+  // decreases, not up — the fix here is 2% LOWER than 28%, not higher
+  // (a first attempt raised it instead, which only pushed the card's
+  // top edge further into "lower-right"'s own bottom edge and made the
+  // overlap worse, confirmed the same way). 26% still sits well above
+  // the original 22% this whole vertical adjustment started from, so
+  // the earlier "nudge it up under the model's rim" request still
+  // holds, just not pushed quite as far up as 28% once this card got
+  // taller.
+  "lower-left": "left-[32%] bottom-[26%]",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
@@ -242,7 +254,14 @@ function OrganicSignalCallout({
       )}
     >
       <p className="whitespace-nowrap font-serif font-normal uppercase tracking-normal text-2xl leading-snug text-cream">{signal.label}</p>
-      <p className="mt-1 text-pretty text-sm text-cream/70">{signal.body}</p>
+      {/* text-pretty removed, w-full added — a direct "let the text
+         flow end-to-end, no line-break utilities pulling words to the
+         next line early" request: text-pretty's only job was avoiding a
+         single dangling last word, which is exactly the kind of early
+         break this asks to stop doing; w-full makes sure the paragraph
+         itself claims the card's full padded content width rather than
+         shrinking to its own text. */}
+      <p className="mt-1 w-full text-sm text-cream/70">{signal.body}</p>
     </motion.div>
   );
 }
