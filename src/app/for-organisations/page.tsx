@@ -26,7 +26,6 @@ const BURNOUT_STATS = [
 
 const SECURITY_ITEMS = [
   "Encryption standards",
-  "UK GDPR alignment",
   "Data residency",
   "What happens to your data on contract exit",
 ];
