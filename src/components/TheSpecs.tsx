@@ -147,6 +147,13 @@ type CardEdge = { x: number; y: number };
 
 export function TheSpecs() {
   const [active, setActive] = useState(0);
+  // Drives the click-pulse ripple behind the model (see the ripple div
+  // further down): starts at 0 so nothing renders on first mount (no
+  // click has happened yet), then increments on every genuine spec
+  // change so a fresh <motion.div key={pulseKey}> mounts and replays its
+  // scale/opacity animation from scratch each time, rather than trying
+  // to restart a single already-mounted instance's animation.
+  const [pulseKey, setPulseKey] = useState(0);
   const reduceMotion = useSafeReducedMotion();
   // Below `md` (768px, useIsMobile's own default): the entire floating-
   // node/leader-line system is replaced outright by a dedicated mobile
@@ -206,6 +213,7 @@ export function TheSpecs() {
   function selectSpec(index: number) {
     if (index === active) return;
     setActive(index);
+    setPulseKey((k) => k + 1);
     // Hides the OLD line immediately (same tick as the active change) —
     // the new one only reappears once handleProjected below has a fresh
     // point for the NEWLY active spec, rather than leaving the outgoing
@@ -412,7 +420,7 @@ export function TheSpecs() {
                       <h3 className="text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                         {spec.label}
                       </h3>
-                      <p className="mt-2 text-pretty text-sm text-cream/70">{spec.detail}</p>
+                      <p className="mt-2 text-pretty text-sm leading-snug text-cream/70">{spec.detail}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -501,7 +509,31 @@ export function TheSpecs() {
          `onProjected` are both undefined on mobile — see
          TheSpecsScene.tsx's own comment on why a dot with no line
          pointing at it isn't rendered there at all. */}
-      <div className="relative h-[45vh] w-full md:absolute md:inset-0 md:h-auto">
+      <div className="relative z-0 h-[45vh] w-full md:absolute md:inset-0 md:h-auto">
+        {/* Click-pulse ripple — a direct "sonar" request: a soft gold
+           disc sitting behind the canvas (-z-10, and this wrapper needs
+           its own `z-0` for that to actually land behind the model
+           rather than escaping to compare against a distant ancestor's
+           stacking context — the same `relative`-without-`z-index` bug
+           this codebase has hit twice before, see TheSpecs.tsx's own
+           section-level comment and BandScrollShowcase.tsx's banner
+           fix) that scales up while fading out on every spec change.
+           `pulseKey > 0` skips the very first render (no click has
+           happened yet — nothing should pulse on load); the `key` prop
+           being the counter itself is what forces framer-motion to
+           mount a brand-new instance (and so replay initial->animate
+           from scratch) on every subsequent click, rather than trying
+           to reverse/restart a single persistent element mid-animation. */}
+        {pulseKey > 0 && !reduceMotion && (
+          <motion.div
+            key={pulseKey}
+            aria-hidden="true"
+            initial={{ scale: 1, opacity: 0.5 }}
+            animate={{ scale: 2, opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="pointer-events-none absolute inset-0 -z-10 m-auto size-56 rounded-full bg-gold/50 blur-2xl md:size-72"
+          />
+        )}
         <TheSpecsSceneClient
           reduceMotion={reduceMotion}
           isMobile={isMobile}
@@ -606,7 +638,7 @@ export function TheSpecs() {
                 <h3 className="mt-3 text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                   {spec.label}
                 </h3>
-                <p className="mt-2 text-pretty text-sm text-cream/70">{spec.detail}</p>
+                <p className="mt-2 text-pretty text-sm leading-snug text-cream/70">{spec.detail}</p>
               </div>
             );
           })}

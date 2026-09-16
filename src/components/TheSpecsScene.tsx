@@ -165,7 +165,17 @@ export function TheSpecsScene({
       camera={{ position: [0, 0, 4.2], fov: 42 }}
       gl={{ alpha: true, antialias: true }}
     >
-      <ambientLight intensity={0.4} />
+      {/* 0.4 -> 0.75 ambient, 2.2 -> 3.2 key spotlight — a direct "too
+         dark to see the hardware details" request: this rig's original
+         values (still used verbatim in BandScrollScene.tsx, where the
+         model sits far smaller and further from camera) left the xray
+         variant's much larger, much closer casing reading mostly as
+         shadow once you're actually trying to read sensor/button detail
+         off it rather than just its silhouette. Raised only the fill
+         (ambient) and the front-facing key spotlight already aimed at
+         the model — not the rim/back lights — so the fix is "brighter
+         face, still has real shadow shape," not "flatly lit." */}
+      <ambientLight intensity={0.75} />
       <directionalLight position={[3, 4, 5]} intensity={1.2} color="#f4f0e9" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#8fb3d9" />
       <directionalLight position={[0, 0, 5]} intensity={2.5} />
@@ -173,7 +183,7 @@ export function TheSpecsScene({
         position={[2, 3, 3]}
         angle={0.35}
         penumbra={0.6}
-        intensity={2.2}
+        intensity={3.2}
         color="#dac79e"
       />
       <spotLight

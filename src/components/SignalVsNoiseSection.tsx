@@ -211,7 +211,7 @@ export function SignalVsNoiseSection() {
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
               Precision, Not Guesswork
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
+            <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-cream/75">
               Every reading is checked against your own resting baseline, not
               a general average, then filtered to separate real stress from
               caffeine, a workout, or the cold. What shows up on your

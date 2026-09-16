@@ -123,7 +123,19 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // as "behind" — a sliver has to stay clear of the model's own
   // silhouette for the occlusion to actually be legible as depth rather
   // than the card just being darker.
-  "upper-left": "left-[25%] top-[36%]",
+  // left-[23%], not 25% — a real, confirmed collision the w-72->w-80
+  // width change (see this card's own base-className comment) introduced
+  // at exactly xl's own 1280px floor, the narrowest width these cards
+  // ever render at: both this card and "lower-right" got 32px wider at
+  // the same two fixed insets, closing what used to be a real ~26px gap
+  // between them into an actual ~38px rectangle overlap, confirmed live
+  // via getBoundingClientRect (both axes overlapping, not just a close
+  // call). 2% further outward here (and the matching 2% on
+  // "lower-right", see that entry) reopens a real ~13px clear gap at
+  // 1280px specifically, confirmed the same way, while staying close
+  // enough at 1366px+ that the wider gap there was never the problem in
+  // the first place.
+  "upper-left": "left-[23%] top-[36%]",
   // bottom-[22%], not the original 16% — a real, confirmed collision
   // the horizontal move introduced: at 16% this card's own bottom edge
   // (now much closer to center) landed inside the "Because knowing your
@@ -147,7 +159,10 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // not just one width. Vertically unchanged — top-[42%] still lands
   // level with the model's top gold side-button, unaffected by this
   // horizontal fix.
-  "lower-right": "top-[42%] right-[28%] text-right",
+  // right-[26%], not 28% — the other half of the same w-80-vs-1280px
+  // collision fix as "upper-left" above (see that entry's own comment
+  // for the actual measured overlap this resolves).
+  "lower-right": "top-[42%] right-[26%] text-right",
   // left-[32%] (was left-[25%]) — the other half of the same "tight
   // anatomical callout" request: pulled inward so it sits snugly under
   // the left side of the model's gold sensors, in the lower-middle-left
@@ -167,7 +182,7 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // the subtext at every width tested.
   //
   // w-96 — a direct "make this specific card wider so its body copy
-  // takes fewer lines" request, overriding the shared w-72 every other
+  // takes fewer lines" request, overriding the shared w-80 every other
   // card uses (this value is listed after that base class in the same
   // cn() call, and cn() runs everything through tailwind-merge, so the
   // later, more specific width wins for this card only). This one's own
@@ -203,17 +218,22 @@ function OrganicSignalCallout({
         // the card it overlaps — the alternating depth effect signals'
         // own `depth` field drives (see that field's own comment).
         signal.depth === "back" ? "z-[-1]" : "z-10",
-        // w-72, not the previous w-64 — a direct "make the width a
-        // little longer so the body copy takes fewer lines" request:
-        // at w-64 (256px, minus p-6's own 48px of horizontal padding =
-        // 208px of actual text width) the longest body copy ("How much
-        // your mind is juggling...") wrapped to 3 lines; w-72 (288px,
-        // 240px of text width) brings that down to 2, confirmed live.
-        "absolute hidden w-72 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
+        // w-80, not the previous w-72 (before that w-64) — the earlier
+        // w-72 came from a "fewer body-copy lines" request alone, before
+        // headings picked up whitespace-nowrap (see the label <p> below,
+        // "force onto a single line" request): measured live, "Cognitive
+        // Load" and "Stress Age" only had ~2px of clearance against
+        // w-72's own 240px content width once nowrap was added — real,
+        // but too tight to trust across fonts/DPI. w-80 (320px, 272px of
+        // text width) gives real headroom instead, confirmed live, with
+        // no regression to body-copy line count (still 2 lines, same as
+        // w-72 — a wider box only ever holds MORE text per line, never
+        // less).
+        "absolute hidden w-80 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
         POSITION_CLASSNAMES[signal.position]
       )}
     >
-      <p className="text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-snug text-cream">{signal.label}</p>
+      <p className="whitespace-nowrap font-serif font-normal uppercase tracking-normal text-2xl leading-snug text-cream">{signal.label}</p>
       <p className="mt-1 text-pretty text-sm text-cream/70">{signal.body}</p>
     </motion.div>
   );

@@ -47,27 +47,42 @@ export function ClosingCurtainSection() {
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
-          {/* max-w-4xl (was max-w-2xl, before that max-w-xl) — a direct
-             "fewer lines" request: max-w-2xl held this to 6 lines at
-             every desktop width (confirmed live, 768–2560px all wrapped
-             identically at that cap), even though the heading right
-             above it sits in a much wider max-w-4xl column. Matching
-             that same width cuts it to 4, evenly balanced via
-             text-balance (not text-pretty, which only ever fixes a
-             single dangling last word, not the overall line count) —
-             confirmed the same way, stable across that whole width
-             range rather than shifting with the viewport. */}
+          {/* max-w-5xl (was max-w-4xl, before that max-w-2xl/max-w-xl) —
+             widened one more step specifically so the manual pyramid
+             breaks below never additionally soft-wrap: the previous
+             max-w-4xl was tuned for text-balance's own automatic line
+             lengths, which are shorter than this longest explicit line
+             (line 1, ~90 characters) needs at `lg` (1024px, the first
+             width these <br>s take effect at) once its own px-6/centering
+             is accounted for.
+             text-balance removed — this is now a deliberate, explicit
+             inverted-pyramid shape (each line manually shorter than the
+             last, per client request), not organic wrapping for
+             text-balance to even out; the two would fight each other.
+             `hidden lg:block` on every <br>, not `md:block` — the
+             longest explicit line (~90 characters) still needs more
+             room than the 768–1023px `md` range gives it even at this
+             wider max-w-5xl; `lg:` (1024px) is the first width it holds
+             its intended shape at without an extra soft-wrap. Below
+             `lg` the <br>s are inert and the full sentence just wraps
+             normally, exactly like before this change. */}
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-4xl text-balance text-lg text-mist"
+            className="mx-auto mt-8 max-w-5xl text-lg text-mist"
           >
-            If you&rsquo;re serious about managing stress, NA·01 gives you
-            more than another set of health metrics to check. It connects
-            signals from your body and mind to show you how stress is
-            affecting your focus, reactions, and ability to stay regulated.
-            So instead of simply telling you that you&rsquo;re stressed, it
-            helps you understand what&rsquo;s driving it and how it shows up
-            in your day.
+            If you&rsquo;re serious about managing stress, NA·01 gives you more than another set of health
+            <br className="hidden lg:block" />
+            metrics to check. It connects signals from your body and mind to show
+            <br className="hidden lg:block" />
+            you how stress is affecting your focus, reactions, and ability
+            <br className="hidden lg:block" />
+            to stay regulated. So instead of simply telling you
+            <br className="hidden lg:block" />
+            that you&rsquo;re stressed, it helps you understand what&rsquo;s
+            <br className="hidden lg:block" />
+            driving it and how it shows
+            <br className="hidden lg:block" />
+            up in your day.
           </motion.p>
         </>
       }
