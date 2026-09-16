@@ -165,7 +165,19 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // horizontal overlap too). 22% is the same value "lower-right" already
   // uses for the identical reason — restores a real ~30px margin above
   // the subtext at every width tested.
-  "lower-left": "left-[32%] bottom-[22%]",
+  //
+  // w-96 — a direct "make this specific card wider so its body copy
+  // takes fewer lines" request, overriding the shared w-72 every other
+  // card uses (this value is listed after that base class in the same
+  // cn() call, and cn() runs everything through tailwind-merge, so the
+  // later, more specific width wins for this card only). This one's own
+  // body copy ("How well you stay balanced under pressure...") is the
+  // longest of the three, and stayed at 3 lines even at w-80 (320px) —
+  // w-96 (384px) is what actually brought it down to 2, confirmed live.
+  // Re-checked all three cards against each other and against the
+  // headline/subtext at 1280–1920px with this wider box in place — no
+  // new collisions introduced.
+  "lower-left": "left-[32%] bottom-[22%] w-96",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
