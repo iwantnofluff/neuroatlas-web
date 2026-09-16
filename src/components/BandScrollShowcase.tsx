@@ -132,15 +132,22 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // clears the subtext's own top edge with real margin without needing
   // to move the subtext itself.
   //
-  // top-[42%] right-[15%] (was bottom-[22%] right-[27%]) — a direct
-  // "act as a tight anatomical callout" request: this card now sits
-  // noticeably higher and closer to center, its own left edge landing
-  // roughly level with the model's top gold side-button rather than
-  // floating in the empty lower-right corner. It's still the "front"
-  // depth card (see `depth` above), so this deeper overlap reads as
-  // genuinely resting against the hardware rather than needing a
-  // visible-sliver pull-back the way the two "back" cards do.
-  "lower-right": "top-[42%] right-[15%] text-right",
+  // top-[42%] right-[28%] (was bottom-[22%] right-[27%], briefly
+  // right-[15%]) — a direct "act as a tight anatomical callout" request,
+  // in two passes: the first pass dropped the inset from 27% to 15% to
+  // "bring it closer", but that's backwards per this very file's own
+  // top-of-block explanation — `right`/`left` here are insets FROM the
+  // edge, so a SMALLER number moves a card OUTWARD, not inward — which
+  // is exactly why it then drifted away from the model at wider
+  // viewports, confirmed live via screenshot at 1920px (a visibly large
+  // gap that wasn't there at 1440). 28% actually pulls it inward, close
+  // to "lower-left"'s own 32% (its width and text-right alignment make
+  // it read just as snug at a couple points less), and stays close to
+  // the model across the whole 1440–1920px range this was checked at,
+  // not just one width. Vertically unchanged — top-[42%] still lands
+  // level with the model's top gold side-button, unaffected by this
+  // horizontal fix.
+  "lower-right": "top-[42%] right-[28%] text-right",
   // left-[32%] (was left-[25%]) — the other half of the same "tight
   // anatomical callout" request: pulled inward so it sits snugly under
   // the left side of the model's gold sensors, in the lower-middle-left
@@ -184,7 +191,13 @@ function OrganicSignalCallout({
         // the card it overlaps — the alternating depth effect signals'
         // own `depth` field drives (see that field's own comment).
         signal.depth === "back" ? "z-[-1]" : "z-10",
-        "absolute hidden w-64 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
+        // w-72, not the previous w-64 — a direct "make the width a
+        // little longer so the body copy takes fewer lines" request:
+        // at w-64 (256px, minus p-6's own 48px of horizontal padding =
+        // 208px of actual text width) the longest body copy ("How much
+        // your mind is juggling...") wrapped to 3 lines; w-72 (288px,
+        // 240px of text width) brings that down to 2, confirmed live.
+        "absolute hidden w-72 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
         POSITION_CLASSNAMES[signal.position]
       )}
     >
