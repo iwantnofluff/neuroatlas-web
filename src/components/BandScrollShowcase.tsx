@@ -172,14 +172,14 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // (see "upper-left"'s own comment on why that matters) rather than
   // the deeper reach "lower-right" affords a front card.
   //
-  // bottom-[22%] stays (not the 18% this move was first tried at) — a
-  // real, confirmed collision that introduced: pulling this card
-  // inward and up toward center also pulled it into the "Because
-  // knowing your stress..." subtext's own box, confirmed live via
-  // getBoundingClientRect at 1280–1920px (6px of vertical overlap, real
-  // horizontal overlap too). 22% is the same value "lower-right" already
-  // uses for the identical reason — restores a real ~30px margin above
-  // the subtext at every width tested.
+  // bottom-[28%] (was 22%, before that 18%) — a direct "nudge the card
+  // up so its top edge sits right under the model's bottom-left rim"
+  // request: a further ~6% of viewport height (~54px at 900px tall,
+  // within the requested 40-60px range) higher than the previous 22%.
+  // left unchanged (still 32%) — this was a vertical-only request.
+  // Re-checked live against the subtext block below (now even more
+  // clearance than 22% already had) and against "lower-right" above it
+  // (no new overlap introduced at 1280-1920px).
   //
   // w-96 — a direct "make this specific card wider so its body copy
   // takes fewer lines" request, overriding the shared w-80 every other
@@ -192,7 +192,7 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // Re-checked all three cards against each other and against the
   // headline/subtext at 1280–1920px with this wider box in place — no
   // new collisions introduced.
-  "lower-left": "left-[32%] bottom-[22%] w-96",
+  "lower-left": "left-[32%] bottom-[28%] w-96",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
