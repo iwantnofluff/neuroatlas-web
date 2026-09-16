@@ -411,16 +411,34 @@ export function TheSpecs() {
                       // true in the literal sense: the side facing the
                       // model never moves, only the outer side grows.
                       className={cn(
+                        // lg:w-72, not the previous lg:w-64 — a direct
+                        // "fit the copy into exactly two lines" request:
+                        // at w-64 (256px, minus p-4's 32px of horizontal
+                        // padding = 224px of text width) the two longest
+                        // details ("Sensors"/"Connectivity") wrapped to
+                        // 3 lines; w-72 (288px, 256px of text width) is
+                        // the smallest step up that brings both down to
+                        // 2, confirmed live by measuring actual rendered
+                        // line rects at 16px increments. The other three
+                        // specs were already 2 lines at w-64 and stay 2
+                        // lines here too — a wider box only ever holds
+                        // MORE text per line, never less.
                         "z-10 mt-3 w-44 rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-md sm:w-52",
                         side === "left"
-                          ? "lg:absolute lg:top-1/2 lg:right-[calc(100%+1rem)] lg:mt-0 lg:w-64 lg:-translate-y-1/2 lg:text-right"
-                          : "lg:absolute lg:top-1/2 lg:left-[calc(100%+1rem)] lg:mt-0 lg:w-64 lg:-translate-y-1/2 lg:text-left"
+                          ? "lg:absolute lg:top-1/2 lg:right-[calc(100%+1rem)] lg:mt-0 lg:w-72 lg:-translate-y-1/2 lg:text-right"
+                          : "lg:absolute lg:top-1/2 lg:left-[calc(100%+1rem)] lg:mt-0 lg:w-72 lg:-translate-y-1/2 lg:text-left"
                       )}
                     >
                       <h3 className="text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                         {spec.label}
                       </h3>
-                      <p className="mt-2 text-pretty text-sm leading-snug text-cream/70">{spec.detail}</p>
+                      {/* text-balance, not text-pretty — text-pretty only
+                         ever fixes a single dangling last word; once
+                         every detail is a clean 2 lines (see the card's
+                         own width comment above), text-balance is what
+                         actually evens the two lines out against each
+                         other rather than leaving one long/one short. */}
+                      <p className="mt-2 text-balance text-sm leading-snug text-cream/70">{spec.detail}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
