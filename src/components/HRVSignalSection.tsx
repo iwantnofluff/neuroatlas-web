@@ -64,12 +64,14 @@ export function HRVSignalSection() {
 
       <Reveal y={20} className="relative mx-auto max-w-3xl">
         <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
-          The Signal That Does Not Lie
+          Your Body Keeps Receipts.
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
-          Heart rate variability shows how well your nervous system is
-          coping with pressure, in a way you cannot fake or talk yourself
-          out of.
+          You can tell yourself you&rsquo;re fine. Your nervous system may
+          have other ideas. HRV is one of the quieter clues your body
+          gives you. Viewed against your own baseline, it can reveal when
+          your system is carrying more strain — or when it&rsquo;s
+          finally getting the recovery it needs.
         </p>
       </Reveal>
     </section>
