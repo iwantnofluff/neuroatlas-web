@@ -246,23 +246,6 @@ export default function ForOrganisationsPage() {
               Book A Presentation
             </ShimmerLink>
           </Reveal>
-
-          <Reveal
-            delay={0.15}
-            className="mt-16 border-t border-cream/10 pt-12"
-          >
-            <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl leading-tight text-cream/90 lg:text-2xl">
-              Exploring This For Yourself?
-            </h3>
-            <ShimmerLink
-              href="/request-access"
-              background="color-mix(in oklab, var(--color-cream) 15%, transparent)"
-              shimmerColor="var(--color-gold)"
-              className="mt-6 text-sm tracking-wide text-cream"
-            >
-              Request Access
-            </ShimmerLink>
-          </Reveal>
         </div>
       </section>
     </main>
