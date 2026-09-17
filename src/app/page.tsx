@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
 // client's latest full pass over the homepage content doc.
+// Force rebuild
 
 // Four scattered, differently sized/rotated tiles rather than a tidy grid
 // — see the "Inside the app" section below, and the client's own "Float
