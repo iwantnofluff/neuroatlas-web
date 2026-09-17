@@ -45,22 +45,29 @@ const BandScrollScene = dynamic(
 const signals = [
   {
     label: "Stress Age",
-    body: "How your body is responding to stress over time.",
-    range: [0, 0.34] as const,
+    body: "Shows how your stress profile compares with population patterns.",
+    range: [0, 0.26] as const,
     position: "upper-left" as const,
     depth: "back" as const,
   },
   {
     label: "Cognitive Load",
-    body: "How much your mind is juggling before your focus starts to slip.",
-    range: [0.33, 0.67] as const,
+    body: "Estimates how much cognitive strain your system is carrying and when focus may begin to drop.",
+    range: [0.25, 0.51] as const,
     position: "lower-right" as const,
     depth: "front" as const,
   },
   {
+    label: "Recovery Capacity",
+    body: "Reflects how recovered your body is by comparing current signals with your personal baseline.",
+    range: [0.5, 0.76] as const,
+    position: "upper-right" as const,
+    depth: "back" as const,
+  },
+  {
     label: "Emotional Regulation",
-    body: "How well you stay balanced under pressure, so your response matches the moment.",
-    range: [0.66, 1] as const,
+    body: "Reflects how well your system is maintaining balance and adapting under pressure.",
+    range: [0.75, 1] as const,
     position: "lower-left" as const,
     // front, not back — a direct "it's behind the model, bring it to the
     // front" request: after this card's own bottom inset moved up (see
@@ -175,10 +182,26 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // not just one width. Vertically unchanged — top-[42%] still lands
   // level with the model's top gold side-button, unaffected by this
   // horizontal fix.
+  // top-[51%], not the previous top-[42%] — a direct consequence of
+  // adding a 4th card (Recovery Capacity, "upper-right" below): with
+  // TWO cards now stacked on the right side instead of one, 42% put
+  // this card's own top edge only ~54px below "upper-right"'s own top
+  // (both were sitting in nearly the same band), overlapping it by a
+  // confirmed ~93px — the same class of "two cards fighting for the
+  // same vertical zone" problem "upper-left"/"lower-left" avoid by
+  // anchoring from OPPOSITE edges (top vs bottom) with real distance
+  // between. 51% pushes this card down into its own genuinely separate
+  // band instead — solved for live: recovery's own bottom edge, this
+  // card's own top, "lower-left"'s own top, and the subtext block's own
+  // top edge, leaving a real (not hairline) margin against all three,
+  // confirmed via getBoundingClientRect at 1280–1920px. No longer
+  // "level with the model's top gold side-button" (the old value's own
+  // reasoning) — a real tradeoff of fitting a 4th card into the same
+  // composition, not an oversight.
   // right-[24%], not 26% — the other half of the same width-vs-1280px
   // collision fix as "upper-left" above (see that entry's own comment
   // for the actual measured overlap this resolves).
-  "lower-right": "top-[42%] right-[24%] text-right",
+  "lower-right": "top-[51%] right-[24%] text-right",
   // left-[32%] (was left-[25%]) — the other half of the same "tight
   // anatomical callout" request: pulled inward so it sits snugly under
   // the left side of the model's gold sensors, in the lower-middle-left
@@ -221,6 +244,15 @@ const POSITION_CLASSNAMES: Record<(typeof signals)[number]["position"], string> 
   // holds, just not pushed quite as far up as 28% once this card got
   // taller.
   "lower-left": "left-[32%] bottom-[26%]",
+  // upper-right: a new 4th position for Recovery Capacity (a direct
+  // "add a fourth card" copy request). Mirrors "upper-left"'s own
+  // top-[36%] headline clearance (see that entry's own comment — the
+  // "For Stress" headline sits centered, so its own right-hand extent
+  // needs the same vertical clearance an upper-left card does) and its
+  // 21% inset (this card is the same shared width, so the identical
+  // inset gives it the same clearance from the model as its mirror
+  // partner) — confirmed live, not just assumed symmetric.
+  "upper-right": "right-[21%] top-[36%] text-right",
 };
 
 /** Premium floating UI card — glassmorphic (bg-white/5, backdrop-blur,
@@ -258,11 +290,24 @@ function OrganicSignalCallout({
         // value for all three cards (not a per-card override) per the
         // earlier "uniform width" request — every card gets the extra
         // room, not just this one.
-        "absolute hidden w-[336px] rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md xl:block",
+        // p-4, text-lg/text-xs (was p-6, text-2xl/text-sm) — a direct
+        // "shrink card size/text to fit" request: going from 3 to 4
+        // floating cards means TWO now have to stack per side within
+        // the same fixed vertical band between the headline and the
+        // subtext block that used to hold only one card per side — a
+        // real, confirmed geometric constraint (only ~343px of clear
+        // vertical room total at 900px viewport height, not enough for
+        // two ~147px cards plus a real gap at the old size). Shrinking
+        // the type and padding is what actually buys back enough
+        // height per card (see each POSITION_CLASSNAMES entry below for
+        // the actual measured values this made room for) without
+        // touching the shared width, which stays the collision-tuned
+        // 336px.
+        "absolute hidden w-[336px] rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md xl:block",
         POSITION_CLASSNAMES[signal.position]
       )}
     >
-      <p className="whitespace-nowrap font-serif font-normal uppercase tracking-normal text-2xl leading-snug text-cream">{signal.label}</p>
+      <p className="whitespace-nowrap font-serif font-normal uppercase tracking-normal text-lg leading-snug text-cream">{signal.label}</p>
       {/* text-pretty removed, w-full added — a direct "let the text
          flow end-to-end, no line-break utilities pulling words to the
          next line early" request: text-pretty's only job was avoiding a
@@ -270,7 +315,7 @@ function OrganicSignalCallout({
          break this asks to stop doing; w-full makes sure the paragraph
          itself claims the card's full padded content width rather than
          shrinking to its own text. */}
-      <p className="mt-1 w-full text-sm text-cream/70">{signal.body}</p>
+      <p className="mt-1 w-full text-xs text-cream/70">{signal.body}</p>
     </motion.div>
   );
 }
