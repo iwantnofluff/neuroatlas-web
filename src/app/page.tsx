@@ -176,10 +176,11 @@ export default function Home() {
                 See It. Act On It.
               </h2>
               <p className="mt-6 text-pretty text-lg text-cream/75">
-                The app turns what the band reads into something you can use: a
-                quick daily read of where you stand, short resets when
-                it&rsquo;s needed, and a way to prepare before moments that
-                matter. Every session shows you it worked.
+                The app turns what the band reads into something useful: See
+                where you stand, understand what your body may need, and use
+                short tools to help you reset, recover or prepare for what&rsquo;s
+                ahead. After each session, you can see how your body
+                responded.
               </p>
               <ShimmerLink
                 href="/inside-the-app"

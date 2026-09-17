@@ -110,7 +110,7 @@ const RINGS = [
   {
     key: "stress-age",
     label: "Stress Age",
-    body: "How your body is responding to stress over time.",
+    body: "See the long-term pattern.",
     radius: 14,
     labelAngle: -135,
     side: "left",
@@ -119,7 +119,7 @@ const RINGS = [
   {
     key: "cognitive-load",
     label: "Cognitive Load",
-    body: "How much your mind is juggling before your focus starts to slip.",
+    body: "Understand the demand on your mind.",
     radius: 26,
     labelAngle: 45,
     side: "right",
@@ -128,7 +128,7 @@ const RINGS = [
   {
     key: "emotional-regulation",
     label: "Emotional Regulation",
-    body: "How well you stay balanced under pressure, so your response matches the moment.",
+    body: "See how steadily you're responding.",
     radius: 38,
     labelAngle: 135,
     side: "left",
@@ -137,7 +137,7 @@ const RINGS = [
   {
     key: "recovery-capacity",
     label: "Recovery Capacity",
-    body: "Copy to be added.",
+    body: "Know how ready your system is.",
     // 38 + 12 — the same step as every other consecutive pair above
     // (14→26→38), per an explicit "match the existing spacing" spec.
     radius: 50,
@@ -297,8 +297,8 @@ export function BeyondHeartSection() {
             Beyond Heart Rate
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
-            Beyond heart rate, NeuroAtlas tracks four things most other
-            tools miss.
+            Beyond individual biometrics, NeuroAtlas turns your signals into
+            four deeper measures of how your system is performing.
           </p>
         </Reveal>
 
