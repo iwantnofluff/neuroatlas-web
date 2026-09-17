@@ -263,7 +263,7 @@ export function BuiltToReadYouSection() {
            bottom edge at every height tested. */}
         <motion.div
           style={{ opacity: subtext.opacity, y: subtext.y }}
-          className="absolute inset-x-0 bottom-8 z-10 mx-auto max-w-2xl px-6 text-center"
+          className="absolute inset-x-0 bottom-8 z-10 flex justify-center px-6 text-center"
         >
           {/* max-w-md (448px) wrapped this to 3 lines, the last one just
              "day." on its own — an orphan, not a deliberate 2-line
@@ -284,7 +284,7 @@ export function BuiltToReadYouSection() {
              to text-pretty's lighter "just avoid a lone final word"
              heuristic for category-consistency alone risked undoing a
              verified fix for an unverified one. */}
-          <p className="text-lg text-balance text-gold-soft/70">
+          <p className="max-w-5xl text-2xl text-balance text-gold-soft/70 sm:text-3xl lg:text-4xl">
             A screenless band designed to read your stress, quietly and
             precisely, throughout your day.
           </p>
