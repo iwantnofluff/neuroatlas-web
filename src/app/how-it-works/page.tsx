@@ -13,15 +13,18 @@ export const metadata = { title: "How it works — NeuroAtlas" };
 const loopSteps = [
   {
     label: "Measure",
-    body: "Reads signals from your body to understand what is happening in the moment.",
+    tagline: "Understand your state.",
+    body: "NeuroAtlas reads your physiological signals against your personal baseline to reveal what's happening beneath the surface.",
   },
   {
     label: "Intervene",
-    body: "Guides you through a short, neuroscience-based exercise designed for what you are experiencing.",
+    tagline: "Shift your state.",
+    body: "Targeted interventions help regulate your system and move it towards a more stable state.",
   },
   {
-    label: "Measure Again",
-    body: "Checks your signals again so you can see the change after the intervention.",
+    label: "Verify",
+    tagline: "See the response.",
+    body: "Your signals show how your system responded, making the effect of the intervention visible.",
   },
 ];
 
@@ -50,8 +53,7 @@ export default function HowItWorksPage() {
       <Hero
         eyebrow="How It Works"
         headline={"Here Is What Tracking\nNever Fixed"}
-        subhead="Most tools stop at showing you the data. NeuroAtlas closes the loop by measuring what is happening, helping you intervene, and measuring again to see what changed."
-        tagline="Measure → Intervene → Measure Again"
+        subhead="Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds."
         ctas={[]}
       />
       <HeroBoundary />
@@ -66,12 +68,11 @@ export default function HowItWorksPage() {
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20} className="text-center">
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-              The Part Every Other App Skips
+              Measure, Intervene, Verify
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-cream/75">
-              NeuroAtlas doesn&rsquo;t stop at telling you what&rsquo;s
-              happening. It helps you do something about it, then checks
-              whether it made a difference.
+              From signal to action to visible change. NeuroAtlas shows you
+              what works for your system.
             </p>
           </Reveal>
           {/* md:grid-cols-3, not sm: — 3 short columns at a 640px
@@ -90,10 +91,30 @@ export default function HowItWorksPage() {
                 <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl">
                   {step.label}
                 </h3>
+                <p className="mt-3 text-balance font-serif text-lg text-gold-soft">
+                  {step.tagline}
+                </p>
                 <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
               </Reveal>
             ))}
           </div>
+          {/* Closing statement for the loop — a direct "add this at the
+             bottom of the page" request: placed here, right under the
+             three steps, rather than at the very end of the whole page
+             (after the unrelated closing CTA) — this line is about the
+             loop specifically (each pass making future recommendations
+             more personal), the same topic every other piece of copy in
+             this section already covers, not a page-level closer. */}
+          <Reveal delay={0.3} y={20} className="mt-16 text-center">
+            <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl leading-tight lg:text-2xl">
+              The Loop Gets Smarter With You.
+            </h3>
+            <p className="mx-auto mt-3 max-w-2xl text-pretty text-base text-cream/70">
+              Every response helps us learn which interventions work best
+              for you, making future recommendations increasingly
+              personal.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -103,7 +124,7 @@ export default function HowItWorksPage() {
           alternating 50/50 sections: text left, media right. */}
       <FeatureSplitSection
         heading="The First Read"
-        body="The band reads your heart rate, breathing and more, all day, picking up pressure before you’d notice it yourself."
+        body="The band reads your heart rate, breathing, and more — all day — picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
       />
@@ -113,7 +134,7 @@ export default function HowItWorksPage() {
           neuroscience" phrase directly. Text right, media left. */}
       <FeatureSplitSection
         heading="Built With Neuroscience"
-        body="When pressure builds, the app runs a short exercise, built on neuroscience, right at your desk. No stepping away, just a few minutes to bring things back into focus."
+        body="NeuroAtlas is built around how the brain and nervous system respond to stress, focus and recovery. It combines the body’s signals with neuroscience-backed techniques to help you understand your state and use simple, targeted tools to shift it."
         imageSide="left"
         background="navy-soft"
       />
@@ -138,17 +159,33 @@ export default function HowItWorksPage() {
             <p className="font-serif font-normal uppercase tracking-normal text-4xl text-cream lg:text-5xl">
               42 <span className="text-gold">→</span> 61
             </p>
+            <p className="mt-1 text-pretty text-sm text-cream/70">
+              A higher HRV typically reflects greater recovery and lower
+              physiological stress.
+            </p>
             <p className="mt-1 text-pretty text-xs italic text-cream/50">
               Illustrative example, pending real pilot data
             </p>
           </div>
         }
       />
+      {/* Disclaimer for the HRV stat card above — a direct "add a
+         disclaimer in the footer" request: placed as its own small-print
+         line directly under this one section rather than inside the
+         shared FeatureSplitSection component, since no other section
+         using that component needs it. */}
+      <div className="bg-navy px-6 pb-16 text-center lg:px-10 lg:pb-20">
+        <p className="mx-auto max-w-2xl text-pretty text-xs text-cream/50">
+          HRV varies naturally between individuals and across the day.
+          Changes are interpreted relative to your personal baseline and
+          should not be read as a standalone measure of health or stress.
+        </p>
+      </div>
 
       {/* 6. Pattern recognition. Text right, media left. */}
       <FeatureSplitSection
         heading="Pattern Recognition Technology"
-        body="Over time, NeuroAtlas learns when and where your stress tends to build. This helps it recognise recurring patterns and support you before pressure reaches its peak."
+        body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure — so you can understand your system better and respond before it reaches its peak."
         imageSide="left"
         background="cream"
       />
