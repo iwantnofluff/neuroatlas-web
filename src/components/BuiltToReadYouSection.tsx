@@ -263,7 +263,7 @@ export function BuiltToReadYouSection() {
            bottom edge at every height tested. */}
         <motion.div
           style={{ opacity: subtext.opacity, y: subtext.y }}
-          className="absolute inset-x-0 bottom-8 z-10 flex justify-center px-6 text-center"
+          className="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center px-6 text-center"
         >
           {/* max-w-md (448px) wrapped this to 3 lines, the last one just
              "day." on its own — an orphan, not a deliberate 2-line
