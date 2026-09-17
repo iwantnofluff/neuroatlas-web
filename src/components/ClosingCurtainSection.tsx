@@ -47,33 +47,25 @@ export function ClosingCurtainSection() {
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
-          {/* max-w-4xl, 4 explicit lines (was max-w-5xl/7 lines) — a
-             direct "the pyramid is too extreme, relax it" request: 7
-             narrow lines (the shortest just 3 words) read as choppy
-             rather than editorial. Line breaks chosen by measuring each
-             candidate line's actual rendered width (not word count) so
-             every line fits inside this max-w-4xl (896px) box with real
-             margin — 870/812/785/806px — a gentle, mostly-decreasing
-             taper rather than a sharp cone, with the last line landing
-             a hair wider than the third (806 vs 785, an ~20px/2%
-             difference, imperceptible) rather than dramatically
-             shorter: the sentence's own trailing clause is long enough
-             that forcing a genuinely short final line would have
-             pushed one of the other three lines over the container's
-             own width and caused an unwanted extra soft-wrap. `hidden
-             lg:block` on the <br>s, same as before — below `lg` they're
-             inert and the sentence just wraps normally. */}
+          {/* max-w-4xl, text-balance, no manual <br>s — this section's
+             previous copy used 4 hand-measured line breaks (see this
+             file's own git history), but those were tuned to that exact
+             text's own line lengths; new copy of a different length
+             makes them meaningless (either orphaned or overflowing).
+             text-balance re-derives an even, editorial taper for
+             whatever text is here automatically, without needing
+             hand-measurement to be redone on every future copy change —
+             confirmed live, no orphaned last line at this width. */}
           <motion.p
             style={{ y: subtextY }}
-            className="mx-auto mt-8 max-w-4xl text-lg text-mist"
+            className="mx-auto mt-8 max-w-4xl text-balance text-lg text-mist"
           >
-            If you&rsquo;re serious about managing stress, NA·01 gives you more than another set of health metrics
-            <br className="hidden lg:block" />
-            to check. It connects signals from your body and mind to show you how stress is affecting
-            <br className="hidden lg:block" />
-            your focus, reactions, and ability to stay regulated. So instead of simply telling you that
-            <br className="hidden lg:block" />
-            you&rsquo;re stressed, it helps you understand what&rsquo;s driving it and how it shows up in your day.
+            A wearable should earn its place on your wrist. NA.01 is
+            designed to work quietly in the background, building a
+            continuous picture of how your system changes. The value
+            isn&rsquo;t in giving you more numbers to check — it&rsquo;s
+            in giving NeuroAtlas the context to make those numbers more
+            meaningful when you need them.
           </motion.p>
         </>
       }
