@@ -117,9 +117,8 @@ export function LivingSignalHero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75"
           >
-            Every protocol maps to established neuroscience,
-            <br />
-            not a wellness trend.
+            Every protocol maps to established neuroscience &amp;
+            psychology, not a wellness trend.
           </motion.p>
         </div>
       </section>
