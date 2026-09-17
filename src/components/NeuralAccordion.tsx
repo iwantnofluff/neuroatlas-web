@@ -9,15 +9,18 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 const SYSTEMS = [
   {
     label: "Autonomic Regulation",
-    body: "How your body's automatic stress response gets trained to calm faster.",
+    tagline: "Calm the stress response.",
+    body: "Uses breathing, pacing and sensory techniques to help shift the nervous system away from heightened arousal and towards a more regulated state.",
   },
   {
     label: "Prefrontal-Limbic Control",
-    body: "How your thinking brain regains control from your reactive brain, under pressure.",
+    tagline: "Create space before you react.",
+    body: "Draws on psychology and neuroscience to support attention, emotional regulation and clearer thinking when pressure is high.",
   },
   {
     label: "Neuroplastic Conditioning",
-    body: "How repetition makes composure a habit, not a one-time fix.",
+    tagline: "Train the response over time.",
+    body: "Repeated practice helps reinforce more adaptive patterns, so regulation and recovery can become easier and more familiar with use.",
   },
 ];
 
@@ -75,15 +78,16 @@ function AccordionPanel({
       </h3>
       <AnimatePresence>
         {isActive && isSettled && (
-          <motion.p
+          <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.35 }}
-            className="mt-4 max-w-sm text-pretty text-base text-cream/70"
+            className="mt-4 max-w-sm"
           >
-            {system.body}
-          </motion.p>
+            <p className="text-balance font-serif text-lg text-gold-soft">{system.tagline}</p>
+            <p className="mt-2 text-pretty text-base text-cream/70">{system.body}</p>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
@@ -140,10 +144,13 @@ export function NeuralAccordion() {
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Three Systems, One Method
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-cream/75">
-            NeuroAtlas draws on established neuroscience to understand how
-            the body and brain respond to stress, and to build
-            interventions around those responses.
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
+            NeuroAtlas brings neuroscience and psychology together to
+            understand how stress affects the way you feel, think and
+            respond. Its interventions are built around three core
+            mechanisms: regulating the nervous system, strengthening
+            cognitive and emotional control, and reinforcing healthier
+            response patterns over time.
           </p>
         </Reveal>
         {/* md:flex-row, not sm: — three panels side by side (one
