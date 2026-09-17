@@ -13,10 +13,35 @@ type View = "individual" | "organisation";
 // down the page, not a claim about any real person's or organisation's
 // actual results.
 const PERSONAL_METRICS = [
-  { label: "Composure score", value: "82" },
   { label: "Recovery streak", value: "6 days" },
   { label: "Stress age", value: "−3 yrs" },
 ];
+
+// Mood & Focus Trends — replaces the previous "Composure score" row (a
+// direct client request), and unlike the two plain label/value metrics
+// above, this one is drawn as an actual small line graph rather than a
+// single number: a "trend" is inherently a change over time, not one
+// fixed value, so a sparkline is what the label itself calls for. Two
+// separate series (mood/focus), not one merged line — the label names
+// two distinct things being tracked, and a single averaged line would
+// hide exactly the "these move differently" detail a real trend view
+// exists to show. Illustrative shapes only, not real data, same
+// standard as PERSONAL_METRICS above.
+const MOOD_TREND_POINTS = [40, 55, 48, 62, 58, 70, 66];
+const FOCUS_TREND_POINTS = [30, 42, 38, 45, 52, 50, 60];
+
+function sparklinePath(points: number[], width: number, height: number) {
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const range = max - min || 1;
+  return points
+    .map((p, i) => {
+      const x = (i / (points.length - 1)) * width;
+      const y = height - ((p - min) / range) * height;
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
 
 // Deliberately abstract: a small grid of shaded cells with no names,
 // team labels, or headcounts small enough to re-identify anyone — the
@@ -106,6 +131,45 @@ export function DataPrivacyToggle() {
               className="card-glass-light rounded-2xl p-6"
             >
               <p className="eyebrow">Your Personal View</p>
+              <div className="mt-4 border-b border-navy/5 pb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-pretty text-sm text-navy/70">Mood &amp; Focus Trends</span>
+                  <span className="flex items-center gap-3 text-xs text-navy/50">
+                    <span className="flex items-center gap-1">
+                      <span aria-hidden="true" className="size-1.5 rounded-full bg-gold" />
+                      Mood
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span aria-hidden="true" className="size-1.5 rounded-full bg-navy/40" />
+                      Focus
+                    </span>
+                  </span>
+                </div>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 200 48"
+                  preserveAspectRatio="none"
+                  className="mt-3 h-12 w-full"
+                >
+                  <path
+                    d={sparklinePath(MOOD_TREND_POINTS, 200, 48)}
+                    fill="none"
+                    stroke="var(--color-gold)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d={sparklinePath(FOCUS_TREND_POINTS, 200, 48)}
+                    fill="none"
+                    stroke="var(--color-navy)"
+                    strokeOpacity={0.4}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
               <div className="mt-4 space-y-3">
                 {PERSONAL_METRICS.map((metric) => (
                   <div
