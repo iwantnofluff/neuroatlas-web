@@ -119,12 +119,32 @@ export function OneSignalSection() {
           // it's the tightest option, so it's already minimizing this
           // headline's own contribution to the total stacked height
           // above, not something loosened further.
-          className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-black tracking-tighter text-transparent uppercase"
+          //
+          // font-normal, tracking-[0] (was font-black, tracking-tighter)
+          // — the project's own BOOWIE typography mandate (see
+          // CLAUDE.md/AGENTS.md) is strict and unqualified about
+          // headings, and this headline's own heavy-weight/tight-tracking
+          // exception no longer holds, same reasoning as the homepage's
+          // "Built To Read You" headline earlier this session.
+          className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-normal tracking-[0] text-transparent uppercase"
         >
           Built For One Focus:
           <br />
           Stress
         </motion.h2>
+        {/* Lead statement — a direct "divide the [copy]" request: the new
+           copy reads as a short punchy opener followed by a longer
+           explanation, so it's split into two visual tiers rather than
+           one run-on paragraph. Plain solid color (not the headline's
+           own gradient-mask effect) at a size between the two — reads
+           as a bridge from the giant headline down to the smaller body
+           copy below it, not a second full headline. */}
+        <motion.p
+          style={{ opacity: subtextOpacity, y: subtextY }}
+          className="mx-auto mt-8 max-w-3xl text-balance text-2xl text-[#1B2430] sm:text-3xl"
+        >
+          Because stress rarely stays in one part of your life.
+        </motion.p>
         <motion.p
           style={{ opacity: subtextOpacity, y: subtextY }}
           // text-[#1B2430]/80 (was /70) — a touch more contrast per the
@@ -152,16 +172,14 @@ export function OneSignalSection() {
           // that point, the same way any wrapped text needs more lines
           // in a narrower column; that's expected reflow, not a bug this
           // is trying to prevent.
-          className="mx-auto mt-8 max-w-[1800px] text-center text-balance text-lg text-[#1B2430]/80"
+          className="mx-auto mt-6 max-w-[1800px] text-center text-balance text-lg text-[#1B2430]/80"
         >
-          NA·01 looks at more than individual health signals. It connects
-          them to help you understand how stress is affecting you. Your
-          sleep might be affecting your focus. Your heart&rsquo;s patterns
-          might reveal rising pressure. The goal isn&rsquo;t to tell you how
-          active you were today. It&rsquo;s to help you understand
-          what&rsquo;s shaping how you feel, think, and respond. Because
-          understanding stress means seeing the whole picture, not just your
-          heart&nbsp;rate.
+          It follows you into your sleep, your focus, your decisions and
+          the moments that matter most. Left unchecked, that pressure can
+          build into exhaustion and burnout. The goal isn&rsquo;t to tell
+          you how active you were today. NeuroAtlas was built to
+          understand that bigger picture — with stress at the
+          centre&nbsp;of&nbsp;it.
         </motion.p>
       </div>
     </div>
