@@ -17,11 +17,32 @@ export const metadata = { title: "For organisations — NeuroAtlas" };
 // organisation's own numbers (see the caption rendered under them below)
 // — the same "real content, honestly framed" standard this codebase
 // already holds itself to elsewhere (e.g. EditorialIndexSection's own
-// placeholder research cards).
+// placeholder research cards). `source` is each stat's own short
+// attribution, rendered directly under its own card — the client's own
+// source text came through with search-result artifacts attached
+// ("Gallup.com+1", a duplicated "World Health Organization. World
+// Health Organization+1"), cleaned to the plain organisation/report
+// name here rather than reproduced verbatim.
 const BURNOUT_STATS = [
-  { value: 33, suffix: "%", label: "Average cost to replace one employee, as a share of salary" },
-  { value: 7.8, decimals: 1, label: "Days lost per employee, per year, to sickness absence" },
-  { value: 50, suffix: "%", label: "Of employees report feeling burned out at work" },
+  {
+    value: 40,
+    suffix: "%",
+    label: "of employees worldwide experienced a lot of stress the previous day.",
+    source: "Gallup, State of the Global Workplace",
+  },
+  {
+    value: 22,
+    suffix: "%",
+    label: "of employees across 30 countries reported burnout symptoms.",
+    source: "McKinsey Health Institute",
+  },
+  {
+    value: 1,
+    prefix: "$",
+    suffix: " Trillion",
+    label: "is lost globally each year in productivity due to depression and anxiety.",
+    source: "World Health Organization",
+  },
 ];
 
 const SECURITY_ITEMS = [
@@ -58,12 +79,15 @@ export default function ForOrganisationsPage() {
               This Is Not Another Wellness Gimmick
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
-              Burnout is a business problem. It affects retention,
-              decision-making, productivity, and the cost of replacing people.
+              Wellness perks have their place, but pressure doesn&rsquo;t
+              wait for the next workshop. It shows up in the middle of
+              meetings, decisions, deadlines and difficult days.
             </p>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-lg font-medium text-cream/90">
-              NeuroAtlas turns that risk into something you can see and
-              address, before it turns into a resignation.
+              NeuroAtlas brings support into those moments — giving people
+              practical tools to manage pressure as it happens, while
+              helping organisations take a more proactive approach to
+              stress and burnout.
             </p>
           </Reveal>
 
@@ -76,11 +100,14 @@ export default function ForOrganisationsPage() {
               >
                 <CountUp
                   value={stat.value}
+                  prefix={stat.prefix}
                   suffix={stat.suffix}
-                  decimals={stat.decimals}
                   className="font-serif text-4xl font-normal uppercase tracking-normal text-gold"
                 />
                 <p className="mt-3 text-pretty text-sm text-cream/70">{stat.label}</p>
+                <p className="mt-3 text-pretty text-xs text-cream/40">
+                  Source: {stat.source}
+                </p>
               </Reveal>
             ))}
           </div>
