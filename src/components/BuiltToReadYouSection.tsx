@@ -64,11 +64,14 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
 }
 
 // Shared by the desktop sandwich AND the mobile stacked headline below —
-// one className, both markups. leading-none + tracking-tighter (was
-// leading-[0.95]/tracking-tight) — an editorial "monolithic, heavy"
-// headline reads as one continuous mass of type, not two lines with
-// visible internal breathing room; tighter tracking and a true 1-to-1
-// line-height are what actually sell that at this size and weight.
+// one className, both markups. font-normal + tracking-[0] (was
+// font-black + tracking-tighter, a one-off "editorial heavy" exception
+// carved out for just this headline) — the project's own BOOWIE
+// typography mandate (see CLAUDE.md/AGENTS.md) is strict and
+// unqualified about headings, and applies here too now. leading-none
+// stays (a true 1-to-1 line-height, not tracking, is what keeps "Built
+// To"/"Read You" reading as one continuous mass rather than two lines
+// with visible internal breathing room).
 //
 // text-gold-soft, not text-cream — pure cream read as too stark/harsh
 // against the Deep Navy at this size and weight per client feedback.
@@ -78,19 +81,43 @@ function useSubtextMotion(progress: MotionValue<number>, reduceMotion: boolean) 
 // one-off hex) is what actually "echoes the gold hardware" the client
 // asked for, and keeps this in the same token system as the rest of
 // the site instead of introducing a color nothing else uses.
-// xl:text-[10rem] is a FLAT cap — fine up through a normal laptop
-// screen, but on anything wider (a real, confirmed complaint: a ~2000px
-// viewport left visibly too much whitespace at both sides) the text
-// just stops growing forever past that one fixed size, while the
-// viewport itself keeps getting wider. 2xl: (1536px+) switches to a
-// vw-based clamp so it keeps scaling with the viewport instead of
-// flatlining — clamp's own floor (10rem) matches xl's own value almost
-// exactly at the 1536px breakpoint itself (11vw ≈ 10.56rem there), so
-// there's no visible jump at the breakpoint edge, just a smooth
-// continuation; the 16rem ceiling is a sanity cap for genuinely
-// ultra-wide displays, not a reintroduction of the same flat-cap bug.
+// md:text-[clamp(6rem,14vw,24rem)], not the previous discrete
+// md:text-8xl/lg:text-9xl/xl:text-[10rem] ladder ending in a 2xl-only
+// clamp — a direct "make it stretch edge-to-edge, it's leaving a big
+// gap at both sides" report: xl:text-[10rem] was a FLAT cap between
+// 1280–1535px (a hard, confirmed regression — "Read You"'s own
+// rendered width measured IDENTICAL, 737px, at both 1280 and 1440px
+// viewports, meaning the whole 160px of extra viewport width at 1440
+// just became unused side margin instead of more text). The 2xl clamp
+// already fixed this ABOVE 1536px; this extends the same continuous
+// vw-based growth all the way down to md (768px) instead, removing the
+// flatline entirely rather than just moving where it starts. 6rem
+// matches md's own previous flat value (text-8xl) almost exactly at
+// the 768px breakpoint itself (14vw ≈ 6.7rem there), so there's no
+// jarring jump at the breakpoint edge.
+//
+// 14vw, not a more literally "edge-to-edge" ~19vw (90%+ fill) — tried
+// live first, and rejected: this headline's OWN pixel height scales
+// with this same font-size (leading-none), and "Read You" is the
+// BOTTOM half of a sandwich split exactly at the viewport's vertical
+// center (see the two-row layout below), so a much taller headline
+// eats directly into the fixed vertical gap to the subtext block
+// below it — confirmed live, 19vw pushed that gap to roughly -140px
+// (a real overlap) at a perfectly ordinary 900px-tall browser window,
+// re-breaking the collision this same file's subtext positioning
+// comment already fixed once this session. 14vw was the highest
+// factor that keeps a real, positive gap down to a 720px-tall window
+// (only a thin, genuinely-edge-case overlap below that, at 660px) —
+// confirmed live across 660–956px of viewport HEIGHT at 1440px width —
+// while still visibly fixing the original complaint: rendered width
+// goes from a flat 737px (51% of a 1440px viewport, unchanged from
+// 1280px) to a continuously-scaling ~929px (65%) at the same width,
+// confirmed live, with no horizontal overflow at any width from 375px
+// up to 2560px. 6rem/24rem are sanity floors/ceilings only. Below md,
+// the existing text-5xl/sm:text-7xl ladder is UNCHANGED — that range
+// wasn't part of this report (a real desktop-viewport screenshot).
 const HEADLINE_TEXT_CLASSNAME =
-  "font-sans text-5xl leading-none font-black tracking-tighter text-gold-soft uppercase sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[clamp(10rem,17vw,22rem)]";
+  "font-sans text-5xl leading-none font-normal tracking-[0] text-gold-soft uppercase sm:text-7xl md:text-[clamp(6rem,14vw,24rem)]";
 
 export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
@@ -284,7 +311,7 @@ export function BuiltToReadYouSection() {
              to text-pretty's lighter "just avoid a lone final word"
              heuristic for category-consistency alone risked undoing a
              verified fix for an unverified one. */}
-          <p className="max-w-5xl text-2xl text-balance text-gold-soft/70 sm:text-3xl lg:text-4xl">
+          <p className="max-w-2xl text-lg text-balance text-gold-soft/70">
             A screenless band designed to read your stress, quietly and
             precisely, throughout your day.
           </p>
