@@ -15,12 +15,13 @@ export function BuiltOnNeuroscienceSection() {
       <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-            Built On Neuroscience
+            Built With Evidence
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
-            The NeuroAtlas approach is informed by established neuroscience
-            and translated into practical interventions designed for
-            everyday stress.
+            Behind every NeuroAtlas tool is a body of research. We draw
+            from neuroscience, psychology and peer-reviewed work on
+            stress, attention, emotional regulation and recovery — then
+            turn that science into something you can actually use.
           </p>
         </Reveal>
       </div>
