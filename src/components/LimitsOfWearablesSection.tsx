@@ -20,11 +20,14 @@ export function LimitsOfWearablesSection() {
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
             The Limits Of Wearables
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
-            Most wearables can tell you what is happening in your body. The
-            gap is knowing what that information means for your stress, and
-            what to do next. NeuroAtlas reads the difference, and acts on
-            it.
+          <p className="mx-auto mt-6 max-w-xl text-balance text-xl text-navy/90">
+            More data was never the point. Knowing what to do with it is.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-mist">
+            Most wearables leave you with charts, scores and another
+            number to think about. NeuroAtlas gives those signals a job
+            — helping you understand when something is shifting, why it
+            matters, and what you can do next.
           </p>
         </Reveal>
       </div>
