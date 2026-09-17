@@ -4,6 +4,7 @@ import { HRVSignalSection } from "@/components/HRVSignalSection";
 import { LimitsOfWearablesSection } from "@/components/LimitsOfWearablesSection";
 import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSection";
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
+import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
 export const metadata = { title: "The science — NeuroAtlas" };
 
@@ -46,6 +47,21 @@ export default function TheSciencePage() {
       <LimitsOfWearablesSection />
       <BuiltOnNeuroscienceSection />
       <ScienceClosingSection />
+      {/* References — the full bibliographic citations for "Guided By
+         Experts"'s own "Backed by" lines (see EditorialIndexSection.tsx,
+         which exports RESEARCH_CARDS as the single source of truth for
+         both). Plain small print at the very bottom of the page, after
+         ScienceClosingSection's own CurtainReveal pair — safe to append
+         here since CurtainReveal's stacking math depends only on
+         viewport height, not on what comes after it (see that
+         component's own doc comment). */}
+      <section className="bg-navy px-6 py-12 text-center lg:px-10">
+        <ol className="mx-auto max-w-2xl space-y-3 text-pretty text-xs text-cream/50">
+          {RESEARCH_CARDS.map((card) => (
+            <li key={card.field}>{card.citation}</li>
+          ))}
+        </ol>
+      </section>
     </main>
   );
 }

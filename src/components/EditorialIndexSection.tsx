@@ -5,32 +5,23 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
-// Placeholder research AREAS, not fabricated citations — real papers
-// aren't sourced yet, so these stay at the honest level of "which
-// field this maps to", echoing the same three pillars section 2
-// covers rather than inventing specific studies/authors. Kept
-// unchanged when this component's own heading/body were repurposed
-// from "Peer-Reviewed, Not Promised" to "Guided By Experts" (the
-// client's final copy for /the-science's section 6) — the cards
-// still read as the expert/research backing that heading refers to.
-const RESEARCH_CARDS = [
-  {
-    index: "01",
-    field: "Autonomic Regulation",
-    note: "Peer-reviewed literature on vagal tone and stress recovery.",
-  },
-  {
-    index: "02",
-    field: "Prefrontal-Limbic Control",
-    note: "Research on cognitive reappraisal and executive control under pressure.",
-  },
-  {
-    index: "03",
-    field: "Neuroplastic Conditioning",
-    note: "Studies on repetition-driven habit formation and skill consolidation.",
-  },
-];
+// Real citations, not placeholders — a direct client update replacing
+// the previous honest-but-generic "which field this maps to" copy
+// (see this file's own git history) with actual backing research per
+// card. The data itself lives in lib/researchCitations.ts, not here —
+// this file is "use client", and /the-science's page.tsx (a plain
+// Server Component) needs the same data for its own "References" list;
+// a Server Component can't import a plain value out of a "use client"
+// module (only component references cross that boundary), so the data
+// has to live in a plain module both sides can import. `citation` (the
+// full bibliographic reference) renders in that page-level References
+// list, not repeated inside each card here — these three cards are
+// already tightly height-constrained (see StackedResearchCard's own
+// fixed-position stacking below), and a full citation string is much
+// longer than the short "Backed by" line meant to be read at a glance
+// while scrolling.
 
 // Fixed "fanned deck" offsets — not scroll-driven, just how each card
 // sits once revealed, so even at full rest they read as a physical
@@ -38,20 +29,21 @@ const RESEARCH_CARDS = [
 const FAN_ROTATE = [-4, 2, 0];
 const FAN_X = [-14, 8, 0];
 
-// Per-card hold-then-reveal windows, evenly split into thirds — index 0
-// (the base card) has none: it's simply always settled, never fading in
-// from hidden, which is what actually lets progress start at exactly 0
-// (see this file's own useScroll comment) without a blank first frame.
-// Index 1 holds through [0, 0.33] — genuinely nothing moves, so a
-// reader who stops anywhere in that window sees card 01 alone and fully
-// readable — then reveals over the next third, [0.33, 0.66]. Index 2
-// holds through [0, 0.66] (i.e. through card 01's whole read AND card
-// 02's own reveal) and takes the final third, [0.66, 1], to slide in
-// and settle exactly as the track ends.
+// Per-card hold-then-reveal windows — was an even split into thirds
+// with no gap between one card's own reveal ending and the next
+// card's reveal starting immediately after (confirmed: index 2's own
+// reveal began at exactly 0.66, the same instant index 1's reveal
+// ended). A direct "the next card shouldn't come immediately, keep
+// one extra scroll of delay per card" report: each now-revealed card
+// gets its own genuine SETTLED hold (nothing moving, fully visible,
+// readable) before the next one begins, rather than reveals running
+// back-to-back. Card 1 alone: [0, 0.18]. Card 2 reveal: [0.18, 0.32].
+// Card 2 settled hold: [0.32, 0.58] — the actual "extra scroll" pause.
+// Card 3 reveal: [0.58, 0.72]. Card 3 settled hold: [0.72, 1].
 const CARD_WINDOWS: ReadonlyArray<{ start: number; end: number } | null> = [
   null,
-  { start: 0.33, end: 0.66 },
-  { start: 0.66, end: 1 },
+  { start: 0.18, end: 0.32 },
+  { start: 0.58, end: 0.72 },
 ];
 
 function clamp01(value: number) {
@@ -75,7 +67,20 @@ function StackedResearchCard({
     reduceMotion || !revealWindow
       ? 1
       : clamp01((p - revealWindow.start) / (revealWindow.end - revealWindow.start));
-  const opacity = useTransform(progress, (p) => eased(p));
+  // Hard cut, not a gradual fade — a direct "don't fade, one card's
+  // text shows through the other while it's translucent" report: with
+  // opacity tracking `eased` directly (0 -> 1 smoothly across the
+  // whole reveal window), a card mid-reveal was partially transparent
+  // for a real stretch of scroll, and since it's stacked ON TOP of the
+  // previous card (z-index), that partial transparency let both
+  // cards' own text show through each other at once. Snapping opacity
+  // to a binary 0/1 the INSTANT `eased` leaves 0 removes every
+  // partially-transparent frame entirely — the card is either fully
+  // invisible (still off in its own `y` offset, nothing to see through
+  // regardless) or a fully opaque solid card physically sliding into
+  // place, never both softened into each other. The `y` slide itself
+  // still eases smoothly — only opacity is a step function.
+  const opacity = useTransform(progress, (p) => (eased(p) > 0 ? 1 : 0));
   const y = useTransform(progress, (p) => (reduceMotion ? 0 : 60 * (1 - eased(p))));
 
   return (
@@ -94,6 +99,13 @@ function StackedResearchCard({
       </span>
       <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">{card.field}</h3>
       <p className="mt-3 text-pretty text-sm text-mist">{card.note}</p>
+      {/* "Backed by" — the short, at-a-glance citation. The full
+         bibliographic reference lives in a shared "References" list
+         on the page itself (see page.tsx), not repeated here — this
+         card is already tightly height-constrained. */}
+      <p className="mt-3 border-t border-navy/10 pt-3 text-xs text-navy/60">
+        Backed by: {card.backedBy}
+      </p>
     </motion.div>
   );
 }
@@ -148,13 +160,15 @@ export function EditorialIndexSection() {
   });
 
   return (
-    // 260vh -> 300vh — a further "give it more deliberate room" pass on
-    // top of the earlier 180vh->260vh one: with "start start"/"end end"
-    // mapping the full 0-1 progress range across (wrapper height -
-    // viewport height) of real scroll, 300vh gives ~200vh of actual
-    // pinned scroll distance across the 3-card sequence, comfortably
-    // more per hold-or-reveal third than 260vh's ~160vh did.
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[300vh]")}>
+    // 300vh -> 380vh — the CARD_WINDOWS change above adds two genuine
+    // settled-hold phases (0.32-0.58 and 0.72-1) that didn't exist
+    // before; keeping the same 300vh total would have squeezed those
+    // new pauses out of the SAME distance the reveals themselves need,
+    // undercutting the very pacing fix those windows are for. 380vh
+    // gives ~280vh of real pinned scroll distance across the full
+    // sequence — still a hold-reveal-hold-reveal-hold shape, just with
+    // real room for each phase rather than a compressed one.
+    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[380vh]")}>
       {/* min-h-[100svh], not h-screen — h-screen (100vh) assumes the
          browser's own toolbar chrome is fully hidden, which isn't true
          on a real phone; the established fix throughout this codebase
@@ -178,7 +192,13 @@ export function EditorialIndexSection() {
             </p>
           </Reveal>
 
-          <div className="relative h-[320px] sm:h-[360px]">
+          {/* h-[380px] sm:h-[420px], not the previous h-[320px]/h-[360px]
+             — each card gained a new "Backed by" line (see
+             StackedResearchCard above); this container is what each
+             card's own `absolute inset-0` sizes itself against, so it
+             needs the same increase or the new line would overflow the
+             card's own box rather than the container growing to fit it. */}
+          <div className="relative h-[380px] sm:h-[420px]">
             {RESEARCH_CARDS.map((card, i) => (
               <StackedResearchCard
                 key={card.field}
