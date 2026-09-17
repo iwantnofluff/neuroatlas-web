@@ -21,18 +21,27 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 // a subtle arch, reported live, so nothing here is a genuine height or
 // position difference between cards. The dynamic feel comes entirely
 // from the ±6° tilt on the ends.
+// Placeholder content — this section is being repurposed from a
+// generic measure/intervene/measure process explainer into one
+// dedicated entirely to Stress Age (an explicit "for now just keep a
+// placeholder, copy needs to be added, the copy team has to rewrite
+// this section" request). The Spaced Arch layout/motion below is
+// untouched and still fully wired up; only these three cards' own
+// copy is a stand-in, using this same codebase's own existing "Copy to
+// be added." convention (see BeyondHeartSection.tsx's RINGS array)
+// rather than inventing a different placeholder style.
 const methodSteps = [
   {
-    label: "Measure",
-    body: "Reads what's happening in your body, from emotional regulation to stress age, to build a clear picture beneath the surface.",
+    label: "Stress Age",
+    body: "Copy to be added.",
   },
   {
-    label: "Intervene",
-    body: "A short, simple reset, right where you are.",
+    label: "Stress Age",
+    body: "Copy to be added.",
   },
   {
-    label: "Measure",
-    body: "A second reading proves the shift, not just the feeling.",
+    label: "Stress Age",
+    body: "Copy to be added.",
   },
 ];
 
@@ -205,7 +214,7 @@ export function MethodScrollCards() {
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
           <h2 className="text-center text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight sm:text-3xl lg:text-4xl">
-            Measure. Intervene. Measure.
+            Stress Age
           </h2>
         </Reveal>
         {/* Spaced Arch: a plain gapped flex row, no negative margins, no
