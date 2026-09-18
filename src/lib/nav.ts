@@ -4,14 +4,16 @@ export type NavLink = {
 };
 
 // Primary header nav — Title Case per Copy V2. "The Science" sits right
-// after "The Band" and before "Toolkits" per the client's own explicit
-// nav update — restored here (see footerNav's own comment on its
-// earlier removal from the footer specifically).
+// after "The Band" per the client's own explicit nav update — restored
+// here (see footerNav's own comment on its earlier removal from the
+// footer specifically). "Toolkits" removed (that page is gone — see
+// /inside-the-app's own Train Categories section, which absorbed its
+// content); "Inside The App" takes its old slot instead.
 export const primaryNav: NavLink[] = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "The Band", href: "/band" },
   { label: "The Science", href: "/the-science" },
-  { label: "Toolkits", href: "/toolkits" },
+  { label: "Inside The App", href: "/inside-the-app" },
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy", href: "/privacy" },
   { label: "About", href: "/about" },
@@ -29,7 +31,6 @@ export const footerNav: NavLink[] = [
   { label: "The Band", href: "/band" },
   { label: "The Science", href: "/the-science" },
   { label: "Inside The App", href: "/inside-the-app" },
-  { label: "Toolkits", href: "/toolkits" },
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy And Your Data", href: "/privacy" },
   { label: "About Us", href: "/about" },

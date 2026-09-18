@@ -68,7 +68,6 @@ const EXPLORE_HREFS = [
   "/band",
   "/the-science",
   "/inside-the-app",
-  "/toolkits",
   "/for-organisations",
   "/privacy",
 ];
