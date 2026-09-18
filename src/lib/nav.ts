@@ -52,3 +52,6 @@ export const socialLinks: NavLink[] = [
 ];
 
 export const contactEmail = "hello@neuroatlas.org.uk";
+
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://neuroatlas.org.uk";

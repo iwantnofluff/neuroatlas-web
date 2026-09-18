@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { siteUrl } from "@/lib/nav";
 
 // The real brand typefaces, replacing the Fraunces/Plus Jakarta Sans
 // Google Fonts stand-ins this site launched with (see this file's own
@@ -41,6 +42,7 @@ const mont = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "NeuroAtlas — The First Stress Management Band",
   description:
     "Know when pressure is building, and reset before it takes over.",
