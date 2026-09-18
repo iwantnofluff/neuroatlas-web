@@ -1,4 +1,4 @@
-import { Gauge, Users, BookOpen } from "lucide-react";
+import { Gauge, Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { AppScreenMock } from "@/components/AppScreenMock";
@@ -61,7 +61,57 @@ export default function InsideTheAppPage() {
         />
       </Reveal>
 
-      {/* 2. The daily dashboard */}
+      <section>
+        <div className="mx-auto max-w-5xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
+          <Reveal y={20}>
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
+              Not Every Moment Needs The Same Response
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
+              Some moments call for sharper focus. Others need a reset, a
+              steadier response, or space to recover. NeuroAtlas brings
+              together targeted tools for performance, stress and
+              wellness — so you can choose what fits the moment.
+            </p>
+          </Reveal>
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Target,
+                label: "Performance",
+                body: "Tools that use attention exercises, structured thinking and reflection to support focus, clarity and preparation for demanding moments.",
+              },
+              {
+                icon: Wind,
+                label: "Stress",
+                body: "Tools that draw on grounding, reframing and short cognitive exercises to help you slow things down, step out of the immediate reaction and approach the moment differently.",
+              },
+              {
+                icon: Sparkles,
+                label: "Wellness",
+                body: "More restorative experiences built around breathing, mindfulness, immersive sound, visualisation and guided relaxation — creating space to pause, reset and recover.",
+              },
+            ].map(({ icon: Icon, label, body }, i) => (
+              <Reveal
+                key={label}
+                delay={i * 0.1}
+                className="card-glass-light rounded-2xl p-8 text-left"
+              >
+                <Icon aria-hidden="true" className="size-6 text-gold-deep" strokeWidth={1.5} />
+                <h3 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">
+                  {label}
+                </h3>
+                <p className="mt-3 text-pretty text-base text-mist">{body}</p>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mx-auto mt-10 max-w-xl text-pretty text-base italic text-mist/80">
+            Different methods. Different moments. One place to find what
+            fits.
+          </p>
+        </div>
+      </section>
+
       <FeatureSplitSection
         heading="Your Day At A Glance"
         imageSide="right"
@@ -195,7 +245,7 @@ export default function InsideTheAppPage() {
       <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
-            A Minute To Check In
+            A Minute Before The Day Moves On
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist lg:mx-0">
             A quick daily check-in lets you record how you&rsquo;re feeling
