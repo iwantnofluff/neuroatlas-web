@@ -1,39 +1,9 @@
-import type { SanityImageSource } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import type { Article } from "@/lib/journal-types";
 
-export type ArticleCategory =
-  | "Focus"
-  | "Pressure"
-  | "Recovery"
-  | "Founder Viewpoints"
-  | "Pilot Stories";
-
-export type ArticleSeo = {
-  metaTitle?: string;
-  metaDescription?: string;
-  ogImage?: string;
-};
-
-export type Article = {
-  slug: string;
-  title: string;
-  standfirst: string;
-  category: ArticleCategory;
-  author: string;
-  publishedAt: string;
-  body: string[];
-  image: SanityImageSource;
-  featured?: boolean;
-  seo?: ArticleSeo;
-};
-
-export const CATEGORIES: ArticleCategory[] = [
-  "Focus",
-  "Pressure",
-  "Recovery",
-  "Founder Viewpoints",
-  "Pilot Stories",
-];
+export type { ArticleCategory, ArticleSeo, Article } from "@/lib/journal-types";
+export { CATEGORIES } from "@/lib/journal-types";
 
 const ARTICLE_PROJECTION = /* groq */ `{
   "slug": slug.current,
@@ -94,11 +64,7 @@ function toArticle(raw: RawArticle, featured: boolean): Article {
 }
 
 export async function getArticles(): Promise<Article[]> {
-  const raw = await sanityClient.fetch<RawArticle[]>(
-    ALL_ARTICLES_QUERY,
-    {},
-    { next: { revalidate: 60 } }
-  );
+  const raw = await sanityFetch<RawArticle[]>(ALL_ARTICLES_QUERY);
   return raw.map((article, i) => toArticle(article, i === 0));
 }
 
@@ -108,11 +74,9 @@ export async function getArticleBySlug(
   // `featured` is not read anywhere on the individual article page (only
   // the journal index uses it to pick the lead story), so this fetch
   // doesn't need the extra round trip getArticles() makes to compute it.
-  const raw = await sanityClient.fetch<RawArticle | null>(
-    ARTICLE_BY_SLUG_QUERY,
-    { slug },
-    { next: { revalidate: 60 } }
-  );
+  const raw = await sanityFetch<RawArticle | null>(ARTICLE_BY_SLUG_QUERY, {
+    slug,
+  });
   if (!raw) return undefined;
   return toArticle(raw, false);
 }

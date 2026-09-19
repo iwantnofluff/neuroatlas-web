@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { Reveal } from "@/components/Reveal";
-import { CATEGORIES, type Article, type ArticleCategory } from "@/lib/journal";
+import { CATEGORIES, type Article, type ArticleCategory } from "@/lib/journal-types";
 import { urlForImage } from "@/lib/sanity/image";
 
 type Filter = "All" | ArticleCategory;
