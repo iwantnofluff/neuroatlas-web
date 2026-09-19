@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Reveal } from "@/components/Reveal";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { cn } from "@/lib/utils";
 
 const FIELDS = [
   { id: "name", label: "Name", type: "text", autoComplete: "name" },
@@ -11,10 +12,28 @@ const FIELDS = [
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setIsSubmitting(true);
+
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) setSubmitted(true);
+    } finally {
+      submittingRef.current = false;
+      setIsSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -65,11 +84,15 @@ export function ContactForm() {
       </div>
       <ShimmerButton
         type="submit"
+        disabled={isSubmitting}
         background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
         shimmerColor="var(--color-cream)"
-        className="mt-2 w-full text-sm tracking-wide text-cream"
+        className={cn(
+          "mt-2 w-full text-sm tracking-wide text-cream",
+          isSubmitting && "cursor-not-allowed opacity-60"
+        )}
       >
-        Send Message
+        {isSubmitting ? "Sending..." : "Send Message"}
       </ShimmerButton>
     </form>
   );

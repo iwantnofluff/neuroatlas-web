@@ -1,15 +1,34 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Reveal } from "@/components/Reveal";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { cn } from "@/lib/utils";
 
 export function NewsletterForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setIsSubmitting(true);
+
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) setSubmitted(true);
+    } finally {
+      submittingRef.current = false;
+      setIsSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -27,6 +46,7 @@ export function NewsletterForm() {
       </label>
       <input
         id="journal-email"
+        name="email"
         type="email"
         required
         placeholder="Your email"
@@ -34,11 +54,15 @@ export function NewsletterForm() {
       />
       <ShimmerButton
         type="submit"
+        disabled={isSubmitting}
         background="color-mix(in oklab, var(--color-gold) 35%, transparent)"
         shimmerColor="var(--color-gold-soft)"
-        className="shrink-0 py-3 text-sm tracking-wide text-cream"
+        className={cn(
+          "shrink-0 py-3 text-sm tracking-wide text-cream",
+          isSubmitting && "cursor-not-allowed opacity-60"
+        )}
       >
-        Subscribe
+        {isSubmitting ? "Sending..." : "Subscribe"}
       </ShimmerButton>
     </form>
   );
