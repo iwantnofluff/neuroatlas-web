@@ -243,7 +243,7 @@ export default function PrivacyPage() {
             This page covers the principles. The full legal detail lives in
             our privacy policy, if you want to go further.
           </p>
-          <div className="mt-2 flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-8">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-8 gap-y-1">
             <TextLink href="/legal/privacy-policy">Read The Privacy Policy</TextLink>
             <TextLink href="/for-organisations">
               For Organisations: See How Team Data Works

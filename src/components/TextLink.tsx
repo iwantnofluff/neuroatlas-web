@@ -20,7 +20,7 @@ export function TextLink({
     <Link
       href={href}
       className={cn(
-        "group mt-6 inline-flex items-center gap-1.5 text-sm underline decoration-gold decoration-2 underline-offset-4",
+        "group mt-6 inline-flex items-center gap-1.5 text-sm underline decoration-gold decoration-2 underline-offset-4 sm:whitespace-nowrap",
         tone === "dark" ? "text-cream" : "text-navy"
       )}
     >
