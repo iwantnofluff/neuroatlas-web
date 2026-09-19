@@ -277,43 +277,6 @@ export default function InsideTheAppPage() {
         media={<TrendGraph tone="dark" />}
       />
 
-      {/* 7. Health integrations - chips name illustrative CATEGORIES, not
-         real integration partners (no confirmed partnerships to name
-         specific health-app brands against yet), matching the "To be
-         confirmed" honesty convention used for hardware specs elsewhere
-         on this site rather than fabricating a specific claimed partner
-         list. */}
-      <FeatureSplitSection
-        heading="Syncs With Your Other Apps"
-        imageSide="right"
-        background="cream"
-        body={
-          <>
-            <p className="text-pretty">
-              Connect NeuroAtlas with the health apps you already use to
-              bring more of your health data into one place.
-            </p>
-            <p className="mt-4 text-pretty text-base italic text-mist/80">
-              More context, without replacing what you rely on.
-            </p>
-          </>
-        }
-        media={
-          <div className="card-glass-light flex size-full flex-col items-center justify-center gap-3 p-8">
-            {["Sleep Tracking", "Wearables", "Health Records", "Calendar"].map(
-              (category) => (
-                <div
-                  key={category}
-                  className="w-full rounded-full border border-navy/10 bg-white/60 px-5 py-2.5 text-center text-sm text-navy/70"
-                >
-                  {category}
-                </div>
-              )
-            )}
-          </div>
-        }
-      />
-
       {/* 8. Availability */}
       <Reveal
         className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
