@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { ReadingProgressBar } from "@/components/ReadingProgressBar";
+import { ArticleHeroImage } from "@/components/ArticleHeroImage";
 import { getAllArticleSlugs, getArticleBySlug } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
 import { siteUrl } from "@/lib/nav";
@@ -87,6 +88,7 @@ export default async function ArticlePage({
 
   return (
     <main className="bg-cream">
+      <ReadingProgressBar />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -121,28 +123,22 @@ export default async function ArticlePage({
           </p>
         </Reveal>
 
-        <Reveal
-          delay={0.1}
-          y={20}
-          className="relative mt-10 aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5"
-        >
-          <Image
+        <Reveal delay={0.1} y={20} className="mt-10">
+          <ArticleHeroImage
             src={urlForImage(article.image).width(1200).height(675).fit("crop").url()}
             alt={article.title}
-            fill
-            priority
-            sizes="(min-width: 672px) 672px, 100vw"
-            className="object-cover"
           />
         </Reveal>
 
-        <Reveal delay={0.15} y={20} className="mt-12 grid gap-6">
+        <div className="mt-12 grid gap-6">
           {article.body.map((paragraph, i) => (
-            <p key={i} className="text-pretty text-lg leading-relaxed text-ink/80">
-              {paragraph}
-            </p>
+            <Reveal key={i} delay={i * 0.06} y={20}>
+              <p className="text-pretty text-lg leading-relaxed text-ink/80">
+                {paragraph}
+              </p>
+            </Reveal>
           ))}
-        </Reveal>
+        </div>
       </div>
     </main>
   );

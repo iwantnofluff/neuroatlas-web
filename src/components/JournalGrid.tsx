@@ -2,16 +2,33 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
-import { Reveal } from "@/components/Reveal";
 import { CATEGORIES, type Article, type ArticleCategory } from "@/lib/journal-types";
 import { urlForImage } from "@/lib/sanity/image";
 
 type Filter = "All" | ArticleCategory;
 
 const FILTERS: Filter[] = ["All", ...CATEGORIES];
+
+function gridVariants(reduceMotion: boolean): Variants {
+  return {
+    hidden: {},
+    visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.08 } },
+  };
+}
+
+function cardVariants(reduceMotion: boolean): Variants {
+  return {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+}
 
 export function JournalGrid({ articles }: { articles: Article[] }) {
   const [active, setActive] = useState<Filter>("All");
@@ -25,10 +42,11 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
         style={{ scrollbarWidth: "none" }}
       >
         {FILTERS.map((filter) => (
-          <button
+          <motion.button
             key={filter}
             type="button"
             onClick={() => setActive(filter)}
+            whileHover={{ scale: 1.05 }}
             className={cn(
               "relative shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-sm transition-colors duration-300",
               active === filter ? "text-navy" : "text-mist hover:text-navy"
@@ -42,13 +60,20 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
                 className="absolute inset-0 -z-10 rounded-full border border-gold/30 bg-gradient-to-b from-cream to-gold/40"
               />
             )}
-          </button>
+          </motion.button>
         ))}
       </div>
 
-      <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((article, i) => (
-          <Reveal key={article.slug} delay={(i % 3) * 0.08} y={20}>
+      <motion.div
+        key={active}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={gridVariants(reduceMotion)}
+        className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {filtered.map((article) => (
+          <motion.div key={article.slug} variants={cardVariants(reduceMotion)}>
             <a href={`/journal/${article.slug}`} className="group block">
               <div className="relative aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5">
                 <Image
@@ -67,9 +92,9 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
               </h3>
               <p className="mt-2 text-pretty text-sm text-mist">{article.standfirst}</p>
             </a>
-          </Reveal>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
