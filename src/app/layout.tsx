@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { SmoothScroll } from "@/components/SmoothScroll";
+import { SiteChrome } from "@/components/SiteChrome";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { siteUrl } from "@/lib/nav";
@@ -64,10 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          only, matching the actual reported gesture — Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
       <body className="min-h-full flex flex-col overscroll-x-none bg-cream font-sans text-ink">
-        <SmoothScroll />
-        <Header />
-        <div className="flex-1">{children}</div>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
