@@ -2,13 +2,16 @@ import { ImageIcon, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { JournalGrid } from "@/components/JournalGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
-import { articles } from "@/lib/journal";
+import { getArticles } from "@/lib/journal";
 
 export const metadata = { title: "Journal — NeuroAtlas" };
 
-export default function JournalPage() {
+export default async function JournalPage() {
+  const articles = await getArticles();
   const featured = articles.find((article) => article.featured) ?? articles[0];
-  const rest = articles.filter((article) => article.slug !== featured.slug);
+  const rest = featured
+    ? articles.filter((article) => article.slug !== featured.slug)
+    : [];
 
   return (
     <main>
@@ -27,47 +30,49 @@ export default function JournalPage() {
         </div>
       </section>
 
-      <section className="bg-cream px-6 pt-16 pb-4 lg:px-10 lg:pt-20">
-        <div className="mx-auto max-w-6xl">
-          <Reveal y={20}>
-            <a
-              href={`/journal/${featured.slug}`}
-              className="group relative block overflow-hidden rounded-3xl"
-            >
-              <div className="aspect-video sm:aspect-[21/9]">
-                <div className="flex size-full items-center justify-center bg-gradient-to-br from-navy/10 to-navy/5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
-                  <ImageIcon
-                    aria-hidden="true"
-                    strokeWidth={1}
-                    className="size-16 text-navy/10"
-                  />
+      {featured && (
+        <section className="bg-cream px-6 pt-16 pb-4 lg:px-10 lg:pt-20">
+          <div className="mx-auto max-w-6xl">
+            <Reveal y={20}>
+              <a
+                href={`/journal/${featured.slug}`}
+                className="group relative block overflow-hidden rounded-3xl"
+              >
+                <div className="aspect-video sm:aspect-[21/9]">
+                  <div className="flex size-full items-center justify-center bg-gradient-to-br from-navy/10 to-navy/5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
+                    <ImageIcon
+                      aria-hidden="true"
+                      strokeWidth={1}
+                      className="size-16 text-navy/10"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
-                <div className="max-w-xl rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md sm:p-8">
-                  <p className="text-xs tracking-[0.15em] text-gold-soft uppercase">
-                    {featured.category}
-                  </p>
-                  <h2 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight text-cream sm:text-3xl">
-                    {featured.title}
-                  </h2>
-                  <p className="mt-3 text-pretty text-base text-cream/75">
-                    {featured.standfirst}
-                  </p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm tracking-wide text-cream underline decoration-cream/30 underline-offset-4 transition-colors group-hover:decoration-cream">
-                    Read Article
-                    <ArrowUpRight aria-hidden="true" className="size-4" />
-                  </span>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+                  <div className="max-w-xl rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md sm:p-8">
+                    <p className="text-xs tracking-[0.15em] text-gold-soft uppercase">
+                      {featured.category}
+                    </p>
+                    <h2 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight text-cream sm:text-3xl">
+                      {featured.title}
+                    </h2>
+                    <p className="mt-3 text-pretty text-base text-cream/75">
+                      {featured.standfirst}
+                    </p>
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-sm tracking-wide text-cream underline decoration-cream/30 underline-offset-4 transition-colors group-hover:decoration-cream">
+                      Read Article
+                      <ArrowUpRight aria-hidden="true" className="size-4" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </Reveal>
-        </div>
-      </section>
+              </a>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       <section className="bg-cream px-6 py-16 md:py-24 lg:px-10 lg:py-32">
         <div className="mx-auto max-w-6xl">

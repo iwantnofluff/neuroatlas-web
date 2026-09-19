@@ -3,13 +3,14 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ImageIcon, ArrowLeft } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { articles, getArticleBySlug } from "@/lib/journal";
+import { getAllArticleSlugs, getArticleBySlug } from "@/lib/journal";
 import { siteUrl } from "@/lib/nav";
 
 const DEFAULT_OG_IMAGE = "/brand/logo-mark.svg";
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllArticleSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     return { title: "Article Not Found — NeuroAtlas" };
@@ -57,7 +58,7 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
