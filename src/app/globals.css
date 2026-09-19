@@ -477,13 +477,11 @@
   ---break---
 */
 @layer base {
-  * {
+  /* /studio shares this document's <body> with no Shadow DOM isolation,
+     so an unscoped wildcard selector here would leak into @sanity/ui's
+     own contrast tokens. */
+  .marketing-shell,
+  .marketing-shell * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
   }
 }

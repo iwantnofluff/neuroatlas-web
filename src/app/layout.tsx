@@ -61,7 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          (not the broader overscroll-none) scopes this to the X axis
          only, matching the actual reported gesture — Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
-      <body className="min-h-full flex flex-col overscroll-x-none bg-cream font-sans text-ink">
+      <body className="min-h-full flex flex-col overscroll-x-none">
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

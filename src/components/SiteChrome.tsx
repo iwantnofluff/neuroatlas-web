@@ -14,11 +14,11 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <>
+    <div className="marketing-shell flex min-h-full flex-1 flex-col bg-cream font-sans text-ink">
       <SmoothScroll />
       <Header />
       <div className="flex-1">{children}</div>
       <Footer />
-    </>
+    </div>
   );
 }
