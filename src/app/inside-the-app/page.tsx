@@ -61,10 +61,11 @@ export default function InsideTheAppPage() {
         />
       </Reveal>
 
-      <section>
+      <section id="train">
         <div className="mx-auto max-w-5xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
+            <p className="eyebrow">Train</p>
+            <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
               Not Every Moment Needs The Same Response
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
