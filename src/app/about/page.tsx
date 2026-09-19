@@ -1,6 +1,8 @@
+import { PlayCircle } from "lucide-react";
 import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
+import { Parallax } from "@/components/Parallax";
 import { FounderStorySection } from "@/components/FounderStorySection";
 import { LivePulseDot } from "@/components/LivePulseDot";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
@@ -9,26 +11,9 @@ export const metadata = { title: "About us — NeuroAtlas" };
 
 // Copy: client's final pass over the /about content doc. Section
 // numbering in the comments below matches the doc's own 1–8 numbering
-// (the doc itself skips 7) — "Vision, Mission & Approach" (doc sections
-// 4 and 5) are rendered as ONE bento-grid section per the brief's own
-// explicit interaction spec ("Group these into a clean, minimalist
-// bento-box grid"), rather than as two separate stacked sections; every
-// line of copy from both is still here, just regrouped.
-
-const BENTO_CELLS = [
-  {
-    label: "Vision",
-    body: "A world where people can better understand and manage their stress, so pressure does not have to dictate how they think, perform, or respond.",
-  },
-  {
-    label: "Mission",
-    body: "We use neuroscience and wearable biometrics to help make stress measurable, understandable, and easier to manage.",
-  },
-  {
-    label: "The Approach",
-    body: "NeuroAtlas is built on neuroscience and translates that understanding into practical ways to help people manage stress.",
-  },
-];
+// (the doc itself skips 7). "Vision & Mission" (doc section 4) and "The
+// Approach" (doc section 5) are now two separate sections rather than
+// one shared bento grid, per Phase 4's explicit layout spec.
 
 const STATUS_ITEMS = [
   { label: "London", detail: "Headquartered" },
@@ -77,13 +62,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4. Vision, mission and approach — one minimalist bento grid,
-          each cell fading in on its own staggered beat. grid-cols-1
-          md:grid-cols-3 — the same "single column through the whole
-          foldable tier, split only at true tablet width" shape this
-          codebase already uses for its other 3-item grids (see
-          page.tsx's own trust-points list, /privacy's collected/stored
-          grid), rather than an uneven 2-up tier for 3 cells. */}
+      {/* 4. Vision & Mission — a clean two-column split, each half
+          fading in on its own beat. */}
       <section className="bg-cream">
         <div className="mx-auto max-w-5xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
@@ -91,24 +71,66 @@ export default function AboutPage() {
               What We Are Building Toward
             </h2>
           </Reveal>
-          <ul className="mx-auto mt-12 grid gap-4 md:grid-cols-3 md:gap-6">
-            {BENTO_CELLS.map((cell, i) => (
-              <Reveal
-                key={cell.label}
-                as="li"
-                delay={i * 0.1}
-                className="card-glass-light rounded-2xl p-6 text-left md:p-8"
-              >
-                <p className="eyebrow">{cell.label}</p>
-                <p className="mt-4 text-pretty text-base text-navy/80">{cell.body}</p>
+          <div className="mx-auto mt-12 grid gap-10 text-left md:grid-cols-2 md:gap-14">
+            <Reveal y={20}>
+              <p className="eyebrow">Vision</p>
+              <p className="mt-4 text-pretty text-lg text-mist">
+                A world where people can better understand and manage
+                their stress, so pressure does not have to dictate how
+                they think, perform, or respond.
+              </p>
+            </Reveal>
+            <Reveal delay={0.1} y={20}>
+              <p className="eyebrow">Mission</p>
+              <p className="mt-4 text-pretty text-lg text-mist">
+                We use neuroscience and wearable biometrics to help make
+                stress measurable, understandable, and easier to manage.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. The Approach — an asymmetrical split matching
+          FounderStorySection's own layout and honest-placeholder
+          convention: no real product-in-use footage exists in this
+          codebase yet, so this holds a labelled aspect-video placeholder
+          rather than inventing one. */}
+      <section className="bg-cream">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-14">
+            <Reveal y={20} className="md:w-1/2">
+              <p className="eyebrow">The Approach</p>
+              <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl leading-tight text-navy">
+                Technology That Meets The Human Element
+              </h2>
+              <p className="mt-6 text-pretty text-lg text-mist">
+                NeuroAtlas is built on neuroscience and translates that
+                understanding into practical ways to help people manage
+                stress.
+              </p>
+              <p className="mt-6 border-l-2 border-gold-deep pl-4 text-pretty text-lg font-medium text-navy/90">
+                Measure what is happening. Take action. See what changes.
+              </p>
+            </Reveal>
+
+            <Parallax offset={20} className="md:w-1/2">
+              <Reveal delay={0.1}>
+                <div className="relative aspect-video w-full overflow-hidden rounded-3xl card-glass-light">
+                  <div className="flex size-full flex-col items-center justify-center gap-3 text-navy/25">
+                    <PlayCircle
+                      strokeWidth={1}
+                      className="size-16"
+                      aria-hidden="true"
+                    />
+                    <span className="text-xs font-medium tracking-[-0.04em] text-navy/40 uppercase">
+                      Product in use
+                    </span>
+                  </div>
+                </div>
               </Reveal>
-            ))}
-          </ul>
-          <Reveal delay={0.25} className="mt-10">
-            <p className="text-pretty text-lg font-medium text-navy/90">
-              Measure what is happening. Take action. See what changes.
-            </p>
-          </Reveal>
+            </Parallax>
+          </div>
         </div>
       </section>
 
