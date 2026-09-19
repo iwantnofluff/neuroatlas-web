@@ -5,18 +5,18 @@ import { AppScreenMock } from "@/components/AppScreenMock";
 import { TrendGraph } from "@/components/TrendGraph";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
-export const metadata = { title: "Inside the app — NeuroAtlas" };
+export const metadata = { title: "Inside the app - NeuroAtlas" };
 
 // Copy: client's full pass over the /inside-the-app content doc (second
-// pass — replaces the earlier all-text version). Section numbering below
+// pass - replaces the earlier all-text version). Section numbering below
 // matches the doc's own 1–9 numbering. Two standing edits applied across
 // every section per the client's own explicit notes on this pass:
 // headings trimmed to 2–3 words max, and body copy never hedges (no
-// "entirely optional" — every line is a plain statement).
+// "entirely optional" - every line is a plain statement).
 //
 // Sections with a clearly-called-for single visual (2, 3, 4, 6, 7) use
-// FeatureSplitSection — this site's established pinned text+media split
-// (see /how-it-works) — with a real custom `media` panel per the brief's
+// FeatureSplitSection - this site's established pinned text+media split
+// (see /how-it-works) - with a real custom `media` panel per the brief's
 // own visual spec, not the generic ImageIcon placeholder. Sections 1, 5,
 // 8 stay as plain, non-pinned Reveal blocks (matching this page's
 // original, lighter treatment): 1 because the shared <Hero> component is
@@ -27,14 +27,14 @@ export const metadata = { title: "Inside the app — NeuroAtlas" };
 // No real app UI has been designed/exported yet, so every "screenshot"
 // here is AppScreenMock (a generic phone-frame silhouette + icon/label,
 // not a fabricated trace of a real screen) or TrendGraph (a hand-drawn
-// illustrative line, explicitly labeled as such) — same honesty
+// illustrative line, explicitly labeled as such) - same honesty
 // convention /how-it-works' own HRV stat card already uses.
 
 export default function InsideTheAppPage() {
   return (
     <main>
       {/* 1. Hero */}
-      {/* pt-24 md:pt-32 lg:pt-48 (was a flat pt-40, unprefixed — 160px
+      {/* pt-24 md:pt-32 lg:pt-48 (was a flat pt-40, unprefixed - 160px
          of top padding on every mobile screen regardless of width,
          confirmed real via audit: this codebase's own homepage already
          steps its section padding up progressively (py-16 md:py-24
@@ -71,7 +71,7 @@ export default function InsideTheAppPage() {
               Some moments call for sharper focus. Others need a reset, a
               steadier response, or space to recover. NeuroAtlas brings
               together targeted tools for performance, stress and
-              wellness — so you can choose what fits the moment.
+              wellness - so you can choose what fits the moment.
             </p>
           </Reveal>
           <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -89,7 +89,7 @@ export default function InsideTheAppPage() {
               {
                 icon: Sparkles,
                 label: "Wellness",
-                body: "More restorative experiences built around breathing, mindfulness, immersive sound, visualisation and guided relaxation — creating space to pause, reset and recover.",
+                body: "More restorative experiences built around breathing, mindfulness, immersive sound, visualisation and guided relaxation - creating space to pause, reset and recover.",
               },
             ].map(({ icon: Icon, label, body }, i) => (
               <Reveal
@@ -160,7 +160,7 @@ export default function InsideTheAppPage() {
           </>
         }
         media={
-          // grid-cols-1 md:grid-cols-2 — this panel is FeatureSplitSection's
+          // grid-cols-1 md:grid-cols-2 - this panel is FeatureSplitSection's
           // own fixed aspect-square/overflow-hidden media box, sitting
           // inside a pinned h-[100svh] section: below `lg` that box's
           // actual pixel size is genuinely small (a mobile viewport's own
@@ -182,10 +182,10 @@ export default function InsideTheAppPage() {
             ].map((category) => (
               <div
                 key={category}
-                // Premium tile popout — a real, confirmed fidelity gap
+                // Premium tile popout - a real, confirmed fidelity gap
                 // this fixes: the tiles previously had no hover
                 // treatment at all, reading as flat/static rather than
-                // interactive. bg-white (was bg-white/60) — a
+                // interactive. bg-white (was bg-white/60) - a
                 // translucent tile lifting with its own cast shadow
                 // read inconsistently against the glass panel behind
                 // it; solid white is what actually makes the lift +
@@ -200,12 +200,12 @@ export default function InsideTheAppPage() {
         }
       />
 
-      {/* 4. Boardroom Mode — the one flagship, full-navy section, same as
+      {/* 4. Boardroom Mode - the one flagship, full-navy section, same as
          the original pass: the copy itself calls this out as the feature
          people come back to. Heading option A ("Composure On Demand")
          over B ("On Call Before It Counts"). The client's final copy
          drops "Boardroom Mode" as the H2 in favor of that punchier
-         option, but doesn't say to drop the name entirely — moved to
+         option, but doesn't say to drop the name entirely - moved to
          the eyebrow (was "The Standout Feature") so the actual feature
          name stays visible rather than disappearing outright. */}
       <FeatureSplitSection
@@ -237,10 +237,10 @@ export default function InsideTheAppPage() {
         }
       />
 
-      {/* 5. Journal and daily check-in — brief marks the screenshot
+      {/* 5. Journal and daily check-in - brief marks the screenshot
          optional; a plain non-pinned split rather than the full cinematic
          FeatureSplitSection treatment. */}
-      {/* py-16 md:py-24 lg:py-32 (was a flat py-24) — same progressive
+      {/* py-16 md:py-24 lg:py-32 (was a flat py-24) - same progressive
          step every other section on this page now uses. */}
       <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
@@ -277,7 +277,7 @@ export default function InsideTheAppPage() {
         media={<TrendGraph tone="dark" />}
       />
 
-      {/* 7. Health integrations — chips name illustrative CATEGORIES, not
+      {/* 7. Health integrations - chips name illustrative CATEGORIES, not
          real integration partners (no confirmed partnerships to name
          specific health-app brands against yet), matching the "To be
          confirmed" honesty convention used for hardware specs elsewhere

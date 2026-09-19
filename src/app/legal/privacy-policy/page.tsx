@@ -1,6 +1,6 @@
 import { PlaceholderPage } from "@/components/PlaceholderPage";
 
-export const metadata = { title: "Privacy policy — NeuroAtlas" };
+export const metadata = { title: "Privacy policy - NeuroAtlas" };
 
 export default function PrivacyPolicyPage() {
   return (

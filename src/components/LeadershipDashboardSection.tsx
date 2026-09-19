@@ -201,7 +201,7 @@ export function LeadershipDashboardSection() {
             </div>
           </div>
           <p className="mt-4 text-center text-xs text-cream/30">
-            Illustrative dashboard preview — your organisation&rsquo;s own
+            Illustrative dashboard preview: your organisation&rsquo;s own
             view reflects your own data.
           </p>
         </div>

@@ -6,7 +6,7 @@ import { NewsletterForm } from "@/components/NewsletterForm";
 import { getArticles } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
 
-export const metadata = { title: "Journal — NeuroAtlas" };
+export const metadata = { title: "Journal - NeuroAtlas" };
 
 export default async function JournalPage() {
   const articles = await getArticles();

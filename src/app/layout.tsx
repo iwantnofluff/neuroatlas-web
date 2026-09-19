@@ -8,10 +8,10 @@ import { siteUrl } from "@/lib/nav";
 // The real brand typefaces, replacing the Fraunces/Plus Jakarta Sans
 // Google Fonts stand-ins this site launched with (see this file's own
 // prior history for why those were chosen as substitutes). Both files
-// live in public/fonts/ — see that directory's own note on what's
+// live in public/fonts/ - see that directory's own note on what's
 // actually present.
 //
-// BOOWIE ships as a single static weight — there is no bold/medium/light
+// BOOWIE ships as a single static weight - there is no bold/medium/light
 // cut to select between, which is also why the brand pass on this
 // site's headings (see globals.css's own font-serif-adjacent comments,
 // and every h1/h2 className across the app) forces font-normal rather
@@ -24,7 +24,7 @@ const boowie = localFont({
 });
 
 // Only Mont-Book (weight 400, "Book") was present in the asset drop this
-// was built from — Light, Medium, and Semibold were named in the brand
+// was built from - Light, Medium, and Semibold were named in the brand
 // brief but no corresponding files exist yet. font-light/font-medium/
 // font-semibold utilities are still used deliberately throughout this
 // codebase per that brief (see .eyebrow and ShimmerButton's own
@@ -41,7 +41,7 @@ const mont = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "NeuroAtlas — The First Stress Management Band",
+  title: "NeuroAtlas - The First Stress Management Band",
   description:
     "Know when pressure is building, and reset before it takes over.",
 };
@@ -52,14 +52,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn("h-full", "antialiased", boowie.variable, mont.variable)}
     >
-      {/* overscroll-x-none — a diagonal/horizontal trackpad scroll
+      {/* overscroll-x-none - a diagonal/horizontal trackpad scroll
          gesture (easy to trigger by accident on this site's own
          scroll-jacked pinned sections, e.g. MethodScrollCards' fan,
          BandScrollShowcase) was reaching past the page's own edge and
          triggering the browser's native swipe-to-go-back/forward
          history navigation instead of just stopping. overscroll-x-none
          (not the broader overscroll-none) scopes this to the X axis
-         only, matching the actual reported gesture — Y-axis
+         only, matching the actual reported gesture - Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
       <body className="min-h-full flex flex-col overscroll-x-none">
         <SiteChrome>{children}</SiteChrome>

@@ -5,20 +5,20 @@ import { Reveal } from "@/components/Reveal";
 import { PrivacyBoundarySplit } from "@/components/PrivacyBoundarySplit";
 import { TextLink } from "@/components/TextLink";
 
-export const metadata = { title: "Privacy and your data — NeuroAtlas" };
+export const metadata = { title: "Privacy and your data - NeuroAtlas" };
 
 // Copy: client's final pass over the /privacy content doc. Section
 // numbering below matches the doc's own 1–6 numbering.
 //
 // Section 2's heading picks option B, "Nothing Hidden, Nothing Assumed",
-// over option A, "Here Is Exactly What Happens To Your Data" — this
+// over option A, "Here Is Exactly What Happens To Your Data" - this
 // site's other headings are consistently short and declarative ("The
 // Line We Do Not Cross", "What You Control", "What We Won't Promise"),
 // and B matches that register directly where A reads more like a section
 // label. It also echoes the intro line's own "tell you plainly... not
 // trust us blindly" contrast more directly than A's flatter phrasing.
 //
-// Fluid H2 scale (text-3xl sm:text-4xl md:text-5xl) — an explicit,
+// Fluid H2 scale (text-3xl sm:text-4xl md:text-5xl) - an explicit,
 // twice-given spec for this specific "reassuring promise, not a
 // whitepaper" page, not just boilerplate: unlike the sitewide default
 // (text-3xl lg:text-4xl, unchanged everywhere else) this page's own
@@ -66,11 +66,11 @@ const RIGHTS = [
 export default function PrivacyPage() {
   return (
     <main>
-      {/* 1. Hero — no CTAs given in the doc for this page (it's a trust/
+      {/* 1. Hero - no CTAs given in the doc for this page (it's a trust/
           policy read, not a conversion page), matching /how-it-works'
           own ctas={[]} pattern. Hero's own entrance is already the
           "subtle fade-up on load" this brief asks for (see Hero.tsx's
-          own word-stagger reveal) — no separate animation needed here. */}
+          own word-stagger reveal) - no separate animation needed here. */}
       <Hero
         eyebrow="Privacy And Your Data"
         headline="Your Data Stays Yours"
@@ -79,14 +79,14 @@ export default function PrivacyPage() {
       />
       <HeroBoundary />
 
-      {/* 2. What is collected, stored and never shared — a crisp 3-card
+      {/* 2. What is collected, stored and never shared - a crisp 3-card
           grid with the same tactile hover lift used for the tile grid on
           /inside-the-app (hover:-translate-y-1.5 hover:shadow-xl).
-          grid-cols-1 sm:max-w-xl sm:mx-auto md:grid-cols-3 — the same
+          grid-cols-1 sm:max-w-xl sm:mx-auto md:grid-cols-3 - the same
           "stay single-column through the whole foldable tier, split
           only at true tablet width" shape this codebase already
           establishes for a 3-item grid (see page.tsx's own trust-points
-          list) — sm:max-w-xl mx-auto keeps the still-single column
+          list) - sm:max-w-xl mx-auto keeps the still-single column
           comfortably centered rather than stretched full-bleed at a
           640px foldable width, rather than forcing an uneven 2-up grid
           with a orphaned third card. */}
@@ -130,7 +130,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* 3. The individual and employer boundary — a permanent 50/50
+      {/* 3. The individual and employer boundary - a permanent 50/50
           split (see PrivacyBoundarySplit.tsx) contrasting a personal app
           view against an anonymous group heatmap, the same visual logic
           as /for-organisations' own individual/organisation toggle. */}
@@ -155,7 +155,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* 4. Encryption, retention and deletion — each safeguard now fades
+      {/* 4. Encryption, retention and deletion - each safeguard now fades
           in on its own staggered beat as the list scrolls into view
           (Reveal as="li", delay={i * 0.1}), rather than the whole block
           appearing at once, so the technical detail reads as digestible
@@ -188,7 +188,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* 5. Your data rights — same per-item stagger as section 4. */}
+      {/* 5. Your data rights - same per-item stagger as section 4. */}
       <section className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* 6. Quiet close — a clean, centered CTA linking out to the full
+      {/* 6. Quiet close - a clean, centered CTA linking out to the full
           legal policy and /for-organisations, no button chrome. */}
       <section>
         <Reveal

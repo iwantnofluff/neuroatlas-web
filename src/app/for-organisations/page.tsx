@@ -8,17 +8,17 @@ import { IlluminatedTimeline } from "@/components/IlluminatedTimeline";
 import { DownloadOverviewForm } from "@/components/DownloadOverviewForm";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
-export const metadata = { title: "For organisations — NeuroAtlas" };
+export const metadata = { title: "For organisations - NeuroAtlas" };
 
 // Copy: client's final pass over the /for-organisations content doc.
 // Section numbering below matches the doc's own 1–9 numbering.
 
 // Widely cited workplace-research averages, not a claim about any one
 // organisation's own numbers (see the caption rendered under them below)
-// — the same "real content, honestly framed" standard this codebase
+// - the same "real content, honestly framed" standard this codebase
 // already holds itself to elsewhere (e.g. EditorialIndexSection's own
 // placeholder research cards). `source` is each stat's own short
-// attribution, rendered directly under its own card — the client's own
+// attribution, rendered directly under its own card - the client's own
 // source text came through with search-result artifacts attached
 // ("Gallup.com+1", a duplicated "World Health Organization. World
 // Health Organization+1"), cleaned to the plain organisation/report
@@ -54,10 +54,10 @@ const SECURITY_ITEMS = [
 export default function ForOrganisationsPage() {
   return (
     <main>
-      {/* 1. Hero — shared cinematic banner, single CTA (this doc gives
+      {/* 1. Hero - shared cinematic banner, single CTA (this doc gives
           one primary action here; the page's own closing section further
           down carries the secondary "explore for yourself" path, so it
-          isn't duplicated here too). Routed to /contact — there's no
+          isn't duplicated here too). Routed to /contact - there's no
           dedicated booking flow/calendar in this codebase yet, and
           /contact is the existing catch-all for a human-routed enquiry
           like this one. */}
@@ -69,7 +69,7 @@ export default function ForOrganisationsPage() {
       />
       <HeroBoundary />
 
-      {/* 2. The cost of burnout — Count-Up Kinetics on the three stat
+      {/* 2. The cost of burnout - Count-Up Kinetics on the three stat
           cards below, each animating from 0 once it scrolls into view
           (see CountUp.tsx). */}
       <section className="dark-glow bg-navy-soft text-cream">
@@ -84,7 +84,7 @@ export default function ForOrganisationsPage() {
               meetings, decisions, deadlines and difficult days.
             </p>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-lg font-medium text-cream/90">
-              NeuroAtlas brings support into those moments — giving people
+              NeuroAtlas brings support into those moments - giving people
               practical tools to manage pressure as it happens, while
               helping organisations take a more proactive approach to
               stress and burnout.
@@ -118,7 +118,7 @@ export default function ForOrganisationsPage() {
         </div>
       </section>
 
-      {/* 3. Data privacy, explained first — the client's own final copy
+      {/* 3. Data privacy, explained first - the client's own final copy
           leads with this rather than saving it for a dedicated privacy
           page, so it's addressed head-on before the dashboard/pilot
           content that follows. The individual/organisation split is now
@@ -147,13 +147,13 @@ export default function ForOrganisationsPage() {
         </div>
       </section>
 
-      {/* 4. The leadership dashboard — a pinned, scroll-jacked preview
+      {/* 4. The leadership dashboard - a pinned, scroll-jacked preview
           with staggered floating annotations (see
           LeadershipDashboardSection.tsx), replacing what used to be a
           static split-panel bullet list. */}
       <LeadershipDashboardSection />
 
-      {/* 5. How a pilot works — a vertical illuminated timeline (see
+      {/* 5. How a pilot works - a vertical illuminated timeline (see
           IlluminatedTimeline.tsx): a glowing track fills as the reader
           scrolls, each of the four steps lifting into full opacity as
           the fill reaches it. */}
@@ -254,7 +254,7 @@ export default function ForOrganisationsPage() {
         </div>
       </section>
 
-      {/* 9. Closing call to action — two stacked CTAs rather than
+      {/* 9. Closing call to action - two stacked CTAs rather than
           ClosingCurtainSection's curtain-reveal mechanic (that component
           is purpose-built for /band's own scroll choreography, not a
           general-purpose "two closing options" layout). */}

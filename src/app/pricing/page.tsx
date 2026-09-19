@@ -1,6 +1,6 @@
 import { PlaceholderPage } from "@/components/PlaceholderPage";
 
-export const metadata = { title: "Pricing and plans — NeuroAtlas" };
+export const metadata = { title: "Pricing and plans - NeuroAtlas" };
 
 export default function PricingPage() {
   return (

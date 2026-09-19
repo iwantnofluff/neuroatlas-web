@@ -23,10 +23,10 @@ export async function generateMetadata({
   const article = await getArticleBySlug(slug);
 
   if (!article) {
-    return { title: "Article Not Found — NeuroAtlas" };
+    return { title: "Article Not Found - NeuroAtlas" };
   }
 
-  const title = article.seo?.metaTitle ?? `${article.title} — NeuroAtlas Journal`;
+  const title = article.seo?.metaTitle ?? `${article.title} - NeuroAtlas Journal`;
   const description = article.seo?.metaDescription ?? article.standfirst;
   const ogImage =
     article.seo?.ogImage ??

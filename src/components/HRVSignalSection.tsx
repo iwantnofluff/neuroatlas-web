@@ -70,7 +70,7 @@ export function HRVSignalSection() {
           You can tell yourself you&rsquo;re fine. Your nervous system may
           have other ideas. HRV is one of the quieter clues your body
           gives you. Viewed against your own baseline, it can reveal when
-          your system is carrying more strain — or when it&rsquo;s
+          your system is carrying more strain, or when it&rsquo;s
           finally getting the recovery it needs.
         </p>
       </Reveal>

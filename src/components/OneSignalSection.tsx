@@ -178,7 +178,7 @@ export function OneSignalSection() {
           the moments that matter most. Left unchecked, that pressure can
           build into exhaustion and burnout. The goal isn&rsquo;t to tell
           you how active you were today. NeuroAtlas was built to
-          understand that bigger picture — with stress at the
+          understand that bigger picture, with stress at the
           centre&nbsp;of&nbsp;it.
         </motion.p>
       </div>

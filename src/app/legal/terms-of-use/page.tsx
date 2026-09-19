@@ -1,6 +1,6 @@
 import { PlaceholderPage } from "@/components/PlaceholderPage";
 
-export const metadata = { title: "Terms of use — NeuroAtlas" };
+export const metadata = { title: "Terms of use - NeuroAtlas" };
 
 export default function TermsOfUsePage() {
   return (

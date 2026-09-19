@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 import { contactEmail } from "@/lib/nav";
 
-export const metadata = { title: "Contact — NeuroAtlas" };
+export const metadata = { title: "Contact - NeuroAtlas" };
 
 export default function ContactPage() {
   return (

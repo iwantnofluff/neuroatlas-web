@@ -63,7 +63,7 @@ export function ClosingCurtainSection() {
             A wearable should earn its place on your wrist. NA.01 is
             designed to work quietly in the background, building a
             continuous picture of how your system changes. The value
-            isn&rsquo;t in giving you more numbers to check — it&rsquo;s
+            isn&rsquo;t in giving you more numbers to check: it&rsquo;s
             in giving NeuroAtlas the context to make those numbers more
             meaningful when you need them.
           </motion.p>

@@ -25,8 +25,8 @@ export function LimitsOfWearablesSection() {
           </p>
           <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-mist">
             Most wearables leave you with charts, scores and another
-            number to think about. NeuroAtlas gives those signals a job
-            — helping you understand when something is shifting, why it
+            number to think about. NeuroAtlas gives those signals a job:
+            helping you understand when something is shifting, why it
             matters, and what you can do next.
           </p>
         </Reveal>

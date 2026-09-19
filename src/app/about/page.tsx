@@ -7,7 +7,7 @@ import { FounderStorySection } from "@/components/FounderStorySection";
 import { LivePulseDot } from "@/components/LivePulseDot";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
-export const metadata = { title: "About us — NeuroAtlas" };
+export const metadata = { title: "About us - NeuroAtlas" };
 
 // Copy: client's final pass over the /about content doc. Section
 // numbering in the comments below matches the doc's own 1–8 numbering
@@ -24,7 +24,7 @@ const STATUS_ITEMS = [
 export default function AboutPage() {
   return (
     <main>
-      {/* 1. Hero — Hero.tsx's own per-word fade-up is already the "slow,
+      {/* 1. Hero - Hero.tsx's own per-word fade-up is already the "slow,
           cinematic fade-in" this brief asks for (see that component's
           own doc comment); no page-specific override needed. */}
       <Hero
@@ -35,12 +35,12 @@ export default function AboutPage() {
       />
       <HeroBoundary />
 
-      {/* 2. The founder's story — see FounderStorySection.tsx for the
+      {/* 2. The founder's story - see FounderStorySection.tsx for the
           50/50 asymmetrical split and its own portrait-placeholder
           note. */}
       <FounderStorySection />
 
-      {/* 3. The core belief — the section's own heading IS the massive,
+      {/* 3. The core belief - the section's own heading IS the massive,
           cinematic pull-quote (a confident one-line thesis reads better
           blown up large than the shorter "Statement" copy would), with
           the statement as smaller supporting copy underneath and
@@ -62,7 +62,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4. Vision & Mission — a clean two-column split, each half
+      {/* 4. Vision & Mission - a clean two-column split, each half
           fading in on its own beat. */}
       <section className="bg-cream">
         <div className="mx-auto max-w-5xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
@@ -91,7 +91,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5. The Approach — an asymmetrical split matching
+      {/* 5. The Approach - an asymmetrical split matching
           FounderStorySection's own layout and honest-placeholder
           convention: no real product-in-use footage exists in this
           codebase yet, so this holds a labelled aspect-video placeholder
@@ -135,7 +135,7 @@ export default function AboutPage() {
       </section>
 
       {/* 6. Where we are today, leading straight into 8. the closing CTA
-          — kept as one section, matching the brief's own "Status & CTA"
+          - kept as one section, matching the brief's own "Status & CTA"
           grouping ("...before leading into the final Request Access
           button"). The India pilot mention carries the pulsing live
           indicator; London and the 2026 launch date sit alongside it as

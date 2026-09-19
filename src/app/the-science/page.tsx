@@ -6,7 +6,7 @@ import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSect
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
-export const metadata = { title: "The science — NeuroAtlas" };
+export const metadata = { title: "The science - NeuroAtlas" };
 
 // The client's final copy pass for /the-science names seven sections —
 // up from the five-section spec this page was originally built
@@ -16,26 +16,26 @@ export const metadata = { title: "The science — NeuroAtlas" };
 // (4, 5) are genuinely new components; the other two slot into
 // components that already existed, just with new heading/body text.
 //
-// 1. The Hero ("The Evidence Behind It") — see LivingSignalHero.tsx.
-// 2. Three Systems, One Method — see NeuralAccordion.tsx.
-// 3. The Signal That Does Not Lie — see HRVSignalSection.tsx.
-// 4. The Limits Of Wearables — see LimitsOfWearablesSection.tsx (new).
-// 5. Built On Neuroscience — see BuiltOnNeuroscienceSection.tsx (new).
+// 1. The Hero ("The Evidence Behind It") - see LivingSignalHero.tsx.
+// 2. Three Systems, One Method - see NeuralAccordion.tsx.
+// 3. The Signal That Does Not Lie - see HRVSignalSection.tsx.
+// 4. The Limits Of Wearables - see LimitsOfWearablesSection.tsx (new).
+// 5. Built On Neuroscience - see BuiltOnNeuroscienceSection.tsx (new).
 // 6. Guided By Experts ("The Editorial Index", repurposed from its
-//    previous "Peer-Reviewed, Not Promised" copy — same research-card
+//    previous "Peer-Reviewed, Not Promised" copy - same research-card
 //    visual, new heading/body) lifting away like a curtain to reveal
-//    section 7's closing CTA behind it — see ScienceClosingSection.tsx
+//    section 7's closing CTA behind it - see ScienceClosingSection.tsx
 //    (which composes EditorialIndexSection.tsx as the curtain and
 //    CurtainReveal.tsx for the shared stacking mechanics, reused from
 //    /band's own closing pair). Sections 6 and 7 have to stay back-to-
-//    back in that exact order — CurtainReveal's own mechanics require
-//    the curtain to directly precede the panel it reveals — which is
+//    back in that exact order - CurtainReveal's own mechanics require
+//    the curtain to directly precede the panel it reveals - which is
 //    why 6 isn't positioned between 4 and 5 in the DOM despite being
 //    numbered after them; the doc's own numbering doesn't dictate
 //    physical position, and this ordering was chosen so the two new
 //    plain-text sections (4, 5) still alternate cream/navy-soft
 //    cleanly into 6's own fixed cream background.
-// 7. The closing CTA itself — no new copy given for it, so it's
+// 7. The closing CTA itself - no new copy given for it, so it's
 //    unchanged (still inside ScienceClosingSection.tsx).
 
 export default function TheSciencePage() {
@@ -47,11 +47,11 @@ export default function TheSciencePage() {
       <LimitsOfWearablesSection />
       <BuiltOnNeuroscienceSection />
       <ScienceClosingSection />
-      {/* References — the full bibliographic citations for "Guided By
+      {/* References - the full bibliographic citations for "Guided By
          Experts"'s own "Backed by" lines (see EditorialIndexSection.tsx,
          which exports RESEARCH_CARDS as the single source of truth for
          both). Plain small print at the very bottom of the page, after
-         ScienceClosingSection's own CurtainReveal pair — safe to append
+         ScienceClosingSection's own CurtainReveal pair - safe to append
          here since CurtainReveal's stacking math depends only on
          viewport height, not on what comes after it (see that
          component's own doc comment). */}

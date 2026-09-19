@@ -20,7 +20,7 @@ export function BuiltOnNeuroscienceSection() {
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
             Behind every NeuroAtlas tool is a body of research. We draw
             from neuroscience, psychology and peer-reviewed work on
-            stress, attention, emotional regulation and recovery — then
+            stress, attention, emotional regulation and recovery, then
             turn that science into something you can actually use.
           </p>
         </Reveal>

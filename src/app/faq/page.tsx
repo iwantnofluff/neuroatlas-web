@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
-export const metadata = { title: "FAQ — NeuroAtlas" };
+export const metadata = { title: "FAQ - NeuroAtlas" };
 
 export default function FaqPage() {
   return (

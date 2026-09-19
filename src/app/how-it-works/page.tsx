@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
-export const metadata = { title: "How it works — NeuroAtlas" };
+export const metadata = { title: "How it works - NeuroAtlas" };
 
 // Copy: client's full pass over the /how-it-works content doc, headline
 // options resolved per section (see the note above each pick). Section
@@ -31,7 +31,7 @@ const loopSteps = [
 export default function HowItWorksPage() {
   return (
     <main>
-      {/* 1. Hero — now the shared cinematic banner (see Hero.tsx), with
+      {/* 1. Hero - now the shared cinematic banner (see Hero.tsx), with
           this page's own headline/subhead in place of the homepage's, and
           no CTAs (this page has its own closing CTA further down, so a
           second pair of buttons up top would just be noise). Header.tsx's
@@ -58,12 +58,12 @@ export default function HowItWorksPage() {
       />
       <HeroBoundary />
 
-      {/* 2. The loop, in three steps — headline B: differentiates from the
+      {/* 2. The loop, in three steps - headline B: differentiates from the
           homepage's own "Measure. Intervene. Measure." heading rather than
           repeating it, and sets up the page's competitive framing (section
           8 later makes the same "other apps" contrast explicit). */}
       <section className="dark-glow bg-navy-soft text-cream">
-        {/* py-16 md:py-24 lg:py-32 (was a flat py-24) — same progressive
+        {/* py-16 md:py-24 lg:py-32 (was a flat py-24) - same progressive
            step the homepage's own sections already use (see page.tsx). */}
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20} className="text-center">
@@ -75,7 +75,7 @@ export default function HowItWorksPage() {
               what works for your system.
             </p>
           </Reveal>
-          {/* md:grid-cols-3, not sm: — 3 short columns at a 640px
+          {/* md:grid-cols-3, not sm: - 3 short columns at a 640px
              foldable-open width read as cramped and squished; delaying
              the jump to md (768px) keeps this a clean single column
              through the whole foldable tier instead of a premature
@@ -98,10 +98,10 @@ export default function HowItWorksPage() {
               </Reveal>
             ))}
           </div>
-          {/* Closing statement for the loop — a direct "add this at the
+          {/* Closing statement for the loop - a direct "add this at the
              bottom of the page" request: placed here, right under the
              three steps, rather than at the very end of the whole page
-             (after the unrelated closing CTA) — this line is about the
+             (after the unrelated closing CTA) - this line is about the
              loop specifically (each pass making future recommendations
              more personal), the same topic every other piece of copy in
              this section already covers, not a page-level closer. */}
@@ -118,19 +118,19 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* 3. Measure — heading option A ("The First Read") over B ("Where
-          It Starts") — echoes the body's own emphasis on "reads" rather
+      {/* 3. Measure - heading option A ("The First Read") over B ("Where
+          It Starts") - echoes the body's own emphasis on "reads" rather
           than a narrative-sequencing framing. First of the six
           alternating 50/50 sections: text left, media right. */}
       <FeatureSplitSection
         heading="The First Read"
-        body="The band reads your heart rate, breathing, and more — all day — picking up signs of pressure before you may notice them yourself."
+        body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
       />
 
-      {/* 4. Intervene — heading option A ("Built With Neuroscience") over
-          B ("The Reset That Works") — echoes the body's own "built on
+      {/* 4. Intervene - heading option A ("Built With Neuroscience") over
+          B ("The Reset That Works") - echoes the body's own "built on
           neuroscience" phrase directly. Text right, media left. */}
       <FeatureSplitSection
         heading="Built With Neuroscience"
@@ -139,14 +139,14 @@ export default function HowItWorksPage() {
         background="navy-soft"
       />
 
-      {/* 5. Measure again — headline A: "The Proof, Not The Promise" adds a
+      {/* 5. Measure again - headline A: "The Proof, Not The Promise" adds a
           new angle rather than repeating the body's own closing phrase.
           Given real weight (navy, the one bg-navy section on this page)
           since this is the step that makes the loop's claim credible. The
-          HRV stat card already IS this section's visual — passed in as
+          HRV stat card already IS this section's visual - passed in as
           `media` rather than buried behind a generic placeholder. The HRV
           number stays marked as an illustrative placeholder, not real
-          pilot data — same honesty convention as the /band specs panel's
+          pilot data - same honesty convention as the /band specs panel's
           "To be confirmed" values. Text left, media right. */}
       <FeatureSplitSection
         heading="The Proof, Not The Promise"
@@ -169,7 +169,7 @@ export default function HowItWorksPage() {
           </div>
         }
       />
-      {/* Disclaimer for the HRV stat card above — a direct "add a
+      {/* Disclaimer for the HRV stat card above - a direct "add a
          disclaimer in the footer" request: placed as its own small-print
          line directly under this one section rather than inside the
          shared FeatureSplitSection component, since no other section
@@ -185,12 +185,12 @@ export default function HowItWorksPage() {
       {/* 6. Pattern recognition. Text right, media left. */}
       <FeatureSplitSection
         heading="Pattern Recognition Technology"
-        body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure — so you can understand your system better and respond before it reaches its peak."
+        body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak."
         imageSide="left"
         background="cream"
       />
 
-      {/* 7. A worked example — eyebrow kept (it's this section's own
+      {/* 7. A worked example - eyebrow kept (it's this section's own
           name), heading updated to the client's final copy, body
           unchanged (already matched verbatim). Text left, media
           right. */}
