@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ImageIcon, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { getAllArticleSlugs, getArticleBySlug } from "@/lib/journal";
+import { urlForImage } from "@/lib/sanity/image";
 import { siteUrl } from "@/lib/nav";
-
-const DEFAULT_OG_IMAGE = "/brand/logo-mark.svg";
 
 export async function generateStaticParams() {
   const slugs = await getAllArticleSlugs();
@@ -27,7 +27,9 @@ export async function generateMetadata({
 
   const title = article.seo?.metaTitle ?? `${article.title} — NeuroAtlas Journal`;
   const description = article.seo?.metaDescription ?? article.standfirst;
-  const ogImage = article.seo?.ogImage ?? DEFAULT_OG_IMAGE;
+  const ogImage =
+    article.seo?.ogImage ??
+    urlForImage(article.image).width(1200).height(630).fit("crop").url();
   const url = `${siteUrl}/journal/${article.slug}`;
 
   return {
@@ -65,12 +67,14 @@ export default async function ArticlePage({
   }
 
   const url = `${siteUrl}/journal/${article.slug}`;
-  const ogImage = article.seo?.ogImage ?? DEFAULT_OG_IMAGE;
+  const ogImage =
+    article.seo?.ogImage ??
+    urlForImage(article.image).width(1200).height(630).fit("crop").url();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: article.title,
-    image: [`${siteUrl}${ogImage}`],
+    image: [ogImage],
     author: { "@type": "Person", name: article.author },
     datePublished: article.publishedAt,
     publisher: {
@@ -120,15 +124,16 @@ export default async function ArticlePage({
         <Reveal
           delay={0.1}
           y={20}
-          className="mt-10 aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5"
+          className="relative mt-10 aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5"
         >
-          <div className="flex size-full items-center justify-center">
-            <ImageIcon
-              aria-hidden="true"
-              strokeWidth={1}
-              className="size-12 text-navy/15"
-            />
-          </div>
+          <Image
+            src={urlForImage(article.image).width(1200).height(675).fit("crop").url()}
+            alt={article.title}
+            fill
+            priority
+            sizes="(min-width: 672px) 672px, 100vw"
+            className="object-cover"
+          />
         </Reveal>
 
         <Reveal delay={0.15} y={20} className="mt-12 grid gap-6">

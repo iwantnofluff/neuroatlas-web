@@ -1,3 +1,4 @@
+import type { SanityImageSource } from "@sanity/image-url";
 import { sanityClient } from "@/lib/sanity/client";
 
 export type ArticleCategory =
@@ -21,6 +22,7 @@ export type Article = {
   author: string;
   publishedAt: string;
   body: string[];
+  image: SanityImageSource;
   featured?: boolean;
   seo?: ArticleSeo;
 };
@@ -41,6 +43,7 @@ const ARTICLE_PROJECTION = /* groq */ `{
   "author": author->name,
   publishedAt,
   "body": body[_type == "block"]{"text": pt::text(@)}.text,
+  "image": mainImage,
   seo{
     metaTitle,
     metaDescription,
@@ -78,6 +81,7 @@ function toArticle(raw: RawArticle, featured: boolean): Article {
     author: raw.author ?? "NeuroAtlas",
     publishedAt: raw.publishedAt,
     body: raw.body ?? [],
+    image: raw.image,
     featured,
     seo: raw.seo
       ? {

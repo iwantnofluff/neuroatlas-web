@@ -1,8 +1,10 @@
-import { ImageIcon, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { JournalGrid } from "@/components/JournalGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getArticles } from "@/lib/journal";
+import { urlForImage } from "@/lib/sanity/image";
 
 export const metadata = { title: "Journal — NeuroAtlas" };
 
@@ -38,14 +40,15 @@ export default async function JournalPage() {
                 href={`/journal/${featured.slug}`}
                 className="group relative block overflow-hidden rounded-3xl"
               >
-                <div className="aspect-video sm:aspect-[21/9]">
-                  <div className="flex size-full items-center justify-center bg-gradient-to-br from-navy/10 to-navy/5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
-                    <ImageIcon
-                      aria-hidden="true"
-                      strokeWidth={1}
-                      className="size-16 text-navy/10"
-                    />
-                  </div>
+                <div className="relative aspect-video sm:aspect-[21/9]">
+                  <Image
+                    src={urlForImage(featured.image).width(1600).height(686).fit("crop").url()}
+                    alt={featured.title}
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 1152px, 100vw"
+                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  />
                 </div>
                 <div
                   aria-hidden="true"

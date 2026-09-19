@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { Reveal } from "@/components/Reveal";
 import { CATEGORIES, type Article, type ArticleCategory } from "@/lib/journal";
+import { urlForImage } from "@/lib/sanity/image";
 
 type Filter = "All" | ArticleCategory;
 
@@ -49,10 +50,14 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
         {filtered.map((article, i) => (
           <Reveal key={article.slug} delay={(i % 3) * 0.08} y={20}>
             <a href={`/journal/${article.slug}`} className="group block">
-              <div className="aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5">
-                <div className="flex size-full items-center justify-center bg-gradient-to-br from-navy/5 to-navy/[0.02] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
-                  <ImageIcon aria-hidden="true" strokeWidth={1.25} className="size-8 text-navy/15" />
-                </div>
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5">
+                <Image
+                  src={urlForImage(article.image).width(800).height(450).fit("crop").url()}
+                  alt={article.title}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                />
               </div>
               <p className="mt-4 text-xs tracking-[0.15em] text-gold-deep uppercase">
                 {article.category}
