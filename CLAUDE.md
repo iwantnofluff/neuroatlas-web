@@ -23,3 +23,13 @@ Surgical Diffs: Never rewrite an entire file. Output ONLY the specific modified 
 Think Then Execute: For complex logic, output a maximum 2-sentence technical plan before writing code to prevent costly hallucination loops.
 
 Read Before Writing: Use terminal commands (like grep or cat) to verify current file state before writing new code.
+
+III. CLEAN CODE & COMMENT ERADICATION
+
+No Inline Explanations: Write strictly self-documenting code. Rely on descriptive variable and function names rather than inline comments.
+
+Zero AI Commentary: Never include comments detailing your changes (e.g., // Added as per user request, // Updated for mobile fallback, // TODO: from Claude).
+
+Active Deletion: When modifying an existing block of code, silently delete any redundant, overly obvious, or outdated comments within that block.
+
+The Only Exception: Use JSDoc comments strictly for highly complex utility functions where type-hinting or parameter explanation is structurally necessary.
