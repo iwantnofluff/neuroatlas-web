@@ -38,16 +38,13 @@ export default function BandPage() {
           SignalVsNoiseSection.tsx. */}
       <SignalVsNoiseSection />
 
-      {/* 7. Technical specifications - the Interactive X-Ray: a real 3D
-          <Band> model dead center that physically rotates to a
-          category-specific angle when one of five reticles flanking it
-          is clicked, with a fixed-anchor glass panel showing that
-          category's data. Own min-h-screen section, not scroll-jacked —
-          no extra page length. Replaced the editorial hover showcase
-          (and, before that, a bento grid, and before that a scroll-spy
-          stack - all scrapped per direct feedback). Every value is
-          still a placeholder pending the real spec doc; already in the
-          right shape to swap in real values with no restructuring. See
+      {/* 7. Technical specifications - a scroll-driven 3D timeline: a
+          real 3D <Band> model that rotates through four stages
+          (Sensors, Battery, Dimensions, Strap) as the user scrolls
+          through this section's own 400vh pinned track, each stage's
+          own glass card sliding in and out in sync. Replaced the
+          previous click-through Leader Line Annotation system (five
+          reticles, a live-projected SVG line) outright. See
           TheSpecs.tsx. */}
       <TheSpecs />
 
