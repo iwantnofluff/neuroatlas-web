@@ -113,27 +113,47 @@ const ACTION_BUTTON_MATERIAL_PROPS = {
   side: THREE.DoubleSide,
 } as const;
 
+// Gloss black plastic — the sensor housing pair at the top edge.
+// Moderate-low roughness (not matte like the casing, not mirror-polished
+// either) for a premium gloss-black plastic read, low metalness since
+// it's a painted/molded plastic surface, not bare metal.
+const SENSOR_MATERIAL_PROPS = {
+  color: "#0A0A0C",
+  roughness: 0.3,
+  metalness: 0.05,
+  side: THREE.DoubleSide,
+} as const;
+
 /** The source GLTF has no semantic mesh names at all (see this file's
  *  own header comment), so which of the 9 "hardware" meshes is which
  *  real part can't be looked up by name — these are fixed array
  *  indices into `hardwareMeshes` (itself sorted by vertex count
- *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below),
- *  identified by rendering each one in its own distinct debug color and
- *  visually matching the result against the real device photos:
- *  - 0, 1: two small round pads near one edge, paired the same way the
- *    two visible charging pins are in the photos.
- *  - 2: a flat, centered plate in the middle of a row of three -
- *    matches the biometric contact panel's position between two other
- *    unlabeled panels.
- *  - 6: sits directly adjacent to index 2, matching the action button's
- *    position right next to the contact panel in the photos.
- *  Every other index keeps the general HARDWARE_MATERIAL_PROPS default.
- *  Best-effort visual identification, not a certainty (no per-feature
- *  geometry to confirm against) — same standing caveat this file
- *  already applies to spec rotations and anchor points elsewhere. */
-const CHARGING_PIN_INDICES = new Set([0, 1]);
+ *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below).
+ *
+ *  Re-identified against a supplied reference render after an earlier
+ *  pass got the top pair wrong (had guessed "small round charging
+ *  pads," colored gold) — re-checked this time with the shell itself
+ *  rendered wireframe/see-through so all 9 pieces are visible at once
+ *  instead of inferring position from silhouette alone:
+ *  - 0, 1: the two larger pills at the top edge — matches the
+ *    reference's sensor housing pair (dark plastic, not metal).
+ *  - 2, 5, 6: the row of three panels below them - 2 (centered) is the
+ *    biometric contact panel, 6 (adjacent to it) is the action button,
+ *    5 (the third, unlabeled in the reference) keeps the general
+ *    hardware default, which already reads as the right steel tone.
+ *  - 7, 8: a small vertically-stacked pair, the closest match in this
+ *    model to "two circles" once 0/1 turned out to be the sensor pair
+ *    instead - best-effort, not a certain match.
+ *  - 3, 4: never visible from any external camera angle tested (even a
+ *    forced top-down view) - almost certainly occluded lugs, not a
+ *    user-visible surface. Left on the general default.
+ *  Still a best-effort visual identification, not a certainty (no
+ *  per-feature geometry to confirm against) — same standing caveat this
+ *  file already applies to spec rotations and anchor points elsewhere. */
+const SENSOR_INDICES = new Set([0, 1]);
 const CONTACT_PANEL_INDEX = 2;
 const ACTION_BUTTON_INDEX = 6;
+const CHARGING_PIN_INDICES = new Set([7, 8]);
 
 // Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
 // BuiltToReadYouSection.tsx) now closes its text blocks together at the
@@ -406,13 +426,15 @@ export function Band({
           </mesh>
         ))}
         {hardwareMeshes.map((mesh, i) => {
-          const materialProps = CHARGING_PIN_INDICES.has(i)
-            ? CHARGING_PIN_MATERIAL_PROPS
-            : i === CONTACT_PANEL_INDEX
-              ? CONTACT_PANEL_MATERIAL_PROPS
-              : i === ACTION_BUTTON_INDEX
-                ? ACTION_BUTTON_MATERIAL_PROPS
-                : HARDWARE_MATERIAL_PROPS;
+          const materialProps = SENSOR_INDICES.has(i)
+            ? SENSOR_MATERIAL_PROPS
+            : CHARGING_PIN_INDICES.has(i)
+              ? CHARGING_PIN_MATERIAL_PROPS
+              : i === CONTACT_PANEL_INDEX
+                ? CONTACT_PANEL_MATERIAL_PROPS
+                : i === ACTION_BUTTON_INDEX
+                  ? ACTION_BUTTON_MATERIAL_PROPS
+                  : HARDWARE_MATERIAL_PROPS;
           return (
             <mesh
               key={`hardware-${i}`}
