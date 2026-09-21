@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useRef } from "react";
+import type { Ref } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
+import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAnchors";
 
 /**
  * Real gltfjsx export of the NA·01 sensor module (public/band.glb),
@@ -181,60 +183,6 @@ function smoothstep(t: number) {
   return t * t * (3 - 2 * t);
 }
 
-/** "timeline" variant only (TheSpecs' scroll-driven 3D timeline) — four
- *  stages, each claiming an equal quarter of the scroll range (see
- *  TIMELINE_STAGE_SPAN). Unlike SHOWCASE_POSE_KEYFRAMES' continuous
- *  tumble, each stage HOLDS its pose for most of its own quarter (see
- *  TIMELINE_HOLD_FRACTION) so the model is genuinely settled — not still
- *  easing toward it — for the whole time its matching text card (see
- *  TheSpecs.tsx) is fully visible, only beginning the turn toward the
- *  NEXT stage's pose in the closing stretch of the current one, timed to
- *  land exactly as that next card takes over. The two files keep this
- *  timing in sync via the same plain fractions (0.25 per stage, 0.7 hold)
- *  rather than a shared constants module.
- *
- *  Poses are a best-effort, stylized mapping to each stage's theme (this
- *  model has no separate geometry for a sensor window, battery
- *  compartment, or strap lug to point the camera at specifically — see
- *  this file's own header comment on mesh identity) rather than a
- *  literal feature callout:
- *  - Sensors: y=π shows the back/underside (this model's default y=0
- *    front face turned fully away from camera).
- *  - Battery: y=π/2, a clean side profile.
- *  - Dimensions: a steep x tilt, tipping the flat face up toward camera
- *    for a top-down-leaning angled view.
- *  - Strap: the far side from Sensors' own back view, at a shallower
- *    tilt, showing the OTHER end of the shell where the hardware meshes
- *    (lugs) sit. */
-const TIMELINE_POSES: ReadonlyArray<{ ry: number; rx: number }> = [
-  { ry: Math.PI, rx: 0.25 }, // Sensors
-  { ry: Math.PI / 2, rx: 0.15 }, // Battery
-  { ry: 0.55, rx: 1.2 }, // Dimensions
-  { ry: -1.35, rx: 0.35 }, // Strap
-];
-
-const TIMELINE_STAGE_SPAN = 1 / TIMELINE_POSES.length;
-const TIMELINE_HOLD_FRACTION = 0.7;
-
-function sampleTimelinePose(p: number) {
-  const stageIndex = Math.min(
-    TIMELINE_POSES.length - 1,
-    Math.floor(p / TIMELINE_STAGE_SPAN)
-  );
-  const current = TIMELINE_POSES[stageIndex];
-  if (stageIndex === TIMELINE_POSES.length - 1) return current;
-
-  const localT = (p - stageIndex * TIMELINE_STAGE_SPAN) / TIMELINE_STAGE_SPAN;
-  if (localT <= TIMELINE_HOLD_FRACTION) return current;
-
-  const next = TIMELINE_POSES[stageIndex + 1];
-  const t = smoothstep((localT - TIMELINE_HOLD_FRACTION) / (1 - TIMELINE_HOLD_FRACTION));
-  return {
-    ry: THREE.MathUtils.lerp(current.ry, next.ry, t),
-    rx: THREE.MathUtils.lerp(current.rx, next.rx, t),
-  };
-}
-
 function sampleShowcasePose(p: number) {
   const kf = SHOWCASE_POSE_KEYFRAMES;
   if (p <= kf[0].p) return { ry: kf[0].ry, rx: kf[0].rx };
@@ -267,13 +215,16 @@ function sampleShowcasePose(p: number) {
  *    from the start (no rise — position.y stays 0 throughout), and
  *    rotation continuously eases through SHOWCASE_POSE_KEYFRAMES above
  *    instead.
- *  - "timeline" (TheSpecs' scroll-driven 3D timeline): also fully visible
- *    from the start, rotation sampled from TIMELINE_POSES above instead —
- *    holds each stage's pose, then eases to the next one late in that
- *    stage's own scroll range. `scrollProgress` here is expected to
- *    already be a spring-smoothed value (see TheSpecs.tsx's own
- *    `useSpring`) — this branch just samples whatever it's given every
- *    frame, same as "showcase".
+ *  - "xray" (TheSpecs): not scroll-driven at all — `scrollProgress` is
+ *    still accepted (kept required so every call site shares one prop
+ *    contract) but never read in this branch. Rotation instead damps
+ *    toward whatever `targetRotation` currently holds, every frame,
+ *    using the same `THREE.MathUtils.lerp` "smooth follow" already used
+ *    for BandModel.tsx's pointer-tilt above — no new dependency (no
+ *    react-spring/framer-motion-3d) needed for a physical-feeling ease
+ *    toward a moving target. reduceMotion snaps straight to the target
+ *    every frame (lerp factor 1) instead of easing, matching this
+ *    codebase's standing "still functions, just instant" convention.
  *
  *  `scale` overrides the isMobile-based MODEL_SCALE_DESKTOP/MOBILE
  *  ternary entirely when supplied — those two constants were tuned
@@ -287,12 +238,36 @@ export function Band({
   isMobile = false,
   variant = "reveal",
   scale,
+  targetRotation,
+  activeAnchorKey,
+  anchorRef,
+  autoRotate = false,
 }: {
   scrollProgress: MotionValue<number>;
   reduceMotion: boolean;
   isMobile?: boolean;
-  variant?: "reveal" | "showcase" | "timeline";
+  variant?: "reveal" | "showcase" | "xray";
   scale?: number;
+  /** "xray" only — the Euler x/y the model should currently ease toward.
+   *  Ignored entirely when `autoRotate` is true. */
+  targetRotation?: { x: number; y: number };
+  /** "xray" only — which spec's anchor point to render the glowing dot
+   *  at (see specAnchors.ts). Undefined renders no dot at all. */
+  activeAnchorKey?: SpecKey;
+  /** "xray" only — a ref TheSpecsScene.tsx reads every frame (via
+   *  `.getWorldPosition()`) to project this exact point to 2D for the
+   *  leader line. Attached directly to the dot mesh itself, not a
+   *  separate invisible marker, so the projected point and the visible
+   *  dot can never drift apart — see specAnchors.ts's own comment. */
+  anchorRef?: Ref<THREE.Mesh>;
+  /** "xray" only — TheSpecs.tsx's mobile layout has no click-driven
+   *  spec selection to steer the model toward (the whole annotation UI
+   *  is hidden below `md`, see that file's own comment), so it passes
+   *  this instead: a slow, continuous turntable spin, purely ambient,
+   *  just enough to still show off the hardware. Takes over the
+   *  rotation update entirely — `targetRotation` is read at all only
+   *  when this is false. */
+  autoRotate?: boolean;
 }) {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -315,38 +290,27 @@ export function Band({
     };
   }, [nodes]);
 
-  useFrame(() => {
+  useFrame((_state, delta) => {
     const g = group.current;
     if (!g) return;
 
-    if (variant === "timeline") {
+    if (variant === "xray") {
       g.position.y = 0;
-      if (reduceMotion) {
-        // Unlike "showcase"'s own reduceMotion branch (a purely
-        // decorative tumble with no informational content tied to any
-        // specific angle, safe to just freeze), this variant's rotation
-        // IS tied to real information — TheSpecs.tsx's stage cards keep
-        // cycling their label/detail text under reduced motion too (see
-        // that file's own useStageReveal), just without the smooth
-        // easing. Freezing the model here while the card text kept
-        // changing underneath it would desync the two halves of the
-        // same narrative. A hard stage-index jump (no smoothstep
-        // blending, no handoff) keeps them showing the same stage at
-        // all times, matching this codebase's standing "still
-        // functions, just instant" convention rather than "stops
-        // functioning".
-        const stageIndex = Math.min(
-          TIMELINE_POSES.length - 1,
-          Math.floor(scrollProgress.get() / TIMELINE_STAGE_SPAN)
-        );
-        const pose = TIMELINE_POSES[stageIndex];
-        g.rotation.y = pose.ry;
-        g.rotation.x = pose.rx;
+      if (autoRotate) {
+        // A representative settled front-on tilt (matches the
+        // "showcase" variant's own reduceMotion pose just below) rather
+        // than 0 — a flat, un-tilted spin reads as a coin spinning edge-
+        // on more than a product turning to show itself off. reduceMotion
+        // holds it there entirely, same "still functions, just instant"
+        // convention as every other variant's own reduceMotion branch.
+        g.rotation.x = 0.3;
+        if (!reduceMotion) g.rotation.y += delta * 0.35;
         return;
       }
-      const pose = sampleTimelinePose(scrollProgress.get());
-      g.rotation.y = pose.ry;
-      g.rotation.x = pose.rx;
+      const target = targetRotation ?? { x: 0.3, y: 0 };
+      const damp = reduceMotion ? 1 : 0.08;
+      g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, target.x, damp);
+      g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, target.y, damp);
       return;
     }
 
@@ -413,6 +377,42 @@ export function Band({
             <meshStandardMaterial {...HARDWARE_MATERIAL_PROPS} />
           </mesh>
         ))}
+
+        {/* The leader line's target — a real 3D object living in the
+           SAME group as the mesh geometry above, so it inherits both
+           BASE_ROTATION and the outer group's live per-frame rotation
+           automatically, with no transform math of our own to keep in
+           sync. A real, confirmed bug this replaces: the previous
+           version pointed leader lines at a FIXED 2D screen percentage
+           that had no actual relationship to the model at all — correct
+           only by coincidence at whatever angle it was tuned against,
+           and visibly wrong (pointing at empty space) the moment the
+           model rotated to face a different spec. `anchorRef` is
+           attached directly to this mesh — TheSpecs.tsx reads its live
+           world position every frame via `.getWorldPosition()`, so the
+           dot rendered here and the leader line's endpoint can never
+           drift apart.
+           `depthTest={false}` + `renderOrder` — SPEC_ANCHORS' own
+           coordinates are a hand-picked, best-effort guess at each
+           feature's location (see that file's comment: there's no real
+           per-feature geometry to target), not measured against the
+           actual mesh surface, so a normal depth-tested sphere read as
+           invisible more often than not — confirmed live via a zoomed
+           screenshot on the Sensors pose, where the anchor should have
+           sat plainly on the visible front face and didn't render at
+           all, meaning it was landing fractionally inside the solid
+           shell rather than on top of it. Always rendering on top
+           trades away correct occlusion (a dot nominally on the far
+           side would, in principle, ideally hide behind the shell) for
+           actually being visible, which is what requirement #3 (a dot
+           that visibly "proves exactly what the line is pointing to")
+           depends on far more than strict physical correctness does. */}
+        {variant === "xray" && activeAnchorKey && (
+          <mesh ref={anchorRef} position={SPEC_ANCHORS[activeAnchorKey]} renderOrder={999}>
+            <sphereGeometry args={[SPEC_ANCHOR_DOT_RADIUS, 16, 16]} />
+            <meshBasicMaterial color="#D4AF37" toneMapped={false} depthTest={false} />
+          </mesh>
+        )}
       </group>
     </group>
   );
