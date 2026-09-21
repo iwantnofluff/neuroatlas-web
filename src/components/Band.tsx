@@ -56,36 +56,25 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  * the same correction, not less, to keep reading as a lit navy surface
  * rather than flat black.
  */
-// Machined-metal pass: metalness 1 (was 0.4) + roughness 0.25 (was 0.3)
-// on BOTH materials below, per the client's own explicit spec — a
-// "premium, machined-metal product," not the part-plastic read
-// metalness 0.4 gave the shell. metalness 1 needs real reflections to
-// look like metal rather than flat-shaded black (a fully metallic
-// surface has no diffuse component left at all — everything it shows
-// is either a direct specular highlight from a light or a reflection of
-// its environment), which is what the new procedural <Environment> in
-// every scene that renders this component is for — see e.g.
-// BandScrollScene.tsx's own comment on why that isn't a `preset`.
+// Shell flipped from the earlier machined-metal pass to a strict matte
+// finish per direct instruction, matching the real device photos — the
+// casing itself reads as a soft-touch matte navy, not a polished metal
+// shell. High roughness (0.85) + low metalness (0.15) is the standard
+// PBR recipe for that: metalness near 0 removes almost all of the
+// specular reflection a metallic surface depends on to read as lit at
+// all, leaving mostly flat diffuse color; a touch of metalness (rather
+// than 0 exactly) keeps a faint, realistic sheen instead of reading as
+// completely dead/chalky. Color unchanged — still the real PANTONE 282
+// CP hex.
 //
-// Shell roughness bumped 0.25 -> 0.32 (an earlier pass, still valid
-// reasoning) -> 0.48 (this pass, alongside the darker Pantone color
-// above) — a razor-low roughness is a near-mirror finish, which only
-// reflects light back from the exact narrow angle it's coming from; the
-// shell's own broad, mostly-flat faces were simply missing that one
-// angle from most camera positions. More roughness blurs/spreads the
-// reflection so the shell picks up light across more of its surface
-// instead of nothing-or-a-glint, while staying well short of a matte/
-// plastic look. Paired with StudioEnvironment.tsx's own wraparound fill
-// panels (same root cause, see that file's comment) rather than relying
-// on either fix alone. Hardware roughness left at 0.25 — Cool Gray 7 C
-// is a light, mid-value gray, not a near-black color, so it doesn't hit
-// the same "reads as flat black" failure mode the shell's own color
-// does, and a lower roughness there reads as the brushed-steel hardware
-// accent this colorway calls for.
+// Hardware default (Cool Gray 7 C) still metalness 1/roughness 0.25 —
+// unchanged, still applies to whichever hardware meshes below AREN'T
+// one of the three specifically-identified parts (charging pins,
+// biometric contact panel, action button) getting their own material.
 const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
-  roughness: 0.48,
-  metalness: 1,
+  roughness: 0.85,
+  metalness: 0.15,
   side: THREE.DoubleSide,
 } as const;
 
@@ -95,6 +84,56 @@ const HARDWARE_MATERIAL_PROPS = {
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
+
+// Metallic gold — the two charging pins.
+const CHARGING_PIN_MATERIAL_PROPS = {
+  color: "#D4AF37",
+  roughness: 0.2,
+  metalness: 1,
+  side: THREE.DoubleSide,
+} as const;
+
+// Polished silver/metallic — the biometric contact panel (the one with
+// the heartbeat logo). High metalness, low roughness so it actually
+// catches specular highlights from the rig's lights, per direct
+// instruction ("polished... so it catches the light").
+const CONTACT_PANEL_MATERIAL_PROPS = {
+  color: "#C7C9CC",
+  roughness: 0.12,
+  metalness: 1,
+  side: THREE.DoubleSide,
+} as const;
+
+// Vibrant solid blue, low metalness/moderate roughness — a painted
+// plastic button, not a metal one, matching the real photos.
+const ACTION_BUTTON_MATERIAL_PROPS = {
+  color: "#2563EB",
+  roughness: 0.35,
+  metalness: 0.1,
+  side: THREE.DoubleSide,
+} as const;
+
+/** The source GLTF has no semantic mesh names at all (see this file's
+ *  own header comment), so which of the 9 "hardware" meshes is which
+ *  real part can't be looked up by name — these are fixed array
+ *  indices into `hardwareMeshes` (itself sorted by vertex count
+ *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below),
+ *  identified by rendering each one in its own distinct debug color and
+ *  visually matching the result against the real device photos:
+ *  - 0, 1: two small round pads near one edge, paired the same way the
+ *    two visible charging pins are in the photos.
+ *  - 2: a flat, centered plate in the middle of a row of three -
+ *    matches the biometric contact panel's position between two other
+ *    unlabeled panels.
+ *  - 6: sits directly adjacent to index 2, matching the action button's
+ *    position right next to the contact panel in the photos.
+ *  Every other index keeps the general HARDWARE_MATERIAL_PROPS default.
+ *  Best-effort visual identification, not a certainty (no per-feature
+ *  geometry to confirm against) — same standing caveat this file
+ *  already applies to spec rotations and anchor points elsewhere. */
+const CHARGING_PIN_INDICES = new Set([0, 1]);
+const CONTACT_PANEL_INDEX = 2;
+const ACTION_BUTTON_INDEX = 6;
 
 // Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
 // BuiltToReadYouSection.tsx) now closes its text blocks together at the
@@ -366,17 +405,26 @@ export function Band({
             <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
           </mesh>
         ))}
-        {hardwareMeshes.map((mesh, i) => (
-          <mesh
-            key={`hardware-${i}`}
-            geometry={mesh.geometry}
-            position={mesh.position}
-            rotation={mesh.rotation}
-            scale={mesh.scale}
-          >
-            <meshStandardMaterial {...HARDWARE_MATERIAL_PROPS} />
-          </mesh>
-        ))}
+        {hardwareMeshes.map((mesh, i) => {
+          const materialProps = CHARGING_PIN_INDICES.has(i)
+            ? CHARGING_PIN_MATERIAL_PROPS
+            : i === CONTACT_PANEL_INDEX
+              ? CONTACT_PANEL_MATERIAL_PROPS
+              : i === ACTION_BUTTON_INDEX
+                ? ACTION_BUTTON_MATERIAL_PROPS
+                : HARDWARE_MATERIAL_PROPS;
+          return (
+            <mesh
+              key={`hardware-${i}`}
+              geometry={mesh.geometry}
+              position={mesh.position}
+              rotation={mesh.rotation}
+              scale={mesh.scale}
+            >
+              <meshStandardMaterial {...materialProps} />
+            </mesh>
+          );
+        })}
 
         {/* The leader line's target — a real 3D object living in the
            SAME group as the mesh geometry above, so it inherits both
