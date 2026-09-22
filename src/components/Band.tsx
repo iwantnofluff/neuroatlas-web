@@ -11,17 +11,34 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
 /**
  * CAD export of the NA·01 sensor module (public/band.glb) — updated to
  * the client's latest assembly file, which bundles the sensor module
- * AND a separate strap/buckle/clasp sub-assembly in one GLB. The strap
- * geometry (~260mm, offset far down the Y axis — a real, confirmed
- * component of this file, not noise) is filtered out below: none of
- * this component's scenes are framed, scaled, or lit for a full strap,
- * so integrating it is separate work, not something to render at the
- * wrong scale by accident. One more mesh (an elongated blade shape, no
- * real transform on it — confirmed identity via a direct position/
- * rotation/scale dump) is also filtered out: it doesn't match any of
- * the product spec's named parts and isn't contained within the
- * housing the way a real internal part would be, most likely stray CAD
- * construction geometry that made it into the export.
+ * AND a separate strap/buckle/clasp sub-assembly in one GLB. Five
+ * meshes belong to that outer sub-assembly, not the module, and are
+ * filtered out below by name — each one directly identified via
+ * isolated single-mesh rendering (this file's own established
+ * methodology) and cross-checked against its measured size, not
+ * inferred from position alone:
+ * - "empty_3": the strap itself, 260.5 x 22.0 x 1.6mm. Straddles the
+ *   origin (its own center lands within ~4mm of it, same as the
+ *   module), which is why the moduleMeshes filter below needs a
+ *   maxDimension check and can't rely on center-distance alone.
+ * - "empty_4", "empty_5": the two clasp halves, ~24.4 x 14.0mm each,
+ *   ~132mm off origin on -Y.
+ * - "empty_6": the keeper loop, 20.0 x 7.7mm, ~135mm off origin on -Y.
+ * - "empty_13": a strap lug/pin — a mounting bracket with a long thin
+ *   pin extending from it, 48.4 x 10.2 x 6.9mm, confirmed via isolated
+ *   render (visibly a hardware bracket + pin shape, not a plate or
+ *   capsule). Not one of the product spec's 8 named module parts.
+ *   Already excluded by maxDimension alone (48.4mm exceeds the shell's
+ *   own 42.8mm max), independent of the other four.
+ * None of these five are rendered anywhere in this file — none of this
+ * component's three scenes are framed, scaled, or lit for a full
+ * ~260mm strap, so integrating it is separate, bigger work than a
+ * materials pass. For when that work happens: the strap should get a
+ * non-metallic, high-roughness woven-navy-textile material (roughly
+ * matching the shell's own #041E42 family, desaturated), and the clasp
+ * halves + keeper loop an anodised-metal material matching
+ * HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1) — same
+ * finish family as the module's own hardware, not a separate palette.
  *
  * Still no semantic mesh/material names anywhere in the file (every
  * mesh is "empty_N", every material name is an empty string) — mesh
@@ -89,14 +106,22 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
 // Housing: "matte anodised aluminium... soft-touch, no gloss" — real
 // anodized aluminum, not plastic, so metalness stays meaningfully above
 // 0 (a true non-metal readback would lose the faint brushed-metal sheen
-// anodizing actually has); roughness is pushed high so that sheen stays
-// diffuse/soft rather than a sharp mirror highlight, which is what "no
-// gloss" rules out. #041E42 is the reference hex the spec gives directly
-// (it notes the color lifts toward ~#16284C at typical on-screen
-// brightness — expected, not a bug to correct for).
+// anodizing actually has). #041E42 is the reference hex the spec gives
+// directly (it notes the color lifts toward ~#16284C at typical
+// on-screen brightness — expected, not a bug to correct for).
+//
+// roughness 0.75 -> 0.45: at 0.75 the material's BRDF lobe is wide
+// enough to blur even a small, bright reflected feature into an
+// invisible soft blob — confirmed live, the StudioEnvironment hotspot
+// panels added specifically to give this shell a legible highlight
+// produced almost no visible change at 0.75. 0.45 is still well short
+// of a mirror (that's what "no gloss" rules out) but narrow enough a
+// BRDF lobe that those hotspots can actually resolve as a highlight
+// rather than washing out into the same flat gradient regardless of
+// what the environment provides.
 const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
-  roughness: 0.75,
+  roughness: 0.45,
   metalness: 0.5,
   side: THREE.DoubleSide,
 } as const;
@@ -156,7 +181,19 @@ const POGO_PAD_MATERIAL_PROPS = {
 /** Fixed array indices into `hardwareMeshes` (sorted by vertex count
  *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below) —
  *  see this file's own header comment for how each was actually
- *  confirmed (isolated rendering, not inference from a combined view). */
+ *  confirmed (isolated rendering, not inference from a combined view).
+ *
+ *  ECG_ELECTRODE_INDEX re-verified directly against this exact GLB (not
+ *  re-derived from memory of an earlier file): resolves to node
+ *  "empty_9", 1.0 x 10.3 x 3.3mm. That's smaller than the product
+ *  spec's rough ~15 x 10 x 4mm estimate, but an isolated render leaves
+ *  no doubt — it's a flat pill with a genuine engraved zigzag waveform
+ *  mark on its face, unlike anything else in this file. The 48.4 x 10.2
+ *  x 6.9mm mesh worth double-checking here isn't this one — that's
+ *  "empty_13", the strap lug/pin (see this file's own header comment),
+ *  which never reaches `hardwareMeshes` at all: it's excluded from
+ *  `moduleMeshes` by the maxDimension filter below before indices are
+ *  even assigned. */
 const BUTTON_INDEX = 0;
 const ECG_ELECTRODE_INDEX = 1;
 const OPTICAL_WINDOW_INDEX = 2;
@@ -372,17 +409,11 @@ export function Band({
       // the real module exceeds ~48mm on any axis); centerDistance
       // catches the separate buckle/clasp pieces, which are small
       // enough individually but sit far from the module (~130mm away).
-      // 0.045, not the 0.06 first tried — one mesh (empty_13, a long
-      // thin blade shape with no real transform on it, confirmed via a
-      // direct position/rotation/scale dump: identity, so this genuinely
-      // is its raw geometry) still slipped through at 0.06 and rendered
-      // as a spike visibly taller than the whole shell. It doesn't match
-      // any of the 8 named parts in the product spec and isn't contained
-      // within the housing the way a real internal part would be — most
-      // likely CAD construction geometry (a reference axis/sketch plane)
-      // that made it into the export by mistake. 0.045 sits between the
-      // shell's own real 0.0428 max and this mesh's 0.0484, excluding
-      // just this one stray piece.
+      // 0.045, not the 0.06 first tried — one mesh ("empty_13", the strap
+      // lug/pin — see this file's own header comment) still slipped
+      // through at 0.06 and rendered as a spike visibly taller than the
+      // whole shell. 0.045 sits between the shell's own real 0.0428 max
+      // and this mesh's 0.0484, excluding just this one piece.
       const maxDimension = Math.max(size.x, size.y, size.z);
       const centerDistance = center.length();
       return maxDimension < 0.045 && centerDistance < 0.08;
