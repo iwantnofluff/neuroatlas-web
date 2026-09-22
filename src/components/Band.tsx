@@ -144,6 +144,15 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
 // highlights, not a flat plastic fill. NOT fixed by lightening the
 // base color instead — that's the exact toy-like look this whole pass
 // exists to undo.
+//
+// DO NOT "correct" this back to 1.0 for physical purity. 1.0 IS more
+// physically accurate for real anodized aluminum, and that is exactly
+// why it's wrong here: it was rendered and compared directly against
+// 0.7 (side by side, same lighting, same everything else) specifically
+// to check that claim, and 1.0 loses the #041E42 navy almost entirely
+// against this site's dark page. 0.7 is a deliberate, tested
+// art-direction choice — legibility over physical accuracy — not an
+// oversight or a value nobody got around to finishing.
 const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
   roughness: 0.45,
