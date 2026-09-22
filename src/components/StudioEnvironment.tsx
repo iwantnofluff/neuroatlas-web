@@ -135,6 +135,40 @@ export function StudioEnvironment() {
       <Lightformer form="rect" intensity={12} color="#ffffff" position={[1, 3, 3]} scale={[0.6, 0.6, 1]} />
       <Lightformer form="rect" intensity={8} color="#f6e2b8" position={[-3, 1.5, 2.5]} scale={[0.5, 1.2, 1]} rotation={[0, Math.PI / 4, 0]} />
       <Lightformer form="rect" intensity={5} color="#bcd6f0" position={[3, -0.5, 2]} scale={[0.5, 1, 1]} rotation={[0, -Math.PI / 4, 0]} />
+
+      {/* Underside plate fix, TheSpecs "Sensors" pose specifically
+         (rotation {x: 0.25, y: Math.PI} — see TheSpecs.tsx). Confirmed
+         via direct screenshot: of the two steel electrode plates
+         (STEEL_ELECTRODE_MATERIAL_PROPS, metalness 1 — see Band.tsx),
+         one read as legible steel and the other read nearly black at
+         this exact pose, despite sharing the identical material — a
+         metalness-1 surface has no diffuse term left, so it's lit ONLY
+         by what it reflects, and a reproduced transform (BASE_ROTATION
+         + this pose's rotation.x/y applied to the real mesh geometry,
+         not guessed) confirmed the two plates' required reflection
+         directions at this pose differ just enough that the existing
+         hotspots above cover one and miss the other entirely.
+         NOT fixed with a fill/directional light — metalness 1 doesn't
+         respond to those (same reasoning already applied to the
+         shell's own metalness value in Band.tsx) — and NOT by
+         symmetrizing TheSpecsScene's own key/fill directional lights:
+         that asymmetry is deliberately doing real work elsewhere in
+         that rig (see its own lighting comments), and flattening it
+         would cost more than it fixes.
+         Deliberately modest (intensity 7, not the 12/8 above) — the
+         goal is a legible "this is metal in shadow" highlight, not
+         brightness parity with the lit plate; a plate in shadow is
+         SUPPOSED to read darker than one that isn't.
+         Confirmed via screenshot this leaks into none of: the other
+         four TheSpecs poses, the hero (BandScrollShowcase), or
+         BuiltToReadYouScene — all three also share this component, and
+         all three render pixel-equivalent to before this panel was
+         added. Positioned below-and-forward of origin specifically
+         because that's where the missing reflection direction actually
+         is (computed, not guessed) — every other position in this file
+         is above or level with origin, which is exactly the gap this
+         one fills. */}
+      <Lightformer form="rect" intensity={7} color="#dbe6ef" position={[0.3, -2, 3.5]} scale={[0.5, 0.5, 1]} />
     </Environment>
   );
 }
