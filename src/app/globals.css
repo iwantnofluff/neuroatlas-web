@@ -412,6 +412,46 @@
     50% { background-position: 100% 50%; }
   }
 
+  /* Global film-grain overlay (see layout.tsx, rendered once as a fixed
+     sibling ahead of <SiteChrome>). White feTurbulence noise (see
+     public/textures/grain.svg) at a near-invisible opacity — deliberately
+     white rather than gold/navy-tinted: over this site's dark navy
+     sections it reads as felt cinematic texture, and over its own cream
+     sections the same white-on-near-white pixels self-cancel to
+     effectively nothing, satisfying "cinematic on navy, invisible on
+     cream" with one asset instead of per-section conditional logic.
+     transform-only keyframes (never background-position) — this stays on
+     the compositor thread with no layout/paint cost per frame, the
+     standard requirement for anything animating under a page people also
+     scroll on mobile. steps() over ease-in-out is deliberate: a flicker
+     reads as "active grain," a smooth drift reads as a slow-panning
+     photograph, which is the opposite of the brief. background-repeat
+     tiles the 180px SVG edge-to-edge with stitchTiles="stitch" baked into
+     the filter itself, so every transform offset below still lines up
+     seamlessly with no visible seam at any point in the loop. */
+  .grain-overlay {
+    background-image: url("/textures/grain.svg");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+    opacity: 0.035;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .grain-overlay {
+      animation: grain-shift 8s steps(8) infinite;
+    }
+  }
+  @keyframes grain-shift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    12.5% { transform: translate3d(-2%, -4%, 0); }
+    25% { transform: translate3d(3%, 2%, 0); }
+    37.5% { transform: translate3d(-1%, 4%, 0); }
+    50% { transform: translate3d(4%, -2%, 0); }
+    62.5% { transform: translate3d(-3%, 1%, 0); }
+    75% { transform: translate3d(2%, -3%, 0); }
+    87.5% { transform: translate3d(-4%, 3%, 0); }
+  }
+
   /* Bento glass — the "Beyond Heart Rate" bento grid's card recipe (see
      BeyondHeartSection.tsx): the hero cell and all three metric cells
      share this one class. A deliberately different, quieter recipe than
