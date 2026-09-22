@@ -68,6 +68,18 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  *   layout the product spec describes), the electrodes as the smaller
  *   mirrored pair flanking it.
  *
+ * The GLB has POSITION and NORMAL only — no TEXCOORD_0, so no texture
+ * map (a brushed-metal normal map, an AO pass, anything) can be applied
+ * without generating UVs first, which is a bigger, separate change from
+ * a materials pass. Every surface below is therefore a perfectly even
+ * color/roughness/metalness across its whole mesh, which is itself a
+ * small realism tell up close (real anodized aluminum has faint
+ * brushing, real steel has micro-scratches). Per-part material
+ * separation and lighting are the only tools available without that
+ * bigger change — deliberately not "solved" with procedural noise or a
+ * UV-generation pass here; this is a known, accepted limit of this
+ * pass, not an oversight.
+ *
  * The two largest-vertex-count meshes within the module cluster are the
  * top housing and skin-side back cover.
  *
@@ -119,10 +131,23 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
 // BRDF lobe that those hotspots can actually resolve as a highlight
 // rather than washing out into the same flat gradient regardless of
 // what the environment provides.
+//
+// metalness 0.7, a deliberate compromise, not the physically "pure"
+// 1.0 — at metalness 1 a metal's base color only ever shows up through
+// reflections (there's no diffuse term left at all), which is
+// physically correct for anodized aluminum but, confirmed via a direct
+// side-by-side render, reads as nearly black against this site's dark
+// navy page — the #041E42 all but disappears rather than reading as
+// navy metal. 0.7 keeps a small enough diffuse contribution that the
+// actual brand color stays legible while still responding to the
+// environment enough to catch the Lightformer hotspots as real
+// highlights, not a flat plastic fill. NOT fixed by lightening the
+// base color instead — that's the exact toy-like look this whole pass
+// exists to undo.
 const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
   roughness: 0.45,
-  metalness: 0.5,
+  metalness: 0.7,
   side: THREE.DoubleSide,
 } as const;
 
@@ -137,35 +162,53 @@ const HARDWARE_MATERIAL_PROPS = {
 } as const;
 
 // The side button — cobalt, "the only saturated colour" on the whole
-// device per the spec. Moderate roughness/low metalness for a painted
-// finish, not bare metal.
+// device per the spec. Non-metallic (a painted/molded finish, not bare
+// metal) at a moderate roughness — matte enough not to compete with the
+// shell's own reflections, not so rough it goes chalky.
 const BUTTON_MATERIAL_PROPS = {
   color: "#2656AD",
   roughness: 0.35,
-  metalness: 0.15,
+  metalness: 0,
   side: THREE.DoubleSide,
 } as const;
 
 // Polished stainless — the top-mounted ECG electrode and the two
-// underside steel electrode plates all share this. Mirror finish per
-// the spec: metalness 1, very low roughness so it actually catches
-// specular highlights rather than reading flat.
+// underside steel electrode plates all share this. High metalness for
+// the mirror finish per spec, but roughness 0.12-0.18 rather than a
+// near-zero value: true near-0 roughness on a flat plate only shows a
+// highlight at the exact angle that mirror-reflects a light/hotspot
+// back at the camera, and misses it entirely everywhere else — a
+// slightly wider BRDF lobe reads as polished steel across more of the
+// viewing envelope instead of "mirror in one spot, flat gray
+// everywhere else."
 const STEEL_ELECTRODE_MATERIAL_PROPS = {
   color: "#5D7B8F",
-  roughness: 0.08,
+  roughness: 0.15,
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
 
 // The optical sensor window (PPG) — not a named color in the palette,
 // so approximated the way a real PPG window is built: a dark, glossy
-// tinted lens (blocks stray ambient light, lets the LED/photodiode
-// wavelengths through), non-metallic, mixed with a cool/blue bias to
-// match the spec's explicit "nothing should read warm" instruction
-// rather than a neutral or warm black.
+// tinted lens, mixed with a cool/blue bias to match the spec's explicit
+// "nothing should read warm" instruction rather than a neutral or warm
+// black.
+//
+// Deliberately opaque, not transmissive: the CAD has no PCB, no LEDs,
+// no photodiode behind this 0.5mm plate — a transmissive material
+// would refract straight through into an empty housing shell, which
+// would look far worse than an opaque one. meshStandardMaterial has no
+// transmission property anyway (that's meshPhysicalMaterial-only), so
+// there's no accidental path to it here. roughness 0.15 -> 0.05 is what
+// actually gets "black glass reflecting the environment" rather than a
+// flat dark rectangle — metalness stays 0 (this is glass/coated
+// polymer, not metal); at a near-black base color even a non-metal's
+// fixed ~4% specular reflectance reads as a clear, legible highlight,
+// because there's so little diffuse brightness underneath it to
+// compete with.
 const OPTICAL_WINDOW_MATERIAL_PROPS = {
   color: "#0A0E14",
-  roughness: 0.15,
+  roughness: 0.05,
   metalness: 0,
   side: THREE.DoubleSide,
 } as const;
@@ -173,7 +216,7 @@ const OPTICAL_WINDOW_MATERIAL_PROPS = {
 // The two gold charging pogo pads.
 const POGO_PAD_MATERIAL_PROPS = {
   color: "#C9A44C",
-  roughness: 0.2,
+  roughness: 0.3,
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
