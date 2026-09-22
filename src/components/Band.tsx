@@ -9,17 +9,50 @@ import * as THREE from "three";
 import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAnchors";
 
 /**
- * Real gltfjsx export of the NA·01 sensor module (public/band.glb),
- * replacing the earlier <Torus> placeholder used in BuiltToReadYouScene.
- * The source file has no semantic names at all — every mesh is
- * "empty_2".."empty_12" and every material is unnamed too (confirmed by
- * parsing the GLB's own JSON chunk directly, not just gltfjsx's
- * generated output) — so mesh identity here is inferred from actual
- * geometry rather than assumed from a name: the two largest-vertex-count
- * meshes are the module's front/back shell (the "Main Band" surface per
- * the brief — leaning into a "core module" read, the precision housing
- * around the sensor), the other nine are small hardware details (lugs,
- * pins, buttons — the "Clasp/Hardware Accents").
+ * CAD export of the NA·01 sensor module (public/band.glb) — updated to
+ * the client's latest assembly file, which bundles the sensor module
+ * AND a separate strap/buckle/clasp sub-assembly in one GLB. The strap
+ * geometry (~260mm, offset far down the Y axis — a real, confirmed
+ * component of this file, not noise) is filtered out below: none of
+ * this component's scenes are framed, scaled, or lit for a full strap,
+ * so integrating it is separate work, not something to render at the
+ * wrong scale by accident. One more mesh (an elongated blade shape, no
+ * real transform on it — confirmed identity via a direct position/
+ * rotation/scale dump) is also filtered out: it doesn't match any of
+ * the product spec's named parts and isn't contained within the
+ * housing the way a real internal part would be, most likely stray CAD
+ * construction geometry that made it into the export.
+ *
+ * Still no semantic mesh/material names anywhere in the file (every
+ * mesh is "empty_N", every material name is an empty string) — mesh
+ * identity is established here by isolating each candidate mesh alone
+ * (hidden from its siblings, camera framed tight on just that one
+ * mesh's own bounding box) and inspecting its actual 3D shape directly,
+ * not by inferring from silhouette in a combined view or from position
+ * alone — both of those weaker methods produced real, confirmed wrong
+ * identifications in earlier passes on this same file. Isolated,
+ * each part was unambiguous:
+ * - The side button has an actual shaft/plunger stub, a physical
+ *   button mechanism, not just a shape that happens to sit where a
+ *   button should be.
+ * - The ECG electrode is a flat pill with a genuine engraved zigzag
+ *   waveform mark visible on its face.
+ * - The two charging pogo pads have the distinctive stepped-cylinder
+ *   profile of a real pogo pin, unlike two other, plainer cylindrical
+ *   posts nearby that share their general position but not their shape
+ *   — those two are left on the general hardware default rather than
+ *   guessed at, since the product spec's 8 named parts don't obviously
+ *   cover them (possibly related to the internal carrier, which has no
+ *   own separately-identifiable external mesh in this file).
+ * - The two steel electrode plates and the optical sensor window are
+ *   three plain flat plates in a row with no distinguishing marks from
+ *   geometry alone; the window is identified as the centered, slightly
+ *   larger one of the three (room for the two-LED-plus-photodiode
+ *   layout the product spec describes), the electrodes as the smaller
+ *   mirrored pair flanking it.
+ *
+ * The two largest-vertex-count meshes within the module cluster are the
+ * top housing and skin-side back cover.
  *
  * Scale: the source is modeled in real-world meters (~2.5cm bounding
  * box) — ×18 brings it in line with this scene's existing unit
@@ -44,40 +77,33 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  * costs nothing visually on an opaque object, and covers either shell
  * if the export changes again.
  *
- * Shell/hardware colors are the final, real Pantone-matched device
- * colorway (supplied directly as swatches: PANTONE 282 CP for the shell,
- * PANTONE Cool Gray 7 C for the hardware/strap accent), not a stylistic
- * pick — #041E42 and #97999B are those two Pantones' hex equivalents.
- * #041E42 is an even deeper navy than the #1B2340 placeholder this
- * replaces, which pushed roughness up alongside it (0.32 -> 0.48): this
- * codebase already hit and fixed the "near-black object with only a
- * couple of sharp glints" failure mode once at a shallower color (see
- * roughness history below) — an even darker target color needs more of
- * the same correction, not less, to keep reading as a lit navy surface
- * rather than flat black.
+ * Every color/finish below is the real supplied product spec, not a
+ * stylistic pick: PANTONE 282 CP (#041E42) housing, PANTONE Cool Gray
+ * 7 C (#97999B) secondary, cobalt button (#2656AD), gold pogo pads
+ * (#C9A44C), polished steel electrodes/ECG capsule (reads #5D7B8F under
+ * cool light). The spec is explicit that both the navy and the grey
+ * carry a blue bias and nothing in the palette should read warm — the
+ * optical window's near-black tint below is mixed cool for the same
+ * reason, not a neutral/warm black.
  */
-// Shell flipped from the earlier machined-metal pass to a strict matte
-// finish per direct instruction, matching the real device photos — the
-// casing itself reads as a soft-touch matte navy, not a polished metal
-// shell. High roughness (0.85) + low metalness (0.15) is the standard
-// PBR recipe for that: metalness near 0 removes almost all of the
-// specular reflection a metallic surface depends on to read as lit at
-// all, leaving mostly flat diffuse color; a touch of metalness (rather
-// than 0 exactly) keeps a faint, realistic sheen instead of reading as
-// completely dead/chalky. Color unchanged — still the real PANTONE 282
-// CP hex.
-//
-// Hardware default (Cool Gray 7 C) still metalness 1/roughness 0.25 —
-// unchanged, still applies to whichever hardware meshes below AREN'T
-// one of the three specifically-identified parts (charging pins,
-// biometric contact panel, action button) getting their own material.
+// Housing: "matte anodised aluminium... soft-touch, no gloss" — real
+// anodized aluminum, not plastic, so metalness stays meaningfully above
+// 0 (a true non-metal readback would lose the faint brushed-metal sheen
+// anodizing actually has); roughness is pushed high so that sheen stays
+// diffuse/soft rather than a sharp mirror highlight, which is what "no
+// gloss" rules out. #041E42 is the reference hex the spec gives directly
+// (it notes the color lifts toward ~#16284C at typical on-screen
+// brightness — expected, not a bug to correct for).
 const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
-  roughness: 0.85,
-  metalness: 0.15,
+  roughness: 0.75,
+  metalness: 0.5,
   side: THREE.DoubleSide,
 } as const;
 
+// Secondary/default for hardware bits the product spec doesn't
+// individually name (see the two unidentified cylindrical posts in the
+// file header comment) — Cool Gray 7 C, the spec's own secondary color.
 const HARDWARE_MATERIAL_PROPS = {
   color: "#97999B",
   roughness: 0.25,
@@ -85,75 +111,57 @@ const HARDWARE_MATERIAL_PROPS = {
   side: THREE.DoubleSide,
 } as const;
 
-// Metallic gold — the two charging pins.
-const CHARGING_PIN_MATERIAL_PROPS = {
-  color: "#D4AF37",
+// The side button — cobalt, "the only saturated colour" on the whole
+// device per the spec. Moderate roughness/low metalness for a painted
+// finish, not bare metal.
+const BUTTON_MATERIAL_PROPS = {
+  color: "#2656AD",
+  roughness: 0.35,
+  metalness: 0.15,
+  side: THREE.DoubleSide,
+} as const;
+
+// Polished stainless — the top-mounted ECG electrode and the two
+// underside steel electrode plates all share this. Mirror finish per
+// the spec: metalness 1, very low roughness so it actually catches
+// specular highlights rather than reading flat.
+const STEEL_ELECTRODE_MATERIAL_PROPS = {
+  color: "#5D7B8F",
+  roughness: 0.08,
+  metalness: 1,
+  side: THREE.DoubleSide,
+} as const;
+
+// The optical sensor window (PPG) — not a named color in the palette,
+// so approximated the way a real PPG window is built: a dark, glossy
+// tinted lens (blocks stray ambient light, lets the LED/photodiode
+// wavelengths through), non-metallic, mixed with a cool/blue bias to
+// match the spec's explicit "nothing should read warm" instruction
+// rather than a neutral or warm black.
+const OPTICAL_WINDOW_MATERIAL_PROPS = {
+  color: "#0A0E14",
+  roughness: 0.15,
+  metalness: 0,
+  side: THREE.DoubleSide,
+} as const;
+
+// The two gold charging pogo pads.
+const POGO_PAD_MATERIAL_PROPS = {
+  color: "#C9A44C",
   roughness: 0.2,
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
 
-// Polished silver/metallic — the biometric contact panel (the one with
-// the heartbeat logo). High metalness, low roughness so it actually
-// catches specular highlights from the rig's lights, per direct
-// instruction ("polished... so it catches the light").
-const CONTACT_PANEL_MATERIAL_PROPS = {
-  color: "#C7C9CC",
-  roughness: 0.12,
-  metalness: 1,
-  side: THREE.DoubleSide,
-} as const;
-
-// Vibrant solid blue, low metalness/moderate roughness — a painted
-// plastic button, not a metal one, matching the real photos.
-const ACTION_BUTTON_MATERIAL_PROPS = {
-  color: "#2563EB",
-  roughness: 0.35,
-  metalness: 0.1,
-  side: THREE.DoubleSide,
-} as const;
-
-// Gloss black plastic — the sensor housing pair at the top edge.
-// Moderate-low roughness (not matte like the casing, not mirror-polished
-// either) for a premium gloss-black plastic read, low metalness since
-// it's a painted/molded plastic surface, not bare metal.
-const SENSOR_MATERIAL_PROPS = {
-  color: "#0A0A0C",
-  roughness: 0.3,
-  metalness: 0.05,
-  side: THREE.DoubleSide,
-} as const;
-
-/** The source GLTF has no semantic mesh names at all (see this file's
- *  own header comment), so which of the 9 "hardware" meshes is which
- *  real part can't be looked up by name — these are fixed array
- *  indices into `hardwareMeshes` (itself sorted by vertex count
- *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below).
- *
- *  Re-identified against a supplied reference render after an earlier
- *  pass got the top pair wrong (had guessed "small round charging
- *  pads," colored gold) — re-checked this time with the shell itself
- *  rendered wireframe/see-through so all 9 pieces are visible at once
- *  instead of inferring position from silhouette alone:
- *  - 0, 1: the two larger pills at the top edge — matches the
- *    reference's sensor housing pair (dark plastic, not metal).
- *  - 2, 5, 6: the row of three panels below them - 2 (centered) is the
- *    biometric contact panel, 6 (adjacent to it) is the action button,
- *    5 (the third, unlabeled in the reference) keeps the general
- *    hardware default, which already reads as the right steel tone.
- *  - 7, 8: a small vertically-stacked pair, the closest match in this
- *    model to "two circles" once 0/1 turned out to be the sensor pair
- *    instead - best-effort, not a certain match.
- *  - 3, 4: never visible from any external camera angle tested (even a
- *    forced top-down view) - almost certainly occluded lugs, not a
- *    user-visible surface. Left on the general default.
- *  Still a best-effort visual identification, not a certainty (no
- *  per-feature geometry to confirm against) — same standing caveat this
- *  file already applies to spec rotations and anchor points elsewhere. */
-const SENSOR_INDICES = new Set([0, 1]);
-const CONTACT_PANEL_INDEX = 2;
-const ACTION_BUTTON_INDEX = 6;
-const CHARGING_PIN_INDICES = new Set([7, 8]);
+/** Fixed array indices into `hardwareMeshes` (sorted by vertex count
+ *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below) —
+ *  see this file's own header comment for how each was actually
+ *  confirmed (isolated rendering, not inference from a combined view). */
+const BUTTON_INDEX = 0;
+const ECG_ELECTRODE_INDEX = 1;
+const OPTICAL_WINDOW_INDEX = 2;
+const STEEL_ELECTRODE_INDICES = new Set([5, 6]);
+const POGO_PAD_INDICES = new Set([7, 8]);
 
 // Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
 // BuiltToReadYouSection.tsx) now closes its text blocks together at the
@@ -335,10 +343,51 @@ export function Band({
   const modelScale = scale ?? (isMobile ? MODEL_SCALE_MOBILE : MODEL_SCALE_DESKTOP);
 
   const { shellMeshes, hardwareMeshes } = useMemo(() => {
-    const meshes = Object.values(nodes).filter(
+    const allMeshes = Object.values(nodes).filter(
       (n): n is THREE.Mesh => Boolean((n as THREE.Mesh)?.isMesh)
     );
-    const byVertexCountDesc = [...meshes].sort(
+    // The updated CAD export bundles the strap/buckle/clasp sub-assembly
+    // in the SAME file as the sensor module, offset far down the Y axis
+    // (geometry-space center around y=-0.13, vs. the module cluster's
+    // own ~-0.01..0.02) — a real, confirmed ~260mm-long strap mesh
+    // sitting alongside an ~25-40mm module, per direct inspection of the
+    // raw GLB. None of this component's scenes are set up to frame a
+    // full strap (camera/scale/lighting all tuned for just the module),
+    // so it's filtered out here rather than rendered at the wrong scale
+    // — a real "integrate the strap" pass is separate, bigger work.
+    const box = new THREE.Box3();
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    const moduleMeshes = allMeshes.filter((m) => {
+      box.setFromBufferAttribute(
+        m.geometry.attributes.position as THREE.BufferAttribute
+      );
+      box.getSize(size);
+      box.getCenter(center);
+      // Two checks, not one — a real bug the first (center-only) version
+      // had: the strap mesh is long enough (~260mm) that it straddles
+      // the origin and its CENTER lands right back near y=0, same as
+      // the module itself, so a center-distance check alone let it
+      // straight through. maxDimension catches that case (nothing in
+      // the real module exceeds ~48mm on any axis); centerDistance
+      // catches the separate buckle/clasp pieces, which are small
+      // enough individually but sit far from the module (~130mm away).
+      // 0.045, not the 0.06 first tried — one mesh (empty_13, a long
+      // thin blade shape with no real transform on it, confirmed via a
+      // direct position/rotation/scale dump: identity, so this genuinely
+      // is its raw geometry) still slipped through at 0.06 and rendered
+      // as a spike visibly taller than the whole shell. It doesn't match
+      // any of the 8 named parts in the product spec and isn't contained
+      // within the housing the way a real internal part would be — most
+      // likely CAD construction geometry (a reference axis/sketch plane)
+      // that made it into the export by mistake. 0.045 sits between the
+      // shell's own real 0.0428 max and this mesh's 0.0484, excluding
+      // just this one stray piece.
+      const maxDimension = Math.max(size.x, size.y, size.z);
+      const centerDistance = center.length();
+      return maxDimension < 0.045 && centerDistance < 0.08;
+    });
+    const byVertexCountDesc = [...moduleMeshes].sort(
       (a, b) =>
         (b.geometry.attributes.position?.count ?? 0) -
         (a.geometry.attributes.position?.count ?? 0)
@@ -426,15 +475,16 @@ export function Band({
           </mesh>
         ))}
         {hardwareMeshes.map((mesh, i) => {
-          const materialProps = SENSOR_INDICES.has(i)
-            ? SENSOR_MATERIAL_PROPS
-            : CHARGING_PIN_INDICES.has(i)
-              ? CHARGING_PIN_MATERIAL_PROPS
-              : i === CONTACT_PANEL_INDEX
-                ? CONTACT_PANEL_MATERIAL_PROPS
-                : i === ACTION_BUTTON_INDEX
-                  ? ACTION_BUTTON_MATERIAL_PROPS
-                  : HARDWARE_MATERIAL_PROPS;
+          const materialProps =
+            i === BUTTON_INDEX
+              ? BUTTON_MATERIAL_PROPS
+              : i === ECG_ELECTRODE_INDEX || STEEL_ELECTRODE_INDICES.has(i)
+                ? STEEL_ELECTRODE_MATERIAL_PROPS
+                : i === OPTICAL_WINDOW_INDEX
+                  ? OPTICAL_WINDOW_MATERIAL_PROPS
+                  : POGO_PAD_INDICES.has(i)
+                    ? POGO_PAD_MATERIAL_PROPS
+                    : HARDWARE_MATERIAL_PROPS;
           return (
             <mesh
               key={`hardware-${i}`}
