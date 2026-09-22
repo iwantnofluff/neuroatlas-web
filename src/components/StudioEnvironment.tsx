@@ -114,6 +114,27 @@ export function StudioEnvironment() {
         scale={[3, 4, 1]}
         rotation={[0, -Math.PI / 3, 0]}
       />
+
+      {/* Hotspots — small, bright panels layered on top of the wraparound
+         fill and the three broad accent panels above. Those all produce
+         genuinely soft gradients by design (large panels = low-frequency
+         reflection), which is correct for the ambient wraparound tone but
+         is also, on its own, exactly why polished/anodized metal was
+         reading flat and clay-like rather than catching real light — a
+         convincing metal highlight needs a SMALL, bright reflected
+         feature (the equivalent of a window mullion or ceiling spot in a
+         real studio's HDRI), not just a large soft one. Scale is what
+         controls apparent sharpness here, not a blur/sharpness prop —
+         Lightformer has none; a small rect at high intensity IS a sharp
+         feature on the reflection sphere, a large one at the same
+         intensity isn't. Positioned to roughly track the existing key
+         spotlight/accent-panel directions in each scene's own lighting
+         rig, so these small hotspots land on the same face of the model
+         that's already lit brightest, rather than adding a highlight
+         somewhere the model's own direct lighting doesn't support. */}
+      <Lightformer form="rect" intensity={12} color="#ffffff" position={[1, 3, 3]} scale={[0.6, 0.6, 1]} />
+      <Lightformer form="rect" intensity={8} color="#f6e2b8" position={[-3, 1.5, 2.5]} scale={[0.5, 1.2, 1]} rotation={[0, Math.PI / 4, 0]} />
+      <Lightformer form="rect" intensity={5} color="#bcd6f0" position={[3, -0.5, 2]} scale={[0.5, 1, 1]} rotation={[0, -Math.PI / 4, 0]} />
     </Environment>
   );
 }
