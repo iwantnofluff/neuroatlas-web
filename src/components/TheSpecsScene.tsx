@@ -163,7 +163,23 @@ export function TheSpecsScene({
       // shades 4x the pixels of 1x).
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
-      gl={{ alpha: true, antialias: true }}
+      // toneMapping/outputColorSpace/toneMappingExposure pinned explicitly
+      // rather than left to R3F's own defaults (which already resolve to
+      // exactly these three values as of @react-three/fiber 9.7.0, per
+      // that package's own source — see the sibling scenes' identical
+      // comment) — a silent default is one dependency bump away from
+      // changing this render's entire color pipeline with no diff to
+      // review. R3F applies extra `gl` keys straight onto the renderer
+      // instance (confirmed in its own source, not assumed), so this is
+      // the correct place for renderer-instance properties, not just
+      // WebGLRenderer constructor options.
+      gl={{
+        alpha: true,
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        outputColorSpace: THREE.SRGBColorSpace,
+        toneMappingExposure: 1,
+      }}
     >
       {/* 0.4 -> 0.75 ambient, 2.2 -> 3.2 key spotlight — a direct "too
          dark to see the hardware details" request: this rig's original
