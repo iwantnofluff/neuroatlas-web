@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
+import { ContactShadows } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Band } from "@/components/Band";
@@ -149,6 +150,24 @@ export function BuiltToReadYouScene({
       <Suspense fallback={null}>
         <Band scrollProgress={progress} reduceMotion={reduceMotion} isMobile={isMobile} />
       </Suspense>
+      {/* Bounds computed against the real mesh geometry, same method as
+         TheSpecsScene's own ContactShadows — swept rotation.y across the
+         "reveal" variant's full 0 -> LOCK_ROTATION_TURNS*Pi range at its
+         fixed rotation.x (0.4, never animated in this variant) and this
+         scene's own default desktop scale (32, the larger of the two
+         breakpoints — sized for it so the smaller mobile footprint is
+         automatically covered too, rather than branching on isMobile
+         for a second set of numbers). Worst case: minY ~-0.62, maxY
+         ~0.62, max XZ radius ~0.78. position.y=-0.7 and matching
+         far/scale margin below. */}
+      <ContactShadows
+        position={[0, -0.7, 0]}
+        opacity={0.45}
+        scale={1.8}
+        blur={2.5}
+        far={1.5}
+        resolution={512}
+      />
     </Canvas>
   );
 }

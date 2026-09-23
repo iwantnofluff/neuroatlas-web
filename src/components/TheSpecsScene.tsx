@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import type { RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows } from "@react-three/drei";
 import { useMotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Band } from "@/components/Band";
@@ -222,6 +223,31 @@ export function TheSpecsScene({
           autoRotate={autoRotate}
         />
       </Suspense>
+      {/* Bounds computed, not guessed: swept rotation.x across
+         [0.15, 1.3] (every named spec pose's x range) and rotation.y
+         across the full [0, 2*Pi] (every spec's y target, PLUS every
+         angle the damped lerp passes through while easing between two
+         poses — confirmed live this matters: a screenshot taken
+         mid-transition, not at any of the 5 settled targets, showed the
+         model dipping to a lower min-Y than all 5 targets' own bounds),
+         against the real mesh geometry. Worst case across that full
+         sweep: minY ~-0.83, maxY ~0.83, max XZ radius ~0.83 (at
+         XRAY_MODEL_SCALE_DESKTOP=34). position.y=-0.9 sits below the
+         true worst-case minY (an earlier -0.6 guess, based on only the
+         5 named poses' own bounds, sat ABOVE the true worst case —
+         confirmed live as the cause of the shadow vanishing entirely
+         mid-transition, not just shrinking: part of the model dipping
+         below the shadow-catcher plane maps outside the depth
+         material's intended near/far range). far=2.2 and scale=2.4
+         carry matching margin above the swept maxY/maxRadius. */}
+      <ContactShadows
+        position={[0, -0.9, 0]}
+        opacity={0.45}
+        scale={2.4}
+        blur={2.5}
+        far={2.2}
+        resolution={512}
+      />
       {onProjected && <AnchorProjector anchorRef={anchorRef} onProjected={onProjected} />}
     </Canvas>
   );
