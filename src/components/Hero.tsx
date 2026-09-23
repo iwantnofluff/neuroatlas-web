@@ -18,10 +18,9 @@ const DEFAULT_CTAS: HeroCta[] = [
   { label: "Book A Pilot", href: "/for-organisations" },
 ];
 
-// Real footage isn't in yet — see HeroMedia.tsx. Set this to e.g.
-// "/video/hero-band.mp4" once it lands; everything else is already built
-// around it.
-const HERO_VIDEO_SRC: string | undefined = undefined;
+// Real footage — client's banner cut (NeuroAtlas_Website_Banner_22_09_26_V1),
+// see HeroMedia.tsx for the <video> swap this one prop drives.
+const HERO_VIDEO_SRC: string | undefined = "/video/hero-band.mp4";
 
 const wordContainer = {
   hidden: {},
@@ -119,7 +118,7 @@ export function Hero({
     >
       {/* Full-bleed background: real footage once HERO_VIDEO_SRC is set,
           an ambient placeholder until then (see HeroMedia.tsx). */}
-      <HeroMedia src={HERO_VIDEO_SRC} poster="/photos/hero-band.jpg" />
+      <HeroMedia src={HERO_VIDEO_SRC} poster="/photos/hero-band.jpg" reduceMotion={reduceMotion} />
 
       {/* Scrim over the video/placeholder — keeps the headline legible
           regardless of what's playing underneath. */}
