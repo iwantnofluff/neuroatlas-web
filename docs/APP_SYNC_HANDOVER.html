@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Web ↔ App Sync Handover</title>
+<style>
+  :root {
+    --bg: #fbfaf8;
+    --surface: #ffffff;
+    --border: #e4e0d8;
+    --ink: #1c1a17;
+    --ink-soft: #55504a;
+    --gold: #a9812f;
+    --gold-soft: #c9a44c;
+    --ok-bg: #eaf3ea; --ok-fg: #2f6b3a; --ok-border: #cfe4cf;
+    --no-bg: #fbeceb; --no-fg: #9c3b34; --no-border: #f0d3d0;
+    --ask-bg: #fdf3e3; --ask-fg: #8a5a10; --ask-border: #f1ddb3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14120f; --surface: #1c1a17; --border: #322e28;
+      --ink: #f3efe8; --ink-soft: #b8b2a6;
+      --ok-bg: #16281a; --ok-fg: #8fce9c; --ok-border: #234a2b;
+      --no-bg: #2c1917; --no-fg: #e2938c; --no-border: #4a2724;
+      --ask-bg: #2c2211; --ask-fg: #e0b45f; --ask-border: #4a3a19;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14120f; --surface: #1c1a17; --border: #322e28;
+    --ink: #f3efe8; --ink-soft: #b8b2a6;
+    --ok-bg: #16281a; --ok-fg: #8fce9c; --ok-border: #234a2b;
+    --no-bg: #2c1917; --no-fg: #e2938c; --no-border: #4a2724;
+    --ask-bg: #2c2211; --ask-fg: #e0b45f; --ask-border: #4a3a19;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 20px 96px; }
+  header.doc-head { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 36px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .meta { color: var(--ink-soft); font-size: 14.5px; }
+  .meta strong { color: var(--ink); }
+  h2 { font-size: 1.25rem; margin: 44px 0 6px; padding-top: 8px; letter-spacing: -0.01em; }
+  h2 .num { color: var(--gold); margin-right: 8px; }
+  .section-intro { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 18px; }
+  h3 { font-size: 1.02rem; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0 20px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--ink-soft); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  code { background: var(--border); padding: 1px 6px; border-radius: 4px; font-size: 0.88em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok-fg); border-color: var(--ok-border); }
+  .badge.no { background: var(--no-bg); color: var(--no-fg); border-color: var(--no-border); }
+  .badge.ask { background: var(--ask-bg); color: var(--ask-fg); border-color: var(--ask-border); }
+  .q { border: 1px solid var(--border); border-left: 3px solid var(--gold-soft); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; background: var(--surface); }
+  .q .question { font-weight: 600; margin-bottom: 8px; font-size: 14.5px; }
+  .q .answer { font-size: 14px; color: var(--ink-soft); margin: 0; }
+  .q .answer strong { color: var(--ink); }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin-bottom: 6px; font-size: 15px; }
+  .flag { background: var(--ask-bg); border: 1px solid var(--ask-border); color: var(--ask-fg); border-radius: 10px; padding: 14px 18px; font-size: 14px; margin: 18px 0; }
+  .flag strong { color: inherit; }
+  .toc { display: grid; gap: 6px; font-size: 14px; margin-top: 8px; }
+  .toc a { color: var(--ink-soft); text-decoration: none; }
+  .toc a:hover { color: var(--gold); }
+  footer.doc-foot { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--ink-soft); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc-head">
+    <p class="eyebrow">Prepared for the mobile app team · web ↔ app sync</p>
+    <h1>NeuroAtlas Web — Handover &amp; Sync Meeting Prep</h1>
+    <p class="meta">
+      Covers the current state of <strong>neuroatlas-web</strong> (the marketing site + waitlist,
+      not yet a logged-in product) and a point-by-point response to your sync checklist.
+      Every fact below is read directly from the repository and its lockfile — where something
+      isn't built yet, it says so plainly rather than guessing.
+    </p>
+    <div class="toc">
+      <a href="#stack">1. Current tech stack</a>
+      <a href="#reality">2. What actually exists today (the honest baseline)</a>
+      <a href="#checklist">3. Your checklist, answered</a>
+      <a href="#extra">4. Questions we'd add for the meeting</a>
+    </div>
+  </header>
+
+  <h2 id="stack"><span class="num">1</span>Current tech stack</h2>
+  <p class="section-intro">Exact versions, read from the lockfile — not the loose <code>^</code> ranges in package.json.</p>
+
+  <table>
+    <tr><th>Layer</th><th>Choice</th><th>Version</th></tr>
+    <tr><td>Framework</td><td>Next.js (App Router)</td><td>16.3.2</td></tr>
+    <tr><td>UI runtime</td><td>React</td><td>19.2.8</td></tr>
+    <tr><td>Language</td><td>TypeScript</td><td>5.9.3</td></tr>
+    <tr><td>Styling</td><td>Tailwind CSS v4</td><td>4.3.3</td></tr>
+    <tr><td>Motion</td><td>Framer Motion, Lenis (smooth scroll)</td><td>13.4.0 / 1.3.26</td></tr>
+    <tr><td>3D</td><td>three.js + React Three Fiber + drei</td><td>0.185.1 / 9.7.0 / 10.7.8</td></tr>
+    <tr><td>CMS</td><td>Sanity (content only — see below)</td><td>6.15.0</td></tr>
+    <tr><td>Payments (SDK installed, not wired up)</td><td>razorpay (server SDK)</td><td>2.9.8</td></tr>
+    <tr><td>Repo host</td><td>GitHub, private</td><td>—</td></tr>
+    <tr><td>Hosting / deploy target</td><td><span class="badge ask">ask them</span> no Vercel project file or CI config committed to the repo</td><td>—</td></tr>
+  </table>
+
+  <div class="flag">
+    <strong>Since this doc was first drafted:</strong> <code>stripe</code> and
+    <code>@stripe/stripe-js</code> — leftover scaffolding from an earlier direction that was never
+    actually referenced anywhere in the code — have been removed. <code>razorpay</code> is now an
+    explicit dependency, matching our actual plan, though <strong>no integration code exists
+    yet</strong> — installing the SDK is not the same as wiring up checkout, and that work hasn't
+    started. <code>zustand</code> and <code>@tanstack/react-query</code> are still installed but
+    unused; flagging again in case they cause the same confusion Stripe did.
+  </div>
+
+  <h2 id="reality"><span class="num">2</span>What actually exists today</h2>
+  <p class="section-intro">
+    The honest baseline the checklist needs to be read against: this is currently a
+    <strong>marketing site with a waitlist form</strong>, not an authenticated product with user
+    accounts. Almost none of the sync machinery below exists yet — that's not an oversight, it's
+    the actual current scope.
+  </p>
+
+  <h3>Routes</h3>
+  <p>All server-rendered marketing pages — no authenticated area exists:</p>
+  <p><code>/</code> <code>/about</code> <code>/band</code> <code>/contact</code> <code>/faq</code>
+  <code>/for-organisations</code> <code>/how-it-works</code> <code>/inside-the-app</code>
+  <code>/journal</code> <code>/journal/[slug]</code> <code>/legal/privacy-policy</code>
+  <code>/legal/terms-of-use</code> <code>/pricing</code> <code>/privacy</code>
+  <code>/request-access</code> <code>/the-science</code> <code>/studio</code> (Sanity CMS admin)</p>
+
+  <h3>API routes — what they actually do</h3>
+  <table>
+    <tr><th>Route</th><th>Behavior today</th></tr>
+    <tr><td><code>/api/waitlist</code></td><td>Accepts a POST, waits 1s, returns <code>{success:true}</code>. <strong>No database write, no persistence at all.</strong> This is the pilot-program lead capture on <code>/pricing</code>.</td></tr>
+    <tr><td><code>/api/newsletter</code></td><td>Same shape — simulated success only.</td></tr>
+    <tr><td><code>/api/contact</code></td><td>Same shape — simulated success only.</td></tr>
+    <tr><td><code>/api/draft-mode/enable</code></td><td>Real — enables Next.js Draft Mode for Sanity content preview. Unrelated to users/auth.</td></tr>
+  </table>
+
+  <h3>Database</h3>
+  <p><span class="badge no">none</span> There is no database of any kind connected to this app — no Postgres, no Supabase, no Firestore. The three "lead capture" routes above don't persist anything anywhere yet.</p>
+
+  <h3>Authentication</h3>
+  <p><span class="badge no">none</span> No auth provider, no login/signup flow, no session/cookie handling, no user table. Searched the entire codebase to confirm — there is nothing to map to a schema yet.</p>
+
+  <h3>CMS (Sanity) — for context, not user data</h3>
+  <p>Sanity powers the <code>/journal</code> blog and its <code>/studio</code> editor — article content only (title, slug, body, images). It has no concept of user accounts, pilot status, or subscriptions, and isn't a candidate for that role.</p>
+
+  <h3>Payments</h3>
+  <p><span class="badge ask">SDK only</span> <code>razorpay</code> is installed as a dependency, but there is no checkout flow, no API keys configured, and no route that calls it. The <code>/pricing</code> page's "Foundation Pilot" card is still a waitlist form only, deliberately structured so it can become a real subscription grid later — the checkout/Razorpay work hasn't started.</p>
+
+  <h3>Mobile app / deep linking</h3>
+  <p><span class="badge no">none</span> Nothing in this repository references a mobile app, Universal Links, App Links, or a magic-link redirect target. If a mobile app codebase already exists elsewhere, it's not something we have visibility into from this side.</p>
+
+  <h2 id="checklist"><span class="num">3</span>Your checklist, answered</h2>
+  <p class="section-intro">Point by point, in your original order and grouping.</p>
+
+  <h3>1. Authentication &amp; Identity</h3>
+
+  <div class="q">
+    <div class="question">Primary Auth Provider — which service for cross-platform identity?</div>
+    <p class="answer"><span class="badge ask">decide together</span> <strong>Not chosen yet.</strong> No auth provider is wired into the web app at all. This is a joint decision — whatever you're already using or planning for the mobile app (Supabase, Clerk, Firebase) is the strongest input here, since the web side is starting from zero and can adopt whichever SDK the app team already has working.</p>
+  </div>
+  <div class="q">
+    <div class="question">Environment Keys — dev/prod API keys, Client IDs, API URLs</div>
+    <p class="answer"><span class="badge no">n/a yet</span> Nothing to provide until the provider above is chosen. Once it is, we'll need dev and prod keys from whoever owns that account.</p>
+  </div>
+  <div class="q">
+    <div class="question">Database Schema Matching — exact unique user ID field name</div>
+    <p class="answer"><span class="badge ask">need this from you</span> There is no user table on the web side yet, so there's no existing field name to conflict with — we can match whatever convention (<code>id</code>, <code>user_id</code>, <code>uid</code>) the app/database side already uses.</p>
+  </div>
+
+  <h3>2. Database &amp; State Management</h3>
+
+  <div class="q">
+    <div class="question">Hosting &amp; Access — where's the central database, connection strings/endpoints?</div>
+    <p class="answer"><span class="badge ask">need this from you</span> No database exists on the web side. If the mobile app already has one provisioned, that's almost certainly the "single source of truth" this checklist is asking about — we'd connect to it rather than stand up a second one.</p>
+  </div>
+  <div class="q">
+    <div class="question">Pilot User Flagging — exact field name for the /api/waitlist route to set</div>
+    <p class="answer"><span class="badge no">not built</span> <code>/api/waitlist</code> currently only simulates success and writes nothing anywhere. Once we know the database and the field name/convention, wiring up a real write here is a small, contained change.</p>
+  </div>
+  <div class="q">
+    <div class="question">Offline State — mobile behavior if web changes subscription/pilot status</div>
+    <p class="answer"><span class="badge ask">app-side question</span> This is really a question for the mobile app's own sync/caching layer rather than something the web side controls — flagging it here so it's on the agenda, not answering on your behalf.</p>
+  </div>
+
+  <h3>3. Subscription Routing &amp; Payments (Razorpay)</h3>
+
+  <div class="q">
+    <div class="question">App Store Compliance Strategy — Reader App vs. native billing alongside web</div>
+    <p class="answer"><span class="badge ask">decide together</span> Not decided. This materially changes what the web checkout flow needs to do post-payment (e.g. whether it needs an "Open in App" handoff at all), so it's worth settling early in the meeting.</p>
+  </div>
+  <div class="q">
+    <div class="question">Entitlement Engine — RevenueCat or similar to sync Razorpay → mobile?</div>
+    <p class="answer"><span class="badge ask">need this from you</span> Not integrated on the web side. If the app team is already using RevenueCat (or an equivalent) for App Store/Play billing, we'd want to fit Razorpay web purchases into that same entitlement layer rather than inventing a parallel one.</p>
+  </div>
+  <div class="q">
+    <div class="question">Razorpay Credentials — who generates Sandbox/Test keys?</div>
+    <p class="answer"><span class="badge ask">need this from you</span> The <code>razorpay</code> npm package is installed, but no account, keys, or integration code exist yet. We'll need the account owner to generate Sandbox keys and share <code>RAZORPAY_KEY_ID</code> — the secret should go directly into our deploy environment's secret store, not passed over chat/email.</p>
+  </div>
+  <div class="q">
+    <div class="question">Webhook Handling — who builds the listener that unlocks mobile features on payment success?</div>
+    <p class="answer"><span class="badge ask">decide together</span> Not built. This is a natural fit for a new <code>/api/razorpay/webhook</code> route on the web side (same pattern as the existing API routes) <em>if</em> the shared database lives somewhere the web deployment can reach — depends on the hosting/access answer above.</p>
+  </div>
+
+  <h3>4. Deep Linking &amp; App Handoff</h3>
+
+  <div class="q">
+    <div class="question">Universal Links (iOS) / App Links (Android)</div>
+    <p class="answer"><span class="badge ask">need this from you</span> Not configured on the web side — no <code>apple-app-site-association</code> or <code>assetlinks.json</code> exists in this repo. We'll need the exact configured link values from whoever owns the mobile app's build config.</p>
+  </div>
+  <div class="q">
+    <div class="question">Magic Link Redirects — exact redirect URL for passwordless login handback</div>
+    <p class="answer"><span class="badge ask">depends on auth choice</span> Depends entirely on the auth provider decision above — most providers (Clerk, Supabase, Firebase) generate this redirect URL as part of their own setup rather than it being something we invent independently.</p>
+  </div>
+
+  <h2 id="extra"><span class="num">4</span>Questions we'd add for the meeting</h2>
+  <p class="section-intro">Gaps the checklist doesn't cover, based on what's actually in this repo today.</p>
+  <ul>
+    <li><strong>Does a mobile app codebase already exist?</strong> Nothing in this repo references one — worth confirming its current state (shipped, in TestFlight, still in design) so we scope the sync work against reality.</li>
+    <li><strong>Hosting for the web app.</strong> No Vercel project or CI config is committed here — where is this actually meant to deploy, and who owns that account?</li>
+    <li><strong>Data residency / compliance for the India pilot.</strong> Given the pilot program targets India specifically, is there a DPDP Act (India's data protection law) consideration for where user data physically lives, separate from the general "which database" question?</li>
+    <li><strong>Sequencing.</strong> Given almost nothing above is built yet, what's the minimum slice that has to exist before the pilot can actually launch — auth + payments, or is a simpler manual/CSV-export flow acceptable for a first cohort?</li>
+    <li><strong>Analytics/crash reporting parity.</strong> Not part of the sync checklist, but worth confirming whether events need to be attributed to the same user across web and app from day one, since that also depends on the identity provider chosen above.</li>
+  </ul>
+
+  <footer class="doc-foot">
+    Prepared from the <code>neuroatlas-web</code> repository as of the current commit — every "not built" claim above was verified by searching the actual source, not assumed.
+  </footer>
+
+</div>
+</body>
+</html>
