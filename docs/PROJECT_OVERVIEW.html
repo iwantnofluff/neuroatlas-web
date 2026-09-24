@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeuroAtlas Web — Project Overview</title>
+<style>
+  :root {
+    --bg: #fbfaf8;
+    --surface: #ffffff;
+    --border: #e4e0d8;
+    --ink: #1c1a17;
+    --ink-soft: #55504a;
+    --gold: #a9812f;
+    --gold-soft: #c9a44c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14120f; --surface: #1c1a17; --border: #322e28;
+      --ink: #f3efe8; --ink-soft: #b8b2a6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14120f; --surface: #1c1a17; --border: #322e28;
+    --ink: #f3efe8; --ink-soft: #b8b2a6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 20px 96px; }
+  header.doc-head { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 36px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .meta { color: var(--ink-soft); font-size: 14.5px; }
+  .meta strong { color: var(--ink); }
+  h2 { font-size: 1.25rem; margin: 44px 0 6px; padding-top: 8px; letter-spacing: -0.01em; }
+  h2 .num { color: var(--gold); margin-right: 8px; }
+  .section-intro { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 18px; }
+  h3 { font-size: 1.02rem; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0 20px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--ink-soft); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  code { background: var(--border); padding: 1px 6px; border-radius: 4px; font-size: 0.88em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin-bottom: 6px; font-size: 15px; }
+  .toc { display: grid; gap: 6px; font-size: 14px; margin-top: 8px; }
+  .toc a { color: var(--ink-soft); text-decoration: none; }
+  .toc a:hover { color: var(--gold); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .card h4 { margin: 0 0 6px; font-size: 14.5px; }
+  .card p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+  footer.doc-foot { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--ink-soft); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc-head">
+    <p class="eyebrow">Project overview</p>
+    <h1>NeuroAtlas Web — Tech Stack &amp; What's Built</h1>
+    <p class="meta">
+      The current state of <strong>neuroatlas-web</strong>, NeuroAtlas's marketing site. Every
+      fact below is read directly from the repository and its lockfile, not from memory.
+    </p>
+    <div class="toc">
+      <a href="#about">1. What NeuroAtlas is</a>
+      <a href="#stack">2. Tech stack</a>
+      <a href="#pages">3. Pages built</a>
+      <a href="#systems">4. Key systems</a>
+    </div>
+  </header>
+
+  <h2 id="about"><span class="num">1</span>What NeuroAtlas is</h2>
+  <p>
+    NeuroAtlas is a screenless stress-management wearable — the <strong>NA·01 band</strong> — that
+    reads physiological signal (HRV, breathing, stress load) and surfaces it through a companion
+    app. The website is the pre-launch marketing site: it introduces the product, explains how it
+    works, and captures leads for an India-focused pilot program ahead of a real purchase flow.
+  </p>
+
+  <h2 id="stack"><span class="num">2</span>Tech stack</h2>
+  <p class="section-intro">Exact versions, read from the lockfile — not the loose <code>^</code> ranges in package.json.</p>
+
+  <table>
+    <tr><th>Layer</th><th>Choice</th><th>Version</th></tr>
+    <tr><td>Framework</td><td>Next.js (App Router)</td><td>16.3.2</td></tr>
+    <tr><td>UI runtime</td><td>React</td><td>19.2.8</td></tr>
+    <tr><td>Language</td><td>TypeScript</td><td>5.9.3</td></tr>
+    <tr><td>Styling</td><td>Tailwind CSS v4</td><td>4.3.3</td></tr>
+    <tr><td>Motion</td><td>Framer Motion, Lenis (smooth scroll)</td><td>13.4.0 / 1.3.26</td></tr>
+    <tr><td>3D</td><td>three.js + React Three Fiber + drei</td><td>0.185.1 / 9.7.0 / 10.7.8</td></tr>
+    <tr><td>CMS</td><td>Sanity (powers the Journal blog)</td><td>6.15.0</td></tr>
+    <tr><td>Payments</td><td>razorpay (SDK installed, integration not yet built)</td><td>2.9.8</td></tr>
+    <tr><td>Repo host</td><td>GitHub, private</td><td>—</td></tr>
+  </table>
+
+  <h2 id="pages"><span class="num">3</span>Pages built</h2>
+
+  <div class="card">
+    <h4>/ — Homepage</h4>
+    <p>Full-screen video hero, real product footage. Scroll-driven sections: the "Method" cards, a
+    bento grid of secondary signals ("Beyond Heart Rate"), a 3D band reveal ("Built To Read You")
+    with the real GLTF model, and a spotlight photo section.</p>
+  </div>
+  <div class="card">
+    <h4>/band — The NA·01 Band</h4>
+    <p>Dedicated product page: a scroll-driven 3D hero showcase of the band model, an editorial
+    "what it doesn't do" section, a design/build section, a Signal vs. Noise comparison sequence,
+    an interactive 3D "Specs" section (click-through reticles reveal sensors/battery/connectivity/
+    dimensions/compatibility with the model rotating to match), and a closing curtain-reveal CTA.</p>
+  </div>
+  <div class="card">
+    <h4>/the-science — The Science</h4>
+    <p>A dedicated 3D "living signal" hero, an HRV explainer section, a section on the limits of
+    consumer wearables, the neuroscience research basis, and a closing section.</p>
+  </div>
+  <div class="card">
+    <h4>/how-it-works</h4>
+    <p>Hero plus a feature-split walkthrough of the read → interpret → act loop.</p>
+  </div>
+  <div class="card">
+    <h4>/inside-the-app</h4>
+    <p>Feature-split breakdown of the companion mobile app's own screens/features.</p>
+  </div>
+  <div class="card">
+    <h4>/for-organisations</h4>
+    <p>B2B pitch page with a leadership dashboard section, aimed at companies piloting the band
+    for teams.</p>
+  </div>
+  <div class="card">
+    <h4>/about</h4>
+    <p>Founder's story section plus company background.</p>
+  </div>
+  <div class="card">
+    <h4>/pricing — Pilot waitlist</h4>
+    <p>India pilot-program capture page: hero, a single "Foundation Pilot" feature card, and an
+    email waitlist form — structured so the same card can become a real Razorpay subscription grid
+    later without a rebuild.</p>
+  </div>
+  <div class="card">
+    <h4>/journal + /journal/[slug]</h4>
+    <p>Blog index and article pages, content managed through Sanity (see below), with a
+    <code>/studio</code> route for the CMS editor itself.</p>
+  </div>
+  <div class="card">
+    <h4>/contact, /faq, /request-access, /privacy, /legal/privacy-policy, /legal/terms-of-use</h4>
+    <p>Standard supporting pages — contact form, FAQ accordion, access request, and legal copy.</p>
+  </div>
+
+  <h2 id="systems"><span class="num">4</span>Key systems</h2>
+
+  <h3>3D band model</h3>
+  <p>
+    A real CAD-derived GLTF model of the NA·01 renders across three scenes (homepage reveal, the
+    /band hero showcase, and the /band interactive Specs section), sharing one component
+    (<code>Band.tsx</code>) and one lighting/environment rig. Every part — housing, button,
+    electrode plates, optical window, charging pads — has its own physically-based material tuned
+    to the real product spec (anodised navy aluminium, cobalt button, polished steel, gold
+    contacts), lit by a procedural studio environment (no external HDRI dependency), with a
+    grounding contact shadow under the module.
+  </p>
+
+  <h3>Global film-grain texture</h3>
+  <p>
+    A subtle, animated noise overlay across every page, tuned to read as cinematic texture over
+    the site's dark navy sections while staying invisible over its light cream sections — a single
+    lightweight SVG asset, no per-page logic.
+  </p>
+
+  <h3>Waitlist capture</h3>
+  <p>
+    <code>/api/waitlist</code>, isolated from the general newsletter signup so pilot leads and
+    general subscribers don't mix once real persistence is added.
+  </p>
+
+  <h3>Content (Sanity CMS)</h3>
+  <p>
+    The Journal blog's articles are authored and edited in Sanity Studio at <code>/studio</code>,
+    with live preview wired through Next.js Draft Mode.
+  </p>
+
+  <footer class="doc-foot">
+    Prepared from the <code>neuroatlas-web</code> repository as of the current commit.
+  </footer>
+
+</div>
+</body>
+</html>
