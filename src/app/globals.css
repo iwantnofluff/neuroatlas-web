@@ -76,6 +76,18 @@
   --color-gold-muted: #998b6f;
   --color-line: #e3dac2;
   --color-line-dark: rgb(242 242 242 / 10%);
+  /* From the "Masterclass" Figma file (Ok6qYziHfAl50GRs0YRC6O) — the
+     body-silhouette background layer's own named fill style,
+     "Masterclass Gradient", is linear-gradient(180deg, #998B6F 0%,
+     #08243F 100%). The first stop is already --color-gold-muted; the
+     second isn't an existing brand color, so it gets its own token
+     here rather than a hardcoded hex at the call site. */
+  --color-navy-abyss: #08243f;
+  --gradient-masterclass: linear-gradient(
+    180deg,
+    var(--color-gold-muted) 0%,
+    var(--color-navy-abyss) 100%
+  );
   /* shadcn semantic tokens, reconciled to the brand palette above so
      any shadcn component (Button, Dialog, Card, …) inherits the
      navy/gold/cream look instead of generic Tailwind grayscale. */
@@ -127,6 +139,7 @@
   --color-gold-muted: var(--color-gold-muted);
   --color-line: var(--color-line);
   --color-line-dark: var(--color-line-dark);
+  --color-navy-abyss: var(--color-navy-abyss);
 
   /* Token names unchanged (font-serif/font-sans are the Tailwind utility
      classes every component in this codebase already calls) — only the

@@ -17,8 +17,13 @@ import { cn } from "@/lib/utils";
 // Four scattered, differently sized/rotated tiles rather than a tidy grid
 // — see the "Inside the app" section below, and the client's own "Float
 // Boxes" sketch.
+//
+// `silhouette` on tile 0 only, for now — a demo of the body-silhouette
+// background layer (Figma node 8802:8043, "B") on ONE card while its
+// actual placement across the set is still being decided. Not a claim
+// that this is the right card for it.
 const floatTiles = [
-  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6" },
+  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6", silhouette: true },
   { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3" },
   { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6" },
   { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
@@ -155,7 +160,37 @@ export default function Home() {
                     "card-glass absolute bg-transparent transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:bg-gold/10",
                     tile.className,
                   )}
-                />
+                >
+                  {tile.silhouette && (
+                    // Background layer, not the card's content — a real
+                    // aspect-ratio vector (168.26:396, from the downloaded
+                    // Figma asset), masked so its actual silhouette shape
+                    // shows rather than its bounding box. Sized by height
+                    // only (width follows from aspect-ratio) and centered
+                    // on both axes via inset-0 + m-auto, so it reads as
+                    // inset within the card rather than filling it.
+                    // --gradient-masterclass + opacity-30 are this node's
+                    // own "Masterclass Gradient" fill and 0.3 layer
+                    // opacity, not filling the mask's own baked color
+                    // (the mask file is a solid, colorless shape — see
+                    // its own header comment).
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto opacity-30"
+                      style={{
+                        backgroundImage: "var(--gradient-masterclass)",
+                        WebkitMaskImage: "url(/images/body-silhouette-mask.svg)",
+                        maskImage: "url(/images/body-silhouette-mask.svg)",
+                        WebkitMaskRepeat: "no-repeat",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center",
+                        maskPosition: "center",
+                        WebkitMaskSize: "contain",
+                        maskSize: "contain",
+                      }}
+                    />
+                  )}
+                </Reveal>
               ))}
             </Parallax>
             {/* Copy: the block itself centers within the column, but the
