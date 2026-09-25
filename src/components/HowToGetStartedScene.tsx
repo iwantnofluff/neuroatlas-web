@@ -68,26 +68,71 @@ import {
  * if it's reverted to a side-rail-beside-text layout, full visibility
  * is correct again and this whole note is the thing that's stale, not
  * the crop.
+ *   Why 200mm specifically, not the full length or some other crop: the
+ *   on-screen width this camera produces is fixed by the strap's own
+ *   22mm width against whatever height it frames — width_px =
+ *   viewportHeight_px * (22 / framed_height_mm) — so at a typical 900px
+ *   viewport, framing the full 260.5mm+margin (the old 320mm) gives
+ *   ~62px, and framing the bare 260.5mm with zero margin only gets to
+ *   ~76px. Both read as a hairline rule next to a full text column on
+ *   either side, not a spine substantial enough to hold the centre.
+ *   Only letting the frame crop the length — trading unseen tips for
+ *   width — moves the number meaningfully: 200mm framed gets to ~99px,
+ *   which is the number that was actually asked for and confirmed
+ *   worth the trade before this reframing happened at all.
  *
- * WORLD SCALE (RIG_SCALE): every other Band scene in this codebase
- * (BuiltToReadYouScene/BandScrollScene/TheSpecsScene) renders this same
- * glb at a ~30-34x scale, with their shared light rig tuned against
- * that. Early on this file used the model's raw, unscaled meter units
- * (for convenient camera-fitting math) and reused those scenes' light
- * positions/intensities verbatim — that did NOT reproduce their look.
- * The reason: at raw scale the strap's ~0.13m half-height is tiny next
- * to the lights' ~4-4.7 unit distance from the origin, so instead of a
- * localized specular hotspot (what those lights produce on a large-in-
- * frame object), the same lights blanket the whole tiny strap in one
- * undifferentiated highlight. Confirmed empirically (isolation testing:
- * disabling each light group in turn, sampling actual rendered pixels)
- * before reaching that conclusion, not assumed from the theory alone.
- * Fix: wrap just the meshes (not the lights) in the same ~32x scale via
- * RIG_SCALE, so the identical light rig sees the identical world-scale
- * relationship it was tuned against. CAMERA_TARGET_HEIGHT is a world-
- * space (post-RIG_SCALE) measurement as a result; the module's travel
- * (moduleStopY) stays in pre-scale LOCAL coordinates inside the scaled
- * group, so it doesn't need to know about RIG_SCALE at all.
+ * WORLD SCALE (RIG_SCALE) AND THE LOCAL/WORLD BOUNDARY — the single
+ * easiest mistake to reintroduce in this file: every other Band scene
+ * in this codebase (BuiltToReadYouScene/BandScrollScene/TheSpecsScene)
+ * renders this same glb at a ~30-34x scale, with their shared light rig
+ * tuned against that. Early on this file used the model's raw, unscaled
+ * meter units (for convenient camera-fitting math) and reused those
+ * scenes' light positions/intensities verbatim — that did NOT reproduce
+ * their look. The reason: at raw scale the strap's ~0.13m half-height is
+ * tiny next to the lights' ~4-4.7 unit distance from the origin, so
+ * instead of a localized specular hotspot (what those lights produce on
+ * a large-in-frame object), the same lights blanket the whole tiny strap
+ * in one undifferentiated highlight. Confirmed empirically (isolation
+ * testing: disabling each light group in turn, sampling actual rendered
+ * pixels) before reaching that conclusion, not assumed from the theory
+ * alone. Fix: wrap just the meshes (not the lights) in the same ~32x
+ * scale via <group scale={RIG_SCALE}>, so the identical light rig sees
+ * the identical world-scale relationship it was tuned against.
+ *   That single group is a hard boundary between two unit systems in
+ *   this file, and everything added here has to know which side of it
+ *   it's on:
+ *     - WORLD-SPACE (post-scale) — anything that is a SIBLING of that
+ *       group, not a child of it: the camera and every light. These
+ *       don't get RIG_SCALE applied automatically, so any real-mm
+ *       measurement feeding them has to be multiplied by RIG_SCALE by
+ *       hand. CAMERA_TARGET_HEIGHT does this correctly: (mm/1000) *
+ *       RIG_SCALE.
+ *     - LOCAL (pre-scale) — anything that is a CHILD of that group:
+ *       StrapPiece, ModuleTravel, and by extension moduleStopY(). The
+ *       group's own `scale` prop applies RIG_SCALE to these
+ *       automatically and exactly once. A real-mm measurement feeding
+ *       one of these needs ONLY the mm-to-meters conversion (/1000) —
+ *       multiplying by RIG_SCALE again double-counts it.
+ *   This second case was wrong here once already, and it's worth
+ *   describing exactly how it failed because the failure mode is
+ *   silent: moduleStopY() computed (moduleStopMM(index)/1000) *
+ *   RIG_SCALE and returned that as ModuleTravel's own
+ *   group.position.y — but that group is a CHILD of <group
+ *   scale={RIG_SCALE}>, so its parent's scale was ALSO applied on top,
+ *   putting the module at world Y=56.32 instead of the intended 1.76 —
+ *   32x further from the origin than the camera's own frame covers.
+ *   Nothing crashed and nothing looked obviously wrong in isolation:
+ *   `group.current.position.y` held a perfectly plausible-looking
+ *   number, the console logs said exactly what the formula predicted,
+ *   and only a scene-graph traversal reading the group's actual
+ *   `matrixWorld` (not its local `.position`) surfaced the real value.
+ *   It was only caught by diffing two screenshots at different scroll
+ *   positions and noticing the module's own column was pixel-identical
+ *   between them — it had been rendering off-canvas the entire time.
+ *   Before adding any new positioned element here: decide which side of
+ *   the <group scale={RIG_SCALE}> boundary it lives on FIRST, then
+ *   write its coordinates in that unit system, rather than copying a
+ *   nearby constant and assuming it's the right convention.
  *
  * LIGHT RIG: beyond the scale fix above, this strap faces the camera
  * dead-on for the ENTIRE scroll (no rotation, ever) — unlike the other
@@ -98,6 +143,22 @@ import {
  * light tinting the wash further. Both were trimmed specifically for a
  * surface that's lit face-on 100% of the time (see the light rig's own
  * comment further down for the exact values and how they were found).
+ *
+ * MODULE TRAVEL RANGE (MODULE_TRAVEL_HALF_RANGE_MM, defined in
+ * howToGetStartedProgress.ts — read that constant's own comment for the
+ * full derivation): 55mm each way from centre, not the 70mm an earlier
+ * pass used. Not a generic safety margin — computed directly against
+ * the fixed header (72px tall) sitting on top of the pinned canvas at
+ * the module's TOP stop specifically. At a typical 900px viewport the
+ * header eats 16mm of the 200mm frame's top edge, and the module itself
+ * is 42.8mm tall (±21.4mm) — so 70mm (module top edge at 91.4mm) pushed
+ * the module's own top edge behind the header, not just the strap's
+ * deliberate bleed. 55mm keeps the module's top edge at 76.4mm, clear
+ * of the header with margin, WHILE the strap keeps bleeding past both
+ * edges regardless. The distinction matters: the strap is decoration
+ * that's supposed to run off-frame now (see FRAMING above); the module
+ * is a functional position indicator that isn't, and needs to stay
+ * fully readable at every one of its four stops.
  *
  * MATERIAL (STRAP_MATERIAL_PROPS): metalness 0, roughness 0.75, color
  * #041E42. This went through a wrong intermediate state worth recording
