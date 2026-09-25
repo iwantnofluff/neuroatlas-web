@@ -72,28 +72,28 @@ export function CeoBreathScreen({ className }: { className?: string }) {
         </div>
       </div>
 
-      {/* Back arrow + step progress */}
-      <div className="relative mt-6 flex items-center justify-center px-6">
-        <button
-          type="button"
-          aria-label="Back"
-          className="absolute left-6 text-gold-soft"
-        >
-          <ChevronLeft className="size-6" />
+      {/* Back arrow + step progress — a 3-column grid (not absolute
+          positioning over a centered flex row) so the back button and
+          the progress segments sit in separate tracks and can never
+          visually overlap, however narrow the phone renders. */}
+      <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center px-6">
+        <button type="button" aria-label="Back" className="justify-self-start text-gold-soft">
+          <ChevronLeft className="size-5" />
         </button>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 justify-self-center">
           <span
-            className="h-1 w-6 rounded-full"
+            className="h-1 w-5 rounded-full"
             style={{ background: "linear-gradient(90deg, #998b6f, var(--color-gold))" }}
           />
           <span
-            className="h-1 w-6 rounded-full"
+            className="h-1 w-5 rounded-full"
             style={{ background: "linear-gradient(90deg, #998b6f, var(--color-gold))" }}
           />
-          <span className="h-1 w-6 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
-          <span className="h-1 w-6 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
-          <span className="h-1 w-6 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
         </div>
+        <div />
       </div>
       <div className="mt-4 border-b border-white/10" />
 
