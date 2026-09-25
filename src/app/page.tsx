@@ -19,13 +19,16 @@ import { cn } from "@/lib/utils";
 // — see the "Inside the app" section below, and the client's own "Float
 // Boxes" sketch.
 //
-// `silhouette` on tile 0 only, for now — a demo of the body-silhouette
-// background layer (Figma node 8802:8043, "B") on ONE card while its
-// actual placement across the set is still being decided. Not a claim
-// that this is the right card for it.
+// `silhouette` on tile 1 (the "top-right", h-52%/w-42% one) — the
+// tallest/narrowest of the four, and the only one whose own aspect
+// ratio (1.24:1) comes anywhere close to the silhouette's real 168.26 x
+// 396 (~1:2.35). Tile 0 (h-42%/w-46%) is actually slightly WIDER than
+// tall, which is why it read as adrift with dead space on either side
+// the first time. Not a claim that tile 1 is the semantically right
+// card, only the right shape for a tall vector.
 const floatTiles = [
-  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6", silhouette: true },
-  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3" },
+  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6" },
+  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
   { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6" },
   { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
 ];
