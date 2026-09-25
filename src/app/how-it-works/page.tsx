@@ -2,6 +2,7 @@ import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
+import { VitalsDashboard } from "@/components/VitalsDashboard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -130,6 +131,11 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
+        media={
+          <div className="card-glass-light flex size-full items-center justify-center p-6">
+            <VitalsDashboard />
+          </div>
+        }
       />
 
       {/* 4. Intervene - heading option A ("Built With Neuroscience") over
