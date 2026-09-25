@@ -415,16 +415,28 @@ export function BandScrollShowcase() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
-  // comment for the full mechanics: "start start" leaves scrollYProgress
-  // clamped at exactly 0 for the whole approach window while this
-  // taller-than-viewport wrapper is still scrolling up from below (its
-  // content already on screen), which for anything gated by progress
-  // rather than always-on renders as genuinely blank/frozen for that
-  // whole stretch, not just briefly.
+  // offset ["start start", "end end"], not ["start end", "end end"] —
+  // FeatureSplitSection.tsx's own comment argues for "start end"
+  // specifically because ITS wrapper sits further down the page,
+  // approached by scrolling up from below with the wrapper's own start
+  // still off-screen at load; "start start" would leave its progress
+  // clamped at 0 for that whole approach. This component is different:
+  // it's always the very FIRST thing in the page (see band/page.tsx —
+  // nothing but a fixed, non-flow header sits above it), so its own
+  // wrapper's top already coincides with the viewport's top at the
+  // moment the page loads, scroll position 0. With "start end", that
+  // "start" vs. "end" pairing never actually happens at a real
+  // (non-negative) scroll position — the crossing point it's defined
+  // against is already behind the page by the time scroll can be 0 — so
+  // progress opens already ~35% of the way in before the user scrolls
+  // at all (confirmed live: Cognitive Load's own [0.25, 0.51] reveal
+  // window was already underway, its card visibly covering Stress
+  // Age's, right at page load with zero scroll). "start start" instead
+  // aligns progress 0 with the genuine start of the page, so Stress Age
+  // reads clean and alone until the user actually scrolls.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start end", "end end"],
+    offset: ["start start", "end end"],
   });
 
   return (
