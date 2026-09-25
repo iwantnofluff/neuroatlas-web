@@ -3,6 +3,7 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
+import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import {
@@ -112,12 +113,55 @@ function FitOrthographicCamera() {
 // than a polished dielectric sheen.
 const STRAP_MATERIAL_PROPS = {
   color: "#041E42",
-  roughness: 0.75,
+  // Full-scale roughness factor, not the real surface value — the woven
+  // roughness map below encodes the actual 0.6-0.9 variation per pixel
+  // (meshStandardMaterial's roughnessMap multiplies this scalar by the
+  // texture's green channel), so this must stay at 1 or it would double
+  // up on top of the map's own baked values.
+  roughness: 1,
   metalness: 0,
   side: THREE.DoubleSide,
 } as const;
-const WOVEN_TEXTURE_REPEAT: readonly [number, number] = [4, 40];
-const STRAP_BUMP_SCALE = 0.35;
+
+// The strap's real dimensions (confirmed directly against band.glb, not
+// guessed): 22mm wide (X), 260.5mm long (Y). At 1mm per weave cell, a
+// 2x2-cell repeat tile is a 2mm-square period, giving exactly 22/2 = 11
+// tile repeats across the width (22 individual cells) and 260.5/2 =
+// 130.25 repeats along the length.
+const STRAP_WIDTH_MM = 22;
+const STRAP_LENGTH_MM = 260.5;
+const WEAVE_TILE_MM = 2;
+const WOVEN_TEXTURE_REPEAT: readonly [number, number] = [
+  STRAP_WIDTH_MM / WEAVE_TILE_MM,
+  STRAP_LENGTH_MM / WEAVE_TILE_MM,
+];
+
+/** Welds duplicate seam vertices and recomputes smooth normals.
+ *
+ *  The raw strap mesh is a CAD extrusion built from ~19 discrete cross-
+ *  section rings along its length, each with its own hard-baked per-
+ *  facet normals rather than normals shared across ring boundaries —
+ *  confirmed directly (a Node script parsing band.glb): 464 vertices for
+ *  only 371 unique normal directions, and welding by position drops it
+ *  to 284 vertices, meaning ~180 were spatially-duplicate seam vertices
+ *  existing only to carry a discontinuous normal. That discontinuity is
+ *  the real cause of the horizontal "ruler" banding along the strap's
+ *  length under raking light — not a shading style choice, an actual
+ *  faceted-CAD-export bug — so the fix is to weld those seams and
+ *  recompute genuinely smooth normals, not to paint over it with a
+ *  texture. mergeVertices() only merges vertices whose attributes ALL
+ *  match, so the stale per-facet normal attribute has to be deleted
+ *  first or it would itself block the very merge meant to fix it. */
+function useSmoothStrapGeometry(geometry: THREE.BufferGeometry | undefined) {
+  return useMemo(() => {
+    if (!geometry) return undefined;
+    const cloned = geometry.clone();
+    cloned.deleteAttribute("normal");
+    const merged = mergeVertices(cloned);
+    merged.computeVertexNormals();
+    return merged;
+  }, [geometry]);
+}
 
 function useProceduralUVGeometry(geometry: THREE.BufferGeometry | undefined) {
   return useMemo(() => {
@@ -140,47 +184,86 @@ function useProceduralUVGeometry(geometry: THREE.BufferGeometry | undefined) {
   }, [geometry]);
 }
 
-function useWovenBumpTexture() {
+// One 2x2-cell basketweave repeat tile, rendered at a fixed pixel
+// resolution and tiled via RepeatWrapping (see WOVEN_TEXTURE_REPEAT).
+// Cells alternate warp-over/weft-over in a checkerboard; each cell's
+// height is a rounded ridge (a half cosine lobe) running along whichever
+// axis that cell's thread lies on, so adjacent cells read as threads
+// passing over and under each other rather than a flat checker pattern.
+const WEAVE_CELL_PX = 32;
+const WEAVE_TILE_PX = WEAVE_CELL_PX * 2;
+const WEAVE_NORMAL_STRENGTH = 2.2;
+const WEAVE_ROUGHNESS_MIN = 0.6;
+const WEAVE_ROUGHNESS_MAX = 0.9;
+
+function buildWeaveHeightField(): Float32Array {
+  const field = new Float32Array(WEAVE_TILE_PX * WEAVE_TILE_PX);
+  for (let y = 0; y < WEAVE_TILE_PX; y++) {
+    for (let x = 0; x < WEAVE_TILE_PX; x++) {
+      const cellX = Math.floor(x / WEAVE_CELL_PX);
+      const cellY = Math.floor(y / WEAVE_CELL_PX);
+      const warpOver = (cellX + cellY) % 2 === 0;
+      const localX = x % WEAVE_CELL_PX;
+      const localY = y % WEAVE_CELL_PX;
+      const t = (warpOver ? localY : localX) / WEAVE_CELL_PX;
+      field[y * WEAVE_TILE_PX + x] = 0.5 - 0.5 * Math.cos(t * Math.PI * 2);
+    }
+  }
+  return field;
+}
+
+/** Derives a tangent-space normal map and a roughness map from the same
+ *  procedural basketweave height field, via a wrapped (toroidal) central-
+ *  difference gradient so the tile repeats seamlessly under
+ *  RepeatWrapping — the actual "tileable" requirement, not just a
+ *  texture that happens to not have a visible border at one scale. */
+function useWovenMaps() {
   return useMemo(() => {
-    const size = 128;
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
+    const size = WEAVE_TILE_PX;
+    const height = buildWeaveHeightField();
+    const heightAt = (x: number, y: number) =>
+      height[((y % size) + size) % size * size + (((x % size) + size) % size)];
 
-    ctx.fillStyle = "#808080";
-    ctx.fillRect(0, 0, size, size);
+    const normalData = new Uint8ClampedArray(size * size * 4);
+    const roughnessData = new Uint8ClampedArray(size * size * 4);
+    const normal = new THREE.Vector3();
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const dx = (heightAt(x + 1, y) - heightAt(x - 1, y)) * WEAVE_NORMAL_STRENGTH;
+        const dy = (heightAt(x, y + 1) - heightAt(x, y - 1)) * WEAVE_NORMAL_STRENGTH;
+        normal.set(-dx, -dy, 1).normalize();
 
-    const lineWidth = size / 10;
-    const step = size / 6;
+        const i = (y * size + x) * 4;
+        normalData[i] = (normal.x * 0.5 + 0.5) * 255;
+        normalData[i + 1] = (normal.y * 0.5 + 0.5) * 255;
+        normalData[i + 2] = (normal.z * 0.5 + 0.5) * 255;
+        normalData[i + 3] = 255;
 
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = "#ffffff";
-    ctx.globalAlpha = 0.6;
-    for (let offset = -size; offset <= size * 2; offset += step) {
-      ctx.beginPath();
-      ctx.moveTo(offset, 0);
-      ctx.lineTo(offset + size, size);
-      ctx.stroke();
+        const roughness =
+          WEAVE_ROUGHNESS_MAX -
+          (WEAVE_ROUGHNESS_MAX - WEAVE_ROUGHNESS_MIN) * heightAt(x, y);
+        const roughnessByte = roughness * 255;
+        roughnessData[i] = roughnessByte;
+        roughnessData[i + 1] = roughnessByte;
+        roughnessData[i + 2] = roughnessByte;
+        roughnessData[i + 3] = 255;
+      }
     }
 
-    ctx.strokeStyle = "#000000";
-    ctx.globalAlpha = 0.6;
-    for (let offset = -size; offset <= size * 2; offset += step) {
-      ctx.beginPath();
-      ctx.moveTo(offset + size, 0);
-      ctx.lineTo(offset, size);
-      ctx.stroke();
-    }
+    const makeTexture = (data: Uint8ClampedArray) => {
+      const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+      texture.colorSpace = THREE.NoColorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(...WOVEN_TEXTURE_REPEAT);
+      texture.needsUpdate = true;
+      return texture;
+    };
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.NoColorSpace;
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(...WOVEN_TEXTURE_REPEAT);
-    texture.needsUpdate = true;
-    return texture;
+    return {
+      normalMap: makeTexture(normalData),
+      roughnessMap: makeTexture(roughnessData),
+    };
   }, []);
 }
 
@@ -191,16 +274,17 @@ function StrapPiece() {
     nodes: Record<string, THREE.Mesh>;
   };
   const strap = nodes[STRAP_MESH_NAME] as THREE.Mesh | undefined;
-  const geometry = useProceduralUVGeometry(strap?.geometry);
-  const bumpMap = useWovenBumpTexture();
+  const smoothGeometry = useSmoothStrapGeometry(strap?.geometry);
+  const geometry = useProceduralUVGeometry(smoothGeometry);
+  const { normalMap, roughnessMap } = useWovenMaps();
   if (!strap || !geometry) return null;
 
   return (
     <mesh geometry={geometry}>
       <meshStandardMaterial
         {...STRAP_MATERIAL_PROPS}
-        bumpMap={bumpMap ?? undefined}
-        bumpScale={STRAP_BUMP_SCALE}
+        normalMap={normalMap}
+        roughnessMap={roughnessMap}
       />
     </mesh>
   );
