@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type HeroMediaProps = {
@@ -9,6 +10,11 @@ type HeroMediaProps = {
    *  instead. Swapping in the real file later is exactly this one prop. */
   src?: string;
   poster?: string;
+  /** A static photo background for pages that don't have hero footage of
+   *  their own (e.g. /how-it-works) — only used when `src` is absent.
+   *  Renders via next/image (fill + object-cover, priority since it's
+   *  always above the fold) instead of the ambient placeholder. */
+  image?: string;
   className?: string;
   /** Pauses the video on its own first frame instead of autoplaying/
    *  looping — the same "still functions, just instant" convention every
@@ -29,7 +35,7 @@ type HeroMediaProps = {
  * its own component so that swap never touches Hero.tsx's layout — see
  * HERO_VIDEO_SRC at the top of Hero.tsx.
  */
-export function HeroMedia({ src, poster, className, reduceMotion = false }: HeroMediaProps) {
+export function HeroMedia({ src, poster, image, className, reduceMotion = false }: HeroMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -56,6 +62,19 @@ export function HeroMedia({ src, poster, className, reduceMotion = false }: Hero
       >
         <source src={src} />
       </video>
+    );
+  }
+
+  if (image) {
+    return (
+      <Image
+        src={image}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className={cn("absolute inset-0 size-full object-cover", className)}
+      />
     );
   }
 

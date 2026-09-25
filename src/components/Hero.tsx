@@ -83,6 +83,11 @@ type HeroProps = {
    *  none (e.g. a page with its own closing CTA already doing that job,
    *  see /how-it-works). */
   ctas?: HeroCta[];
+  /** Static photo background for a page that should show a specific
+   *  still instead of the shared homepage video (see /how-it-works) —
+   *  passed through to HeroMedia's own `image` prop, and takes priority
+   *  over HERO_VIDEO_SRC when set. */
+  heroImage?: string;
 };
 
 /**
@@ -100,6 +105,7 @@ export function Hero({
   subhead = SUBHEAD,
   tagline,
   ctas = DEFAULT_CTAS,
+  heroImage,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
   // comment) — [headline] with no split at all when there's no "\n",
@@ -116,9 +122,16 @@ export function Hero({
       id="hero"
       className="relative flex min-h-[100svh] flex-col items-center overflow-hidden bg-navy text-cream"
     >
-      {/* Full-bleed background: real footage once HERO_VIDEO_SRC is set,
-          an ambient placeholder until then (see HeroMedia.tsx). */}
-      <HeroMedia src={HERO_VIDEO_SRC} poster="/photos/hero-band.jpg" reduceMotion={reduceMotion} />
+      {/* Full-bleed background: a page-specific still (`heroImage`) takes
+          priority when passed; otherwise real footage once
+          HERO_VIDEO_SRC is set, or an ambient placeholder until then
+          (see HeroMedia.tsx). */}
+      <HeroMedia
+        src={heroImage ? undefined : HERO_VIDEO_SRC}
+        poster="/photos/hero-band.jpg"
+        image={heroImage}
+        reduceMotion={reduceMotion}
+      />
 
       {/* Scrim over the video/placeholder — keeps the headline legible
           regardless of what's playing underneath. */}

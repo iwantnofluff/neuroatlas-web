@@ -55,6 +55,7 @@ export default function HowItWorksPage() {
         headline={"Here Is What Tracking\nNever Fixed"}
         subhead="Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds."
         ctas={[]}
+        heroImage="/photos/how-it-works-hero.png"
       />
       <HeroBoundary />
 
