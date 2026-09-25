@@ -151,9 +151,9 @@ export function BreathingCard({ className }: { className?: string }) {
         Inhale · Hold · Exhale
       </span>
 
-      <div className="absolute top-[58%] left-1/2 aspect-square w-[47%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
-        <span className="font-serif text-4xl leading-none text-cream">5</span>
-        <span className="mt-1 text-xs tracking-wide text-cream/40 uppercase">
+      <div className="absolute top-[58%] left-1/2 aspect-square w-[22%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+        <span className="font-serif text-sm leading-none text-cream">5</span>
+        <span className="mt-0.5 text-[0.4rem] tracking-wide text-cream/40 uppercase">
           sec
         </span>
       </div>
