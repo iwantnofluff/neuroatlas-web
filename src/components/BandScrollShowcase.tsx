@@ -11,7 +11,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
-import { Reveal } from "@/components/Reveal";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 // Genuinely lazy — @react-three/fiber's Canvas is only pulled in once this
@@ -321,43 +320,68 @@ function OrganicSignalCallout({
   );
 }
 
-/** Below xl there's no room for floating cards — a compact, still-
- *  persistent (not swapping) stacked list instead, sitting above the
- *  bottom-left subtext/CTA. Same glass-card treatment, no step numbers,
- *  just a tighter footprint.
+/** Overlap (px) each card is pulled up into the one before it — tuned
+ *  against this card's own real rendered height (p-4 + a serif label +
+ *  up to a 2-line text-xs body, confirmed via screenshot at 390px
+ *  wide), leaving a clean ~28-34px sliver of the earlier card peeking
+ *  out above it, whether that card's own body wrapped to one line or
+ *  two. */
+const DECK_OVERLAP_PX = 68;
+/** Per-depth-level shrink for cards further back in the deck — a subtle
+ *  recede, not a real size difference; enough to read as depth on the
+ *  sliver that's actually visible without shrinking the frontmost
+ *  (fully visible) card at all. */
+const DECK_DEPTH_SCALE_STEP = 0.035;
+
+/** Below xl there's no room for floating cards — a genuine dealt-deck
+ *  instead: each card but the first is pulled up by DECK_OVERLAP_PX so
+ *  only a sliver of the earlier card peeks out above it, with later DOM
+ *  order (the default paint order, no z-index needed) putting the most
+ *  recently "dealt" card on top. Emotional Regulation, last in
+ *  `signals`, ends up
+ *  frontmost and fully visible at the bottom of the deck — its own
+ *  final resting spot, matching this section's own reference image. A
+ *  direct "stack like a deck, not a tack [plain list]" correction: the
+ *  previous version already stacked the four cards smoothly, just as a
+ *  plain non-overlapping vertical list, which read as a totally
+ *  different, flatter composition than what was actually being asked
+ *  for.
  *
- * Not scroll-progress-gated like OrganicSignalCallout — a direct "the
- * cards should stack one on top of the other smoothly" request: the
- * xl+ desktop composition reveals each card across its own slice of the
- * 280vh scrubbed track because there's real floating-position/depth
- * staging to reveal one at a time, but the mobile stack has nowhere
- * else to go — all four already sit in their final resting position
- * from the very first frame the section is visible (confirmed live:
- * pinning the section at any scroll offset showed the same four-card
- * stack in the same spot, just some still mid-fade). Gating that fixed
- * stack behind ~92vh of dead scroll per card, on top of a pin/release
- * transition where the fixed header can visibly overlap the last
- * card's own text right as the section unpins, is what actually read
- * as un-smooth. Reveal's own `whileInView` fires once the section
- * scrolls into the viewport and each card fades/rises into its
- * permanent spot with a short stagger — no scrubbing required, and no
- * dependency on this section's own pin/release mechanics. */
+ * Custom motion.div here, not Reveal — Reveal's own signature has no
+ * room for a static per-card `style` override, and this needs one for
+ * the deck's scale/margin math alongside the same fade-up-once-in-view
+ * treatment Reveal already gives every other section on this page. */
 function MobileSignalCard({
   signal,
+  depthFromFront,
+  isFirst,
   delay,
 }: {
   signal: (typeof signals)[number];
+  depthFromFront: number;
+  isFirst: boolean;
   delay: number;
 }) {
+  const reduceMotion = useSafeReducedMotion();
   return (
-    <Reveal
-      delay={delay}
-      y={16}
-      className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.5,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      style={{
+        scale: 1 - depthFromFront * DECK_DEPTH_SCALE_STEP,
+        marginTop: isFirst ? 0 : -DECK_OVERLAP_PX,
+      }}
+      className="relative origin-top rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-[0_16px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-md"
     >
       <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
       <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
-    </Reveal>
+    </motion.div>
   );
 }
 
@@ -429,9 +453,15 @@ export function BandScrollShowcase() {
             reduceMotion={reduceMotion}
           />
         ))}
-        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 flex flex-col gap-3 xl:hidden">
+        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 flex flex-col xl:hidden">
           {signals.map((s, i) => (
-            <MobileSignalCard key={s.label} signal={s} delay={i * 0.08} />
+            <MobileSignalCard
+              key={s.label}
+              signal={s}
+              depthFromFront={signals.length - 1 - i}
+              isFirst={i === 0}
+              delay={i * 0.08}
+            />
           ))}
         </div>
 
