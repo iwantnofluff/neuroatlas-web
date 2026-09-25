@@ -33,15 +33,15 @@ import { cn } from "@/lib/utils";
 export function HrvDetailCard({ className }: { className?: string }) {
   return (
     <div className={cn("relative flex w-full flex-col", className)}>
-      <div className="relative -mx-4 mb-6 flex items-center justify-center border-b border-white/10 px-4 pb-4 backdrop-blur-[2px]">
+      <div className="relative -mx-4 mb-4 flex items-center justify-center border-b border-white/10 px-4 pb-3 backdrop-blur-[2px]">
         <button
           type="button"
           aria-label="Close"
-          className="absolute left-0 flex size-9 items-center justify-center rounded-full bg-black/40"
+          className="absolute left-0 flex size-7 items-center justify-center rounded-full bg-black/40"
         >
-          <X className="size-4 text-[#f2f2f2]" />
+          <X className="size-3.5 text-[#f2f2f2]" />
         </button>
-        <p className="text-[15px] text-[#f2f2f2]">HRV</p>
+        <p className="text-xs text-[#f2f2f2]">HRV</p>
       </div>
 
       {/* Decorative scroll-position indicator, matching the source
@@ -49,19 +49,19 @@ export function HrvDetailCard({ className }: { className?: string }) {
           element here since nothing below it is clipped. */}
       <span className="absolute top-14 right-0 h-24 w-1 rounded-full bg-[#f2f2f2]/25" />
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div className="flex items-end gap-1.5 text-[#f2f2f2]">
-            <span className="font-serif text-5xl leading-none">45</span>
-            <span className="text-lg text-[#f2f2f2]/30">ms</span>
+            <span className="font-serif text-3xl leading-none">45</span>
+            <span className="text-sm text-[#f2f2f2]/30">ms</span>
           </div>
-          <p className="max-w-[150px] text-right text-xs leading-tight text-[#dd416b]">
+          <p className="text-right text-[10px] whitespace-nowrap text-[#dd416b]">
             BELOW AVERAGE FOR AGE 32
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gold">Range Graph</p>
+          <p className="text-xs text-gold">Range Graph</p>
           <div
             className="relative h-[9px] w-full rounded-[3px]"
             style={{
@@ -72,24 +72,24 @@ export function HrvDetailCard({ className }: { className?: string }) {
             <span className="absolute inset-y-0 left-[37%] w-[52%] rounded-full bg-[#f2f2f2]/25 backdrop-blur-[2px]" />
             <span className="absolute top-1/2 left-[18%] size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#c3d1de] bg-[#f2f2f2]" />
           </div>
-          <div className="flex justify-between text-sm text-[#5e6165]">
+          <div className="flex justify-between text-[10px] text-[#5e6165]">
             <span>10ms</span>
             <span>110ms</span>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-2xl border border-gold-soft/30 bg-gold/10 px-4 py-3">
-          <Sparkle className="mt-0.5 size-5 shrink-0 fill-gold text-gold" />
-          <p className="text-sm leading-relaxed text-[#c6c7c9]">
+        <div className="flex items-start gap-3 rounded-2xl border border-gold-soft/30 bg-gold/10 px-3 py-2.5">
+          <Sparkle className="mt-0.5 size-4 shrink-0 fill-gold text-gold" />
+          <p className="text-xs leading-relaxed text-[#c6c7c9]">
             Your HRV is 45 ms. Below average for a 32-year-old male is 67 to 90
             ms.
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gold">24-Hour Trend</p>
+          <p className="text-xs text-gold">24-Hour Trend</p>
 
-          <div className="relative h-[220px] w-full overflow-hidden rounded-2xl bg-navy-soft">
+          <div className="relative h-[190px] w-full overflow-hidden rounded-2xl bg-navy-soft">
             <div className="absolute top-[24%] left-[11%] flex h-[62%] w-[85%] flex-col justify-between text-right text-[9px] text-[#5e6165]">
               <span>110</span>
               <span>90</span>
@@ -144,7 +144,7 @@ export function HrvDetailCard({ className }: { className?: string }) {
             </div>
           </div>
 
-          <div className="flex w-full items-center justify-between rounded-2xl bg-navy-soft px-6 py-4">
+          <div className="flex w-full items-center justify-between rounded-2xl bg-navy-soft px-5 py-3">
             <StatCell label="HIGHEST" value="58" />
             <div className="h-10 w-px bg-white/8" />
             <StatCell label="LOWEST" value="28" />
@@ -160,10 +160,10 @@ export function HrvDetailCard({ className }: { className?: string }) {
 function StatCell({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <p className="text-[10.5px] text-[#5e6165]">{label}</p>
+      <p className="text-[9px] text-[#5e6165]">{label}</p>
       <div className="flex items-center gap-1">
-        <span className="text-lg text-[#f2f2f2]">{value}</span>
-        <span className="text-[10.5px] text-[#5e6165]">ms</span>
+        <span className="text-sm text-[#f2f2f2]">{value}</span>
+        <span className="text-[9px] text-[#5e6165]">ms</span>
       </div>
     </div>
   );
