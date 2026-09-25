@@ -81,17 +81,19 @@ export default function HowItWorksPage() {
              the jump to md (768px) keeps this a clean single column
              through the whole foldable tier instead of a premature
              3-up split. */}
-          <div className="mt-16 grid gap-12 md:grid-cols-3">
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
             {loopSteps.map((step, i) => (
               <Reveal
                 key={step.label}
                 delay={i * 0.1}
-                className="text-center md:text-left"
+                className="card-glass bg-transparent p-8 text-center md:text-left"
               >
-                <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl">
-                  {step.label}
-                </h3>
+                <div className="flex items-baseline gap-3 md:justify-start justify-center">
+                  <span className="eyebrow">{`0${i + 1}`}</span>
+                  <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl">
+                    {step.label}
+                  </h3>
+                </div>
                 <p className="mt-3 text-balance font-serif text-lg text-gold-soft">
                   {step.tagline}
                 </p>
