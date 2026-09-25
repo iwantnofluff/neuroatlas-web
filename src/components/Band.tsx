@@ -32,13 +32,20 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  *   own 42.8mm max), independent of the other four.
  * None of these five are rendered anywhere in this file — none of this
  * component's three scenes are framed, scaled, or lit for a full
- * ~260mm strap, so integrating it is separate, bigger work than a
- * materials pass. For when that work happens: the strap should get a
- * non-metallic, high-roughness woven-navy-textile material (roughly
- * matching the shell's own #041E42 family, desaturated), and the clasp
- * halves + keeper loop an anodised-metal material matching
- * HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1) — same
- * finish family as the module's own hardware, not a separate palette.
+ * ~260mm strap, so integrating it here is separate, bigger work than a
+ * materials pass. The strap ("empty_3") IS rendered elsewhere, though,
+ * standalone: TimelineBandSpine.tsx (/for-organisations' "How To Get
+ * Started" section) loads it directly via its own useGLTF call and
+ * gives it an anodised-navy METALLIC finish (metalness 0.85, a
+ * deliberate Milanese-mesh departure from the product spec's own
+ * "woven fabric yarn" strap description, confirmed explicitly before
+ * changing it) — not the non-metallic textile material this comment
+ * used to describe here. If the strap/clasp/keeper ever get integrated
+ * into one of THIS file's own scenes, match that file's material, not
+ * this stale note. The clasp halves + keeper loop remain unrendered
+ * anywhere, still a reasonable fit for an anodised-metal material
+ * matching HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1)
+ * when that work happens.
  *
  * Still no semantic mesh/material names anywhere in the file (every
  * mesh is "empty_N", every material name is an empty string) — mesh

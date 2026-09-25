@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
+import { StudioEnvironment } from "@/components/StudioEnvironment";
 
 // The strap itself, not the module — "empty_3" in the raw GLTF (no
 // semantic names anywhere in this file, see Band.tsx's own header
@@ -14,16 +15,29 @@ import * as THREE from "three";
 // up, unlike Band.tsx's own BASE_ROTATION correction for the module.
 const STRAP_MESH_NAME = "empty_3";
 
-// Woven navy textile — the same material spec Band.tsx's own header
-// comment already documented for when the strap would eventually get
-// rendered somewhere: non-metallic, high roughness (a fabric/soft-touch
-// finish, not the module's anodised-aluminium sheen), a desaturated
-// member of the shell's own #041E42 navy family rather than a separate
-// palette.
+// Anodised navy metallic mesh — a direct request to make the strap read
+// as a Milanese-style woven metal band rather than the fabric/soft-touch
+// finish this file previously documented (that was the product spec's
+// own description of the strap; this is a deliberate departure from it,
+// confirmed explicitly before changing, not an accident). #041E42 is
+// PANTONE 282 CP, the same reference hex the housing itself uses.
+// metalness 0.85 (not 1) leaves a sliver of diffuse response so the navy
+// base color still reads at all — see Band.tsx's own SHELL_MATERIAL_PROPS
+// comment for the identical reasoning already established there: a pure
+// metalness-1 surface only shows color through reflections, which loses
+// a dark navy almost entirely against a light backdrop.
+//
+// No bump/normal map for the woven cross-hatch texture that was also
+// requested — every mesh in this GLB (checked directly, all 16) has only
+// POSITION and NORMAL attributes, no UVs at all, and a bump/normal map
+// has nothing to project onto without them. Generating UVs is real,
+// separate, bigger work, not something to attempt inline here — flagged
+// and confirmed explicitly before proceeding with material properties
+// only.
 const STRAP_MATERIAL_PROPS = {
-  color: "#1c2733",
-  roughness: 0.85,
-  metalness: 0,
+  color: "#041E42",
+  roughness: 0.35,
+  metalness: 0.85,
   side: THREE.DoubleSide,
 } as const;
 
@@ -96,13 +110,12 @@ function StrapMesh() {
  * aspect ratio (very narrow, very tall) the way every other Band scene
  * in this codebase has to for their own roughly-square canvases.
  *
- * Deliberately no StudioEnvironment/full lighting rig — this is a small
- * non-metallic decorative element, not a hero product shot; a
- * meshStandardMaterial at metalness 0 has a real diffuse response and
- * doesn't need an environment map to avoid going flat black the way the
- * module's metalness-1 hardware does (see Band.tsx's own comment on
- * exactly that point). Ambient + two directional lights is enough for a
- * matte fabric surface to read with real shape.
+ * StudioEnvironment is required here, not optional — metalness 0.85
+ * leaves almost no diffuse component, so the metallic weave has next to
+ * nothing to reflect without it (the exact same reasoning already
+ * established for the module's own metalness-1 hardware in Band.tsx).
+ * This was NOT needed in this file's own earlier non-metallic version;
+ * added specifically alongside the metalness change, not left over.
  */
 export function TimelineBandSpine({ progress }: { progress: MotionValue<number> }) {
   return (
@@ -122,6 +135,7 @@ export function TimelineBandSpine({ progress }: { progress: MotionValue<number> 
       <ambientLight intensity={0.55} />
       <directionalLight position={[2, 2, 3]} intensity={1.6} color="#f4f0e9" />
       <directionalLight position={[-2, -1, 2]} intensity={0.5} color="#8fb3d9" />
+      <StudioEnvironment />
       <ProgressHighlight progress={progress} />
       <Suspense fallback={null}>
         <StrapMesh />
