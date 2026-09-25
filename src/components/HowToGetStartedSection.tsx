@@ -179,9 +179,23 @@ export function HowToGetStartedSection() {
          ends, so progress 0 -> 1 now spans exactly the pinned-and-
          visible range, no more and no less. */}
       <div className="py-24 lg:py-32">
+        {/* Left column fixed at 300px, not an even md:grid-cols-2 split.
+           The strap's own on-screen width is set entirely by the ortho
+           camera's zoom fitting CAMERA_TARGET_HEIGHT to the CANVAS'S
+           PIXEL HEIGHT (HowToGetStartedScene.tsx's FitOrthographicCamera)
+           — it never depended on how wide this column was, so a wide
+           50/50 column just added empty margin around a strap that
+           stayed the same ~50-75px wide regardless (viewport-height
+           dependent: strap world-width * RIG_SCALE / CAMERA_TARGET_HEIGHT
+           * canvas pixel height), reading as adrift in leftover space.
+           300px is close to that width plus a comfortable margin, not a
+           crop — the camera still fits the strap's full height exactly
+           as before, this only changes how much unused horizontal
+           whitespace surrounds it. The recovered width goes straight to
+           the step column via 1fr. */}
         <div
           ref={gridRef}
-          className="mx-auto grid max-w-6xl gap-16 md:grid-cols-2"
+          className="mx-auto grid max-w-6xl gap-16 md:grid-cols-[300px_1fr]"
         >
           <div className="sticky top-0 h-screen">
             <div className="relative h-full w-full">

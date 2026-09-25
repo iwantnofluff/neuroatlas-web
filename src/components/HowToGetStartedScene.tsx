@@ -3,7 +3,6 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import {
@@ -22,6 +21,145 @@ import {
 } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
 import { activeStepIndex, STEP_COUNT } from "@/lib/howToGetStartedProgress";
+
+/**
+ * STRAP RENDERING — GEOMETRY, MATERIAL, AND TEXTURE NOTES
+ *
+ * This file renders the strap ("empty_3" in band.glb) as a static navy
+ * fabric backdrop with the module traveling in front of it. Several of
+ * the choices below look like mistakes out of context — this block is
+ * the reasoning, gathered in one place, for whoever reads this next.
+ *
+ * GEOMETRY (confirmed directly against band.glb via a one-off Node
+ * script using three's GLTFLoader — not assumed from the model name):
+ *   - Strap: X ±11mm (22mm wide), Y ±130.25mm (260.5mm long), front face
+ *     at Z 3.3-4.9mm. A CAD extrusion of a rounded-rectangle cross-
+ *     section swept along Y through ~19 rings, with a flat end-cap face
+ *     at each tip.
+ *   - Module: combined shell+hardware bbox X -12.7 to 13.1mm, Y ±21.4mm,
+ *     Z -6.2 to 6.9mm — already straddling the strap's own face in Z, so
+ *     it depth-tests in front of the strap with no manual offset needed.
+ *   - The raw mesh has NO uv attribute at all (confirmed: absent from
+ *     the exported attributes, not just empty) — see UV GENERATION.
+ *
+ * WORLD SCALE (RIG_SCALE): every other Band scene in this codebase
+ * (BuiltToReadYouScene/BandScrollScene/TheSpecsScene) renders this same
+ * glb at a ~30-34x scale, with their shared light rig tuned against
+ * that. Early on this file used the model's raw, unscaled meter units
+ * (for convenient camera-fitting math) and reused those scenes' light
+ * positions/intensities verbatim — that did NOT reproduce their look.
+ * The reason: at raw scale the strap's ~0.13m half-height is tiny next
+ * to the lights' ~4-4.7 unit distance from the origin, so instead of a
+ * localized specular hotspot (what those lights produce on a large-in-
+ * frame object), the same lights blanket the whole tiny strap in one
+ * undifferentiated highlight. Confirmed empirically (isolation testing:
+ * disabling each light group in turn, sampling actual rendered pixels)
+ * before reaching that conclusion, not assumed from the theory alone.
+ * Fix: wrap just the meshes (not the lights) in the same ~32x scale via
+ * RIG_SCALE, so the identical light rig sees the identical world-scale
+ * relationship it was tuned against. CAMERA_TARGET_HEIGHT is a world-
+ * space (post-RIG_SCALE) measurement as a result; MODULE_TRAVEL_TOP/
+ * BOTTOM are pre-scale LOCAL coordinates inside the scaled group, so
+ * they didn't need to change.
+ *
+ * LIGHT RIG: beyond the scale fix above, this strap faces the camera
+ * dead-on for the ENTIRE scroll (no rotation, ever) — unlike the other
+ * Band scenes, where the model only locks front-on briefly or turns
+ * continuously. A directional light aimed straight down the Z-axis
+ * (tuned elsewhere for occasional front-on framing) was flooding this
+ * always-front-facing plate at full strength, with a cool-blue rim
+ * light tinting the wash further. Both were trimmed specifically for a
+ * surface that's lit face-on 100% of the time (see the light rig's own
+ * comment further down for the exact values and how they were found).
+ *
+ * MATERIAL (STRAP_MATERIAL_PROPS): metalness 0, roughness 0.75, color
+ * #041E42. This went through a wrong intermediate state worth recording
+ * so it isn't reintroduced: woven nylon is a dielectric, not a metal.
+ * An earlier pass set metalness 0.85 (inherited from a "make it look
+ * anodized/metallic" instruction that applied to the module's housing,
+ * not the strap). At high metalness, a material's own base color is
+ * only visible through tinted reflections — what actually rendered was
+ * the studio HDRI's own blue, not the fabric's navy, no matter what
+ * color or light-intensity tuning was tried. The fix was metalness: 0,
+ * not a brighter light or a darker base color. Expect this material to
+ * look flatter/darker than a "premium metallic" instinct suggests —
+ * that flatness is correct for fabric, and it's the necessary starting
+ * point for the woven texture below to have something to actually
+ * modulate (a normal map on top of a metallic material would have
+ * produced blue foil with a weave stamped into it, not woven fabric).
+ * roughness is set to 1 (full scale factor) rather than 0.75 directly —
+ * see WOVEN TEXTURE, the roughness MAP carries the real 0.6-0.9 value.
+ *
+ * NORMALS WELD (useSmoothStrapGeometry / HARD_EDGE_ANGLE_DEG): the raw
+ * strap mesh bakes independent per-facet normals at every one of its
+ * ~19 cross-section rings, rather than sharing normals smoothly across
+ * ring boundaries — a CAD export artifact, not a shading style choice.
+ * That discontinuity is what caused a horizontal "ruler" banding along
+ * the strap's length under raking light. The straightforward fix
+ * (three.js's own mergeVertices() + computeVertexNormals()) blends
+ * EVERY duplicate-position vertex group into one averaged normal,
+ * which fixes the banding but ALSO softens the strap's tip edges — a
+ * genuine ~90° hard edge where the rounded tube wall meets its flat
+ * end-cap face — into a fake rounded blend. Checked this directly
+ * before shipping either version: every one of the 144 duplicate-
+ * position groups in the raw mesh falls into one of two tight clusters
+ * with nothing in between — 112 groups under 10° max internal angle
+ * (the false ring seams) and 32 groups at exactly 90° (the real tip
+ * edges). HARD_EDGE_ANGLE_DEG (45°) sits in that clean gap. The custom
+ * weld below only merges the low-angle groups and leaves the 90° tip
+ * groups exactly as CAD authored them — confirmed visually afterward
+ * that the tip still reads as a distinct, crisp flat cap face, not a
+ * soft rounded blend, and that the strap's OUTER SILHOUETTE against the
+ * background (a separate concern from internal shading — the silhouette
+ * is just the unchanged triangle boundary, never affected by normal
+ * smoothing either way) stays crisp everywhere.
+ *
+ * UV GENERATION (useProceduralUVGeometry): the raw mesh has no uv
+ * attribute, so standard texture mapping isn't possible without adding
+ * one. A planar projection (local X -> U, local Y -> V, each normalized
+ * against the mesh's own bounding box) is used deliberately, and only on
+ * this mesh — the strap is a true flat rectangle, so this projection is
+ * geometrically exact and can't distort. The module's curved shell is
+ * NOT treated this way; it keeps whatever real UV unwrap it has (or
+ * doesn't), since a planar projection on a curved surface would visibly
+ * warp a texture. Runs AFTER the normals weld above, so the geometry it
+ * operates on already has its final (reduced, angle-corrected) vertex
+ * set.
+ *
+ * WOVEN TEXTURE (useWovenMaps / buildWeaveHeightField): a normal map and
+ * a roughness map, both derived from one procedural basketweave height
+ * field — a 2x2-cell repeat tile (WEAVE_TILE_MM = 2mm period), each
+ * cell a rounded-ridge (half-cosine) profile oriented along whichever
+ * axis that cell's thread runs, alternating in a checkerboard so
+ * adjacent cells read as threads passing over/under each other. Sized
+ * to the strap's REAL measured dimensions (STRAP_WIDTH_MM/LENGTH_MM),
+ * not a guessed repeat count, so the physical density is genuinely
+ * ~1mm per weave cell. The normal map comes from a wrapped (toroidal)
+ * central-difference gradient of that same height field specifically so
+ * the tile has no seam under RepeatWrapping — a naive (non-wrapped)
+ * gradient would show a visible edge at every tile boundary. The
+ * roughness map encodes its actual 0.6-0.9 value directly in the green
+ * channel (per meshStandardMaterial's own convention), which is why
+ * STRAP_MATERIAL_PROPS.roughness is 1, not 0.75 — the material's scalar
+ * multiplies the map, so it has to stay at full scale or it would double
+ * the map's own baked variation down.
+ *   Texture filtering: THREE.DataTexture defaults to NearestFilter with
+ *   mipmaps disabled (confirmed in three's own source, not assumed).
+ *   At this render size the strap is only ~50-75px wide on screen for a
+ *   130-tile-deep texture, a ~6x minification — point-sampling that
+ *   without mipmaps aliases into a false lower-frequency beat pattern.
+ *   Confirmed via a real measurement, not a guess: autocorrelating the
+ *   rendered pixel brightness down the strap's length showed a peak at
+ *   roughly 3x the tile's own screen pitch before mipmaps were enabled,
+ *   the signature of moiré rather than a genuinely repeating highlight.
+ *   generateMipmaps/minFilter/magFilter are now set explicitly (see
+ *   useWovenMaps) rather than left on the DataTexture default. After
+ *   that fix the same measurement's variance roughly halved and the
+ *   isolated low-frequency beat did not survive — residual, much
+ *   smaller periodicity at the texture's own true tile-scale frequency
+ *   remains, which is the weave design working as intended, not an
+ *   artifact.
+ */
 
 const STRAP_MESH_NAME = "empty_3";
 
@@ -136,30 +274,104 @@ const WOVEN_TEXTURE_REPEAT: readonly [number, number] = [
   STRAP_LENGTH_MM / WEAVE_TILE_MM,
 ];
 
-/** Welds duplicate seam vertices and recomputes smooth normals.
+// Below this angle (degrees) between two position-duplicate vertices'
+// original normals, treat the pair as a spurious ring-seam split and
+// weld them into one smoothed vertex. At or above it, treat them as a
+// genuine hard edge and keep them distinct. Chosen from the mesh's own
+// data, not picked blind: every one of the 144 duplicate-position groups
+// in the raw strap mesh falls into one of two tight clusters — 112 with
+// a max internal angle under 10° (the ring-to-ring seams), and 32 sitting
+// at exactly 90° (the strap's end-cap edges, where the rounded tube wall
+// meets its flat tip face). Nothing falls in between, so anywhere from
+// ~15° to ~85° threads that gap safely; 45° is just the middle of it.
+const HARD_EDGE_ANGLE_DEG = 45;
+
+/** Welds spurious seam-duplicate vertices into smoothed ones while
+ *  leaving genuine hard-edge duplicates untouched.
  *
  *  The raw strap mesh is a CAD extrusion built from ~19 discrete cross-
- *  section rings along its length, each with its own hard-baked per-
- *  facet normals rather than normals shared across ring boundaries —
- *  confirmed directly (a Node script parsing band.glb): 464 vertices for
- *  only 371 unique normal directions, and welding by position drops it
- *  to 284 vertices, meaning ~180 were spatially-duplicate seam vertices
- *  existing only to carry a discontinuous normal. That discontinuity is
- *  the real cause of the horizontal "ruler" banding along the strap's
- *  length under raking light — not a shading style choice, an actual
- *  faceted-CAD-export bug — so the fix is to weld those seams and
- *  recompute genuinely smooth normals, not to paint over it with a
- *  texture. mergeVertices() only merges vertices whose attributes ALL
- *  match, so the stale per-facet normal attribute has to be deleted
- *  first or it would itself block the very merge meant to fix it. */
+ *  section rings along its length. Along the tube's smooth body, the
+ *  exporter split a vertex at every ring boundary anyway, baking two
+ *  near-identical per-facet normals a few degrees apart where one smooth
+ *  normal belongs — that discontinuity is the real cause of the
+ *  horizontal "ruler" banding under raking light, not a shading style
+ *  choice. But at the two tips, where the rounded tube wall meets its
+ *  flat end-cap face, the same kind of position-duplicate exists for a
+ *  legitimate reason: a real ~90° hard edge that should stay crisp.
+ *  three.js's own mergeVertices() + computeVertexNormals() can't tell
+ *  these apart — it blends every duplicate group into one averaged
+ *  normal regardless of angle, which fixes the banding but also softens
+ *  the tip edges into a fake rounded blend. This walks every duplicate-
+ *  position group by hand and only welds the ones under
+ *  HARD_EDGE_ANGLE_DEG, leaving the tip's 90° groups exactly as CAD
+ *  authored them. */
 function useSmoothStrapGeometry(geometry: THREE.BufferGeometry | undefined) {
   return useMemo(() => {
     if (!geometry) return undefined;
-    const cloned = geometry.clone();
-    cloned.deleteAttribute("normal");
-    const merged = mergeVertices(cloned);
-    merged.computeVertexNormals();
-    return merged;
+    const position = geometry.attributes.position;
+    const normal = geometry.attributes.normal;
+    const index = geometry.index;
+    if (!position || !normal || !index) return geometry;
+
+    const keyFor = (i: number) =>
+      `${position.getX(i).toFixed(5)},${position.getY(i).toFixed(5)},${position.getZ(i).toFixed(5)}`;
+
+    const groups = new Map<string, number[]>();
+    for (let i = 0; i < position.count; i++) {
+      const key = keyFor(i);
+      const list = groups.get(key);
+      if (list) list.push(i);
+      else groups.set(key, [i]);
+    }
+
+    const outPositions: number[] = [];
+    const outNormals: number[] = [];
+    const remap = new Int32Array(position.count);
+    const a = new THREE.Vector3();
+    const b = new THREE.Vector3();
+
+    for (const members of groups.values()) {
+      let maxAngle = 0;
+      for (let x = 0; x < members.length; x++) {
+        for (let y = x + 1; y < members.length; y++) {
+          a.set(normal.getX(members[x]), normal.getY(members[x]), normal.getZ(members[x]));
+          b.set(normal.getX(members[y]), normal.getY(members[y]), normal.getZ(members[y]));
+          const angle = THREE.MathUtils.radToDeg(a.angleTo(b));
+          if (angle > maxAngle) maxAngle = angle;
+        }
+      }
+
+      if (members.length === 1 || maxAngle < HARD_EDGE_ANGLE_DEG) {
+        const first = members[0];
+        const newIndex = outPositions.length / 3;
+        outPositions.push(position.getX(first), position.getY(first), position.getZ(first));
+        a.set(0, 0, 0);
+        for (const m of members) {
+          a.x += normal.getX(m);
+          a.y += normal.getY(m);
+          a.z += normal.getZ(m);
+        }
+        a.normalize();
+        outNormals.push(a.x, a.y, a.z);
+        for (const m of members) remap[m] = newIndex;
+      } else {
+        for (const m of members) {
+          const newIndex = outPositions.length / 3;
+          outPositions.push(position.getX(m), position.getY(m), position.getZ(m));
+          outNormals.push(normal.getX(m), normal.getY(m), normal.getZ(m));
+          remap[m] = newIndex;
+        }
+      }
+    }
+
+    const newIndex = new Uint32Array(index.count);
+    for (let i = 0; i < index.count; i++) newIndex[i] = remap[index.getX(i)];
+
+    const result = new THREE.BufferGeometry();
+    result.setAttribute("position", new THREE.Float32BufferAttribute(outPositions, 3));
+    result.setAttribute("normal", new THREE.Float32BufferAttribute(outNormals, 3));
+    result.setIndex(new THREE.Uint32BufferAttribute(newIndex, 1));
+    return result;
   }, [geometry]);
 }
 
@@ -256,6 +468,20 @@ function useWovenMaps() {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(...WOVEN_TEXTURE_REPEAT);
+      // THREE.DataTexture defaults to NearestFilter with mipmaps disabled
+      // (confirmed in three's own source) — fine for a texture sampled
+      // near 1:1, but this one is repeated 11x130 times onto a strap
+      // that renders only ~60px wide on screen, so each 2mm tile lands
+      // in ~5-6 screen pixels: a ~6x minification. Point-sampling that
+      // without mipmaps aliases into a false lower-frequency beat
+      // pattern — confirmed by measuring an autocorrelation peak in the
+      // rendered pixels at ~3x the tile's own screen pitch, the
+      // signature of moiré rather than a genuinely repeating highlight.
+      // Enabling mipmaps with trilinear filtering lets the GPU blend
+      // down to the correct per-pixel average instead of aliasing.
+      texture.generateMipmaps = true;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
       texture.needsUpdate = true;
       return texture;
     };
