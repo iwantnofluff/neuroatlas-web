@@ -42,6 +42,10 @@ export function IPhoneMockup({
 
           {/* Dynamic Island */}
           <div className="absolute top-[1.6%] left-1/2 h-[3%] w-[28%] -translate-x-1/2 rounded-full bg-black" />
+
+          {/* Home indicator — #F4F0E9 is an exact match for
+              --color-cream, reused rather than hardcoded again. */}
+          <div className="absolute bottom-[1%] left-1/2 h-[0.4%] w-[32%] -translate-x-1/2 rounded-full bg-cream" />
         </div>
       </div>
     </div>

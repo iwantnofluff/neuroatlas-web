@@ -7,6 +7,7 @@ import { VitalsDashboard } from "@/components/VitalsDashboard";
 import { NeuroWaveVisual } from "@/components/NeuroWaveVisual";
 import { HrvDetailCard } from "@/components/HrvDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { CeoBreathScreen } from "@/components/CeoBreathScreen";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -224,6 +225,14 @@ export default function HowItWorksPage() {
         body="It is late afternoon. Focus starts to slip, the kind of drop that usually goes unnoticed until it costs you something. The band picks it up. A short reset runs before the next meeting. By the time you are back at your desk, the numbers show it worked."
         imageSide="right"
         background="navy-soft"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        media={
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup className="h-full">
+              <CeoBreathScreen />
+            </IPhoneMockup>
+          </div>
+        }
       />
 
       {/* 8. What it does not claim to do. Text right, media left. */}
