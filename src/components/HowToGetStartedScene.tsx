@@ -610,23 +610,56 @@ function StrapPiece() {
   );
 }
 
-// A static 180° turn about Y, not animation — this section's "no
-// rotation" rule is about the scroll-driven tumble the module never
-// gets (see ModuleTravel), not about a one-time orientation correction.
-// Raw (no BASE_ROTATION, matching this whole file's premise), the
-// module's embossed-logo face points -Z, away from the camera on +Z;
-// this flips it to face the camera instead. Rotating about Y (not Z)
-// keeps the module upright and matches how the strap itself is already
-// oriented — a Z-axis flip would have turned the module sideways
-// relative to it.
-const MODULE_FACE_ROTATION: readonly [number, number, number] = [0, Math.PI, 0];
+// A directional light, not another spotlight, specifically because the
+// module TRAVELS (up to ±1.76 world units along Y) while every proven
+// Band scene's model sits fixed at the origin. Confirmed directly: the
+// existing "kicker" spotLight (position [0.6,0.7,4.3], angle 0.25) is
+// tuned for a subject sitting at its default target (world origin) —
+// boosting its intensity 7 -> 40 (a ~6x jump) produced a PIXEL-IDENTICAL
+// render of the module at its top stop, meaning the light wasn't
+// reaching the module at all, not just contributing weakly. At angle
+// 0.25 and ~4.3 units away, the cone's radius at the module's distance
+// is only ~1.1 world units — comfortably covering a subject parked at
+// the origin, but missing a module that travels to ±1.76. A directional
+// light has no cone or distance falloff to miss with, so it lights the
+// module identically at every stop regardless of where it's travelled
+// to — the correct tool for a subject that moves, where the existing
+// spotlights (tuned for the strap, which is centred and static) are the
+// right tool for what they already light.
+const MODULE_KICKER_INTENSITY = 1.8;
+
+// A second, deliberately WIDE-angle light — near-camera-axis light (the
+// kicker above) raises overall brightness/contrast against the strap,
+// confirmed via screenshot, but a light that closely tracks the camera
+// hits a flat, camera-facing surface at close to normal incidence
+// everywhere, which is exactly what erases shadow contrast in shallow
+// relief (the embossed logo) rather than revealing it — the same
+// "dead-on light flattens engraving" problem this file's own light rig
+// comment already worked through for the strap's raking-light needs,
+// just for a different surface. This one is offset far enough from the
+// camera axis to actually raise a shadow edge on each groove instead of
+// bathing it in even light from the same direction it's viewed from.
+const MODULE_RAKE_POSITION: readonly [number, number, number] = [3.5, 1, 1.2];
+const MODULE_RAKE_INTENSITY = 1.4;
 
 /** The module's own meshes, rendered directly rather than through
  *  <Band> — that component unconditionally applies BASE_ROTATION
  *  internally, which this section's whole premise rules out. Same
  *  per-part material dispatch <Band> itself uses (see its own JSX),
  *  just reusing the exported pieces instead of duplicating the logic
- *  under a different name that could drift from it later. */
+ *  under a different name that could drift from it later.
+ *
+ *  NO rotation here, deliberately, despite an earlier pass adding a
+ *  180°-Y flip on the theory that the raw orientation showed the
+ *  module's back. That flip was wrong: checked directly against
+ *  band.glb, the three flat panels it exposed match
+ *  OPTICAL_WINDOW_INDEX + STEEL_ELECTRODE_INDICES exactly in count,
+ *  shape, and position — the sensor/skin-contact cluster, confirmed by
+ *  a reference photo of the correct face showing the engraved logo,
+ *  ECG capsule, and button on what turned out to be THIS (raw,
+ *  unrotated) orientation all along. The original "smooth featureless"
+ *  complaint was a lighting problem (MODULE_KICKER_INTENSITY above),
+ *  not an orientation one. */
 function ModulePiece() {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -634,7 +667,7 @@ function ModulePiece() {
   const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
 
   return (
-    <group rotation={MODULE_FACE_ROTATION}>
+    <>
       {shellMeshes.map((mesh, i) => (
         <mesh key={`shell-${i}`} geometry={mesh.geometry}>
           <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
@@ -657,7 +690,7 @@ function ModulePiece() {
           </mesh>
         );
       })}
-    </group>
+    </>
   );
 }
 
@@ -787,6 +820,14 @@ export function HowToGetStartedScene({
       <directionalLight position={[0, 0, 0.5]} intensity={0.6} />
       <spotLight position={[2, 3, 3]} angle={0.35} penumbra={0.6} intensity={3.5} decay={2} color="#dac79e" />
       <spotLight position={[0.6, 0.7, 4.3]} angle={0.25} penumbra={0.2} intensity={7} decay={2} color="#ffffff" />
+      {/* Dedicated module lights — see the header comments above
+         MODULE_KICKER_INTENSITY and MODULE_RAKE_POSITION for why these
+         are directional (not spotlights) and why there are two: one
+         near the camera axis for overall brightness/contrast against
+         the strap, one well off-axis so the embossed logo's shallow
+         relief actually casts a shadow instead of being flattened. */}
+      <directionalLight position={[0.6, 0.7, 4.3]} intensity={MODULE_KICKER_INTENSITY} color="#ffffff" />
+      <directionalLight position={MODULE_RAKE_POSITION} intensity={MODULE_RAKE_INTENSITY} color="#f4f0e9" />
       <StudioEnvironment />
       <Suspense fallback={null}>
         <group scale={RIG_SCALE}>
