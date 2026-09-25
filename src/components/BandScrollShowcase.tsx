@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
+import { Reveal } from "@/components/Reveal";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 // Genuinely lazy — @react-three/fiber's Canvas is only pulled in once this
@@ -323,25 +324,40 @@ function OrganicSignalCallout({
 /** Below xl there's no room for floating cards — a compact, still-
  *  persistent (not swapping) stacked list instead, sitting above the
  *  bottom-left subtext/CTA. Same glass-card treatment, no step numbers,
- *  just a tighter footprint. */
+ *  just a tighter footprint.
+ *
+ * Not scroll-progress-gated like OrganicSignalCallout — a direct "the
+ * cards should stack one on top of the other smoothly" request: the
+ * xl+ desktop composition reveals each card across its own slice of the
+ * 280vh scrubbed track because there's real floating-position/depth
+ * staging to reveal one at a time, but the mobile stack has nowhere
+ * else to go — all four already sit in their final resting position
+ * from the very first frame the section is visible (confirmed live:
+ * pinning the section at any scroll offset showed the same four-card
+ * stack in the same spot, just some still mid-fade). Gating that fixed
+ * stack behind ~92vh of dead scroll per card, on top of a pin/release
+ * transition where the fixed header can visibly overlap the last
+ * card's own text right as the section unpins, is what actually read
+ * as un-smooth. Reveal's own `whileInView` fires once the section
+ * scrolls into the viewport and each card fades/rises into its
+ * permanent spot with a short stagger — no scrubbing required, and no
+ * dependency on this section's own pin/release mechanics. */
 function MobileSignalCard({
   signal,
-  progress,
-  reduceMotion,
+  delay,
 }: {
   signal: (typeof signals)[number];
-  progress: MotionValue<number>;
-  reduceMotion: boolean;
+  delay: number;
 }) {
-  const { opacity, y } = useSignalReveal(progress, signal.range, reduceMotion);
   return (
-    <motion.div
-      style={{ opacity, y }}
+    <Reveal
+      delay={delay}
+      y={16}
       className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md"
     >
       <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
       <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -414,13 +430,8 @@ export function BandScrollShowcase() {
           />
         ))}
         <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 flex flex-col gap-3 xl:hidden">
-          {signals.map((s) => (
-            <MobileSignalCard
-              key={s.label}
-              signal={s}
-              progress={scrollYProgress}
-              reduceMotion={reduceMotion}
-            />
+          {signals.map((s, i) => (
+            <MobileSignalCard key={s.label} signal={s} delay={i * 0.08} />
           ))}
         </div>
 
