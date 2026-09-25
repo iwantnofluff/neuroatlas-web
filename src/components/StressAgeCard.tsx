@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Heart, Zap, Eye, Coffee, ChevronRight, CornerRightDown, ArrowLeft } from "lucide-react";
+import { Heart, Zap, Eye, Coffee, ChevronRight, CornerRightDown, ArrowLeft, Watch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -99,6 +99,29 @@ function MetricTile({
           {status}
         </p>
       </div>
+    </div>
+  );
+}
+
+function BatteryRingBadge({ percent }: { percent: number }) {
+  const r = 15;
+  const c = 2 * Math.PI * r;
+  return (
+    <div className="relative flex size-7 shrink-0 items-center justify-center">
+      <svg viewBox="0 0 36 36" className="absolute inset-0 size-full -rotate-90">
+        <circle cx="18" cy="18" r={r} fill="none" stroke="#f2f2f2" strokeOpacity="0.15" strokeWidth="3" />
+        <circle
+          cx="18"
+          cy="18"
+          r={r}
+          fill="none"
+          stroke={SUCCESS}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={`${(c * percent) / 100} ${c}`}
+        />
+      </svg>
+      <Watch className="size-3" style={{ color: SUCCESS }} />
     </div>
   );
 }
@@ -268,8 +291,8 @@ export function StressAgeCard({ className }: { className?: string }) {
           icon={<Heart className="size-3.5" />}
           label="Recovery Capacity"
           value={recovery}
-          status={recovery >= 60 ? "Balanced" : "Strained"}
-          color={recovery >= 60 ? SUCCESS : DANGER}
+          status={recovery >= 65 ? "Strained" : recovery >= 35 ? "Balanced" : "Depleted"}
+          color={recovery >= 65 || recovery < 35 ? DANGER : SUCCESS}
           onRefresh={() =>
             refresh(setRecoveryBusy, () => setRecovery(Math.round(randomBetween(35, 90))))
           }
@@ -292,8 +315,8 @@ export function StressAgeCard({ className }: { className?: string }) {
           icon={<Eye className="size-3.5" />}
           label="Emotional Regulation"
           value={emotional}
-          status={emotional >= 60 ? "Primed" : "Reactive"}
-          color={emotional >= 60 ? SUCCESS : DANGER}
+          status={emotional >= 40 ? "Primed" : "Reactive"}
+          color={emotional >= 40 ? SUCCESS : DANGER}
           onRefresh={() =>
             refresh(setEmotionalBusy, () => setEmotional(Math.round(randomBetween(35, 90))))
           }
@@ -323,14 +346,7 @@ export function StressAgeCard({ className }: { className?: string }) {
 
         <div className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-2.5">
           <span className="flex items-center gap-2">
-            <span
-              className="relative flex size-7 items-center justify-center rounded-full border-2"
-              style={{ borderColor: SUCCESS }}
-            >
-              <span className="text-[7px] font-medium" style={{ color: SUCCESS }}>
-                78%
-              </span>
-            </span>
+            <BatteryRingBadge percent={78} />
             <span className="flex flex-col">
               <span className="text-xs font-light text-gold-deep">Band</span>
               <span className="text-[9px] tracking-[0.2px] text-[#5e6165] uppercase">78%</span>
