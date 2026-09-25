@@ -3,6 +3,7 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { VitalsDashboard } from "@/components/VitalsDashboard";
+import { NeuroWaveVisual } from "@/components/NeuroWaveVisual";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -146,6 +147,7 @@ export default function HowItWorksPage() {
         body="NeuroAtlas is built around how the brain and nervous system respond to stress, focus and recovery. It combines the body’s signals with neuroscience-backed techniques to help you understand your state and use simple, targeted tools to shift it."
         imageSide="left"
         background="navy-soft"
+        media={<NeuroWaveVisual />}
       />
 
       {/* 5. Measure again - headline A: "The Proof, Not The Promise" adds a

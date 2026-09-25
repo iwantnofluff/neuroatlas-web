@@ -392,6 +392,18 @@
     50% { transform: translate(-3%, -4%) scale(1.05); }
   }
 
+  /* NeuroWaveVisual's animated ECG trace (see that component) — the
+     wrapper is two identical strips side by side at 200% width;
+     scrolling it exactly -50% loops seamlessly back to the start
+     with no visible seam or reset jump. */
+  .animate-ecg-scroll {
+    animation: ecg-scroll 6s linear infinite;
+  }
+  @keyframes ecg-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
   /* "One Signal, Just Stress" gradient text-mask (see OneSignalSection.tsx)
      — a slow-shifting fade painted INSIDE the headline's own glyphs via
      bg-clip-text (applied as a Tailwind utility at the call site;
