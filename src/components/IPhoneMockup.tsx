@@ -7,21 +7,33 @@ import { cn } from "@/lib/utils";
  * by height with its own true aspect ratio, same "size by height,
  * width follows" pattern as BodySilhouette.tsx.
  *
- * Aspect ratio is iPhone 17 Pro's actual screen resolution, 1206:2622
- * (~9:19.57) — its real physical case ratio is close but not
- * identical (bezel proportions differ from the pixel grid), and this
- * mockup is standing in for the screen, so the resolution ratio is
- * the correct one to match here.
+ * `variant` picks which real device's screen resolution the aspect
+ * ratio matches — "pro" (the default, every existing caller) is
+ * iPhone 17 Pro's 1206:2622 (~9:19.57); "pro-max" is iPhone 17 Pro
+ * Max's own, larger 1320:2868 (~9:19.57 too, but not the identical
+ * ratio — confirmed via Apple's own published specs, not assumed from
+ * the smaller Pro). Either way this mockup stands in for the screen
+ * itself, so the resolution ratio is the correct one to match, not
+ * the physical case ratio (close but not identical, since bezel
+ * proportions differ from the pixel grid).
  */
 export function IPhoneMockup({
   children,
   className,
+  variant = "pro",
 }: {
   children: React.ReactNode;
   className?: string;
+  variant?: "pro" | "pro-max";
 }) {
   return (
-    <div className={cn("relative aspect-[1206/2622] h-full", className)}>
+    <div
+      className={cn(
+        "relative h-full",
+        variant === "pro-max" ? "aspect-[1320/2868]" : "aspect-[1206/2622]",
+        className
+      )}
+    >
       {/* Side buttons — sit outside the bezel's own rounded rect. */}
       <div className="absolute top-[16%] -left-[2px] h-[3.5%] w-[3px] rounded-l-sm bg-[#3a3b3e]" />
       <div className="absolute top-[22%] -left-[2px] h-[6%] w-[3px] rounded-l-sm bg-[#3a3b3e]" />
