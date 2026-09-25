@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Heart, Zap, Eye, Coffee, ChevronRight, ArrowDown } from "lucide-react";
+import { Heart, Zap, Eye, Coffee, ChevronRight, ArrowDown, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -131,7 +131,10 @@ export function StressAgeCard({ className }: { className?: string }) {
   }
 
   const diff = chronological - nervous;
-  const arcPercent = clamp((nervous / chronological) * 100, 15, 92);
+  // The arc shows the "years younger/older" DELTA, not the ratio of
+  // nervous-system age to chronological age — it's a short highlight
+  // segment starting at the badge, not most of the ring.
+  const arcPercent = clamp((Math.abs(diff) / chronological) * 100, 5, 45);
 
   function logCaffeine() {
     setCaffeineCount((c) => c + 1);
@@ -167,9 +170,13 @@ export function StressAgeCard({ className }: { className?: string }) {
               filter this replaced instead traces the stroke's exact
               silhouette, which reads as a hard-edged cutout right where
               the arc ends against the tan track. */}
+          {/* -scale-x-100 alongside -rotate-90 sweeps the arc counter-
+              clockwise (leftward) from the top badge, matching the
+              reference — plain clockwise dash math always sweeps
+              rightward from the start point otherwise. */}
           <svg
             viewBox="0 0 100 100"
-            className="absolute inset-0 size-full -rotate-90 blur-[6px]"
+            className="absolute inset-0 size-full -rotate-90 -scale-x-100 blur-[6px]"
           >
             <circle
               cx="50"
@@ -186,7 +193,7 @@ export function StressAgeCard({ className }: { className?: string }) {
             />
           </svg>
 
-          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90 -scale-x-100">
             <circle
               cx="50"
               cy="50"
@@ -221,7 +228,7 @@ export function StressAgeCard({ className }: { className?: string }) {
               boxShadow: `0 0 6px ${SUCCESS}66, 0 0 14px ${SUCCESS}33`,
             }}
           >
-            <ArrowDown className={cn("size-2.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
+            <ArrowLeft className={cn("size-2.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
           </button>
         </div>
 
