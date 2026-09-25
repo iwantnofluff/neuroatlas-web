@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { CurtainReveal } from "@/components/CurtainReveal";
 import { EditorialIndexSection } from "@/components/EditorialIndexSection";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
@@ -27,6 +28,25 @@ export function ScienceClosingSection() {
       revealClassName="flex flex-col items-center justify-center bg-navy px-6 text-center text-cream"
       reveal={
         <>
+          {/* DotPattern, not just a bigger glow — a direct "this section
+             acts weird" fix: this reveal pins at a full h-[100svh]
+             (CurtainReveal.tsx's own shared sticky child, not something
+             this section controls), but the heading + button it holds
+             only occupy a small centered band of that height. The
+             55%-radius glow below fades to fully transparent well
+             before the box's own top/bottom edges, so as the box
+             scrolls (both while pinned-at-top, showing its own lower
+             half, and while sliding off after release), a large
+             stretch read as flat, unstyled black — confirmed live via
+             screenshot, right where "Composure Isn't A Personality"
+             scrolls past and before the References list begins.
+             Widening the glow itself didn't fix it (still mostly
+             fallen off well past center, confirmed the same way) — a
+             uniform dot texture across the WHOLE box, the same
+             DotPattern Hero.tsx already uses, is what actually
+             guarantees no stretch of it ever reads as truly empty,
+             regardless of scroll position. */}
+          <DotPattern width={28} height={28} className="text-gold/20" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_50%,color-mix(in_oklab,var(--color-gold)_20%,transparent),transparent_70%)]"
