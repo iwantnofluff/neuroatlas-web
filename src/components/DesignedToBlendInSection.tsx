@@ -13,10 +13,9 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
  * until it fills the entire viewport, acting as a full-bleed cinematic
  * billboard behind the headline (which stays static and in front the
  * whole time, simply last in DOM so it paints on top — no z-index
- * needed). Real lifestyle photo (band-bw-wrist.jpg) now dropped in —
- * was a glassmorphic/gradient placeholder; also removed from the photo
- * gallery further down this page so the same shot doesn't appear twice
- * in two adjacent sections.
+ * needed). designed-to-blend-in.png — a macro shot of the band's own
+ * woven strap and engraved clasp — is the client-supplied photo for
+ * this section, replacing an earlier lifestyle wrist shot.
  *
  * clip-path is built as a SINGLE function-transformer useTransform that
  * returns the COMPLETE template string directly (inset(...% ...% ...%
@@ -89,7 +88,7 @@ export function DesignedToBlendInSection() {
           className="absolute inset-0 overflow-hidden border border-white/10"
         >
           <Image
-            src="/photos/band-bw-wrist.jpg"
+            src="/photos/designed-to-blend-in.png"
             alt=""
             fill
             sizes="100vw"

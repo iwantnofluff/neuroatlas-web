@@ -484,11 +484,18 @@ export function BandScrollShowcase() {
            via screenshot at 390px wide; every MobileSignalCard fills
            this exact rect (`absolute inset-0`), so the box never grows
            past one card no matter how many signals reveal into it.
-           bottom-44 keeps real daylight below it clear of the subtext/
-           CTA block; the box's own short height (one card, not a
-           4-card list) is what leaves real daylight above it clear of
-           the model too, without needing a separate top offset. */}
-        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 h-[112px] xl:hidden">
+           bottom-[218px] (was bottom-44/176px) — a direct "keep equal
+           distance between all the elements in this section" request,
+           paired with BandScrollScene's own bottom-[77px] fix: with the
+           model's own daylight above and below it now equalized at
+           ~97px each (see that file's own comment), the old 176px left
+           this stack's own gap up to the model at ~97px but its gap
+           down to the subtext/CTA at only ~34px — the same "closer to
+           one neighbor than the other" problem, just one level down.
+           218px (its own bottom edge sitting 626px from the top of an
+           844px-tall test viewport, confirmed via screenshot) splits
+           the same ~76px evenly on both sides of this stack instead. */}
+        <div className="pointer-events-none absolute inset-x-6 bottom-[218px] z-10 h-[112px] xl:hidden">
           {signals.map((s) => (
             <MobileSignalCard
               key={s.label}

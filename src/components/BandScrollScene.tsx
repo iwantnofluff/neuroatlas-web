@@ -49,7 +49,22 @@ export function BandScrollScene({
       // above the headline's z-[-1] regardless of default stacking
       // order, so any deliberate slight overlap at the very bottom
       // edge of the text still shows the model in front of it.
-      className="!absolute inset-x-0 bottom-0 z-0 h-[72%]"
+      //
+      // bottom-[77px], not bottom-0, below xl — a direct "the band
+      // should sit centered between the title and the cards, it's
+      // currently closer to the cards" correction: at bottom-0 the
+      // model's own rendered silhouette (not this box's own edges —
+      // the model sits higher in its box than the box's true center,
+      // confirmed live via screenshot pixel measurement at 390×844) sat
+      // ~153px under the headline but only ~41px above the mobile card
+      // stack, nowhere near centered. Shifting this whole box up by the
+      // same 77px the model needs to move (the box's height is
+      // unchanged, so the model inside it moves with it 1:1) puts equal
+      // ~97px daylight above and below the model, confirmed the same
+      // way. xl:bottom-0 restores the untouched original for the
+      // desktop floating-card composition, which was never the
+      // complaint here.
+      className="!absolute inset-x-0 bottom-[77px] z-0 h-[72%] xl:bottom-0"
       // pan-y — a global responsiveness-audit finding, applied for
       // consistency: R3F's <Canvas> renders its OWN wrapper div around
       // the actual <canvas> element, which is where this `style` prop
