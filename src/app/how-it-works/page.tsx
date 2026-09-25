@@ -4,6 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { VitalsDashboard } from "@/components/VitalsDashboard";
 import { NeuroWaveVisual } from "@/components/NeuroWaveVisual";
+import { HrvDetailCard } from "@/components/HrvDetailCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -154,29 +155,18 @@ export default function HowItWorksPage() {
           new angle rather than repeating the body's own closing phrase.
           Given real weight (navy, the one bg-navy section on this page)
           since this is the step that makes the loop's claim credible. The
-          HRV stat card already IS this section's visual - passed in as
-          `media` rather than buried behind a generic placeholder. The HRV
-          number stays marked as an illustrative placeholder, not real
-          pilot data - same honesty convention as the /band specs panel's
-          "To be confirmed" values. Text left, media right. */}
+          HRV detail screen (Figma node 15312:18742, minus its own "About
+          this metric" section per explicit instruction) IS this
+          section's visual - passed in as `media` rather than buried
+          behind a generic placeholder. Text left, media right. */}
       <FeatureSplitSection
         heading="The Proof, Not The Promise"
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
         media={
-          <div className="card-glass bg-transparent flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
-            <p className="eyebrow">HRV</p>
-            <p className="font-serif font-normal uppercase tracking-normal text-4xl text-cream lg:text-5xl">
-              42 <span className="text-gold">→</span> 61
-            </p>
-            <p className="mt-1 text-pretty text-sm text-cream/70">
-              A higher HRV typically reflects greater recovery and lower
-              physiological stress.
-            </p>
-            <p className="mt-1 text-pretty text-xs italic text-cream/50">
-              Illustrative example, pending real pilot data
-            </p>
+          <div className="card-glass bg-transparent flex size-full items-center justify-center px-6 py-8">
+            <HrvDetailCard />
           </div>
         }
       />
