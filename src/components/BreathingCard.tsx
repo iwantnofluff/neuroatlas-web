@@ -110,43 +110,35 @@ export function BreathingCard({ className }: { className?: string }) {
         />
       </svg>
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-[96%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
-      >
-        <span className="size-1.5 rounded-full" style={{ backgroundColor: "#ECE3D1" }} />
-        <span className="size-1.5 rounded-full opacity-30" style={{ backgroundColor: "#ECE3D1" }} />
-      </div>
-
       {/* Outer ring — real CSS conic-gradient (Figma's own computed stop
           angles/colors, copied verbatim from its foreignObject output),
           masked down to the hairline ring the fallback stroke only
           hinted at. Ordinary DOM element, not SVG-embedded. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[38%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute top-[58%] left-1/2 aspect-square w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
             "conic-gradient(from 90deg, rgba(78,74,64,1) 0deg, rgba(229,218,194,1) 110.769deg, rgba(22,20,16,1) 318.462deg, rgba(78,74,64,1) 360deg)",
           opacity: 0.55,
           WebkitMaskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
+            "radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px))",
           maskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
+            "radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px))",
         }}
       />
 
       {/* Middle ring — --gradient-masterclass, masked to a thin stroke. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[29%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute top-[58%] left-1/2 aspect-square w-[47%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background: "var(--gradient-masterclass)",
           opacity: 0.9,
           WebkitMaskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
           maskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
         }}
       />
 
@@ -154,7 +146,7 @@ export function BreathingCard({ className }: { className?: string }) {
           on this one, just a soft radial-ish conic blend). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[3px]"
+        className="pointer-events-none absolute top-[58%] left-1/2 aspect-square w-[24%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[4px]"
         style={{
           background:
             "conic-gradient(from 90deg, rgba(18,16,14,0) 0deg, rgba(75,118,158,1) 180deg, rgba(18,16,14,0) 295.396deg, rgba(18,16,14,0) 360deg)",
@@ -166,25 +158,25 @@ export function BreathingCard({ className }: { className?: string }) {
           same way as the middle ring, sitting just inside the glow. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute top-[58%] left-1/2 aspect-square w-[24%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
             "linear-gradient(180deg, var(--color-gold-deep), var(--color-bronze))",
           opacity: 0.25,
           WebkitMaskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
           maskImage:
-            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+            "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
         }}
       />
 
-      <span className="absolute top-[30%] left-1/2 w-[85%] -translate-x-1/2 text-center text-[0.5rem] leading-tight text-cream/60">
+      <span className="absolute top-[20%] left-1/2 w-[85%] -translate-x-1/2 text-center text-sm leading-tight text-cream/60">
         Inhale · Hold · Exhale
       </span>
 
-      <div className="absolute top-[54%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-        <span className="font-serif text-xl leading-none text-cream">5</span>
-        <span className="mt-0.5 text-[0.45rem] tracking-wide text-cream/40 uppercase">
+      <div className="absolute top-[58%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+        <span className="font-serif text-4xl leading-none text-cream">5</span>
+        <span className="mt-1 text-xs tracking-wide text-cream/40 uppercase">
           sec
         </span>
       </div>
