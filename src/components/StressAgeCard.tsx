@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Heart, Zap, Eye, Coffee, ChevronRight, ArrowDown, ArrowLeft } from "lucide-react";
+import { Heart, Zap, Eye, Coffee, ChevronRight, CornerRightDown, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -91,7 +91,7 @@ function MetricTile({
           <path d="M21 3v5h-5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <span className="text-[#f2f2f2]">{icon}</span>
+      <span className="text-gold">{icon}</span>
       <p className="text-[8px] leading-tight tracking-[0.3px] text-[#f2f2f2] uppercase">{label}</p>
       <div className="flex flex-col gap-0.5">
         <p className="text-xl font-light tracking-[-0.02em] text-[#f2f2f2]">{value}</p>
@@ -170,10 +170,16 @@ export function StressAgeCard({ className }: { className?: string }) {
               filter this replaced instead traces the stroke's exact
               silhouette, which reads as a hard-edged cutout right where
               the arc ends against the tan track. */}
-          {/* -scale-x-100 alongside -rotate-90 sweeps the arc counter-
-              clockwise (leftward) from the top badge, matching the
-              reference — plain clockwise dash math always sweeps
-              rightward from the start point otherwise. */}
+          {/* Two-value dasharray (arc length, then the rest of the
+              circumference as one long gap) rather than a single-value
+              dasharray + offset trick — the offset trick's dash and
+              gap are the same length as the full circumference, so at
+              small percentages it was rendering as TWO separate
+              visible segments (a wraparound artifact) instead of one
+              clean arc starting at the badge. -scale-x-100 alongside
+              -rotate-90 mirrors the whole circle so the single arc
+              sweeps from the top badge toward the left, matching the
+              reference, rather than the right. */}
           <svg
             viewBox="0 0 100 100"
             className="absolute inset-0 size-full -rotate-90 -scale-x-100 blur-[6px]"
@@ -187,9 +193,8 @@ export function StressAgeCard({ className }: { className?: string }) {
               strokeWidth="10"
               strokeLinecap="round"
               strokeOpacity="0.55"
-              strokeDasharray={2 * Math.PI * 44}
-              strokeDashoffset={2 * Math.PI * 44 * (1 - arcPercent / 100)}
-              style={{ transition: "stroke-dashoffset 500ms ease" }}
+              strokeDasharray={`${(2 * Math.PI * 44 * arcPercent) / 100} ${2 * Math.PI * 44}`}
+              style={{ transition: "stroke-dasharray 500ms ease" }}
             />
           </svg>
 
@@ -202,9 +207,8 @@ export function StressAgeCard({ className }: { className?: string }) {
               stroke={SUCCESS}
               strokeWidth="6"
               strokeLinecap="round"
-              strokeDasharray={2 * Math.PI * 44}
-              strokeDashoffset={2 * Math.PI * 44 * (1 - arcPercent / 100)}
-              style={{ transition: "stroke-dashoffset 500ms ease" }}
+              strokeDasharray={`${(2 * Math.PI * 44 * arcPercent) / 100} ${2 * Math.PI * 44}`}
+              style={{ transition: "stroke-dasharray 500ms ease" }}
             />
           </svg>
 
@@ -249,7 +253,7 @@ export function StressAgeCard({ className }: { className?: string }) {
               className="flex size-6 items-center justify-center rounded-full"
               style={{ backgroundColor: `${SUCCESS}1a` }}
             >
-              <ArrowDown className="size-3" style={{ color: SUCCESS }} />
+              <CornerRightDown className="size-3.5" style={{ color: SUCCESS }} />
             </span>
             <span className="text-[10px] whitespace-nowrap" style={{ color: SUCCESS }}>
               {diff >= 0 ? `${diff} years younger` : `${Math.abs(diff)} years older`}
@@ -306,7 +310,7 @@ export function StressAgeCard({ className }: { className?: string }) {
           className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-2.5 text-left transition-colors hover:bg-navy/80"
         >
           <span className="flex items-center gap-2">
-            <Coffee className="size-4 text-cream" />
+            <Coffee className="size-4 text-gold" />
             <span className="flex flex-col">
               <span className="text-xs font-light text-gold-deep">Caffeine</span>
               <span className="text-[9px] tracking-[0.2px] text-[#5e6165] uppercase">
