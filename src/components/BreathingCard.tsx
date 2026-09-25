@@ -31,9 +31,6 @@ import { cn } from "@/lib/utils";
  *   - Inner stroke ring (#C4B38E -> #6D644F) exactly matches the
  *     "Stroke Linear For Cards" pairing already tokenized as
  *     --color-gold-deep / --color-bronze.
- *   - The divider's mid-stop (#C8B68F) does not match any existing
- *     token and is left as literal hex — flagged to the user rather
- *     than inventing a new one.
  *
  * All four rings (outer conic, middle gradient, inner glow, inner
  * stroke) are plain CSS circles sized as a % of the component's own
@@ -80,18 +77,6 @@ export function BreathingCard({ className }: { className?: string }) {
             <stop offset="0.3" stopOpacity="0" />
             <stop offset="1" stopColor="var(--color-gold)" />
           </linearGradient>
-          <linearGradient
-            id={id("paint1")}
-            x1="10"
-            y1="50.5"
-            x2="335"
-            y2="50.5"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="#12100E" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#C8B68F" stopOpacity="0.6" />
-            <stop offset="1" stopColor="#12100E" stopOpacity="0" />
-          </linearGradient>
         </defs>
 
         <rect
@@ -99,14 +84,6 @@ export function BreathingCard({ className }: { className?: string }) {
           height="400"
           fill={`url(#${id("paint0")})`}
           fillOpacity="0.1"
-        />
-        <line
-          x1="10"
-          y1="49.5"
-          x2="335"
-          y2="49.5"
-          stroke={`url(#${id("paint1")})`}
-          strokeOpacity="0.5"
         />
       </svg>
 
@@ -170,11 +147,11 @@ export function BreathingCard({ className }: { className?: string }) {
         }}
       />
 
-      <span className="absolute top-[20%] left-1/2 w-[85%] -translate-x-1/2 text-center text-sm leading-tight text-cream/60">
+      <span className="absolute top-[8%] left-1/2 w-[85%] -translate-x-1/2 text-center text-sm leading-tight text-cream/60">
         Inhale · Hold · Exhale
       </span>
 
-      <div className="absolute top-[58%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+      <div className="absolute top-[58%] left-1/2 aspect-square w-[47%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
         <span className="font-serif text-4xl leading-none text-cream">5</span>
         <span className="mt-1 text-xs tracking-wide text-cream/40 uppercase">
           sec
