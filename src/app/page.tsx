@@ -9,6 +9,7 @@ import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
 import { BodySilhouette } from "@/components/BodySilhouette";
+import { BreathingCard } from "@/components/BreathingCard";
 import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
@@ -26,10 +27,18 @@ import { cn } from "@/lib/utils";
 // tall, which is why it read as adrift with dead space on either side
 // the first time. Not a claim that tile 1 is the semantically right
 // card, only the right shape for a tall vector.
+//
+// `breathingCard` on tile 2 ("bottom-left", h-38%/w-36%) — the
+// breathing card's own frame is 345x400 (~1:1.16). Of the two
+// remaining tiles, tile 2's ratio (38/36 ≈ 1.06) is closer to that than
+// tile 3's (34/40 ≈ 0.85), so it crops least.
 const floatTiles = [
   { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6" },
   { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
-  { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6" },
+  {
+    className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6",
+    breathingCard: true,
+  },
   { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
 ];
 
@@ -177,6 +186,9 @@ export default function Home() {
                     // 0.1-0.2 for the hexes), matching Figma exactly —
                     // an outer opacity would flatten that difference.
                     <BodySilhouette className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto" />
+                  )}
+                  {tile.breathingCard && (
+                    <BreathingCard className="pointer-events-none absolute inset-0" />
                   )}
                 </Reveal>
               ))}
