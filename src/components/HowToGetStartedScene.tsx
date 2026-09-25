@@ -3,6 +3,7 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
+import { damp } from "maath/easing";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import {
@@ -609,6 +610,17 @@ function StrapPiece() {
   );
 }
 
+// A static 180° turn about Y, not animation — this section's "no
+// rotation" rule is about the scroll-driven tumble the module never
+// gets (see ModuleTravel), not about a one-time orientation correction.
+// Raw (no BASE_ROTATION, matching this whole file's premise), the
+// module's embossed-logo face points -Z, away from the camera on +Z;
+// this flips it to face the camera instead. Rotating about Y (not Z)
+// keeps the module upright and matches how the strap itself is already
+// oriented — a Z-axis flip would have turned the module sideways
+// relative to it.
+const MODULE_FACE_ROTATION: readonly [number, number, number] = [0, Math.PI, 0];
+
 /** The module's own meshes, rendered directly rather than through
  *  <Band> — that component unconditionally applies BASE_ROTATION
  *  internally, which this section's whole premise rules out. Same
@@ -622,7 +634,7 @@ function ModulePiece() {
   const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
 
   return (
-    <>
+    <group rotation={MODULE_FACE_ROTATION}>
       {shellMeshes.map((mesh, i) => (
         <mesh key={`shell-${i}`} geometry={mesh.geometry}>
           <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
@@ -645,21 +657,41 @@ function ModulePiece() {
           </mesh>
         );
       })}
-    </>
+    </group>
   );
 }
 
+// How long (seconds) the damped follow takes to close most of the gap
+// to a new stop — maath's damp() is framerate-independent (see below),
+// so this is a real physical time constant, not a per-frame decay rate
+// tuned against an assumed 60fps. Long enough to read as weight, short
+// enough that a reader who has already moved on to the next step isn't
+// still watching the module arrive at the last one.
+const MODULE_FOLLOW_SMOOTH_TIME = 0.4;
+
 /** Reads the SAME scrollYProgress MotionValue the step text uses, through
  *  the SAME `activeStepIndex` function the text's own active-step
- *  highlighting is built on (imported from HowToGetStartedSection.tsx,
- *  not reimplemented here) — one source of truth, so the module and the
- *  highlighted step can't drift apart the way two independently-computed
- *  values could. Eased via a per-frame damped lerp toward whichever stop
- *  is currently active (same "smooth follow" convention Band.tsx's own
- *  xray variant already uses); reduced motion snaps straight to the
- *  target instead of easing, but still tracks the SAME active index every
- *  frame — never frozen at one position, since holding still would break
- *  the progress indication this whole section exists to show. */
+ *  highlighting is built on (imported from howToGetStartedProgress.ts —
+ *  one shared module, not reimplemented here) — one source of truth, so
+ *  the module's TARGET and the highlighted step can't drift apart the
+ *  way two independently-computed values could. The target itself is
+ *  always computed from this undamped, instantaneous progress — only
+ *  the module's own motion toward that target is damped (maath's
+ *  `damp()`, the standard framerate-independent exponential smoothing:
+ *  see https://www.gamedeveloper.com/programming/damp-those-springs —
+ *  a per-frame `lerp(current, target, fixedFactor)` implicitly assumes
+ *  a fixed frame rate, since the SAME factor applied at 30fps closes
+ *  only half the real-time distance it would at 60fps; `damp()` takes
+ *  elapsed frame time directly so the real-time smoothing feel doesn't
+ *  change with frame rate). This is deliberately NOT the same MotionValue
+ *  the text's opacity windows read — those stay tied to the reader's
+ *  literal scroll position; only the module's own position trails it,
+ *  so the two can never desynchronize by more than this lag, and the
+ *  active step is never ambiguous. Reduced motion snaps straight to the
+ *  target instead of easing, but still re-reads the SAME active index
+ *  every frame — never frozen at one position, since holding still
+ *  would break the progress indication this whole section exists to
+ *  show. */
 function ModuleTravel({
   progress,
   reduceMotion,
@@ -668,12 +700,14 @@ function ModuleTravel({
   reduceMotion: boolean;
 }) {
   const group = useRef<THREE.Group>(null);
-  useFrame(() => {
+  useFrame((_state, delta) => {
     if (!group.current) return;
     const target = moduleStopY(activeStepIndex(progress.get()));
-    group.current.position.y = reduceMotion
-      ? target
-      : THREE.MathUtils.lerp(group.current.position.y, target, 0.12);
+    if (reduceMotion) {
+      group.current.position.y = target;
+    } else {
+      damp(group.current.position, "y", target, MODULE_FOLLOW_SMOOTH_TIME, delta);
+    }
   });
   return (
     <group ref={group}>
