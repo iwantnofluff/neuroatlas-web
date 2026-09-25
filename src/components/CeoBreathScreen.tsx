@@ -157,9 +157,11 @@ export function CeoBreathScreen({ className }: { className?: string }) {
                 "radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
             }}
           />
-          <div className="relative flex flex-col items-center">
-            <span className="text-xl text-[#f2f2f2] tabular-nums">{secondsLeft}</span>
-            <span className="text-xs text-[#9b9c9d]">sec</span>
+          <div className="absolute inset-[24%] flex flex-col items-center justify-center">
+            <span className="font-serif text-sm leading-none text-[#f2f2f2] tabular-nums">
+              {secondsLeft}
+            </span>
+            <span className="mt-0.5 text-[0.5rem] leading-none text-[#9b9c9d]">sec</span>
           </div>
         </div>
 
