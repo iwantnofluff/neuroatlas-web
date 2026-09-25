@@ -25,18 +25,24 @@ import { cn } from "@/lib/utils";
  *    NeuralAccordion, TheSpecs all use it), which clears 4.5:1 here.
  *
  * Token reuse (do not re-declare):
- *   - Middle ring stroke (`paint3`, #998B6F -> #08243F) is an exact
- *     match for --gradient-masterclass, reused via its two component
- *     colors (--color-gold-muted / --color-navy-abyss).
- *   - Inner ring's plain stroke (`paint5`, #C4B38E -> #6D644F) exactly
- *     matches the "Stroke Linear For Cards" pairing already tokenized
- *     as --color-gold-deep / --color-bronze.
- *   - "505" and the divider's mid-stop and pagination dots use three of
- *     the file's five "warm sand" colors: #E5DAC2 -> --color-gold-soft,
- *     #DAC79E -> --color-gold both map exactly. #ECE3D1 (pagination
- *     dots) and #C8B68F (divider mid-stop) do NOT match any existing
- *     token and are left as literal hex — flagged to the user rather
- *     than inventing new tokens for them.
+ *   - Middle ring (#998B6F -> #08243F) is an exact match for
+ *     --gradient-masterclass, reused via its two component colors
+ *     (--color-gold-muted / --color-navy-abyss).
+ *   - Inner stroke ring (#C4B38E -> #6D644F) exactly matches the
+ *     "Stroke Linear For Cards" pairing already tokenized as
+ *     --color-gold-deep / --color-bronze.
+ *   - The divider's mid-stop (#C8B68F) does not match any existing
+ *     token and is left as literal hex — flagged to the user rather
+ *     than inventing a new one.
+ *
+ * All four rings (outer conic, middle gradient, inner glow, inner
+ * stroke) are plain CSS circles sized as a % of the component's own
+ * width, not SVG paths — the source SVG's viewBox is 345x400, and this
+ * component's box is whatever aspect the caller gives it, so any
+ * circle drawn via that viewBox with `preserveAspectRatio="none"`
+ * comes out as a mismatched ellipse the moment the container isn't
+ * 345:400. Keeping every ring on the same "% of width, aspect-square"
+ * basis is what keeps them genuinely concentric.
  *
  * The frame-crop background path (rounded top corners, square bottom —
  * an artifact of Figma's own canvas crop) is dropped entirely; the
@@ -86,28 +92,6 @@ export function BreathingCard({ className }: { className?: string }) {
             <stop offset="0.5" stopColor="#C8B68F" stopOpacity="0.6" />
             <stop offset="1" stopColor="#12100E" stopOpacity="0" />
           </linearGradient>
-          <linearGradient
-            id={id("paint3")}
-            x1="172"
-            y1="150"
-            x2="172"
-            y2="289"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="var(--color-gold-muted)" />
-            <stop offset="1" stopColor="var(--color-navy-abyss)" />
-          </linearGradient>
-          <linearGradient
-            id={id("paint5")}
-            x1="172.5"
-            y1="184"
-            x2="172.5"
-            y2="255"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="var(--color-gold-deep)" />
-            <stop offset="1" stopColor="var(--color-bronze)" />
-          </linearGradient>
         </defs>
 
         <rect
@@ -124,21 +108,15 @@ export function BreathingCard({ className }: { className?: string }) {
           stroke={`url(#${id("paint1")})`}
           strokeOpacity="0.5"
         />
-        <path
-          opacity="0.9"
-          d="M172 150.5C209.828 150.5 240.5 181.389 240.5 219.5C240.5 257.611 209.828 288.5 172 288.5C134.172 288.5 103.5 257.611 103.5 219.5C103.5 181.389 134.172 150.5 172 150.5Z"
-          stroke={`url(#${id("paint3")})`}
-        />
-        <circle
-          cx="172.5"
-          cy="219.5"
-          r="35"
-          stroke={`url(#${id("paint5")})`}
-          strokeOpacity="0.25"
-        />
-        <circle cx="164" cy="384.5" r="5.5" fill="#ECE3D1" />
-        <circle opacity="0.3" cx="181" cy="384.5" r="5.5" fill="#ECE3D1" />
       </svg>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[96%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
+      >
+        <span className="size-1.5 rounded-full" style={{ backgroundColor: "#ECE3D1" }} />
+        <span className="size-1.5 rounded-full opacity-30" style={{ backgroundColor: "#ECE3D1" }} />
+      </div>
 
       {/* Outer ring — real CSS conic-gradient (Figma's own computed stop
           angles/colors, copied verbatim from its foreignObject output),
@@ -158,8 +136,22 @@ export function BreathingCard({ className }: { className?: string }) {
         }}
       />
 
-      {/* Inner glow — same technique, full circle (the source design has
-          no ring mask on this one, just a soft radial-ish conic blend). */}
+      {/* Middle ring — --gradient-masterclass, masked to a thin stroke. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[29%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background: "var(--gradient-masterclass)",
+          opacity: 0.9,
+          WebkitMaskImage:
+            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+          maskImage:
+            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+        }}
+      />
+
+      {/* Inner glow — full circle (the source design has no ring mask
+          on this one, just a soft radial-ish conic blend). */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[3px]"
@@ -167,6 +159,22 @@ export function BreathingCard({ className }: { className?: string }) {
           background:
             "conic-gradient(from 90deg, rgba(18,16,14,0) 0deg, rgba(75,118,158,1) 180deg, rgba(18,16,14,0) 295.396deg, rgba(18,16,14,0) 360deg)",
           opacity: 0.5,
+        }}
+      />
+
+      {/* Inner stroke ring — the gold-deep/bronze pairing, masked the
+          same way as the middle ring, sitting just inside the glow. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[54%] left-1/2 aspect-square w-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-gold-deep), var(--color-bronze))",
+          opacity: 0.25,
+          WebkitMaskImage:
+            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
+          maskImage:
+            "radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px))",
         }}
       />
 
