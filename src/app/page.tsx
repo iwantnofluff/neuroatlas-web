@@ -11,6 +11,7 @@ import { SpotlightPhoto } from "@/components/SpotlightPhoto";
 import { BodySilhouette } from "@/components/BodySilhouette";
 import { BreathingCard } from "@/components/BreathingCard";
 import { SyncRingCard } from "@/components/SyncRingCard";
+import { GlowOrbCard } from "@/components/GlowOrbCard";
 import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
@@ -36,7 +37,10 @@ const floatTiles = [
   },
   { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
   { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6", syncRing: true },
-  { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
+  {
+    className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3",
+    glowOrb: true,
+  },
 ];
 
 const trustPoints = [
@@ -189,6 +193,9 @@ export default function Home() {
                   )}
                   {tile.syncRing && (
                     <SyncRingCard className="pointer-events-none absolute inset-0 m-auto h-[80%] w-auto" />
+                  )}
+                  {tile.glowOrb && (
+                    <GlowOrbCard className="pointer-events-none absolute inset-0 m-auto h-[75%] w-auto" />
                   )}
                 </Reveal>
               ))}
