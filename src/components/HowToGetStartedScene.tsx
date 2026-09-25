@@ -20,7 +20,11 @@ import {
   POGO_PAD_INDICES,
 } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
-import { activeStepIndex, STEP_COUNT } from "@/lib/howToGetStartedProgress";
+import {
+  activeStepIndex,
+  moduleStopMM,
+  STRAP_VISIBLE_HEIGHT_MM,
+} from "@/lib/howToGetStartedProgress";
 
 /**
  * STRAP RENDERING — GEOMETRY, MATERIAL, AND TEXTURE NOTES
@@ -42,6 +46,29 @@ import { activeStepIndex, STEP_COUNT } from "@/lib/howToGetStartedProgress";
  *   - The raw mesh has NO uv attribute at all (confirmed: absent from
  *     the exported attributes, not just empty) — see UV GENERATION.
  *
+ * FRAMING — A DELIBERATE REFRAMING, NOT A REGRESSION OF "FULL
+ * VISIBILITY": earlier passes on this section treated "full visibility"
+ * as a hard constraint — frame the complete 260.5mm strap, both tips
+ * always on screen, because the strap was being PRESENTED as an object
+ * (see this file's own git history/PR notes from that phase). That was
+ * the right call for that job: an object with a tip cropped off reads
+ * as a mistake.
+ * The layout changed since: the strap is now a CENTRED SPINE with steps
+ * flanking it, not an object beside a text column. A spine that both
+ * starts and stops on screen, fully visible, floating in open space on
+ * both sides, reads as a detached component — not what a centred
+ * timeline wants. A spine that bleeds off the top and bottom implies
+ * continuity beyond the frame, which is the actual job here. So this
+ * file now frames only STRAP_VISIBLE_HEIGHT_MM (200mm) of the strap's
+ * real 260.5mm length, centred on its midpoint, and lets the rest run
+ * past the canvas's own top/bottom edge on purpose. If you're reading
+ * this because the strap looks "cropped" and are about to widen
+ * CAMERA_TARGET_HEIGHT back out to the full length: don't, without
+ * first checking whether the layout is still this centred-spine one —
+ * if it's reverted to a side-rail-beside-text layout, full visibility
+ * is correct again and this whole note is the thing that's stale, not
+ * the crop.
+ *
  * WORLD SCALE (RIG_SCALE): every other Band scene in this codebase
  * (BuiltToReadYouScene/BandScrollScene/TheSpecsScene) renders this same
  * glb at a ~30-34x scale, with their shared light rig tuned against
@@ -58,9 +85,9 @@ import { activeStepIndex, STEP_COUNT } from "@/lib/howToGetStartedProgress";
  * Fix: wrap just the meshes (not the lights) in the same ~32x scale via
  * RIG_SCALE, so the identical light rig sees the identical world-scale
  * relationship it was tuned against. CAMERA_TARGET_HEIGHT is a world-
- * space (post-RIG_SCALE) measurement as a result; MODULE_TRAVEL_TOP/
- * BOTTOM are pre-scale LOCAL coordinates inside the scaled group, so
- * they didn't need to change.
+ * space (post-RIG_SCALE) measurement as a result; the module's travel
+ * (moduleStopY) stays in pre-scale LOCAL coordinates inside the scaled
+ * group, so it doesn't need to know about RIG_SCALE at all.
  *
  * LIGHT RIG: beyond the scale fix above, this strap faces the camera
  * dead-on for the ENTIRE scroll (no rotation, ever) — unlike the other
@@ -181,9 +208,6 @@ const STRAP_MESH_NAME = "empty_3";
 // face-on pose wanted here. BASE_ROTATION exists to turn that same raw
 // orientation INTO the landscape pose every other Band scene wants;
 // applying it here would do the opposite of what this section needs.
-const MODULE_TRAVEL_TOP = 0.1003;
-const MODULE_TRAVEL_BOTTOM = -0.1003;
-
 // Every other Band scene (BuiltToReadYouScene/BandScrollScene/TheSpecsScene)
 // renders this same glb at a ~30-34x world scale, with its light rig tuned
 // against that scale. At the raw, unscaled meter units this file otherwise
@@ -198,30 +222,38 @@ const MODULE_TRAVEL_BOTTOM = -0.1003;
 // ~32x scale reproduces the exact world-scale relationship those scenes
 // were tuned against, so the identical light rig produces the same
 // proven result. CAMERA_TARGET_HEIGHT below is scaled to match — it's a
-// world-space (post-scale) measurement, while MODULE_TRAVEL_TOP/BOTTOM
-// above stay as pre-scale LOCAL coordinates inside the scaled group, so
-// they don't need to change.
+// world-space (post-scale) measurement, while the module's travel stays
+// in pre-scale LOCAL coordinates inside the scaled group, so it doesn't
+// need to know about RIG_SCALE at all.
 const RIG_SCALE = 32;
 
-// The full visible height the orthographic camera frames, in world
-// space (i.e. after RIG_SCALE) — the strap's own real height (0.2605m)
-// plus a comfortable margin on both ends, scaled up to match: this is
-// what "frame the full 260mm height with a comfortable margin" converts
-// to once the strap itself is rendered at the same world scale as every
-// other Band scene.
-const CAMERA_TARGET_HEIGHT = 0.32 * RIG_SCALE;
+// The visible height the orthographic camera frames, in world space
+// (i.e. after RIG_SCALE) — STRAP_VISIBLE_HEIGHT_MM (200mm, the central
+// portion of the strap's real 260.5mm length) converted to this file's
+// working units. See the header comment above for why this is a crop,
+// not the full length, and howToGetStartedProgress.ts for why that
+// constant lives there instead of here (Section needs the identical
+// number to place the step text at the right screen height).
+const CAMERA_TARGET_HEIGHT = (STRAP_VISIBLE_HEIGHT_MM / 1000) * RIG_SCALE;
 
+// Pre-scale LOCAL units (meters), NOT multiplied by RIG_SCALE — this
+// value is consumed as ModuleTravel's own group.position.y, and that
+// group is a CHILD of the outer <group scale={RIG_SCALE}>, so the
+// scale already applies once when computing its world position.
+// Multiplying by RIG_SCALE here as well double-counted it: confirmed
+// directly (a scene-graph traversal reading the module's own
+// matrixWorld) that the module was rendering at world Y=56.32 instead
+// of the intended 1.76 — 32x further from the origin than the frame
+// covers, genuinely off-screen rather than merely mis-lit.
 function moduleStopY(index: number) {
-  const t = STEP_COUNT <= 1 ? 0 : index / (STEP_COUNT - 1);
-  return THREE.MathUtils.lerp(MODULE_TRAVEL_TOP, MODULE_TRAVEL_BOTTOM, t);
+  return moduleStopMM(index) / 1000;
 }
 
 /** Keeps the orthographic camera's zoom in sync with the canvas's own
  *  live pixel height, recalculated on every resize — the only way to
- *  guarantee "frame the full 260mm height... at all times" actually
- *  holds regardless of how tall the sticky left column renders at on a
- *  given viewport, rather than a zoom value tuned for one specific
- *  canvas size that drifts on any other. */
+ *  guarantee STRAP_VISIBLE_HEIGHT_MM stays framed regardless of how tall
+ *  the pinned viewport renders at on a given screen, rather than a zoom
+ *  value tuned for one specific canvas size that drifts on any other. */
 function FitOrthographicCamera() {
   // useFrame, not useThree()+useEffect — mutating `camera.zoom` on a
   // value obtained directly from useThree() trips the React Compiler's
