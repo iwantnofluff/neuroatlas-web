@@ -1,7 +1,6 @@
 import { LivingSignalHero } from "@/components/LivingSignalHero";
 import { NeuralAccordion } from "@/components/NeuralAccordion";
-import { HRVSignalSection } from "@/components/HRVSignalSection";
-import { LimitsOfWearablesSection } from "@/components/LimitsOfWearablesSection";
+import { HRVAndLimitsSection } from "@/components/HRVAndLimitsSection";
 import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSection";
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
@@ -20,6 +19,11 @@ export const metadata = { title: "The science - NeuroAtlas" };
 // 2. Three Systems, One Method - see NeuralAccordion.tsx.
 // 3. The Signal That Does Not Lie - see HRVSignalSection.tsx.
 // 4. The Limits Of Wearables - see LimitsOfWearablesSection.tsx (new).
+//    Sections 3 and 4 render together via HRVAndLimitsSection.tsx, not
+//    as separate top-level entries here - a shared Champagne Gold wave
+//    draws continuously from section 3's own heading down through the
+//    end of section 4, which needs one scroll-linked wrapper spanning
+//    both rather than two independent per-section animations.
 // 5. Built On Neuroscience - see BuiltOnNeuroscienceSection.tsx (new).
 // 6. Guided By Experts ("The Editorial Index", repurposed from its
 //    previous "Peer-Reviewed, Not Promised" copy - same research-card
@@ -43,8 +47,7 @@ export default function TheSciencePage() {
     <main>
       <LivingSignalHero />
       <NeuralAccordion />
-      <HRVSignalSection />
-      <LimitsOfWearablesSection />
+      <HRVAndLimitsSection />
       <BuiltOnNeuroscienceSection />
       <ScienceClosingSection />
       {/* References - the full bibliographic citations for "Guided By
