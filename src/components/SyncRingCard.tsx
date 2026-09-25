@@ -54,7 +54,7 @@ export function SyncRingCard({ className }: { className?: string }) {
             <feGaussianBlur stdDeviation="6" />
           </filter>
         </defs>
-        <g transform="translate(3, 23)" opacity="0.6" filter={`url(#${id("heptagon-blur")})`}>
+        <g transform="translate(3, 23)" opacity="0.3" filter={`url(#${id("heptagon-blur")})`}>
           <path d={heptagonPath} stroke="var(--color-gold)" strokeWidth="9" />
         </g>
         <g transform="translate(3, 23)">
@@ -75,7 +75,7 @@ export function SyncRingCard({ className }: { className?: string }) {
         className="pointer-events-none absolute top-[6%] left-1/2 h-[15%] w-[3.4%] -translate-x-1/2 rounded-full"
         style={{
           background: "linear-gradient(180deg, #4b769e, transparent)",
-          boxShadow: "0 0 12px 2px rgba(75,118,158,0.6)",
+          boxShadow: "0 0 5px 0px rgba(75,118,158,0.35)",
         }}
       />
       <div
@@ -83,13 +83,13 @@ export function SyncRingCard({ className }: { className?: string }) {
         className="pointer-events-none absolute top-[92%] left-1/2 h-[15%] w-[3.4%] -translate-x-1/2 -translate-y-full rounded-full"
         style={{
           background: "linear-gradient(0deg, #4b769e, transparent)",
-          boxShadow: "0 0 12px 2px rgba(75,118,158,0.6)",
+          boxShadow: "0 0 5px 0px rgba(75,118,158,0.35)",
         }}
       />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-[57%] left-[96.6%] size-[8%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#F2F2F2]"
-        style={{ boxShadow: "0 0 10px 2px rgba(242,242,242,0.5)" }}
+        style={{ boxShadow: "0 0 4px 0px rgba(242,242,242,0.3)" }}
       />
 
       <div className="absolute top-[53%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center opacity-40">
