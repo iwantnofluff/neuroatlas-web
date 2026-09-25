@@ -260,7 +260,7 @@ export function EmotionalWheelScreen({ className }: { className?: string }) {
         {/* Selected emotion's own label, radially positioned/rotated
            to match its petal — see labelOffsets' own comment. */}
         <p
-          className="pointer-events-none absolute font-normal text-[3.56cqw] whitespace-nowrap text-[#ece3d1]"
+          className="pointer-events-none absolute font-normal text-[2.4cqw] whitespace-nowrap text-[#ece3d1]"
           style={{
             left: `${50 + labelOffsets[selected].dx}%`,
             top: `${50 + labelOffsets[selected].dy}%`,
