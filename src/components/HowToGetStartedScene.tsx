@@ -103,10 +103,17 @@ function FitOrthographicCamera() {
   return null;
 }
 
+// Woven nylon is a dielectric, not a metal — metalness must stay at 0.
+// At the earlier 0.85 metalness, the strap's own #041E42 base colour was
+// almost irrelevant to what rendered: a metallic surface shows its base
+// colour only through tinted reflections, so what actually appeared was
+// the studio HDRI's own colour (a saturated royal blue), not the navy
+// fabric. roughness 0.75 keeps it matte enough to read as fabric rather
+// than a polished dielectric sheen.
 const STRAP_MATERIAL_PROPS = {
   color: "#041E42",
-  roughness: 0.35,
-  metalness: 0.85,
+  roughness: 0.75,
+  metalness: 0,
   side: THREE.DoubleSide,
 } as const;
 const WOVEN_TEXTURE_REPEAT: readonly [number, number] = [4, 40];
