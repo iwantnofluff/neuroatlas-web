@@ -98,9 +98,30 @@ export function DotPattern({
     const el = containerRef.current
     if (!el) return
 
+    // Rounds to whole px and bails out if unchanged — a real, confirmed
+    // bug this fixes: inside a `position: sticky` container (exactly
+    // this component's use inside CurtainReveal's reveal panel),
+    // getBoundingClientRect() reports tiny sub-pixel fluctuations on
+    // almost every scroll frame even though the element's true CSS
+    // size never changes. Calling setDimensions unconditionally turned
+    // every one of those sub-pixel jitters into a full re-render of
+    // every circle in `dots` (1700+ of them at this pattern's own
+    // density) racing against the scroll itself — confirmed live via a
+    // frame-by-frame video capture, which showed the dot grid visibly
+    // flickering in and out between adjacent frames while scrolling
+    // past this exact panel, not a one-time layout bug. Skipping the
+    // update when the rounded size hasn't actually changed removes
+    // those spurious re-renders entirely without weakening the
+    // ResizeObserver's own job of catching REAL size changes.
     const updateDimensions = () => {
       const { width, height } = el.getBoundingClientRect()
-      setDimensions({ width, height })
+      const nextWidth = Math.round(width)
+      const nextHeight = Math.round(height)
+      setDimensions((prev) =>
+        prev.width === nextWidth && prev.height === nextHeight
+          ? prev
+          : { width: nextWidth, height: nextHeight }
+      )
     }
 
     updateDimensions()
