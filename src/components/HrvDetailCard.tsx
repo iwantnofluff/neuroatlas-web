@@ -26,13 +26,13 @@ import { cn } from "@/lib/utils";
  */
 export function HrvDetailCard({ className }: { className?: string }) {
   return (
-    <div className={cn("flex w-full max-w-sm flex-col gap-4 text-left", className)}>
+    <div className={cn("flex w-full flex-col gap-6 text-left", className)}>
       <div className="flex items-start justify-between">
         <div className="flex items-end gap-1.5 text-[#f2f2f2]">
-          <span className="font-serif text-4xl leading-none">45</span>
-          <span className="text-base text-[#f2f2f2]/30">ms</span>
+          <span className="font-serif text-5xl leading-none">45</span>
+          <span className="text-lg text-[#f2f2f2]/30">ms</span>
         </div>
-        <p className="max-w-[140px] text-right text-[11px] leading-tight text-[#dd416b]">
+        <p className="max-w-[150px] text-right text-xs leading-tight text-[#dd416b]">
           BELOW AVERAGE FOR AGE 32
         </p>
       </div>
@@ -65,7 +65,7 @@ export function HrvDetailCard({ className }: { className?: string }) {
       <div className="flex flex-col gap-2">
         <p className="text-sm text-gold">24-Hour Trend</p>
 
-        <div className="relative h-[165px] w-full overflow-hidden rounded-2xl bg-navy-soft">
+        <div className="relative h-[220px] w-full overflow-hidden rounded-2xl bg-navy-soft">
           <div className="absolute top-[24%] left-[11%] flex h-[62%] w-[85%] flex-col justify-between text-right text-[9px] text-[#5e6165]">
             <span>110</span>
             <span>90</span>

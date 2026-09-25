@@ -5,6 +5,7 @@ import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { VitalsDashboard } from "@/components/VitalsDashboard";
 import { NeuroWaveVisual } from "@/components/NeuroWaveVisual";
 import { HrvDetailCard } from "@/components/HrvDetailCard";
+import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -164,9 +165,14 @@ export default function HowItWorksPage() {
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
+        mediaClassName="aspect-[3/4] max-md:max-h-none md:max-h-none"
         media={
-          <div className="card-glass bg-transparent flex size-full items-center justify-center px-6 py-8">
-            <HrvDetailCard />
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup className="h-full">
+              <div className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <HrvDetailCard />
+              </div>
+            </IPhoneMockup>
           </div>
         }
       />
