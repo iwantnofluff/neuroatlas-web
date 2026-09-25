@@ -159,6 +159,34 @@ export function StressAgeCard({ className }: { className?: string }) {
               </linearGradient>
             </defs>
             <circle cx="50" cy="50" r="44" fill="none" stroke={`url(#${id("track")})`} strokeWidth="6" />
+          </svg>
+
+          {/* Soft glow layer — a wide, blurred duplicate of the arc
+              sitting behind the crisp one. A CSS `blur()` on the whole
+              layer gives an even, falling-off halo; the drop-shadow
+              filter this replaced instead traces the stroke's exact
+              silhouette, which reads as a hard-edged cutout right where
+              the arc ends against the tan track. */}
+          <svg
+            viewBox="0 0 100 100"
+            className="absolute inset-0 size-full -rotate-90 blur-[6px]"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="44"
+              fill="none"
+              stroke={SUCCESS}
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeOpacity="0.55"
+              strokeDasharray={2 * Math.PI * 44}
+              strokeDashoffset={2 * Math.PI * 44 * (1 - arcPercent / 100)}
+              style={{ transition: "stroke-dashoffset 500ms ease" }}
+            />
+          </svg>
+
+          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90">
             <circle
               cx="50"
               cy="50"
@@ -169,10 +197,7 @@ export function StressAgeCard({ className }: { className?: string }) {
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 44}
               strokeDashoffset={2 * Math.PI * 44 * (1 - arcPercent / 100)}
-              style={{
-                filter: `drop-shadow(0 0 4px ${SUCCESS})`,
-                transition: "stroke-dashoffset 500ms ease",
-              }}
+              style={{ transition: "stroke-dashoffset 500ms ease" }}
             />
           </svg>
 
@@ -193,7 +218,7 @@ export function StressAgeCard({ className }: { className?: string }) {
             className="absolute top-[-4%] left-[43%] flex size-5 -translate-x-1/2 items-center justify-center rounded-full"
             style={{
               background: SUCCESS,
-              boxShadow: `0 0 8px ${SUCCESS}, 0 0 16px ${SUCCESS}`,
+              boxShadow: `0 0 6px ${SUCCESS}66, 0 0 14px ${SUCCESS}33`,
             }}
           >
             <ArrowDown className={cn("size-2.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
