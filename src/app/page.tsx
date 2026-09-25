@@ -28,17 +28,13 @@ import { cn } from "@/lib/utils";
 // the first time. Not a claim that tile 1 is the semantically right
 // card, only the right shape for a tall vector.
 //
-// `breathingCard` on tile 2 ("bottom-left", h-38%/w-36%) — the
-// breathing card's own frame is 345x400 (~1:1.16). Of the two
-// remaining tiles, tile 2's ratio (38/36 ≈ 1.06) is closer to that than
-// tile 3's (34/40 ≈ 0.85), so it crops least.
 const floatTiles = [
-  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6" },
-  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
   {
-    className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6",
+    className: "top-0 left-0 h-[42%] w-[46%] -rotate-6",
     breathingCard: true,
   },
+  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
+  { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6" },
   { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
 ];
 
