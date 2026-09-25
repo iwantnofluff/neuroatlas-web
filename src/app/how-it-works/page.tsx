@@ -242,9 +242,8 @@ export default function HowItWorksPage() {
         body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and help you manage it."
         imageSide="left"
         background="cream"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[72svh] md:w-auto md:max-h-none lg:h-[74svh]"
         media={
-          <div className="card-glass-light flex size-full items-center justify-center overflow-y-auto p-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="card-glass-light flex size-full items-center justify-center p-6">
             <StressAgeCard />
           </div>
         }

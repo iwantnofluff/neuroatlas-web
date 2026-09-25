@@ -65,7 +65,7 @@ function MetricTile({
   return (
     <div
       className={cn(
-        "relative flex flex-1 flex-col gap-2.5 overflow-hidden border border-bronze px-4 py-5",
+        "relative flex flex-1 flex-col gap-1.5 overflow-hidden border border-bronze px-2.5 py-3",
         corner === "left" && "rounded-tl-2xl rounded-tr-sm rounded-br-sm rounded-bl-sm",
         corner === "right" && "rounded-br-2xl rounded-tl-sm rounded-tr-sm rounded-bl-sm",
         corner === "none" && "rounded-sm",
@@ -78,11 +78,11 @@ function MetricTile({
         type="button"
         onClick={onRefresh}
         aria-label={`Refresh ${label}`}
-        className="absolute top-3 right-3 text-[#f2f2f2]/30 transition-colors hover:text-[#f2f2f2]/60"
+        className="absolute top-2 right-2 text-[#f2f2f2]/30 transition-colors hover:text-[#f2f2f2]/60"
       >
         <svg
           viewBox="0 0 24 24"
-          className={cn("size-3.5", busy && "animate-spin")}
+          className={cn("size-3", busy && "animate-spin")}
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -92,10 +92,10 @@ function MetricTile({
         </svg>
       </button>
       <span className="text-[#f2f2f2]">{icon}</span>
-      <p className="text-[10px] tracking-[0.3px] text-[#f2f2f2] uppercase">{label}</p>
-      <div className="flex flex-col gap-1.5">
-        <p className="text-3xl font-light tracking-[-0.02em] text-[#f2f2f2]">{value}</p>
-        <p className="text-sm" style={{ color }}>
+      <p className="text-[8px] leading-tight tracking-[0.3px] text-[#f2f2f2] uppercase">{label}</p>
+      <div className="flex flex-col gap-0.5">
+        <p className="text-xl font-light tracking-[-0.02em] text-[#f2f2f2]">{value}</p>
+        <p className="text-[11px]" style={{ color }}>
           {status}
         </p>
       </div>
@@ -140,17 +140,17 @@ export function StressAgeCard({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("flex w-full max-w-sm flex-col gap-5", className)}>
+    <div className={cn("flex w-full max-w-xs flex-col gap-3", className)}>
       {/* Gauge card */}
       <div
-        className="relative overflow-hidden rounded-t-2xl rounded-b-sm border border-bronze px-6 py-6"
+        className="relative overflow-hidden rounded-t-2xl rounded-b-sm border border-bronze px-4 py-4"
         style={{ backgroundImage: "linear-gradient(180deg, #2c2820 0%, #04121f 100%)" }}
       >
-        <p className="text-center text-xs tracking-[0.3em] text-gold-deep uppercase">
+        <p className="text-center text-[10px] tracking-[0.25em] text-gold-deep uppercase">
           Stress Age
         </p>
 
-        <div className="relative mx-auto mt-4 flex aspect-square w-[58%] items-center justify-center">
+        <div className="relative mx-auto mt-2 flex aspect-square w-[46%] items-center justify-center">
           <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90">
             <defs>
               <linearGradient id={id("track")} x1="0" y1="0" x2="1" y2="1">
@@ -177,9 +177,9 @@ export function StressAgeCard({ className }: { className?: string }) {
           </svg>
 
           <div className="flex flex-col items-center">
-            <p className="text-sm text-gold-soft">Feels Like</p>
-            <p className="font-serif text-5xl font-light text-cream">{nervous}</p>
-            <p className="text-xs tracking-[0.3em] text-gold-muted">YEARS</p>
+            <p className="text-[10px] text-gold-soft">Feels Like</p>
+            <p className="font-serif text-3xl font-light text-cream">{nervous}</p>
+            <p className="text-[9px] tracking-[0.25em] text-gold-muted">YEARS</p>
           </div>
 
           <button
@@ -190,36 +190,36 @@ export function StressAgeCard({ className }: { className?: string }) {
                 setNervous(Math.round(randomBetween(28, 45)));
               })
             }
-            className="absolute top-[-4%] left-[43%] flex size-7 -translate-x-1/2 items-center justify-center rounded-full"
+            className="absolute top-[-4%] left-[43%] flex size-5 -translate-x-1/2 items-center justify-center rounded-full"
             style={{
               background: SUCCESS,
               boxShadow: `0 0 8px ${SUCCESS}, 0 0 16px ${SUCCESS}`,
             }}
           >
-            <ArrowDown className={cn("size-3.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
+            <ArrowDown className={cn("size-2.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
           </button>
         </div>
 
-        <div className="mt-5 flex items-center justify-between">
-          <div className="flex flex-col gap-2">
-            <span className="flex items-center gap-1.5 text-xs text-[#909396]">
-              <span className="size-2.5 rounded-full bg-gold-deep" />
+        <div className="mt-3 flex items-center justify-between">
+          <div className="flex flex-col gap-1.5">
+            <span className="flex items-center gap-1 text-[10px] text-[#909396]">
+              <span className="size-2 rounded-full bg-gold-deep" />
               Chronological Age <span className="text-[#f2f2f2]">{chronological}</span>
             </span>
-            <span className="flex items-center gap-1.5 text-xs text-[#909396]">
-              <span className="size-2.5 rounded-full" style={{ backgroundColor: SUCCESS }} />
+            <span className="flex items-center gap-1 text-[10px] text-[#909396]">
+              <span className="size-2 rounded-full" style={{ backgroundColor: SUCCESS }} />
               Nervous System <span className="text-[#f2f2f2]">{nervous}</span>
             </span>
           </div>
-          <div className="h-10 w-px bg-white/10" />
-          <div className="flex flex-col items-center gap-1.5">
+          <div className="h-8 w-px bg-white/10" />
+          <div className="flex flex-col items-center gap-1">
             <span
-              className="flex size-8 items-center justify-center rounded-full"
+              className="flex size-6 items-center justify-center rounded-full"
               style={{ backgroundColor: `${SUCCESS}1a` }}
             >
-              <ArrowDown className="size-4" style={{ color: SUCCESS }} />
+              <ArrowDown className="size-3" style={{ color: SUCCESS }} />
             </span>
-            <span className="text-xs whitespace-nowrap" style={{ color: SUCCESS }}>
+            <span className="text-[10px] whitespace-nowrap" style={{ color: SUCCESS }}>
               {diff >= 0 ? `${diff} years younger` : `${Math.abs(diff)} years older`}
             </span>
           </div>
@@ -229,7 +229,7 @@ export function StressAgeCard({ className }: { className?: string }) {
       {/* Metric tiles */}
       <div className="flex gap-2">
         <MetricTile
-          icon={<Heart className="size-4.5" />}
+          icon={<Heart className="size-3.5" />}
           label="Recovery Capacity"
           value={recovery}
           status={recovery >= 60 ? "Balanced" : "Strained"}
@@ -241,7 +241,7 @@ export function StressAgeCard({ className }: { className?: string }) {
           corner="left"
         />
         <MetricTile
-          icon={<Zap className="size-4.5" />}
+          icon={<Zap className="size-3.5" />}
           label="Cognitive Load"
           value={cognitive}
           status={cognitive >= 70 ? "High" : cognitive >= 40 ? "Moderate" : "Low"}
@@ -253,7 +253,7 @@ export function StressAgeCard({ className }: { className?: string }) {
           corner="none"
         />
         <MetricTile
-          icon={<Eye className="size-4.5" />}
+          icon={<Eye className="size-3.5" />}
           label="Emotional Regulation"
           value={emotional}
           status={emotional >= 60 ? "Primed" : "Reactive"}
@@ -271,36 +271,36 @@ export function StressAgeCard({ className }: { className?: string }) {
         <button
           type="button"
           onClick={logCaffeine}
-          className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-4 text-left transition-colors hover:bg-navy/80"
+          className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-2.5 text-left transition-colors hover:bg-navy/80"
         >
-          <span className="flex items-center gap-3">
-            <Coffee className="size-5 text-cream" />
+          <span className="flex items-center gap-2">
+            <Coffee className="size-4 text-cream" />
             <span className="flex flex-col">
-              <span className="text-base font-light text-gold-deep">Caffeine</span>
-              <span className="text-xs tracking-[0.24px] text-[#5e6165] uppercase">
+              <span className="text-xs font-light text-gold-deep">Caffeine</span>
+              <span className="text-[9px] tracking-[0.2px] text-[#5e6165] uppercase">
                 {caffeineCount === 0 ? "Log use" : `${caffeineCount} logged today`}
               </span>
             </span>
           </span>
-          <ChevronRight className="size-5 text-[#5e6165]" />
+          <ChevronRight className="size-4 text-[#5e6165]" />
         </button>
 
-        <div className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-4">
-          <span className="flex items-center gap-3">
+        <div className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-2.5">
+          <span className="flex items-center gap-2">
             <span
-              className="relative flex size-9 items-center justify-center rounded-full border-2"
+              className="relative flex size-7 items-center justify-center rounded-full border-2"
               style={{ borderColor: SUCCESS }}
             >
-              <span className="text-[9px] font-medium" style={{ color: SUCCESS }}>
+              <span className="text-[7px] font-medium" style={{ color: SUCCESS }}>
                 78%
               </span>
             </span>
             <span className="flex flex-col">
-              <span className="text-base font-light text-gold-deep">Band</span>
-              <span className="text-xs tracking-[0.24px] text-[#5e6165] uppercase">78%</span>
+              <span className="text-xs font-light text-gold-deep">Band</span>
+              <span className="text-[9px] tracking-[0.2px] text-[#5e6165] uppercase">78%</span>
             </span>
           </span>
-          <ChevronRight className="size-5 text-[#5e6165]" />
+          <ChevronRight className="size-4 text-[#5e6165]" />
         </div>
       </div>
     </div>
