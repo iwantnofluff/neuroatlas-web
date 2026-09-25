@@ -44,18 +44,13 @@ export function HrvDetailCard({ className }: { className?: string }) {
         <p className="text-xs text-[#f2f2f2]">HRV</p>
       </div>
 
-      {/* Decorative scroll-position indicator, matching the source
-          screen's own right-edge scrollbar — not a real scrollable
-          element here since nothing below it is clipped. */}
-      <span className="absolute top-14 right-0 h-24 w-1 rounded-full bg-[#f2f2f2]/25" />
-
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div className="flex items-end gap-1.5 text-[#f2f2f2]">
             <span className="font-serif text-3xl leading-none">45</span>
             <span className="text-sm text-[#f2f2f2]/30">ms</span>
           </div>
-          <p className="text-right text-[10px] whitespace-nowrap text-[#dd416b]">
+          <p className="text-right text-[7px] whitespace-nowrap text-[#dd416b]">
             BELOW AVERAGE FOR AGE 32
           </p>
         </div>
