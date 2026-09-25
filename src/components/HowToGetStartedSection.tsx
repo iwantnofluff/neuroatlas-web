@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 import {
   motion,
   useScroll,
@@ -8,10 +9,17 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
-import { TimelineBandSpine } from "@/components/TimelineBandSpine";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
-import { cn } from "@/lib/utils";
+
+// Genuinely lazy — @react-three/fiber's Canvas is only pulled in once this
+// resolves client-side, never touched during the server render. This file
+// is already "use client", so ssr:false is allowed here, same as every
+// other Band scene's own identical inline dynamic() call.
+const HowToGetStartedScene = dynamic(
+  () => import("@/components/HowToGetStartedScene").then((m) => m.HowToGetStartedScene),
+  { ssr: false }
+);
 
 type Step = { label: string; body: string };
 
@@ -56,15 +64,15 @@ function TimelineStep({
   const { start, end } = windowFor(index, STEPS.length);
   const eased = (p: number) => (reduceMotion ? 1 : clamp01((p - start) / (end - start)));
   const opacity = useTransform(progress, (p) => 0.35 + 0.65 * eased(p));
-  const y = useTransform(progress, (p) => (reduceMotion ? 0 : 4 * (1 - eased(p))));
+  const y = useTransform(progress, (p) => (reduceMotion ? 0 : 16 * (1 - eased(p))));
 
   return (
-    <motion.div style={{ opacity, y }} className="pb-4 last:pb-0">
+    <motion.div style={{ opacity, y }} className="py-16 first:pt-0 last:pb-0 md:py-32">
       <span className="eyebrow">{`0${index + 1}`}</span>
-      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">
+      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-2xl text-navy lg:text-3xl">
         {step.label}
       </h3>
-      <p className="mt-3 max-w-md text-pretty text-base text-mist">{step.body}</p>
+      <p className="mt-4 max-w-md text-pretty text-lg text-mist">{step.body}</p>
     </motion.div>
   );
 }
@@ -83,44 +91,38 @@ const heading = (
 );
 
 /**
- * "How To Get Started" — a pinned, scroll-locked sequence (same
- * `h-[Nvh]` wrapper + `sticky` inner panel + `useScroll` "start start" ->
- * "end end" pattern LeadershipDashboardSection.tsx already established on
- * this exact page): the section holds the reader in place until they've
- * scrolled through all four steps, only releasing to the next section
- * once the track is exhausted.
+ * "How To Get Started" — a premium split-screen scroll showcase, replacing
+ * the previous single-column pinned layout entirely per direct feedback
+ * (the flat vertical strap spine read as a 2D rectangle, not a real
+ * object). Left column: the four steps in normal document flow, generous
+ * vertical spacing, scrolling past at their own natural pace — NOT pinned
+ * this time. Right column: `sticky top-0 h-screen`, holding the real 3D
+ * <Band> module + strap assembly (see HowToGetStartedScene.tsx), which
+ * stays in view for as long as the left column's own content is taller
+ * than the viewport, then releases naturally once the reader scrolls past
+ * it — plain CSS sticky behavior, no `h-[Nvh]` wrapper trick needed the
+ * way a true scroll-LOCK section requires, since nothing here is meant to
+ * hold the reader in place anymore.
  *
- * The visual rail beside the steps is the real 3D strap mesh from the
- * product's own GLB (see TimelineBandSpine.tsx) — not the module/device
- * model (that lived in a separate right-hand canvas in an earlier pass
- * of this section; removed entirely per direct feedback, along with the
- * flat SVG line + gold dot markers it replaced). The strap is already
- * long on its own vertical axis in the raw file, so it stands in
- * naturally as the timeline's spine with no rotation trick needed.
+ * scrollYProgress is read off the shared two-column grid itself (offset
+ * "start start" -> "end end", the same pairing LeadershipDashboardSection
+ * uses on this exact page) and drives both the step reveal timing AND the
+ * model's continuous scroll-tied spin — one progress value, two
+ * consumers, so the model visibly keeps turning for exactly as long as
+ * the steps are still revealing, never longer or shorter.
  *
- * pb-8 between steps (was pb-14) and `items-start` with generous
- * top/bottom padding on the sticky panel itself (was `items-center`,
- * no explicit padding budget) — a real, confirmed clipping bug the
- * previous version had: `items-center` on a `min-h-[100svh]` sticky
- * panel vertically centers ALL FOUR steps + heading as one block, and
- * their combined height was taller than the viewport on ordinary
- * laptop screens, clipping "Review" off the bottom with no way to
- * scroll to see it (the panel is sticky/pinned, not scrollable itself).
- * Tightening the inter-step gap is what actually fixes it — no amount
- * of container padding helps when the CONTENT itself doesn't fit; the
- * generous top/bottom padding on top of that is what was actually
- * asked for once the content fits with real room to spare.
- *
- * `md:` and up only — below that, the same four steps render as a plain
- * in-flow stack (no pin, no 3D canvas), matching
- * LeadershipDashboardSection's own `isMobile` split on this same page.
+ * `md:` and up only — below that, a plain stacked list with no sticky
+ * visual and no 3D canvas, matching every other Band-model section on
+ * this page's own mobile fallback: no room for a real two-column split on
+ * a phone-width viewport, and a WebGL canvas isn't worth the GPU cost
+ * there.
  */
 export function HowToGetStartedSection() {
   const isMobile = useIsMobile();
   const reduceMotion = useSafeReducedMotion();
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: wrapperRef,
+    target: gridRef,
     offset: ["start start", "end end"],
   });
 
@@ -129,7 +131,7 @@ export function HowToGetStartedSection() {
       <section>
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <div className="text-center">{heading}</div>
-          <div className="mx-auto mt-16 max-w-xl">
+          <div className="mx-auto mt-16 max-w-xl divide-y divide-navy/10">
             {STEPS.map((step, i) => (
               <TimelineStep
                 key={step.label}
@@ -146,33 +148,31 @@ export function HowToGetStartedSection() {
   }
 
   return (
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[280vh]")}>
-      {/* pt-24 - clears the fixed 73px-tall Header (confirmed via
-         measurement) with margin; items-start rather than items-center,
-         which drifted this content's top edge under the header once the
-         content got short enough for centering to matter (confirmed
-         live at a 800px viewport height). */}
-      <div className="sticky top-0 flex min-h-[100svh] items-start bg-cream px-6 pt-20 pb-10 lg:px-10">
-        <div className="mx-auto w-full max-w-4xl">
-          <div className="text-center">{heading}</div>
-          <div className="mx-auto mt-6 flex max-w-xl gap-6">
-            <div className="relative w-10 shrink-0">
-              <TimelineBandSpine progress={scrollYProgress} />
-            </div>
-            <div className="min-w-0 flex-1">
-              {STEPS.map((step, i) => (
-                <TimelineStep
-                  key={step.label}
-                  progress={scrollYProgress}
-                  index={i}
-                  step={step}
-                  reduceMotion={reduceMotion}
-                />
-              ))}
-            </div>
+    <section className="bg-cream px-6 lg:px-10">
+      <div
+        ref={gridRef}
+        className="mx-auto grid max-w-6xl gap-16 py-24 md:grid-cols-2 lg:py-32"
+      >
+        <div>
+          {heading}
+          <div className="mt-16 divide-y divide-navy/10">
+            {STEPS.map((step, i) => (
+              <TimelineStep
+                key={step.label}
+                progress={scrollYProgress}
+                index={i}
+                step={step}
+                reduceMotion={reduceMotion}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="sticky top-0 h-screen">
+          <div className="relative h-full w-full">
+            <HowToGetStartedScene progress={scrollYProgress} reduceMotion={reduceMotion} />
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

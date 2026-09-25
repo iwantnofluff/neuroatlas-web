@@ -297,7 +297,12 @@ const MODEL_SCALE_MOBILE = 20;
  *  combining unpredictably. Applied in the model's own local space
  *  instead, so the outer group's spin/tilt keep behaving exactly as
  *  before regardless. */
-const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
+// Exported — HowToGetStartedScene.tsx needs this exact same correction to
+// align its own separately-rendered strap mesh with the module's corrected
+// orientation, since it can't reach inside <Band>'s own internal group to
+// attach sibling content directly. Any change here must stay in sync with
+// that file's own replica.
+export const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
 
 /** Multiplier on the lock rotation — `Math.PI * 2` (2π) is a full turn,
  *  which lands the model back at its exact starting orientation, and
