@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
@@ -202,6 +203,15 @@ export default function HowItWorksPage() {
         body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak."
         imageSide="left"
         background="cream"
+        media={
+          <Image
+            src="/photos/pattern-recognition.png"
+            alt="A hand wearing the NeuroAtlas band, arm raised"
+            fill
+            sizes="(min-width: 1024px) 40vw, 90vw"
+            className="object-cover"
+          />
+        }
       />
 
       {/* 7. A worked example - eyebrow kept (it's this section's own
