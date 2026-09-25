@@ -119,15 +119,15 @@ export function BreathingCard({ className }: { className?: string }) {
         }}
       />
 
-      {/* Inner glow — full circle (the source design has no ring mask
-          on this one, just a soft radial-ish conic blend). */}
+      {/* Inner glow — a centered radial blend instead of Figma's
+          off-axis conic one, so the highlight sits symmetrically
+          behind the digit rather than pooling to one side of it. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-[58%] left-1/2 aspect-square w-[24%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[4px]"
         style={{
           background:
-            "conic-gradient(from 90deg, rgba(18,16,14,0) 0deg, rgba(75,118,158,1) 180deg, rgba(18,16,14,0) 295.396deg, rgba(18,16,14,0) 360deg)",
-          opacity: 0.5,
+            "radial-gradient(circle, rgba(75,118,158,0.55) 0%, rgba(18,16,14,0.55) 70%, rgba(18,16,14,0) 100%)",
         }}
       />
 
