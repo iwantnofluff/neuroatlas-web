@@ -92,7 +92,9 @@ function MetricTile({
         </svg>
       </button>
       <span className="text-gold">{icon}</span>
-      <p className="text-[8px] leading-tight tracking-[0.3px] text-[#f2f2f2] uppercase">{label}</p>
+      <p className="text-[8px] leading-tight tracking-[0.3px] whitespace-pre-line text-[#f2f2f2] uppercase">
+        {label}
+      </p>
       <div className="flex flex-col gap-0.5">
         <p className="text-xl font-light tracking-[-0.02em] text-[#f2f2f2]">{value}</p>
         <p className="text-[11px]" style={{ color }}>
@@ -301,7 +303,7 @@ export function StressAgeCard({ className }: { className?: string }) {
         />
         <MetricTile
           icon={<Zap className="size-3.5" />}
-          label="Cognitive Load"
+          label={"Cognitive\nLoad"}
           value={cognitive}
           status={cognitive >= 70 ? "High" : cognitive >= 40 ? "Moderate" : "Low"}
           color={cognitive >= 70 ? DANGER : INFO}
