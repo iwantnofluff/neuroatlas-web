@@ -4,9 +4,14 @@ import { cn } from "@/lib/utils";
  * A realistic (CSS-only, no image asset) iPhone frame — titanium-style
  * bezel, a Dynamic Island notch, and side buttons — for presenting an
  * app screen as a device photo mockup rather than a bare card. Sized
- * by height with its own true aspect ratio (9:19.5, standard modern
- * iPhone screen ratio), same "size by height, width follows" pattern
- * as BodySilhouette.tsx.
+ * by height with its own true aspect ratio, same "size by height,
+ * width follows" pattern as BodySilhouette.tsx.
+ *
+ * Aspect ratio is iPhone 17 Pro's actual screen resolution, 1206:2622
+ * (~9:19.57) — its real physical case ratio is close but not
+ * identical (bezel proportions differ from the pixel grid), and this
+ * mockup is standing in for the screen, so the resolution ratio is
+ * the correct one to match here.
  */
 export function IPhoneMockup({
   children,
@@ -16,7 +21,7 @@ export function IPhoneMockup({
   className?: string;
 }) {
   return (
-    <div className={cn("relative aspect-[9/19.5] h-full", className)}>
+    <div className={cn("relative aspect-[1206/2622] h-full", className)}>
       {/* Side buttons — sit outside the bezel's own rounded rect. */}
       <div className="absolute top-[16%] -left-[2px] h-[3.5%] w-[3px] rounded-l-sm bg-[#3a3b3e]" />
       <div className="absolute top-[22%] -left-[2px] h-[6%] w-[3px] rounded-l-sm bg-[#3a3b3e]" />
