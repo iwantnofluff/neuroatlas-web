@@ -165,7 +165,7 @@ export default function HowItWorksPage() {
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
-        mediaClassName="aspect-[3/4] max-md:max-h-none md:max-h-none"
+        mediaClassName="aspect-[3/5] max-md:max-h-none md:max-h-none"
         media={
           <div className="flex size-full items-center justify-center">
             <IPhoneMockup className="h-full">
