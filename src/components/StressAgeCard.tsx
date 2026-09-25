@@ -1,0 +1,308 @@
+"use client";
+
+import { useId, useState } from "react";
+import { Heart, Zap, Eye, Coffee, ChevronRight, ArrowDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * Figma file Ok6qYziHfAl50GRs0YRC6O, node 15332:15354 — the "Stress
+ * Age" dashboard: a gauge card (chronological vs. nervous-system age),
+ * three toolkit metric tiles (Recovery Capacity, Cognitive Load,
+ * Emotional Regulation), and a caffeine/band status row. Everything
+ * below that row (the "Recommended / Mind Sanctum" wellness card) is
+ * excluded per explicit instruction — this covers up to Caffeine and
+ * Band only.
+ *
+ * Token reuse (do not re-declare):
+ *   - Card borders (#6D644F) are an exact match for --color-bronze.
+ *   - "Stress Age" label, metric-tile labels, and the Caffeine/Band
+ *     labels (#C4B38E) are an exact match for --color-gold-deep.
+ *   - Caffeine/Band card backgrounds (#0B1016) are an exact match for
+ *     --color-navy.
+ * The two-stop card gradients (#2C2820/#04121F, #04121F/#161410), the
+ * success green (#4ADE80), danger red (#DD416B), and the cognitive-
+ * load blue (#4B769E) are the app's own local palette and stay
+ * literal hex, same treatment as VitalsDashboard.tsx/HrvDetailCard.tsx.
+ *
+ * Live interactive: each metric tile has VitalsDashboard's own
+ * refresh-tile pattern (re-rolls that one value/status on click). The
+ * gauge's own refresh badge re-simulates chronological/nervous-system
+ * age together. The caffeine tile is a real log-use counter — tapping
+ * it increments today's count and nudges Cognitive Load up slightly,
+ * a believable (not real-sensor) cause and effect.
+ */
+const SUCCESS = "#4ade80";
+const DANGER = "#dd416b";
+const INFO = "#4b769e";
+
+function randomBetween(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function MetricTile({
+  icon,
+  label,
+  value,
+  status,
+  color,
+  onRefresh,
+  busy,
+  corner,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  status: string;
+  color: string;
+  onRefresh: () => void;
+  busy: boolean;
+  corner: "left" | "right" | "none";
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex flex-1 flex-col gap-2.5 overflow-hidden border border-bronze px-4 py-5",
+        corner === "left" && "rounded-tl-2xl rounded-tr-sm rounded-br-sm rounded-bl-sm",
+        corner === "right" && "rounded-br-2xl rounded-tl-sm rounded-tr-sm rounded-bl-sm",
+        corner === "none" && "rounded-sm",
+      )}
+      style={{
+        backgroundImage: "linear-gradient(180deg, #04121f 36%, #161410 100%)",
+      }}
+    >
+      <button
+        type="button"
+        onClick={onRefresh}
+        aria-label={`Refresh ${label}`}
+        className="absolute top-3 right-3 text-[#f2f2f2]/30 transition-colors hover:text-[#f2f2f2]/60"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className={cn("size-3.5", busy && "animate-spin")}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M21 12a9 9 0 1 1-3-6.7" strokeLinecap="round" />
+          <path d="M21 3v5h-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <span className="text-[#f2f2f2]">{icon}</span>
+      <p className="text-[10px] tracking-[0.3px] text-[#f2f2f2] uppercase">{label}</p>
+      <div className="flex flex-col gap-1.5">
+        <p className="text-3xl font-light tracking-[-0.02em] text-[#f2f2f2]">{value}</p>
+        <p className="text-sm" style={{ color }}>
+          {status}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function StressAgeCard({ className }: { className?: string }) {
+  const uid = useId();
+  const id = (name: string) => `${name}-${uid}`;
+
+  const [chronological] = useState(40);
+  const [nervous, setNervous] = useState(35);
+  const [gaugeBusy, setGaugeBusy] = useState(false);
+
+  const [recovery, setRecovery] = useState(74);
+  const [recoveryBusy, setRecoveryBusy] = useState(false);
+
+  const [cognitive, setCognitive] = useState(61);
+  const [cognitiveBusy, setCognitiveBusy] = useState(false);
+
+  const [emotional, setEmotional] = useState(51);
+  const [emotionalBusy, setEmotionalBusy] = useState(false);
+
+  const [caffeineCount, setCaffeineCount] = useState(0);
+
+  function refresh(setBusy: (v: boolean) => void, apply: () => void) {
+    setBusy(true);
+    setTimeout(() => {
+      apply();
+      setBusy(false);
+    }, 500);
+  }
+
+  const diff = chronological - nervous;
+  const arcPercent = clamp((nervous / chronological) * 100, 15, 92);
+
+  function logCaffeine() {
+    setCaffeineCount((c) => c + 1);
+    setCognitive((c) => clamp(c + Math.round(randomBetween(3, 8)), 0, 100));
+    setRecovery((r) => clamp(r - Math.round(randomBetween(2, 6)), 0, 100));
+  }
+
+  return (
+    <div className={cn("flex w-full max-w-sm flex-col gap-5", className)}>
+      {/* Gauge card */}
+      <div
+        className="relative overflow-hidden rounded-t-2xl rounded-b-sm border border-bronze px-6 py-6"
+        style={{ backgroundImage: "linear-gradient(180deg, #2c2820 0%, #04121f 100%)" }}
+      >
+        <p className="text-center text-xs tracking-[0.3em] text-gold-deep uppercase">
+          Stress Age
+        </p>
+
+        <div className="relative mx-auto mt-4 flex aspect-square w-[58%] items-center justify-center">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90">
+            <defs>
+              <linearGradient id={id("track")} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="var(--color-gold-deep)" />
+                <stop offset="100%" stopColor="var(--color-bronze)" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="44" fill="none" stroke={`url(#${id("track")})`} strokeWidth="6" />
+            <circle
+              cx="50"
+              cy="50"
+              r="44"
+              fill="none"
+              stroke={SUCCESS}
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 44}
+              strokeDashoffset={2 * Math.PI * 44 * (1 - arcPercent / 100)}
+              style={{
+                filter: `drop-shadow(0 0 4px ${SUCCESS})`,
+                transition: "stroke-dashoffset 500ms ease",
+              }}
+            />
+          </svg>
+
+          <div className="flex flex-col items-center">
+            <p className="text-sm text-gold-soft">Feels Like</p>
+            <p className="font-serif text-5xl font-light text-cream">{nervous}</p>
+            <p className="text-xs tracking-[0.3em] text-gold-muted">YEARS</p>
+          </div>
+
+          <button
+            type="button"
+            aria-label="Re-simulate stress age"
+            onClick={() =>
+              refresh(setGaugeBusy, () => {
+                setNervous(Math.round(randomBetween(28, 45)));
+              })
+            }
+            className="absolute top-[-4%] left-[43%] flex size-7 -translate-x-1/2 items-center justify-center rounded-full"
+            style={{
+              background: SUCCESS,
+              boxShadow: `0 0 8px ${SUCCESS}, 0 0 16px ${SUCCESS}`,
+            }}
+          >
+            <ArrowDown className={cn("size-3.5 text-[#04121f]", gaugeBusy && "animate-spin")} />
+          </button>
+        </div>
+
+        <div className="mt-5 flex items-center justify-between">
+          <div className="flex flex-col gap-2">
+            <span className="flex items-center gap-1.5 text-xs text-[#909396]">
+              <span className="size-2.5 rounded-full bg-gold-deep" />
+              Chronological Age <span className="text-[#f2f2f2]">{chronological}</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-[#909396]">
+              <span className="size-2.5 rounded-full" style={{ backgroundColor: SUCCESS }} />
+              Nervous System <span className="text-[#f2f2f2]">{nervous}</span>
+            </span>
+          </div>
+          <div className="h-10 w-px bg-white/10" />
+          <div className="flex flex-col items-center gap-1.5">
+            <span
+              className="flex size-8 items-center justify-center rounded-full"
+              style={{ backgroundColor: `${SUCCESS}1a` }}
+            >
+              <ArrowDown className="size-4" style={{ color: SUCCESS }} />
+            </span>
+            <span className="text-xs whitespace-nowrap" style={{ color: SUCCESS }}>
+              {diff >= 0 ? `${diff} years younger` : `${Math.abs(diff)} years older`}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Metric tiles */}
+      <div className="flex gap-2">
+        <MetricTile
+          icon={<Heart className="size-4.5" />}
+          label="Recovery Capacity"
+          value={recovery}
+          status={recovery >= 60 ? "Balanced" : "Strained"}
+          color={recovery >= 60 ? SUCCESS : DANGER}
+          onRefresh={() =>
+            refresh(setRecoveryBusy, () => setRecovery(Math.round(randomBetween(35, 90))))
+          }
+          busy={recoveryBusy}
+          corner="left"
+        />
+        <MetricTile
+          icon={<Zap className="size-4.5" />}
+          label="Cognitive Load"
+          value={cognitive}
+          status={cognitive >= 70 ? "High" : cognitive >= 40 ? "Moderate" : "Low"}
+          color={cognitive >= 70 ? DANGER : INFO}
+          onRefresh={() =>
+            refresh(setCognitiveBusy, () => setCognitive(Math.round(randomBetween(30, 85))))
+          }
+          busy={cognitiveBusy}
+          corner="none"
+        />
+        <MetricTile
+          icon={<Eye className="size-4.5" />}
+          label="Emotional Regulation"
+          value={emotional}
+          status={emotional >= 60 ? "Primed" : "Reactive"}
+          color={emotional >= 60 ? SUCCESS : DANGER}
+          onRefresh={() =>
+            refresh(setEmotionalBusy, () => setEmotional(Math.round(randomBetween(35, 90))))
+          }
+          busy={emotionalBusy}
+          corner="right"
+        />
+      </div>
+
+      {/* Caffeine / Band row */}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={logCaffeine}
+          className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-4 text-left transition-colors hover:bg-navy/80"
+        >
+          <span className="flex items-center gap-3">
+            <Coffee className="size-5 text-cream" />
+            <span className="flex flex-col">
+              <span className="text-base font-light text-gold-deep">Caffeine</span>
+              <span className="text-xs tracking-[0.24px] text-[#5e6165] uppercase">
+                {caffeineCount === 0 ? "Log use" : `${caffeineCount} logged today`}
+              </span>
+            </span>
+          </span>
+          <ChevronRight className="size-5 text-[#5e6165]" />
+        </button>
+
+        <div className="flex flex-1 items-center justify-between rounded-xl border border-gold-deep bg-navy p-4">
+          <span className="flex items-center gap-3">
+            <span
+              className="relative flex size-9 items-center justify-center rounded-full border-2"
+              style={{ borderColor: SUCCESS }}
+            >
+              <span className="text-[9px] font-medium" style={{ color: SUCCESS }}>
+                78%
+              </span>
+            </span>
+            <span className="flex flex-col">
+              <span className="text-base font-light text-gold-deep">Band</span>
+              <span className="text-xs tracking-[0.24px] text-[#5e6165] uppercase">78%</span>
+            </span>
+          </span>
+          <ChevronRight className="size-5 text-[#5e6165]" />
+        </div>
+      </div>
+    </div>
+  );
+}
