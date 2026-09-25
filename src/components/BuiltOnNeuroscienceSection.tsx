@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 
 /**
@@ -8,11 +9,31 @@ import { Reveal } from "@/components/Reveal";
  * component's background is fixed — see its own doc comment on why
  * it's untouched) — this section is the dark beat in between, not
  * incidentally dark.
+ *
+ * built-with-evidence.png — client-supplied macro shot of the band's
+ * own clasp/strap — now sits full-bleed behind the copy, same scrim
+ * treatment Hero.tsx's own background image uses (bg-navy-soft/xx +
+ * a top/bottom gradient) so the text stays legible regardless of the
+ * photo's own exposure; bg-navy-soft stays on the section itself as
+ * the fallback colour while the image loads.
  */
 export function BuiltOnNeuroscienceSection() {
   return (
-    <section className="dark-glow bg-navy-soft text-cream">
-      <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
+    <section className="dark-glow relative overflow-hidden bg-navy-soft text-cream">
+      <Image
+        src="/photos/built-with-evidence.png"
+        alt=""
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-navy-soft/55" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-b from-navy-soft/80 via-transparent to-navy-soft/90"
+      />
+
+      <div className="relative mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Built With Evidence
