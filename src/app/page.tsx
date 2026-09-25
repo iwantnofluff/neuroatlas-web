@@ -8,6 +8,7 @@ import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
+import { BodySilhouette } from "@/components/BodySilhouette";
 import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
@@ -162,33 +163,17 @@ export default function Home() {
                   )}
                 >
                   {tile.silhouette && (
-                    // Background layer, not the card's content — a real
-                    // aspect-ratio vector (168.26:396, from the downloaded
-                    // Figma asset), masked so its actual silhouette shape
-                    // shows rather than its bounding box. Sized by height
-                    // only (width follows from aspect-ratio) and centered
-                    // on both axes via inset-0 + m-auto, so it reads as
-                    // inset within the card rather than filling it.
-                    // --gradient-masterclass + opacity-30 are this node's
-                    // own "Masterclass Gradient" fill and 0.3 layer
-                    // opacity, not filling the mask's own baked color
-                    // (the mask file is a solid, colorless shape — see
-                    // its own header comment).
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto opacity-30"
-                      style={{
-                        backgroundImage: "var(--gradient-masterclass)",
-                        WebkitMaskImage: "url(/images/body-silhouette-mask.svg)",
-                        maskImage: "url(/images/body-silhouette-mask.svg)",
-                        WebkitMaskRepeat: "no-repeat",
-                        maskRepeat: "no-repeat",
-                        WebkitMaskPosition: "center",
-                        maskPosition: "center",
-                        WebkitMaskSize: "contain",
-                        maskSize: "contain",
-                      }}
-                    />
+                    // Background layer, not the card's content — the
+                    // full node (body + six sensor-point hexes), sized
+                    // by height only (width follows from its own real
+                    // aspect ratio) and centered on both axes, so it
+                    // reads as inset within the card rather than filling
+                    // it. Opacity is NOT applied here: the body and each
+                    // hex marker already carry their own distinct
+                    // opacities inside the component (0.3 for the body,
+                    // 0.1-0.2 for the hexes), matching Figma exactly —
+                    // an outer opacity would flatten that difference.
+                    <BodySilhouette className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto" />
                   )}
                 </Reveal>
               ))}

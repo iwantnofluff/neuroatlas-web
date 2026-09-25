@@ -88,6 +88,17 @@
     var(--color-gold-muted) 0%,
     var(--color-navy-abyss) 100%
   );
+  /* Same file's "Stroke Linear For Cards" style — the body silhouette's
+     own outline, linear-gradient(#C4B38E 0%, #6D644F 100%). First stop
+     is already --color-gold-deep; second is a new, distinctly cooler/
+     browner tone than the gold-* family, so it gets its own name
+     rather than being squeezed into that scale. */
+  --color-bronze: #6d644f;
+  --gradient-card-stroke: linear-gradient(
+    180deg,
+    var(--color-gold-deep) 0%,
+    var(--color-bronze) 100%
+  );
   /* shadcn semantic tokens, reconciled to the brand palette above so
      any shadcn component (Button, Dialog, Card, …) inherits the
      navy/gold/cream look instead of generic Tailwind grayscale. */
@@ -140,6 +151,7 @@
   --color-line: var(--color-line);
   --color-line-dark: var(--color-line-dark);
   --color-navy-abyss: var(--color-navy-abyss);
+  --color-bronze: var(--color-bronze);
 
   /* Token names unchanged (font-serif/font-sans are the Tailwind utility
      classes every component in this codebase already calls) — only the
