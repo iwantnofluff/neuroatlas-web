@@ -5,36 +5,83 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
-import { Band, BASE_ROTATION } from "@/components/Band";
+import {
+  useModuleMeshes,
+  SHELL_MATERIAL_PROPS,
+  HARDWARE_MATERIAL_PROPS,
+  BUTTON_MATERIAL_PROPS,
+  STEEL_ELECTRODE_MATERIAL_PROPS,
+  OPTICAL_WINDOW_MATERIAL_PROPS,
+  POGO_PAD_MATERIAL_PROPS,
+  BUTTON_INDEX,
+  ECG_ELECTRODE_INDEX,
+  OPTICAL_WINDOW_INDEX,
+  STEEL_ELECTRODE_INDICES,
+  POGO_PAD_INDICES,
+} from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
+import { activeStepIndex, STEP_COUNT } from "@/lib/howToGetStartedProgress";
 
 const STRAP_MESH_NAME = "empty_3";
 
-// Real assembled scale — both the module and the strap render from the
-// SAME raw CAD coordinate space (confirmed: both meshes' own bounding-box
-// centers land within a few mm of the shared origin), so one scale factor
-// keeps them physically consistent as one rigid object. Much smaller than
-// any other Band scene's own scale (30-34) — those are tuned to frame
-// just the ~25mm module tightly; this scene has to fit the module PLUS
-// the full ~260mm strap extending to both sides, an order of magnitude
-// bigger footprint, in the same camera.
-const SCENE_SCALE = 8;
+// Raw meter units throughout this file — deliberately NOT scaled up to a
+// "1 unit = 1mm" convention. Either works arithmetically; this just means
+// one fewer place a unit-conversion mistake could hide, since every
+// number below is the real GLTF export's own native unit. The geometry
+// facts this file is built against (confirmed directly against band.glb,
+// not assumed): strap runs Y -0.1303 to 0.1302m, 0.022m wide in X,
+// 0.0016m thick in Z, face at Z 0.0033-0.0049m. Module combined bbox:
+// X -0.0127 to 0.0131m, Y +-0.0214m, Z -0.0062 to 0.0069m — already
+// straddling the strap's own face in Z with no offset needed, so the
+// module's front face naturally depth-tests in front of the strap's
+// with zero manual Z-nudging.
+//
+// NO BASE_ROTATION anywhere in this file, on either the module or the
+// strap — the whole premise of this section (per direct instruction) is
+// that the raw, uncorrected export orientation IS already the vertical,
+// face-on pose wanted here. BASE_ROTATION exists to turn that same raw
+// orientation INTO the landscape pose every other Band scene wants;
+// applying it here would do the opposite of what this section needs.
+const MODULE_TRAVEL_TOP = 0.1003;
+const MODULE_TRAVEL_BOTTOM = -0.1003;
 
-// {x: 0.5, y: Math.PI/4} — the exact isometric/dynamic angle asked for,
-// applied to the WHOLE assembly (module + strap together) as one rigid
-// tilt, not to <Band> internally — <Band>'s own "xray" rotation target
-// stays fixed at {x:0, y:0} below specifically so this outer tilt is the
-// only rotation actually visible, rather than the two composing into an
-// angle nobody chose on purpose.
-const ISOMETRIC_TILT: readonly [number, number, number] = [0.5, Math.PI / 4, 0];
+// The full visible height the orthographic camera frames — the strap's
+// own real height (0.2605m) plus a comfortable margin on both ends, not
+// a guess: this is what "frame the full 260mm height with a comfortable
+// margin" converts to directly.
+const CAMERA_TARGET_HEIGHT = 0.32;
 
-// Woven navy metallic strap — same material/UV-generation approach as
-// TimelineBandSpine.tsx (now removed; this scene replaces it entirely,
-// per direct feedback that the flat spine read as a 2D rectangle). See
-// that file's own former header comment (preserved here) for why these
-// exact numbers: the mesh has zero real UVs (confirmed directly against
-// band.glb), so this box-projects planar UVs from the mesh's own local
-// X/Y before tiling a hand-drawn cross-hatch CanvasTexture as a bumpMap.
+function moduleStopY(index: number) {
+  const t = STEP_COUNT <= 1 ? 0 : index / (STEP_COUNT - 1);
+  return THREE.MathUtils.lerp(MODULE_TRAVEL_TOP, MODULE_TRAVEL_BOTTOM, t);
+}
+
+/** Keeps the orthographic camera's zoom in sync with the canvas's own
+ *  live pixel height, recalculated on every resize — the only way to
+ *  guarantee "frame the full 260mm height... at all times" actually
+ *  holds regardless of how tall the sticky left column renders at on a
+ *  given viewport, rather than a zoom value tuned for one specific
+ *  canvas size that drifts on any other. */
+function FitOrthographicCamera() {
+  // useFrame, not useThree()+useEffect — mutating `camera.zoom` on a
+  // value obtained directly from useThree() trips the React Compiler's
+  // immutability check ("modifying a value returned from a hook").
+  // state.camera read inside useFrame's own callback parameter isn't a
+  // hook return in that same sense (same reasoning this codebase already
+  // relies on for every other per-frame ref mutation, e.g. Band.tsx's
+  // own group.current.rotation writes). Cheap early-out below means this
+  // only actually touches the camera on the frame the size changes, not
+  // every frame.
+  useFrame((state) => {
+    const camera = state.camera as THREE.OrthographicCamera;
+    const desiredZoom = state.size.height / CAMERA_TARGET_HEIGHT;
+    if (camera.zoom === desiredZoom) return;
+    camera.zoom = desiredZoom;
+    camera.updateProjectionMatrix();
+  });
+  return null;
+}
+
 const STRAP_MATERIAL_PROPS = {
   color: "#041E42",
   roughness: 0.35,
@@ -109,13 +156,8 @@ function useWovenBumpTexture() {
   }, []);
 }
 
-/** The strap, rendered as a sibling of <Band> rather than inside it —
- *  <Band> only ever renders the module (shellMeshes/hardwareMeshes; the
- *  strap is deliberately excluded there, see that file's own header
- *  comment). Wrapped in its own `scale`+`rotation={BASE_ROTATION}` group
- *  replicating exactly what <Band> applies to itself internally, so the
- *  two align as one assembly instead of the strap sitting in raw,
- *  uncorrected CAD space while the module sits in corrected space. */
+/** Static, unrotated, un-moved — the strap is the fixed backdrop the
+ *  module travels against, not something that itself animates. */
 function StrapPiece() {
   const { nodes } = useGLTF("/band.glb") as unknown as {
     nodes: Record<string, THREE.Mesh>;
@@ -126,65 +168,102 @@ function StrapPiece() {
   if (!strap || !geometry) return null;
 
   return (
-    <group scale={SCENE_SCALE} rotation={BASE_ROTATION}>
-      <mesh geometry={geometry}>
-        <meshStandardMaterial
-          {...STRAP_MATERIAL_PROPS}
-          bumpMap={bumpMap ?? undefined}
-          bumpScale={STRAP_BUMP_SCALE}
-        />
-      </mesh>
-    </group>
+    <mesh geometry={geometry}>
+      <meshStandardMaterial
+        {...STRAP_MATERIAL_PROPS}
+        bumpMap={bumpMap ?? undefined}
+        bumpScale={STRAP_BUMP_SCALE}
+      />
+    </mesh>
   );
 }
 
-/** Continuous scroll-driven spin, composed OUTSIDE the isometric tilt —
- *  applied as its own outermost group so it rotates the already-tilted
- *  assembly around the WORLD Y axis (reads as the object turning in
- *  place on a turntable), not around its own tilted local axis (which
- *  would wobble/precess instead of spinning cleanly). Plain useFrame +
- *  MotionValue.get(), same "read the live scroll value every frame
- *  inside R3F" convention as every other scroll-tied rotation in this
- *  codebase (Band.tsx's own useFrame blocks, TimelineBandSpine's former
- *  ProgressHighlight). */
-function ScrollSpin({
+/** The module's own meshes, rendered directly rather than through
+ *  <Band> — that component unconditionally applies BASE_ROTATION
+ *  internally, which this section's whole premise rules out. Same
+ *  per-part material dispatch <Band> itself uses (see its own JSX),
+ *  just reusing the exported pieces instead of duplicating the logic
+ *  under a different name that could drift from it later. */
+function ModulePiece() {
+  const { nodes } = useGLTF("/band.glb") as unknown as {
+    nodes: Record<string, THREE.Mesh>;
+  };
+  const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
+
+  return (
+    <>
+      {shellMeshes.map((mesh, i) => (
+        <mesh key={`shell-${i}`} geometry={mesh.geometry}>
+          <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
+        </mesh>
+      ))}
+      {hardwareMeshes.map((mesh, i) => {
+        const materialProps =
+          i === BUTTON_INDEX
+            ? BUTTON_MATERIAL_PROPS
+            : i === ECG_ELECTRODE_INDEX || STEEL_ELECTRODE_INDICES.has(i)
+              ? STEEL_ELECTRODE_MATERIAL_PROPS
+              : i === OPTICAL_WINDOW_INDEX
+                ? OPTICAL_WINDOW_MATERIAL_PROPS
+                : POGO_PAD_INDICES.has(i)
+                  ? POGO_PAD_MATERIAL_PROPS
+                  : HARDWARE_MATERIAL_PROPS;
+        return (
+          <mesh key={`hardware-${i}`} geometry={mesh.geometry}>
+            <meshStandardMaterial {...materialProps} />
+          </mesh>
+        );
+      })}
+    </>
+  );
+}
+
+/** Reads the SAME scrollYProgress MotionValue the step text uses, through
+ *  the SAME `activeStepIndex` function the text's own active-step
+ *  highlighting is built on (imported from HowToGetStartedSection.tsx,
+ *  not reimplemented here) — one source of truth, so the module and the
+ *  highlighted step can't drift apart the way two independently-computed
+ *  values could. Eased via a per-frame damped lerp toward whichever stop
+ *  is currently active (same "smooth follow" convention Band.tsx's own
+ *  xray variant already uses); reduced motion snaps straight to the
+ *  target instead of easing, but still tracks the SAME active index every
+ *  frame — never frozen at one position, since holding still would break
+ *  the progress indication this whole section exists to show. */
+function ModuleTravel({
   progress,
   reduceMotion,
-  children,
 }: {
   progress: MotionValue<number>;
   reduceMotion: boolean;
-  children: React.ReactNode;
 }) {
   const group = useRef<THREE.Group>(null);
   useFrame(() => {
     if (!group.current) return;
-    const p = reduceMotion ? 0 : progress.get();
-    // A little over half a turn across the whole section — enough for
-    // the environment's lights to genuinely sweep across every face
-    // (including the woven strap) rather than a token few degrees, but
-    // short of a full turn landing back where it started (which would
-    // make the very end of the scroll look identical to the beginning).
-    group.current.rotation.y = p * Math.PI * 1.6;
+    const target = moduleStopY(activeStepIndex(progress.get()));
+    group.current.position.y = reduceMotion
+      ? target
+      : THREE.MathUtils.lerp(group.current.position.y, target, 0.12);
   });
-  return <group ref={group}>{children}</group>;
+  return (
+    <group ref={group}>
+      <ModulePiece />
+    </group>
+  );
 }
 
 /**
- * The premium sticky-scroll showcase for /for-organisations' "How To Get
- * Started" section — replaces TimelineBandSpine.tsx's flat vertical strap
- * rail entirely (removed; direct feedback called it out as reading like a
- * 2D rectangle). Renders the full wearable — module (<Band>) and strap
- * (StrapPiece, aligned via the same BASE_ROTATION correction) — as one
- * rigid assembly, held at a fixed isometric tilt and spun continuously
- * around world Y as the reader scrolls past the steps beside it.
+ * The strap + traveling module for /for-organisations' "How To Get
+ * Started" section — a full rebuild, not an iteration on the previous
+ * sticky-canvas attempt (deleted along with it): no rotation anywhere,
+ * a static orthographic camera on +Z looking straight at the origin, and
+ * the module's Y position (not rotation) is the only thing that ever
+ * moves, snapping through four rest stops as the reader scrolls the
+ * steps beside it.
  *
- * Lighting rig + StudioEnvironment copied verbatim from every other Band
- * scene in this codebase, for the same reason they always are: the
- * module's hardware and the strap's own woven mesh are both
- * metalness > 0.8, which has essentially no diffuse response left and
- * reads as flat black without a real environment to reflect (see
- * Band.tsx's and TimelineBandSpine's own identical reasoning).
+ * Lighting rig + StudioEnvironment carried over unchanged from the
+ * previous version — explicitly NOT retuned in this pass, per the
+ * instruction to get layout and scroll wiring working first and treat
+ * material/lighting as a separate, later step.
  */
 export function HowToGetStartedScene({
   progress,
@@ -197,8 +276,9 @@ export function HowToGetStartedScene({
     <Canvas
       className="!absolute inset-0"
       style={{ touchAction: "pan-y" }}
+      orthographic
+      camera={{ position: [0, 0, 0.5], near: 0.01, far: 2 }}
       dpr={[1, 1.5]}
-      camera={{ position: [0, 0, 6.5], fov: 45 }}
       gl={{
         alpha: true,
         antialias: true,
@@ -207,26 +287,29 @@ export function HowToGetStartedScene({
         toneMappingExposure: 1,
       }}
     >
+      <FitOrthographicCamera />
       <ambientLight intensity={0.5} />
-      <directionalLight position={[3, 4, 5]} intensity={1.4} color="#f4f0e9" />
-      <directionalLight position={[-4, -2, -3]} intensity={0.7} color="#8fb3d9" />
-      <directionalLight position={[0, 0, 5]} intensity={2.2} />
-      <spotLight position={[2, 3, 3]} angle={0.35} penumbra={0.6} intensity={3.5} color="#dac79e" />
-      <spotLight position={[0.6, 0.7, 4.3]} angle={0.25} penumbra={0.2} intensity={7} color="#ffffff" />
+      <directionalLight position={[0.3, 0.4, 0.5]} intensity={1.4} color="#f4f0e9" />
+      <directionalLight position={[-0.4, -0.2, -0.3]} intensity={0.7} color="#8fb3d9" />
+      <directionalLight position={[0, 0, 0.5]} intensity={2.2} />
+      {/* decay={0} on both — a real scale bug, not a taste choice: these
+         intensity values (3.5, 7) were copied from other Band scenes
+         where the model is scaled up ~30x and lights sit 2-5 world units
+         away. This scene uses raw, unscaled meters, so the same light
+         positions sit ~10x closer to the surface in absolute terms.
+         SpotLight's default decay=2 is physically-correct inverse-square
+         falloff, so 10x closer at the same intensity is ~100x brighter
+         at the surface — confirmed live, the first pass rendered
+         completely blown out to near-white. decay={0} removes distance
+         falloff entirely, which is what actually lets these intensities
+         mean the same thing regardless of which scale convention the
+         positions happen to be written in. */}
+      <spotLight position={[0.2, 0.3, 0.3]} angle={0.35} penumbra={0.6} intensity={3.5} decay={0} color="#dac79e" />
+      <spotLight position={[0.06, 0.07, 0.43]} angle={0.25} penumbra={0.2} intensity={7} decay={0} color="#ffffff" />
       <StudioEnvironment />
       <Suspense fallback={null}>
-        <ScrollSpin progress={progress} reduceMotion={reduceMotion}>
-          <group rotation={ISOMETRIC_TILT}>
-            <Band
-              scrollProgress={progress}
-              reduceMotion={reduceMotion}
-              variant="xray"
-              scale={SCENE_SCALE}
-              targetRotation={{ x: 0, y: 0 }}
-            />
-            <StrapPiece />
-          </group>
-        </ScrollSpin>
+        <StrapPiece />
+        <ModuleTravel progress={progress} reduceMotion={reduceMotion} />
       </Suspense>
     </Canvas>
   );

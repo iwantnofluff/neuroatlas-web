@@ -30,22 +30,24 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  *   capsule). Not one of the product spec's 8 named module parts.
  *   Already excluded by maxDimension alone (48.4mm exceeds the shell's
  *   own 42.8mm max), independent of the other four.
- * None of these five are rendered anywhere in this file — none of this
+ * None of these five are rendered anywhere in THIS file — none of this
  * component's three scenes are framed, scaled, or lit for a full
  * ~260mm strap, so integrating it here is separate, bigger work than a
  * materials pass. The strap ("empty_3") IS rendered elsewhere, though,
- * standalone: TimelineBandSpine.tsx (/for-organisations' "How To Get
- * Started" section) loads it directly via its own useGLTF call and
- * gives it an anodised-navy METALLIC finish (metalness 0.85, a
- * deliberate Milanese-mesh departure from the product spec's own
- * "woven fabric yarn" strap description, confirmed explicitly before
- * changing it) — not the non-metallic textile material this comment
- * used to describe here. If the strap/clasp/keeper ever get integrated
- * into one of THIS file's own scenes, match that file's material, not
- * this stale note. The clasp halves + keeper loop remain unrendered
- * anywhere, still a reasonable fit for an anodised-metal material
- * matching HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1)
- * when that work happens.
+ * standalone: HowToGetStartedScene.tsx (/for-organisations' "How To
+ * Get Started" section) loads it directly via its own useGLTF call —
+ * deliberately not through <Band> at all, since that section's whole
+ * premise is the raw, uncorrected export orientation (no BASE_ROTATION)
+ * being already the vertical, face-on pose it wants, which <Band>
+ * can't skip — and gives it an anodised-navy METALLIC finish
+ * (metalness 0.85, a deliberate Milanese-mesh departure from the
+ * product spec's own "woven fabric yarn" strap description, confirmed
+ * explicitly before changing it), reusing this file's own
+ * `useModuleMeshes` export for the module half of that same scene. The
+ * clasp halves + keeper loop remain unrendered anywhere, still a
+ * reasonable fit for an anodised-metal material matching
+ * HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1) when that
+ * work happens.
  *
  * Still no semantic mesh/material names anywhere in the file (every
  * mesh is "empty_N", every material name is an empty string) — mesh
@@ -160,7 +162,7 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
 // against this site's dark page. 0.7 is a deliberate, tested
 // art-direction choice — legibility over physical accuracy — not an
 // oversight or a value nobody got around to finishing.
-const SHELL_MATERIAL_PROPS = {
+export const SHELL_MATERIAL_PROPS = {
   color: "#041E42",
   roughness: 0.45,
   metalness: 0.7,
@@ -170,7 +172,7 @@ const SHELL_MATERIAL_PROPS = {
 // Secondary/default for hardware bits the product spec doesn't
 // individually name (see the two unidentified cylindrical posts in the
 // file header comment) — Cool Gray 7 C, the spec's own secondary color.
-const HARDWARE_MATERIAL_PROPS = {
+export const HARDWARE_MATERIAL_PROPS = {
   color: "#97999B",
   roughness: 0.25,
   metalness: 1,
@@ -181,7 +183,7 @@ const HARDWARE_MATERIAL_PROPS = {
 // device per the spec. Non-metallic (a painted/molded finish, not bare
 // metal) at a moderate roughness — matte enough not to compete with the
 // shell's own reflections, not so rough it goes chalky.
-const BUTTON_MATERIAL_PROPS = {
+export const BUTTON_MATERIAL_PROPS = {
   color: "#2656AD",
   roughness: 0.35,
   metalness: 0,
@@ -197,7 +199,7 @@ const BUTTON_MATERIAL_PROPS = {
 // slightly wider BRDF lobe reads as polished steel across more of the
 // viewing envelope instead of "mirror in one spot, flat gray
 // everywhere else."
-const STEEL_ELECTRODE_MATERIAL_PROPS = {
+export const STEEL_ELECTRODE_MATERIAL_PROPS = {
   color: "#5D7B8F",
   roughness: 0.15,
   metalness: 1,
@@ -222,7 +224,7 @@ const STEEL_ELECTRODE_MATERIAL_PROPS = {
 // fixed ~4% specular reflectance reads as a clear, legible highlight,
 // because there's so little diffuse brightness underneath it to
 // compete with.
-const OPTICAL_WINDOW_MATERIAL_PROPS = {
+export const OPTICAL_WINDOW_MATERIAL_PROPS = {
   color: "#0A0E14",
   roughness: 0.05,
   metalness: 0,
@@ -230,7 +232,7 @@ const OPTICAL_WINDOW_MATERIAL_PROPS = {
 } as const;
 
 // The two gold charging pogo pads.
-const POGO_PAD_MATERIAL_PROPS = {
+export const POGO_PAD_MATERIAL_PROPS = {
   color: "#C9A44C",
   roughness: 0.3,
   metalness: 1,
@@ -253,11 +255,11 @@ const POGO_PAD_MATERIAL_PROPS = {
  *  which never reaches `hardwareMeshes` at all: it's excluded from
  *  `moduleMeshes` by the maxDimension filter below before indices are
  *  even assigned. */
-const BUTTON_INDEX = 0;
-const ECG_ELECTRODE_INDEX = 1;
-const OPTICAL_WINDOW_INDEX = 2;
-const STEEL_ELECTRODE_INDICES = new Set([5, 6]);
-const POGO_PAD_INDICES = new Set([7, 8]);
+export const BUTTON_INDEX = 0;
+export const ECG_ELECTRODE_INDEX = 1;
+export const OPTICAL_WINDOW_INDEX = 2;
+export const STEEL_ELECTRODE_INDICES = new Set([5, 6]);
+export const POGO_PAD_INDICES = new Set([7, 8]);
 
 // Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
 // BuiltToReadYouSection.tsx) now closes its text blocks together at the
@@ -400,6 +402,66 @@ function sampleShowcasePose(p: number) {
  *  BandScrollShowcase's and TheSpecs' models each sit in their own
  *  differently-framed container and need their own independently-tuned
  *  value. */
+
+/** Extracted so HowToGetStartedScene.tsx can reuse the exact same
+ *  module/strap split (and the exact same excluded-mesh thresholds) when
+ *  rendering the module WITHOUT going through <Band> itself — that
+ *  component unconditionally applies BASE_ROTATION internally, which
+ *  HowToGetStartedSection.tsx's whole premise explicitly rules out (the
+ *  raw, uncorrected export orientation is already the vertical, face-on
+ *  pose that section wants). Same logic Band.tsx always ran inline here,
+ *  now just callable from outside it too — not a behavior change. */
+export function useModuleMeshes(nodes: Record<string, THREE.Mesh>) {
+  return useMemo(() => {
+    const allMeshes = Object.values(nodes).filter(
+      (n): n is THREE.Mesh => Boolean((n as THREE.Mesh)?.isMesh)
+    );
+    // The updated CAD export bundles the strap/buckle/clasp sub-assembly
+    // in the SAME file as the sensor module, offset far down the Y axis
+    // (geometry-space center around y=-0.13, vs. the module cluster's
+    // own ~-0.01..0.02) — a real, confirmed ~260mm-long strap mesh
+    // sitting alongside an ~25-40mm module, per direct inspection of the
+    // raw GLB. None of <Band>'s three scenes are set up to frame a
+    // full strap (camera/scale/lighting all tuned for just the module),
+    // so it's filtered out here rather than rendered at the wrong scale.
+    const box = new THREE.Box3();
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    const moduleMeshes = allMeshes.filter((m) => {
+      box.setFromBufferAttribute(
+        m.geometry.attributes.position as THREE.BufferAttribute
+      );
+      box.getSize(size);
+      box.getCenter(center);
+      // Two checks, not one — a real bug the first (center-only) version
+      // had: the strap mesh is long enough (~260mm) that it straddles
+      // the origin and its CENTER lands right back near y=0, same as
+      // the module itself, so a center-distance check alone let it
+      // straight through. maxDimension catches that case (nothing in
+      // the real module exceeds ~48mm on any axis); centerDistance
+      // catches the separate buckle/clasp pieces, which are small
+      // enough individually but sit far from the module (~130mm away).
+      // 0.045, not the 0.06 first tried — one mesh ("empty_13", the strap
+      // lug/pin — see this file's own header comment) still slipped
+      // through at 0.06 and rendered as a spike visibly taller than the
+      // whole shell. 0.045 sits between the shell's own real 0.0428 max
+      // and this mesh's 0.0484, excluding just this one piece.
+      const maxDimension = Math.max(size.x, size.y, size.z);
+      const centerDistance = center.length();
+      return maxDimension < 0.045 && centerDistance < 0.08;
+    });
+    const byVertexCountDesc = [...moduleMeshes].sort(
+      (a, b) =>
+        (b.geometry.attributes.position?.count ?? 0) -
+        (a.geometry.attributes.position?.count ?? 0)
+    );
+    return {
+      shellMeshes: byVertexCountDesc.slice(0, 2),
+      hardwareMeshes: byVertexCountDesc.slice(2),
+    };
+  }, [nodes]);
+}
+
 export function Band({
   scrollProgress,
   reduceMotion,
@@ -443,55 +505,7 @@ export function Band({
   const group = useRef<THREE.Group>(null);
   const modelScale = scale ?? (isMobile ? MODEL_SCALE_MOBILE : MODEL_SCALE_DESKTOP);
 
-  const { shellMeshes, hardwareMeshes } = useMemo(() => {
-    const allMeshes = Object.values(nodes).filter(
-      (n): n is THREE.Mesh => Boolean((n as THREE.Mesh)?.isMesh)
-    );
-    // The updated CAD export bundles the strap/buckle/clasp sub-assembly
-    // in the SAME file as the sensor module, offset far down the Y axis
-    // (geometry-space center around y=-0.13, vs. the module cluster's
-    // own ~-0.01..0.02) — a real, confirmed ~260mm-long strap mesh
-    // sitting alongside an ~25-40mm module, per direct inspection of the
-    // raw GLB. None of this component's scenes are set up to frame a
-    // full strap (camera/scale/lighting all tuned for just the module),
-    // so it's filtered out here rather than rendered at the wrong scale
-    // — a real "integrate the strap" pass is separate, bigger work.
-    const box = new THREE.Box3();
-    const size = new THREE.Vector3();
-    const center = new THREE.Vector3();
-    const moduleMeshes = allMeshes.filter((m) => {
-      box.setFromBufferAttribute(
-        m.geometry.attributes.position as THREE.BufferAttribute
-      );
-      box.getSize(size);
-      box.getCenter(center);
-      // Two checks, not one — a real bug the first (center-only) version
-      // had: the strap mesh is long enough (~260mm) that it straddles
-      // the origin and its CENTER lands right back near y=0, same as
-      // the module itself, so a center-distance check alone let it
-      // straight through. maxDimension catches that case (nothing in
-      // the real module exceeds ~48mm on any axis); centerDistance
-      // catches the separate buckle/clasp pieces, which are small
-      // enough individually but sit far from the module (~130mm away).
-      // 0.045, not the 0.06 first tried — one mesh ("empty_13", the strap
-      // lug/pin — see this file's own header comment) still slipped
-      // through at 0.06 and rendered as a spike visibly taller than the
-      // whole shell. 0.045 sits between the shell's own real 0.0428 max
-      // and this mesh's 0.0484, excluding just this one piece.
-      const maxDimension = Math.max(size.x, size.y, size.z);
-      const centerDistance = center.length();
-      return maxDimension < 0.045 && centerDistance < 0.08;
-    });
-    const byVertexCountDesc = [...moduleMeshes].sort(
-      (a, b) =>
-        (b.geometry.attributes.position?.count ?? 0) -
-        (a.geometry.attributes.position?.count ?? 0)
-    );
-    return {
-      shellMeshes: byVertexCountDesc.slice(0, 2),
-      hardwareMeshes: byVertexCountDesc.slice(2),
-    };
-  }, [nodes]);
+  const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
 
   useFrame((_state, delta) => {
     const g = group.current;
