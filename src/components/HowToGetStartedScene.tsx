@@ -45,11 +45,32 @@ const STRAP_MESH_NAME = "empty_3";
 const MODULE_TRAVEL_TOP = 0.1003;
 const MODULE_TRAVEL_BOTTOM = -0.1003;
 
-// The full visible height the orthographic camera frames — the strap's
-// own real height (0.2605m) plus a comfortable margin on both ends, not
-// a guess: this is what "frame the full 260mm height with a comfortable
-// margin" converts to directly.
-const CAMERA_TARGET_HEIGHT = 0.32;
+// Every other Band scene (BuiltToReadYouScene/BandScrollScene/TheSpecsScene)
+// renders this same glb at a ~30-34x world scale, with its light rig tuned
+// against that scale. At the raw, unscaled meter units this file otherwise
+// uses, the strap's ~0.13m half-height is tiny next to those lights'
+// ~4-4.7 unit distance from the origin — so instead of a localized
+// specular hotspot (what a small light source produces on a large-in-
+// frame object), the same lights blanket the ENTIRE tiny strap in one
+// undifferentiated highlight, reading as a flat washed-out pastel blue
+// instead of navy. Confirmed empirically: keeping the lights' absolute
+// values identical to the proven scenes but leaving the mesh unscaled
+// did not fix it. Wrapping just the meshes (not the lights) in this same
+// ~32x scale reproduces the exact world-scale relationship those scenes
+// were tuned against, so the identical light rig produces the same
+// proven result. CAMERA_TARGET_HEIGHT below is scaled to match — it's a
+// world-space (post-scale) measurement, while MODULE_TRAVEL_TOP/BOTTOM
+// above stay as pre-scale LOCAL coordinates inside the scaled group, so
+// they don't need to change.
+const RIG_SCALE = 32;
+
+// The full visible height the orthographic camera frames, in world
+// space (i.e. after RIG_SCALE) — the strap's own real height (0.2605m)
+// plus a comfortable margin on both ends, scaled up to match: this is
+// what "frame the full 260mm height with a comfortable margin" converts
+// to once the strap itself is rendered at the same world scale as every
+// other Band scene.
+const CAMERA_TARGET_HEIGHT = 0.32 * RIG_SCALE;
 
 function moduleStopY(index: number) {
   const t = STEP_COUNT <= 1 ? 0 : index / (STEP_COUNT - 1);
@@ -260,10 +281,10 @@ function ModuleTravel({
  * moves, snapping through four rest stops as the reader scrolls the
  * steps beside it.
  *
- * Lighting rig + StudioEnvironment carried over unchanged from the
- * previous version — explicitly NOT retuned in this pass, per the
- * instruction to get layout and scroll wiring working first and treat
- * material/lighting as a separate, later step.
+ * Lighting rig + StudioEnvironment, RIG_SCALE, and strap material color
+ * are the only things this pass touched — see the light rig's own
+ * comment below for the wash/color fix. Layout and scroll wiring
+ * (everything else in this file) are unchanged from the prior pass.
  */
 export function HowToGetStartedScene({
   progress,
@@ -288,28 +309,46 @@ export function HowToGetStartedScene({
       }}
     >
       <FitOrthographicCamera />
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[0.3, 0.4, 0.5]} intensity={1.4} color="#f4f0e9" />
-      <directionalLight position={[-0.4, -0.2, -0.3]} intensity={0.7} color="#8fb3d9" />
-      <directionalLight position={[0, 0, 0.5]} intensity={2.2} />
-      {/* decay={0} on both — a real scale bug, not a taste choice: these
-         intensity values (3.5, 7) were copied from other Band scenes
-         where the model is scaled up ~30x and lights sit 2-5 world units
-         away. This scene uses raw, unscaled meters, so the same light
-         positions sit ~10x closer to the surface in absolute terms.
-         SpotLight's default decay=2 is physically-correct inverse-square
-         falloff, so 10x closer at the same intensity is ~100x brighter
-         at the surface — confirmed live, the first pass rendered
-         completely blown out to near-white. decay={0} removes distance
-         falloff entirely, which is what actually lets these intensities
-         mean the same thing regardless of which scale convention the
-         positions happen to be written in. */}
-      <spotLight position={[0.2, 0.3, 0.3]} angle={0.35} penumbra={0.6} intensity={3.5} decay={0} color="#dac79e" />
-      <spotLight position={[0.06, 0.07, 0.43]} angle={0.25} penumbra={0.2} intensity={7} decay={0} color="#ffffff" />
+      {/* Re-diagnosed via fresh isolation testing on this file's own
+         RIG_SCALE-corrected geometry (zeroing each light group in turn,
+         sampling actual rendered pixel color) rather than reasoning
+         about it in the abstract — and the result changed from an
+         earlier pass on this same file: with the mesh now wrapped at
+         RIG_SCALE, disabling BOTH spotlights and <StudioEnvironment/>
+         left the wash almost completely unchanged; disabling ambient +
+         directional on top of that dropped it to near-black. So the
+         ambient/directional trio, not the spotlights, is what's
+         actually washing this out.
+         The reason is specific to this scene: the strap is a flat
+         plate that faces the camera dead-on for the ENTIRE scroll (no
+         rotation, ever) — unlike the other Band scenes, where the
+         model continuously turns or is only briefly locked front-on.
+         The straight-down-the-Z-axis directional light (originally
+         intensity 2.2, meant elsewhere as an occasional "locked-state"
+         fill) lands at exactly normal incidence on this surface 100% of
+         the time, flooding the whole face uniformly at full strength —
+         a flat mirror-ish surface lit dead-on doesn't get the
+         angle-of-incidence falloff a curved shell (the module) gets
+         across its own surface, so the same intensity reads as a
+         uniform wash here where it reads as a highlight there. The
+         cool-blue rim light (#8fb3d9) directly tints that wash toward
+         pastel blue instead of navy. Trimmed all three to match a
+         surface that's always front-lit rather than only sometimes:
+         ambient and warm key kept close to original, blue rim and
+         Z-axis flood cut hardest since those two are the actual
+         wash/tint sources. */}
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[0.3, 0.4, 0.5]} intensity={1.2} color="#f4f0e9" />
+      <directionalLight position={[-0.4, -0.2, -0.3]} intensity={0.3} color="#8fb3d9" />
+      <directionalLight position={[0, 0, 0.5]} intensity={0.6} />
+      <spotLight position={[2, 3, 3]} angle={0.35} penumbra={0.6} intensity={3.5} decay={2} color="#dac79e" />
+      <spotLight position={[0.6, 0.7, 4.3]} angle={0.25} penumbra={0.2} intensity={7} decay={2} color="#ffffff" />
       <StudioEnvironment />
       <Suspense fallback={null}>
-        <StrapPiece />
-        <ModuleTravel progress={progress} reduceMotion={reduceMotion} />
+        <group scale={RIG_SCALE}>
+          <StrapPiece />
+          <ModuleTravel progress={progress} reduceMotion={reduceMotion} />
+        </group>
       </Suspense>
     </Canvas>
   );

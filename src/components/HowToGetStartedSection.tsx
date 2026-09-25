@@ -160,25 +160,59 @@ export function HowToGetStartedSection() {
   return (
     <section className="bg-cream px-6 lg:px-10">
       <div className="mx-auto max-w-6xl pt-24 lg:pt-32">{heading}</div>
-      <div
-        ref={gridRef}
-        className="mx-auto grid max-w-6xl gap-16 py-24 md:grid-cols-2 lg:py-32"
-      >
-        <div className="sticky top-0 h-screen">
-          <div className="relative h-full w-full">
-            <HowToGetStartedScene progress={scrollYProgress} reduceMotion={reduceMotion} />
+      {/* py-24/lg:py-32 lives HERE, on a wrapper OUTSIDE gridRef — not on
+         the grid itself. That's the actual fix for the step-1 timing
+         bug: useScroll's "start start"/"end end" measures the TRACKED
+         element's own border box, padding included. With the padding on
+         the grid itself, progress=0 fired the instant the grid's outer
+         box (padding and all) touched the viewport top — a full lg:py-32
+         (128px) BEFORE the sticky child's own natural top reached that
+         same point, since the child sits 128px lower inside that padded
+         box. Confirmed directly (getBoundingClientRect measurements):
+         that 128px is ~17.5% of the real pinned-scroll range, which is
+         almost exactly step 1's own reveal window (0 to 0.175) — step 1
+         was finishing its reveal at almost exactly the moment the
+         sticky visual actually engaged, matching the reported bug
+         exactly. Moving the padding outside gridRef means the grid's
+         own top/bottom edges now coincide exactly with where the
+         sticky child naturally starts and its containing row naturally
+         ends, so progress 0 -> 1 now spans exactly the pinned-and-
+         visible range, no more and no less. */}
+      <div className="py-24 lg:py-32">
+        <div
+          ref={gridRef}
+          className="mx-auto grid max-w-6xl gap-16 md:grid-cols-2"
+        >
+          <div className="sticky top-0 h-screen">
+            <div className="relative h-full w-full">
+              <HowToGetStartedScene progress={scrollYProgress} reduceMotion={reduceMotion} />
+            </div>
           </div>
-        </div>
-        <div className="divide-y divide-navy/10">
-          {STEPS.map((step, i) => (
-            <TimelineStep
-              key={step.label}
-              progress={scrollYProgress}
-              index={i}
-              step={step}
-              reduceMotion={reduceMotion}
-            />
-          ))}
+          <div>
+            {/* A spacer OUTSIDE the divide-y list, not padding on step
+               1 itself — placing it inside the divided list would give
+               it its own divider border between spacer and step 1,
+               which isn't wanted. Shifts where step 1 sits on screen at
+               progress~0 without adding to gridRef's own tracked height
+               in a way that would skew the scroll-progress mapping for
+               steps 2-4. Sized so step 1 clears the fixed 73px header
+               (confirmed live: without this, "Scope" rendered clipped
+               directly behind the nav bar at progress 0) and lands
+               roughly centred in the remaining viewport height, not
+               just technically visible below the header. */}
+            <div aria-hidden="true" className="h-[280px] lg:h-[340px]" />
+            <div className="divide-y divide-navy/10">
+              {STEPS.map((step, i) => (
+                <TimelineStep
+                  key={step.label}
+                  progress={scrollYProgress}
+                  index={i}
+                  step={step}
+                  reduceMotion={reduceMotion}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
