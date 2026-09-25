@@ -165,11 +165,18 @@ export default function HowItWorksPage() {
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
-        mediaClassName="aspect-[3/4.3] max-md:max-h-none md:max-h-none"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
         media={
           <div className="flex size-full items-center justify-center">
             <IPhoneMockup className="h-full">
-              <div className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div
+                className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
+                  backgroundColor: "var(--color-navy)",
+                }}
+              >
                 <HrvDetailCard />
               </div>
             </IPhoneMockup>
