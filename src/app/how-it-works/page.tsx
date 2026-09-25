@@ -94,7 +94,7 @@ export default function HowItWorksPage() {
                     {step.label}
                   </h3>
                 </div>
-                <p className="mt-3 text-balance font-serif text-lg text-gold-soft">
+                <p className="mt-3 text-nowrap font-serif text-lg text-gold-soft">
                   {step.tagline}
                 </p>
                 <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
