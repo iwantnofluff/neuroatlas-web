@@ -226,7 +226,7 @@ export function StressAgeCard({ className }: { className?: string }) {
                 setNervous(Math.round(randomBetween(28, 45)));
               })
             }
-            className="absolute top-[-4%] left-[43%] flex size-5 -translate-x-1/2 items-center justify-center rounded-full"
+            className="absolute top-[6%] left-1/2 flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
             style={{
               background: SUCCESS,
               boxShadow: `0 0 6px ${SUCCESS}66, 0 0 14px ${SUCCESS}33`,
