@@ -93,13 +93,14 @@ const signals = [
 function useSignalReveal(
   progress: MotionValue<number>,
   range: readonly [number, number],
-  reduceMotion: boolean
+  reduceMotion: boolean,
+  travel = 16
 ) {
   const [start, end] = range;
   const eased = (p: number) =>
     reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
   const opacity = useTransform(progress, (p) => eased(p));
-  const y = useTransform(progress, (p) => (reduceMotion ? 0 : 16 * (1 - eased(p))));
+  const y = useTransform(progress, (p) => (reduceMotion ? 0 : travel * (1 - eased(p))));
   return { opacity, y };
 }
 
@@ -320,64 +321,89 @@ function OrganicSignalCallout({
   );
 }
 
-/** Overlap (px) each card is pulled up into the one before it — tuned
- *  against this card's own real rendered height (p-4 + a serif label +
- *  up to a 2-line text-xs body, confirmed via screenshot at 390px
- *  wide), leaving a clean ~28-34px sliver of the earlier card peeking
- *  out above it, whether that card's own body wrapped to one line or
- *  two. */
-const DECK_OVERLAP_PX = 68;
-/** Per-depth-level shrink for cards further back in the deck — a subtle
- *  recede, not a real size difference; enough to read as depth on the
- *  sliver that's actually visible without shrinking the frontmost
- *  (fully visible) card at all. */
-const DECK_DEPTH_SCALE_STEP = 0.035;
+/** Mobile card travel (px) — a direct "each card should come in frame
+ *  as you scroll" request: the desktop cards' own 16px nudge reads as a
+ *  settle, not an arrival, because each one lands in its own distinct
+ *  floating spot with nothing behind it to compare against. Here every
+ *  card shares the exact same slot (see MobileSignalCard's own
+ *  className: `absolute inset-0`, no per-card offset), so the incoming
+ *  card visibly sliding up from further below into that fixed rect —
+ *  landing exactly flush over whichever card was there before it — is
+ *  what actually sells "arriving", not just fading up in place. */
+const MOBILE_CARD_TRAVEL_PX = 48;
 
-/** Below xl there's no room for floating cards — a genuine dealt-deck
- *  instead: each card but the first is pulled up by DECK_OVERLAP_PX so
- *  only a sliver of the earlier card peeks out above it, with later DOM
- *  order (the default paint order, no z-index needed) putting the most
- *  recently "dealt" card on top. Emotional Regulation, last in
- *  `signals`, ends up
- *  frontmost and fully visible at the bottom of the deck — its own
- *  final resting spot, matching this section's own reference image. A
- *  direct "stack like a deck, not a tack [plain list]" correction: the
- *  previous version already stacked the four cards smoothly, just as a
- *  plain non-overlapping vertical list, which read as a totally
- *  different, flatter composition than what was actually being asked
- *  for.
+/** Mobile-stack-only reveal — a hard opacity cut at the range's own
+ *  start, not useSignalReveal's smooth fade. Every card here shares the
+ *  exact same `absolute inset-0` rect (see MobileSignalCard below), so
+ *  a gradual opacity fade would mean two glass cards sitting at partial
+ *  alpha in the identical spot at once — their labels/body copy
+ *  literally double-exposed through each other's blur, confirmed live
+ *  (this is exactly what a smooth crossfade produced here). Two cards
+ *  CAN legitimately both be "on" at once for a moment (adjacent ranges
+ *  share a sliver, e.g. [0,0.26]/[0.25,0.51]), but as long as each is
+ *  either fully off or fully opaque, never in between, the later one
+ *  in DOM order simply paints solidly over the earlier one — a clean
+ *  cut, not a blend. `y` still eases smoothly across the range —
+ *  that's what makes the (fully opaque, from the instant it appears)
+ *  incoming card visibly slide up and cover the previous one, rather
+ *  than just popping into place. */
+function useStackedSignalReveal(
+  progress: MotionValue<number>,
+  range: readonly [number, number],
+  reduceMotion: boolean,
+  travel: number
+) {
+  const [start, end] = range;
+  const eased = (p: number) =>
+    reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
+  const opacity = useTransform(progress, (p) => (reduceMotion || p >= start ? 1 : 0));
+  const y = useTransform(progress, (p) => (reduceMotion ? 0 : travel * (1 - eased(p))));
+  return { opacity, y };
+}
+
+/** Below xl there's no room for floating cards. Every card renders at
+ *  the exact same `absolute inset-0` rect (a direct "each card has to
+ *  land exactly over the previous one" correction — an earlier pass
+ *  gave each card its own slight vertical offset, a peeking-deck look,
+ *  which is a different composition than what was actually being
+ *  asked for), so only one is ever visibly on top at a given scroll
+ *  position: DOM order (later signal = later sibling) puts the most
+ *  recently revealed one above the last, which is already fully
+ *  opaque and holding its resting position underneath (see
+ *  useSignalReveal's own "reveal, don't cross-fade back out"
+ *  comment) — so the incoming card visibly covers it edge-to-edge,
+ *  not just alongside it. Emotional Regulation, last in `signals`,
+ *  ends up on top permanently once fully scrolled.
  *
- * Custom motion.div here, not Reveal — Reveal's own signature has no
- * room for a static per-card `style` override, and this needs one for
- * the deck's scale/margin math alongside the same fade-up-once-in-view
- * treatment Reveal already gives every other section on this page. */
+ * bg-navy-soft/95, not the desktop cards' own bg-white/5 — a direct
+ * consequence of full-rect overlap: the desktop floating cards never
+ * sit on top of each other, so a near-transparent glass panel reads as
+ * premium there. Here the whole point is the incoming card physically
+ * occluding the one behind it, which a mostly-see-through panel can't
+ * do — confirmed live, it let the covered card's own text bleed
+ * through as visual noise. --color-navy-soft at 95% is solid enough to
+ * actually cover while still reading as the same glass family (same
+ * hue, still blurred, still bordered) rather than a flat, unrelated
+ * opaque card. */
 function MobileSignalCard({
   signal,
-  depthFromFront,
-  isFirst,
-  delay,
+  progress,
+  reduceMotion,
 }: {
   signal: (typeof signals)[number];
-  depthFromFront: number;
-  isFirst: boolean;
-  delay: number;
+  progress: MotionValue<number>;
+  reduceMotion: boolean;
 }) {
-  const reduceMotion = useSafeReducedMotion();
+  const { opacity, y } = useStackedSignalReveal(
+    progress,
+    signal.range,
+    reduceMotion,
+    MOBILE_CARD_TRAVEL_PX
+  );
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{
-        duration: reduceMotion ? 0 : 0.5,
-        delay: reduceMotion ? 0 : delay,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      style={{
-        scale: 1 - depthFromFront * DECK_DEPTH_SCALE_STEP,
-        marginTop: isFirst ? 0 : -DECK_OVERLAP_PX,
-      }}
-      className="relative origin-top rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-[0_16px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-md"
+      style={{ opacity, y }}
+      className="absolute inset-0 rounded-2xl border border-white/10 bg-navy-soft/95 p-4 text-left shadow-[0_16px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-md"
     >
       <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
       <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
@@ -453,14 +479,22 @@ export function BandScrollShowcase() {
             reduceMotion={reduceMotion}
           />
         ))}
-        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 flex flex-col xl:hidden">
-          {signals.map((s, i) => (
+        {/* h-[112px] — just tall enough for one card's own real content
+           (a serif label + up to a 2-line text-xs body + p-4), confirmed
+           via screenshot at 390px wide; every MobileSignalCard fills
+           this exact rect (`absolute inset-0`), so the box never grows
+           past one card no matter how many signals reveal into it.
+           bottom-44 keeps real daylight below it clear of the subtext/
+           CTA block; the box's own short height (one card, not a
+           4-card list) is what leaves real daylight above it clear of
+           the model too, without needing a separate top offset. */}
+        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 h-[112px] xl:hidden">
+          {signals.map((s) => (
             <MobileSignalCard
               key={s.label}
               signal={s}
-              depthFromFront={signals.length - 1 - i}
-              isFirst={i === 0}
-              delay={i * 0.08}
+              progress={scrollYProgress}
+              reduceMotion={reduceMotion}
             />
           ))}
         </div>
