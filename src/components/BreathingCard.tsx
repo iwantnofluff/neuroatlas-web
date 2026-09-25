@@ -146,7 +146,7 @@ export function BreathingCard({ className }: { className?: string }) {
           hinted at. Ordinary DOM element, not SVG-embedded. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54.9%] left-1/2 aspect-square w-[52.5%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute top-[52%] left-1/2 aspect-square w-[38%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
             "conic-gradient(from 90deg, rgba(78,74,64,1) 0deg, rgba(229,218,194,1) 110.769deg, rgba(22,20,16,1) 318.462deg, rgba(78,74,64,1) 360deg)",
@@ -162,7 +162,7 @@ export function BreathingCard({ className }: { className?: string }) {
           no ring mask on this one, just a soft radial-ish conic blend). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[54.9%] left-1/2 aspect-square w-[20.6%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[3px]"
+        className="pointer-events-none absolute top-[52%] left-1/2 aspect-square w-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[3px]"
         style={{
           background:
             "conic-gradient(from 90deg, rgba(18,16,14,0) 0deg, rgba(75,118,158,1) 180deg, rgba(18,16,14,0) 295.396deg, rgba(18,16,14,0) 360deg)",
@@ -170,28 +170,28 @@ export function BreathingCard({ className }: { className?: string }) {
         }}
       />
 
-      <span className="absolute top-[3%] left-1/2 w-[85%] -translate-x-1/2 text-center text-xs leading-tight font-medium tracking-[0.05em] text-cream/50 uppercase">
+      <span className="absolute top-[6%] left-1/2 w-[85%] -translate-x-1/2 text-center text-[0.6rem] leading-tight font-medium tracking-[0.05em] text-cream/50 uppercase">
         Authoritative Mode
       </span>
-      <span className="absolute top-[21%] left-1/2 -translate-x-1/2 font-serif text-base leading-none text-gold-soft">
+      <span className="absolute top-[17%] left-1/2 -translate-x-1/2 font-serif text-sm leading-none text-gold-soft">
         505
       </span>
-      <span className="absolute top-[31%] left-1/2 w-[85%] -translate-x-1/2 text-center text-[0.55rem] leading-tight text-cream/60">
+      <span className="absolute top-[25%] left-1/2 w-[85%] -translate-x-1/2 text-center text-[0.45rem] leading-tight text-cream/60">
         Inhale · Hold · Exhale
       </span>
 
-      <div className="absolute top-[54.9%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-        <span className="font-serif text-3xl text-cream">5</span>
-        <span className="text-[0.6rem] tracking-wide text-cream/40 uppercase">
+      <div className="absolute top-[52%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+        <span className="font-serif text-xl leading-none text-cream">5</span>
+        <span className="mt-0.5 text-[0.45rem] tracking-wide text-cream/40 uppercase">
           sec
         </span>
       </div>
 
-      <span className="absolute top-[75%] left-1/2 -translate-x-1/2 text-xs font-medium tracking-[0.05em] text-cream uppercase">
+      <span className="absolute top-[73%] left-1/2 -translate-x-1/2 text-[0.6rem] font-medium tracking-[0.05em] text-cream uppercase">
         Inhale
       </span>
 
-      <p className="absolute top-[83%] left-1/2 w-[88%] -translate-x-1/2 text-center text-[0.55rem] leading-snug text-cream/70">
+      <p className="absolute top-[80%] left-1/2 w-[80%] -translate-x-1/2 text-center text-[0.4rem] leading-snug text-cream/70">
         Breathe in through your nose for 5 counts
       </p>
     </div>
