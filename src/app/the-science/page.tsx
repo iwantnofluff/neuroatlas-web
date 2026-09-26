@@ -3,6 +3,7 @@ import { NeuralAccordion } from "@/components/NeuralAccordion";
 import { HRVAndLimitsSection } from "@/components/HRVAndLimitsSection";
 import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSection";
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
+import { DotGrid } from "@/components/ui/dot-grid";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
 export const metadata = { title: "The science - NeuroAtlas" };
@@ -67,8 +68,17 @@ export default function TheSciencePage() {
          with a left rule threading them together like a real endnotes
          page, so the list reads as organized reference material rather
          than an anonymous block of text. */}
-      <section className="bg-navy px-6 py-16 text-left md:py-20 lg:px-10 lg:py-24">
-        <div className="mx-auto max-w-2xl">
+      <section className="relative overflow-hidden bg-navy px-6 py-16 text-left md:py-20 lg:px-10 lg:py-24">
+        {/* DotGrid — the citation column only ever fills a narrow
+           centered max-w-2xl, leaving the entire rest of this
+           section's own width (its "either end", flanking that
+           column) completely flat, unstyled navy — reported live as
+           looking bare/unfinished right next to ScienceClosingSection's
+           own now-textured panel directly above it. CSS-only DotGrid,
+           not DotPattern's live motion-component cloud — see
+           dot-grid.tsx's own doc comment for why. */}
+        <DotGrid size={28} />
+        <div className="relative mx-auto max-w-2xl">
           <p className="eyebrow text-center">References</p>
           <ol className="mt-10 space-y-8">
             {RESEARCH_CARDS.map((card) => (
