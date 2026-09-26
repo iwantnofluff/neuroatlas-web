@@ -68,6 +68,7 @@ export default function InsideTheAppPage() {
           className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
         >
           <div
+            data-lenis-prevent
             className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{
               backgroundImage:
@@ -157,6 +158,7 @@ export default function InsideTheAppPage() {
           <div className="flex size-full items-center justify-center">
             <IPhoneMockup variant="pro-max" className="h-full">
               <div
+                data-lenis-prevent
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                   backgroundImage:

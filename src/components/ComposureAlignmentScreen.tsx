@@ -110,7 +110,21 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
           </div>
         </div>
 
-        <div className="mt-[4.58cqw] flex items-center justify-center gap-[3.05cqw] px-[6.11cqw]">
+        {/* Arrow, then the step dots below it, each on its own row with
+           real space between — a real, confirmed clutter this replaces:
+           the dots used to sit directly under the status bar with the
+           arrow absolutely positioned on top of that same band, so both
+           read as one crowded row rather than two distinct pieces of
+           chrome. */}
+        <button
+          type="button"
+          aria-label="Back"
+          className="mt-[5cqw] ml-[6.11cqw] text-cream/70 transition-colors hover:text-cream"
+        >
+          <ArrowLeft className="size-[6.11cqw]" />
+        </button>
+
+        <div className="mt-[5cqw] flex items-center justify-center gap-[3.05cqw] px-[6.11cqw]">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
@@ -126,15 +140,7 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
           </span>
         </div>
 
-        <button
-          type="button"
-          aria-label="Back"
-          className="absolute top-[38%] left-[6.11%] text-cream/70 transition-colors hover:text-cream"
-        >
-          <ArrowLeft className="size-[6.11cqw]" />
-        </button>
-
-        <div className="mt-[8.65cqw] px-[6.11cqw] text-center">
+        <div className="mt-[6.1cqw] px-[6.11cqw] text-center">
           <p className="text-[6.11cqw] leading-tight text-gold-soft">Integration &amp; Reflection</p>
           <p className="mx-auto mt-[1.02cqw] max-w-[65cqw] text-[4.07cqw] leading-snug font-light text-[#c6c7c9]">
             Measure your alignment — from physiology to presence
@@ -142,7 +148,10 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        data-lenis-prevent
+        className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
       <div className="relative mx-auto mt-[9.67cqw] flex aspect-square w-[58.78cqw] items-center justify-center">
         {METRICS.map((metric) => (
           <img
