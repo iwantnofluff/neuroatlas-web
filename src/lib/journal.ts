@@ -1,4 +1,4 @@
-import { sanityClient } from "@/lib/sanity/client";
+import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import type { Article } from "@/lib/journal-types";
 
@@ -64,7 +64,7 @@ function toArticle(raw: RawArticle, featured: boolean): Article {
 }
 
 export async function getArticles(): Promise<Article[]> {
-  const raw = await sanityFetch<RawArticle[]>(ALL_ARTICLES_QUERY);
+  const raw = await sanityFetch<RawArticle[]>(ALL_ARTICLES_QUERY, {}, []);
   return raw.map((article, i) => toArticle(article, i === 0));
 }
 
@@ -74,14 +74,23 @@ export async function getArticleBySlug(
   // `featured` is not read anywhere on the individual article page (only
   // the journal index uses it to pick the lead story), so this fetch
   // doesn't need the extra round trip getArticles() makes to compute it.
-  const raw = await sanityFetch<RawArticle | null>(ARTICLE_BY_SLUG_QUERY, {
-    slug,
-  });
+  const raw = await sanityFetch<RawArticle | null>(
+    ARTICLE_BY_SLUG_QUERY,
+    { slug },
+    null
+  );
   if (!raw) return undefined;
   return toArticle(raw, false);
 }
 
 export async function getAllArticleSlugs(): Promise<string[]> {
+  // Guarded the same way sanityFetch guards itself (see that file's own
+  // comment) — this one bypasses sanityFetch entirely (it needs a fixed
+  // 60s revalidate regardless of draft mode) and runs inside
+  // generateStaticParams, which executes during `next build` — a real
+  // request against the client's own placeholder project id here would
+  // hang/fail the build too, not just at request time.
+  if (!isSanityConfigured) return [];
   return sanityClient.fetch<string[]>(ALL_SLUGS_QUERY, {}, {
     next: { revalidate: 60 },
   });
