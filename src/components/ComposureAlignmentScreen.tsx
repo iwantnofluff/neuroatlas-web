@@ -134,16 +134,16 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
           <ArrowLeft className="size-[6.11cqw]" />
         </button>
 
-        <div className="mt-[3.05cqw] px-[6.11cqw] text-center">
-          <p className="text-[5.6cqw] leading-tight text-gold-soft">Integration &amp; Reflection</p>
-          <p className="mx-auto mt-[1cqw] max-w-[65cqw] text-[3.56cqw] leading-snug font-light text-[#c6c7c9]">
+        <div className="mt-[8.65cqw] px-[6.11cqw] text-center">
+          <p className="text-[6.11cqw] leading-tight text-gold-soft">Integration &amp; Reflection</p>
+          <p className="mx-auto mt-[1.02cqw] max-w-[65cqw] text-[4.07cqw] leading-snug font-light text-[#c6c7c9]">
             Measure your alignment — from physiology to presence
           </p>
         </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div className="relative mx-auto mt-[5cqw] flex aspect-square w-[50cqw] items-center justify-center">
+      <div className="relative mx-auto mt-[9.67cqw] flex aspect-square w-[58.78cqw] items-center justify-center">
         {METRICS.map((metric) => (
           <img
             key={metric.id}
@@ -170,18 +170,18 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
         />
       </div>
 
-      <p className="mt-[4cqw] px-[6.11cqw] text-center text-[3.56cqw] text-[#909396]">
+      <p className="mt-[4.83cqw] px-[6.11cqw] text-center text-[3.56cqw] text-[#909396]">
         Review your composure alignment
       </p>
 
-      <div className="mx-auto mt-[2.3cqw] flex w-[55.5cqw] flex-col gap-[2.3cqw]">
+      <div className="mx-auto mt-[5.34cqw] flex w-[55.5cqw] flex-col gap-[3.05cqw]">
         {METRICS.map((metric) => (
           <button
             key={metric.id}
             type="button"
             onClick={() => toggle(metric.id)}
             className={cn(
-              "flex h-[9.5cqw] items-center justify-center gap-[2.3cqw] rounded-[3.05cqw] border px-[2.3cqw] text-[3.05cqw] whitespace-nowrap transition-colors duration-300",
+              "flex h-[12.21cqw] items-center justify-center gap-[2.5cqw] rounded-[3.05cqw] border px-[2.5cqw] text-[3.1cqw] whitespace-nowrap transition-colors duration-300",
               active === metric.id
                 ? "border-transparent text-[#f2f2f2]"
                 : "border-white/10 bg-gold-soft/10 text-[#f2f2f2]"
@@ -201,7 +201,7 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
         ))}
       </div>
 
-      <div className="mt-[3cqw] flex flex-col gap-[3cqw] px-[5.85cqw]">
+      <div className="mt-[10.43cqw] flex flex-col gap-[4.07cqw] px-[5.85cqw]">
         {METRICS.slice()
           .sort((a, b) => METRICS.indexOf(a) - METRICS.indexOf(b))
           .map((metric) => (
@@ -210,7 +210,7 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
               type="button"
               onClick={() => toggle(metric.id)}
               className={cn(
-                "flex flex-col gap-[2.3cqw] rounded-[4.07cqw] border bg-navy px-[4.07cqw] py-[3.6cqw] text-left transition-[border-color,box-shadow] duration-300",
+                "flex flex-col gap-[3.05cqw] rounded-[4.07cqw] border bg-navy px-[4.07cqw] py-[5.09cqw] text-left transition-[border-color,box-shadow] duration-300",
                 active === metric.id ? "" : "border-gold-deep/60"
               )}
               style={
@@ -238,7 +238,7 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
           ))}
       </div>
 
-      <div className="mt-[4cqw] mb-[5cqw] flex justify-center px-[5.85cqw]">
+      <div className="mt-[6.1cqw] mb-[8.14cqw] flex justify-center px-[5.85cqw]">
         <button
           type="button"
           className="w-full rounded-[3.05cqw] bg-gold-soft px-[4.07cqw] py-[2.55cqw] text-[3.56cqw] font-medium text-[#161410]"
