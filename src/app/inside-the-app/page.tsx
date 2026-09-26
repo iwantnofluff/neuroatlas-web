@@ -5,8 +5,8 @@ import { ClarityProtocolScreen } from "@/components/ClarityProtocolScreen";
 import { ComposureAlignmentScreen } from "@/components/ComposureAlignmentScreen";
 import { DashboardDetailCard } from "@/components/DashboardDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
-import { TrendGraph } from "@/components/TrendGraph";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "Inside the app - NeuroAtlas" };
@@ -28,11 +28,9 @@ export const metadata = { title: "Inside the app - NeuroAtlas" };
 // different visual, 5 because the brief marks its screenshot optional,
 // 8 because a two-badge row doesn't need a whole cinematic pinned beat.
 //
-// Every "screenshot" on this page is now a real Figma-sourced screen
-// (SleepDetailCard, DashboardDetailCard, ComposureAlignmentScreen,
-// ClarityProtocolScreen) except TrendGraph, a hand-drawn illustrative
-// line explicitly labeled as such - same honesty convention
-// /how-it-works' own HRV stat card already uses.
+// Every "screenshot" on this page is now a real Figma-sourced screen:
+// SleepDetailCard, DashboardDetailCard, ComposureAlignmentScreen,
+// ClarityProtocolScreen, JournalScreen.
 
 export default function InsideTheAppPage() {
   return (
@@ -285,6 +283,7 @@ export default function InsideTheAppPage() {
         heading="The Long View"
         imageSide="left"
         background="navy-soft"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
         body={
           <>
             <p className="text-pretty">
@@ -296,7 +295,13 @@ export default function InsideTheAppPage() {
             </p>
           </>
         }
-        media={<TrendGraph tone="dark" />}
+        media={
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <JournalScreen />
+            </IPhoneMockup>
+          </div>
+        }
       />
 
       {/* 8. Availability */}
