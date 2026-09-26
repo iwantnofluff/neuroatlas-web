@@ -210,16 +210,7 @@ export default function InsideTheAppPage() {
             ].map((category) => (
               <div
                 key={category}
-                // Premium tile popout - a real, confirmed fidelity gap
-                // this fixes: the tiles previously had no hover
-                // treatment at all, reading as flat/static rather than
-                // interactive. bg-white (was bg-white/60) - a
-                // translucent tile lifting with its own cast shadow
-                // read inconsistently against the glass panel behind
-                // it; solid white is what actually makes the lift +
-                // shadow read as one tile floating above another,
-                // rather than two overlapping translucent layers.
-                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white px-3 py-3 text-center text-xs font-medium text-navy/70 uppercase tracking-[-0.04em] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-black/10 hover:shadow-xl hover:shadow-black/5 md:py-4"
+                className="flex items-center justify-center rounded-xl border border-gold-soft/50 bg-navy/90 px-3 py-3 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-gold hover:text-cream hover:shadow-xl hover:shadow-black/30 md:py-4"
               >
                 {category}
               </div>
