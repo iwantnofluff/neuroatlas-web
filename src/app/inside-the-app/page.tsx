@@ -2,6 +2,8 @@ import { Gauge, Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { AppScreenMock } from "@/components/AppScreenMock";
+import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { TrendGraph } from "@/components/TrendGraph";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
@@ -52,13 +54,28 @@ export default function InsideTheAppPage() {
           </p>
         </Reveal>
       </div>
-      <Reveal delay={0.1} y={20} className="px-6 pb-20 lg:pb-24">
-        <AppScreenMock
-          icon={Gauge}
-          label="Today's Reading"
-          tone="light"
-          annotations={[{ label: "Readiness: 82", className: "top-12 -right-4 sm:-right-10" }]}
-        />
+      {/* Real "Sleep" detail screen (Figma node 15348:17273), life-size
+         inside an iPhone 17 Pro Max — replaces AppScreenMock's generic
+         placeholder for this page's own hero media. h-[62svh]/68svh/74svh
+         mirrors the same tiered sizing every other phone-mockup section
+         on this site already uses (see /how-it-works' own HrvDetailCard/
+         CeoBreathScreen sections). */}
+      <Reveal delay={0.1} y={20} className="flex justify-center px-6 pb-20 lg:pb-24">
+        <IPhoneMockup
+          variant="pro-max"
+          className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
+        >
+          <div
+            className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{
+              backgroundImage:
+                "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
+              backgroundColor: "var(--color-navy)",
+            }}
+          >
+            <SleepDetailCard />
+          </div>
+        </IPhoneMockup>
       </Reveal>
 
       <section id="train">
