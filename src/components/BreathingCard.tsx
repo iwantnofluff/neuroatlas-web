@@ -57,7 +57,10 @@ export function BreathingCard({ className }: { className?: string }) {
   const id = (name: string) => `${name}-${uid}`;
 
   return (
-    <div className={cn("relative h-full w-full overflow-hidden rounded-2xl", className)}>
+    <div
+      className={cn("relative h-full w-full overflow-hidden rounded-2xl", className)}
+      style={{ containerType: "size" }}
+    >
       <svg
         className="absolute inset-0 h-full w-full"
         viewBox="0 0 345 400"
@@ -147,13 +150,22 @@ export function BreathingCard({ className }: { className?: string }) {
         }}
       />
 
-      <span className="absolute top-[8%] left-1/2 w-[85%] -translate-x-1/2 text-center text-sm leading-tight text-cream/60">
+      {/* Font sizes as cqw (of this card's OWN current width), not fixed
+         Tailwind text-sm/rem — a real, confirmed bug this fixes: this
+         card renders anywhere from ~200px (desktop float-tile) down to
+         a fraction of a small phone viewport, and fixed text held its
+         literal pixel size regardless, so it read fine at one width and
+         overlapped the rings at any smaller one (reported live: "Inhale
+         · Hold · Exhale" wrapping into the countdown ring below it).
+         cqw values are the source's own 345px-wide reference canvas
+         proportions (14px/345 and 6.4px/345), not arbitrary shrinkage. */}
+      <span className="absolute top-[8%] left-1/2 w-[85%] -translate-x-1/2 text-center text-[4.06cqw] leading-tight whitespace-nowrap text-cream/60">
         Inhale · Hold · Exhale
       </span>
 
       <div className="absolute top-[58%] left-1/2 aspect-square w-[22%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
-        <span className="font-serif text-sm leading-none text-cream">5</span>
-        <span className="mt-0.5 text-[0.4rem] tracking-wide text-cream/40 uppercase">
+        <span className="font-serif text-[4.06cqw] leading-none text-cream">5</span>
+        <span className="mt-[0.6cqw] text-[1.86cqw] tracking-wide text-cream/40 uppercase">
           sec
         </span>
       </div>

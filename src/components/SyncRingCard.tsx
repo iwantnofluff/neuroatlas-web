@@ -42,7 +42,10 @@ export function SyncRingCard({ className }: { className?: string }) {
     "M103.103 7.67945C114.675 2.10685 128.154 2.10685 139.726 7.67945L200.441 36.9184C212.013 42.491 220.417 53.0297 223.275 65.5512L238.271 131.251C241.128 143.772 238.129 156.914 230.121 166.955L188.105 219.642C180.097 229.683 167.953 235.532 155.109 235.532H87.7201C74.8765 235.532 62.732 229.683 54.7242 219.642L12.7079 166.955C4.70005 156.914 1.70059 143.772 4.55854 131.251L19.554 65.5512C22.4119 53.0297 30.8163 42.491 42.3879 36.9184L103.103 7.67945Z";
 
   return (
-    <div className={cn("relative aspect-[249/288]", className)}>
+    <div
+      className={cn("relative aspect-[249/288]", className)}
+      style={{ containerType: "size" }}
+    >
       <svg
         className="absolute inset-0 h-full w-full"
         viewBox="0 0 249 288"
@@ -92,9 +95,17 @@ export function SyncRingCard({ className }: { className?: string }) {
         style={{ boxShadow: "0 0 4px 0px rgba(242,242,242,0.3)" }}
       />
 
+      {/* cqw font sizes (of this card's OWN current width), not fixed
+         text-3xl/text-xs — a real, confirmed bug this fixes: at a small
+         enough render size the fixed-pixel "0%"/"Sync" text stopped
+         fitting inside the inner ring's own diameter (which DOES scale
+         with the card, via the aspect-locked SVG above) and sat on top
+         of the ring instead of inside it. cqw values are the source's
+         own 249px-wide reference canvas proportions (30px/249 and
+         12px/249), not arbitrary shrinkage. */}
       <div className="absolute top-[53%] left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center opacity-40">
-        <span className="font-serif text-3xl text-cream">0%</span>
-        <span className="text-xs text-cream/70">Sync</span>
+        <span className="font-serif text-[12.05cqw] leading-tight whitespace-nowrap text-cream">0%</span>
+        <span className="text-[4.82cqw] whitespace-nowrap text-cream/70">Sync</span>
       </div>
     </div>
   );

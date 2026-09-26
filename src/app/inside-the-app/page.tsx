@@ -1,11 +1,12 @@
-import { Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
+import { Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
-import { AppScreenMock } from "@/components/AppScreenMock";
+import { ClarityProtocolScreen } from "@/components/ClarityProtocolScreen";
+import { ComposureAlignmentScreen } from "@/components/ComposureAlignmentScreen";
 import { DashboardDetailCard } from "@/components/DashboardDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
-import { TrendGraph } from "@/components/TrendGraph";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "Inside the app - NeuroAtlas" };
@@ -27,11 +28,9 @@ export const metadata = { title: "Inside the app - NeuroAtlas" };
 // different visual, 5 because the brief marks its screenshot optional,
 // 8 because a two-badge row doesn't need a whole cinematic pinned beat.
 //
-// No real app UI has been designed/exported yet, so every "screenshot"
-// here is AppScreenMock (a generic phone-frame silhouette + icon/label,
-// not a fabricated trace of a real screen) or TrendGraph (a hand-drawn
-// illustrative line, explicitly labeled as such) - same honesty
-// convention /how-it-works' own HRV stat card already uses.
+// Every "screenshot" on this page is now a real Figma-sourced screen:
+// SleepDetailCard, DashboardDetailCard, ComposureAlignmentScreen,
+// ClarityProtocolScreen, JournalScreen.
 
 export default function InsideTheAppPage() {
   return (
@@ -67,6 +66,7 @@ export default function InsideTheAppPage() {
           className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
         >
           <div
+            data-lenis-prevent
             className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{
               backgroundImage:
@@ -156,6 +156,7 @@ export default function InsideTheAppPage() {
           <div className="flex size-full items-center justify-center">
             <IPhoneMockup variant="pro-max" className="h-full">
               <div
+                data-lenis-prevent
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                   backgroundImage:
@@ -199,7 +200,7 @@ export default function InsideTheAppPage() {
           // last one or two clipping against its own overflow-hidden,
           // confirmed live via screenshot at a real mobile width, not
           // assumed from the class change alone.
-          <div className="card-glass-light grid size-full grid-cols-1 gap-2 p-4 md:grid-cols-2 md:gap-3 md:p-8">
+          <div className="grid size-full grid-cols-1 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
             {[
               "Breathing",
               "Focus Reset",
@@ -210,16 +211,7 @@ export default function InsideTheAppPage() {
             ].map((category) => (
               <div
                 key={category}
-                // Premium tile popout - a real, confirmed fidelity gap
-                // this fixes: the tiles previously had no hover
-                // treatment at all, reading as flat/static rather than
-                // interactive. bg-white (was bg-white/60) - a
-                // translucent tile lifting with its own cast shadow
-                // read inconsistently against the glass panel behind
-                // it; solid white is what actually makes the lift +
-                // shadow read as one tile floating above another,
-                // rather than two overlapping translucent layers.
-                className="flex items-center justify-center rounded-xl border border-navy/10 bg-white px-3 py-3 text-center text-xs font-medium text-navy/70 uppercase tracking-[-0.04em] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-black/10 hover:shadow-xl hover:shadow-black/5 md:py-4"
+                className="flex items-center justify-center rounded-xl border border-gold-soft/40 bg-cream/10 px-3 py-3 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-gold hover:bg-cream/15 hover:text-cream hover:shadow-xl hover:shadow-black/30 md:py-4"
               >
                 {category}
               </div>
@@ -241,6 +233,7 @@ export default function InsideTheAppPage() {
         heading="Composure On Demand"
         imageSide="right"
         background="navy"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
         body={
           <>
             <p className="text-pretty">
@@ -255,12 +248,9 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <AppScreenMock
-              icon={Users}
-              label="Boardroom Mode"
-              className="max-w-[200px]"
-              annotations={[{ label: "T-2:00", className: "top-10 -left-4 sm:-left-10" }]}
-            />
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <ComposureAlignmentScreen />
+            </IPhoneMockup>
           </div>
         }
       />
@@ -281,8 +271,10 @@ export default function InsideTheAppPage() {
             the picture.
           </p>
         </Reveal>
-        <Reveal delay={0.1} y={20}>
-          <AppScreenMock icon={BookOpen} label="Daily Check-In" tone="light" />
+        <Reveal delay={0.1} y={20} className="flex justify-center">
+          <IPhoneMockup variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
+            <ClarityProtocolScreen />
+          </IPhoneMockup>
         </Reveal>
       </div>
 
@@ -291,6 +283,7 @@ export default function InsideTheAppPage() {
         heading="The Long View"
         imageSide="left"
         background="navy-soft"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
         body={
           <>
             <p className="text-pretty">
@@ -302,7 +295,13 @@ export default function InsideTheAppPage() {
             </p>
           </>
         }
-        media={<TrendGraph tone="dark" />}
+        media={
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <JournalScreen />
+            </IPhoneMockup>
+          </div>
+        }
       />
 
       {/* 8. Availability */}
