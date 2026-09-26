@@ -77,17 +77,57 @@ export function DotPattern({
   const containerRef = useRef<SVGSVGElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
+  // ResizeObserver, not a `window.resize` listener — a real, confirmed
+  // bug this fixes: a resize LISTENER only fires when the BROWSER
+  // WINDOW itself changes size, so a container that changes size for
+  // any other reason (a parent's own scroll-linked height/margin
+  // style resolving after this component's first mount — exactly what
+  // CurtainReveal.tsx's `metrics` state does, since it starts `null`
+  // and only applies real inline styles after its own effect runs one
+  // render later; a Fast Refresh hot-reload landing mid-layout; late-
+  // loading fonts reflowing the page) never re-measures at all. Caught
+  // live inside CurtainReveal's own sticky reveal: this pattern
+  // measured its container's height as whatever it happened to be at
+  // the very first paint, then never updated again, rendering dots
+  // across only a thin strip at the top instead of the element's real
+  // (later-settled) full height — confirmed by reading the rendered
+  // circles' own cy values directly, not just eyeballing a screenshot.
+  // A ResizeObserver reacts to the OBSERVED ELEMENT's actual box
+  // changing, for any reason, which is what this always needed.
   useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    // Rounds to whole px and bails out if unchanged — a real, confirmed
+    // bug this fixes: inside a `position: sticky` container (exactly
+    // this component's use inside CurtainReveal's reveal panel),
+    // getBoundingClientRect() reports tiny sub-pixel fluctuations on
+    // almost every scroll frame even though the element's true CSS
+    // size never changes. Calling setDimensions unconditionally turned
+    // every one of those sub-pixel jitters into a full re-render of
+    // every circle in `dots` (1700+ of them at this pattern's own
+    // density) racing against the scroll itself — confirmed live via a
+    // frame-by-frame video capture, which showed the dot grid visibly
+    // flickering in and out between adjacent frames while scrolling
+    // past this exact panel, not a one-time layout bug. Skipping the
+    // update when the rounded size hasn't actually changed removes
+    // those spurious re-renders entirely without weakening the
+    // ResizeObserver's own job of catching REAL size changes.
     const updateDimensions = () => {
-      if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect()
-        setDimensions({ width, height })
-      }
+      const { width, height } = el.getBoundingClientRect()
+      const nextWidth = Math.round(width)
+      const nextHeight = Math.round(height)
+      setDimensions((prev) =>
+        prev.width === nextWidth && prev.height === nextHeight
+          ? prev
+          : { width: nextWidth, height: nextHeight }
+      )
     }
 
     updateDimensions()
-    window.addEventListener("resize", updateDimensions)
-    return () => window.removeEventListener("resize", updateDimensions)
+    const observer = new ResizeObserver(updateDimensions)
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [])
 
   const dots = Array.from(

@@ -62,6 +62,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          only, matching the actual reported gesture - Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
       <body className="min-h-full flex flex-col overscroll-x-none">
+        <div
+          aria-hidden="true"
+          className="grain-overlay pointer-events-none fixed inset-0 z-0"
+        />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

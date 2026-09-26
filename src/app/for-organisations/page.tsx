@@ -4,7 +4,7 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import { DataPrivacyToggle } from "@/components/DataPrivacyToggle";
 import { LeadershipDashboardSection } from "@/components/LeadershipDashboardSection";
-import { IlluminatedTimeline } from "@/components/IlluminatedTimeline";
+import { HowToGetStartedSection } from "@/components/HowToGetStartedSection";
 import { DownloadOverviewForm } from "@/components/DownloadOverviewForm";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
@@ -153,27 +153,12 @@ export default function ForOrganisationsPage() {
           static split-panel bullet list. */}
       <LeadershipDashboardSection />
 
-      {/* 5. How a pilot works - a vertical illuminated timeline (see
-          IlluminatedTimeline.tsx): a glowing track fills as the reader
-          scrolls, each of the four steps lifting into full opacity as
-          the fill reaches it. */}
-      <section>
-        <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
-          <Reveal y={20} className="text-center">
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
-              How To Get Started
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-mist">
-              A NeuroAtlas pilot gives your organization a structured way to
-              introduce the platform, measure the experience, and review the
-              results.
-            </p>
-          </Reveal>
-          <div className="mt-16">
-            <IlluminatedTimeline />
-          </div>
-        </div>
-      </section>
+      {/* 5. How a pilot works - a pinned, scroll-locked sequence (see
+          HowToGetStartedSection.tsx): the reader is held in the section
+          until all four steps have scrolled past, with the real 3D
+          <Band> model rotating to a distinct pose per step in place of
+          the previous static illuminated-rail visual. */}
+      <HowToGetStartedSection />
 
       {/* 6. The business case */}
       <section className="dark-glow bg-navy-soft text-cream">

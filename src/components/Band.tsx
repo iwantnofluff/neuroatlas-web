@@ -9,17 +9,88 @@ import * as THREE from "three";
 import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAnchors";
 
 /**
- * Real gltfjsx export of the NA·01 sensor module (public/band.glb),
- * replacing the earlier <Torus> placeholder used in BuiltToReadYouScene.
- * The source file has no semantic names at all — every mesh is
- * "empty_2".."empty_12" and every material is unnamed too (confirmed by
- * parsing the GLB's own JSON chunk directly, not just gltfjsx's
- * generated output) — so mesh identity here is inferred from actual
- * geometry rather than assumed from a name: the two largest-vertex-count
- * meshes are the module's front/back shell (the "Main Band" surface per
- * the brief — leaning into a "core module" read, the precision housing
- * around the sensor), the other nine are small hardware details (lugs,
- * pins, buttons — the "Clasp/Hardware Accents").
+ * CAD export of the NA·01 sensor module (public/band.glb) — updated to
+ * the client's latest assembly file, which bundles the sensor module
+ * AND a separate strap/buckle/clasp sub-assembly in one GLB. Five
+ * meshes belong to that outer sub-assembly, not the module, and are
+ * filtered out below by name — each one directly identified via
+ * isolated single-mesh rendering (this file's own established
+ * methodology) and cross-checked against its measured size, not
+ * inferred from position alone:
+ * - "empty_3": the strap itself, 260.5 x 22.0 x 1.6mm. Straddles the
+ *   origin (its own center lands within ~4mm of it, same as the
+ *   module), which is why the moduleMeshes filter below needs a
+ *   maxDimension check and can't rely on center-distance alone.
+ * - "empty_4", "empty_5": the two clasp halves, ~24.4 x 14.0mm each,
+ *   ~132mm off origin on -Y.
+ * - "empty_6": the keeper loop, 20.0 x 7.7mm, ~135mm off origin on -Y.
+ * - "empty_13": a strap lug/pin — a mounting bracket with a long thin
+ *   pin extending from it, 48.4 x 10.2 x 6.9mm, confirmed via isolated
+ *   render (visibly a hardware bracket + pin shape, not a plate or
+ *   capsule). Not one of the product spec's 8 named module parts.
+ *   Already excluded by maxDimension alone (48.4mm exceeds the shell's
+ *   own 42.8mm max), independent of the other four.
+ * None of these five are rendered anywhere in THIS file — none of this
+ * component's three scenes are framed, scaled, or lit for a full
+ * ~260mm strap, so integrating it here is separate, bigger work than a
+ * materials pass. The strap ("empty_3") IS rendered elsewhere, though,
+ * standalone: HowToGetStartedScene.tsx (/for-organisations' "How To
+ * Get Started" section) loads it directly via its own useGLTF call —
+ * deliberately not through <Band> at all, since that section's whole
+ * premise is the raw, uncorrected export orientation (no BASE_ROTATION)
+ * being already the vertical, face-on pose it wants, which <Band>
+ * can't skip — and gives it an anodised-navy METALLIC finish
+ * (metalness 0.85, a deliberate Milanese-mesh departure from the
+ * product spec's own "woven fabric yarn" strap description, confirmed
+ * explicitly before changing it), reusing this file's own
+ * `useModuleMeshes` export for the module half of that same scene. The
+ * clasp halves + keeper loop remain unrendered anywhere, still a
+ * reasonable fit for an anodised-metal material matching
+ * HARDWARE_MATERIAL_PROPS below (Cool Gray 7 C, metalness 1) when that
+ * work happens.
+ *
+ * Still no semantic mesh/material names anywhere in the file (every
+ * mesh is "empty_N", every material name is an empty string) — mesh
+ * identity is established here by isolating each candidate mesh alone
+ * (hidden from its siblings, camera framed tight on just that one
+ * mesh's own bounding box) and inspecting its actual 3D shape directly,
+ * not by inferring from silhouette in a combined view or from position
+ * alone — both of those weaker methods produced real, confirmed wrong
+ * identifications in earlier passes on this same file. Isolated,
+ * each part was unambiguous:
+ * - The side button has an actual shaft/plunger stub, a physical
+ *   button mechanism, not just a shape that happens to sit where a
+ *   button should be.
+ * - The ECG electrode is a flat pill with a genuine engraved zigzag
+ *   waveform mark visible on its face.
+ * - The two charging pogo pads have the distinctive stepped-cylinder
+ *   profile of a real pogo pin, unlike two other, plainer cylindrical
+ *   posts nearby that share their general position but not their shape
+ *   — those two are left on the general hardware default rather than
+ *   guessed at, since the product spec's 8 named parts don't obviously
+ *   cover them (possibly related to the internal carrier, which has no
+ *   own separately-identifiable external mesh in this file).
+ * - The two steel electrode plates and the optical sensor window are
+ *   three plain flat plates in a row with no distinguishing marks from
+ *   geometry alone; the window is identified as the centered, slightly
+ *   larger one of the three (room for the two-LED-plus-photodiode
+ *   layout the product spec describes), the electrodes as the smaller
+ *   mirrored pair flanking it.
+ *
+ * The GLB has POSITION and NORMAL only — no TEXCOORD_0, so no texture
+ * map (a brushed-metal normal map, an AO pass, anything) can be applied
+ * without generating UVs first, which is a bigger, separate change from
+ * a materials pass. Every surface below is therefore a perfectly even
+ * color/roughness/metalness across its whole mesh, which is itself a
+ * small realism tell up close (real anodized aluminum has faint
+ * brushing, real steel has micro-scratches). Per-part material
+ * separation and lighting are the only tools available without that
+ * bigger change — deliberately not "solved" with procedural noise or a
+ * UV-generation pass here; this is a known, accepted limit of this
+ * pass, not an oversight.
+ *
+ * The two largest-vertex-count meshes within the module cluster are the
+ * top housing and skin-side back cover.
  *
  * Scale: the source is modeled in real-world meters (~2.5cm bounding
  * box) — ×18 brings it in line with this scene's existing unit
@@ -44,50 +115,151 @@ import { SPEC_ANCHORS, SPEC_ANCHOR_DOT_RADIUS, type SpecKey } from "@/lib/specAn
  * costs nothing visually on an opaque object, and covers either shell
  * if the export changes again.
  *
- * Shell color is a lighter, slightly desaturated navy (not the near-
- * black #0A0F1D this started with) at lower roughness/higher metalness
- * — #0A0F1D with roughness 0.8 absorbed essentially all incoming light,
- * reading as a flat 2D silhouette rather than a lit 3D object; this
- * combination actually catches the rig's rim/fill lights. #1E2B4D ->
- * #1B2340 per a direct client color pick — close to the same hue/depth,
- * still well clear of #0A0F1D's near-black floor.
+ * Every color/finish below is the real supplied product spec, not a
+ * stylistic pick: PANTONE 282 CP (#041E42) housing, PANTONE Cool Gray
+ * 7 C (#97999B) secondary, cobalt button (#2656AD), gold pogo pads
+ * (#C9A44C), polished steel electrodes/ECG capsule (reads #5D7B8F under
+ * cool light). The spec is explicit that both the navy and the grey
+ * carry a blue bias and nothing in the palette should read warm — the
+ * optical window's near-black tint below is mixed cool for the same
+ * reason, not a neutral/warm black.
  */
-// Machined-metal pass: metalness 1 (was 0.4) + roughness 0.25 (was 0.3)
-// on BOTH materials below, per the client's own explicit spec — a
-// "premium, machined-metal product," not the part-plastic read
-// metalness 0.4 gave the shell. metalness 1 needs real reflections to
-// look like metal rather than flat-shaded black (a fully metallic
-// surface has no diffuse component left at all — everything it shows
-// is either a direct specular highlight from a light or a reflection of
-// its environment), which is what the new procedural <Environment> in
-// every scene that renders this component is for — see e.g.
-// BandScrollScene.tsx's own comment on why that isn't a `preset`.
-// Deep Navy shell / Champagne Gold hardware unchanged.
+// Housing: "matte anodised aluminium... soft-touch, no gloss" — real
+// anodized aluminum, not plastic, so metalness stays meaningfully above
+// 0 (a true non-metal readback would lose the faint brushed-metal sheen
+// anodizing actually has). #041E42 is the reference hex the spec gives
+// directly (it notes the color lifts toward ~#16284C at typical
+// on-screen brightness — expected, not a bug to correct for).
 //
-// Shell roughness bumped 0.25 -> 0.32 specifically (hardware left at
-// 0.25) after this read as a near-black object in production with only
-// a couple of sharp gold glints — a razor-low roughness is a near-
-// mirror finish, which only reflects light back from the exact narrow
-// angle it's coming from; the shell's own broad, mostly-flat faces were
-// simply missing that one angle from most camera positions. A touch
-// more roughness blurs/spreads the reflection so the shell picks up
-// light across more of its surface instead of nothing-or-a-glint, while
-// staying well short of a matte/plastic look. Paired with
-// StudioEnvironment.tsx's new wraparound fill panels (same root cause,
-// see that file's comment) rather than relying on either fix alone.
-const SHELL_MATERIAL_PROPS = {
-  color: "#1B2340",
-  roughness: 0.32,
-  metalness: 1,
+// roughness 0.75 -> 0.45: at 0.75 the material's BRDF lobe is wide
+// enough to blur even a small, bright reflected feature into an
+// invisible soft blob — confirmed live, the StudioEnvironment hotspot
+// panels added specifically to give this shell a legible highlight
+// produced almost no visible change at 0.75. 0.45 is still well short
+// of a mirror (that's what "no gloss" rules out) but narrow enough a
+// BRDF lobe that those hotspots can actually resolve as a highlight
+// rather than washing out into the same flat gradient regardless of
+// what the environment provides.
+//
+// metalness 0.7, a deliberate compromise, not the physically "pure"
+// 1.0 — at metalness 1 a metal's base color only ever shows up through
+// reflections (there's no diffuse term left at all), which is
+// physically correct for anodized aluminum but, confirmed via a direct
+// side-by-side render, reads as nearly black against this site's dark
+// navy page — the #041E42 all but disappears rather than reading as
+// navy metal. 0.7 keeps a small enough diffuse contribution that the
+// actual brand color stays legible while still responding to the
+// environment enough to catch the Lightformer hotspots as real
+// highlights, not a flat plastic fill. NOT fixed by lightening the
+// base color instead — that's the exact toy-like look this whole pass
+// exists to undo.
+//
+// DO NOT "correct" this back to 1.0 for physical purity. 1.0 IS more
+// physically accurate for real anodized aluminum, and that is exactly
+// why it's wrong here: it was rendered and compared directly against
+// 0.7 (side by side, same lighting, same everything else) specifically
+// to check that claim, and 1.0 loses the #041E42 navy almost entirely
+// against this site's dark page. 0.7 is a deliberate, tested
+// art-direction choice — legibility over physical accuracy — not an
+// oversight or a value nobody got around to finishing.
+export const SHELL_MATERIAL_PROPS = {
+  color: "#041E42",
+  roughness: 0.45,
+  metalness: 0.7,
   side: THREE.DoubleSide,
 } as const;
 
-const HARDWARE_MATERIAL_PROPS = {
-  color: "#D4AF37",
+// Secondary/default for hardware bits the product spec doesn't
+// individually name (see the two unidentified cylindrical posts in the
+// file header comment) — Cool Gray 7 C, the spec's own secondary color.
+export const HARDWARE_MATERIAL_PROPS = {
+  color: "#97999B",
   roughness: 0.25,
   metalness: 1,
   side: THREE.DoubleSide,
 } as const;
+
+// The side button — cobalt, "the only saturated colour" on the whole
+// device per the spec. Non-metallic (a painted/molded finish, not bare
+// metal) at a moderate roughness — matte enough not to compete with the
+// shell's own reflections, not so rough it goes chalky.
+export const BUTTON_MATERIAL_PROPS = {
+  color: "#2656AD",
+  roughness: 0.35,
+  metalness: 0,
+  side: THREE.DoubleSide,
+} as const;
+
+// Polished stainless — the top-mounted ECG electrode and the two
+// underside steel electrode plates all share this. High metalness for
+// the mirror finish per spec, but roughness 0.12-0.18 rather than a
+// near-zero value: true near-0 roughness on a flat plate only shows a
+// highlight at the exact angle that mirror-reflects a light/hotspot
+// back at the camera, and misses it entirely everywhere else — a
+// slightly wider BRDF lobe reads as polished steel across more of the
+// viewing envelope instead of "mirror in one spot, flat gray
+// everywhere else."
+export const STEEL_ELECTRODE_MATERIAL_PROPS = {
+  color: "#5D7B8F",
+  roughness: 0.15,
+  metalness: 1,
+  side: THREE.DoubleSide,
+} as const;
+
+// The optical sensor window (PPG) — not a named color in the palette,
+// so approximated the way a real PPG window is built: a dark, glossy
+// tinted lens, mixed with a cool/blue bias to match the spec's explicit
+// "nothing should read warm" instruction rather than a neutral or warm
+// black.
+//
+// Deliberately opaque, not transmissive: the CAD has no PCB, no LEDs,
+// no photodiode behind this 0.5mm plate — a transmissive material
+// would refract straight through into an empty housing shell, which
+// would look far worse than an opaque one. meshStandardMaterial has no
+// transmission property anyway (that's meshPhysicalMaterial-only), so
+// there's no accidental path to it here. roughness 0.15 -> 0.05 is what
+// actually gets "black glass reflecting the environment" rather than a
+// flat dark rectangle — metalness stays 0 (this is glass/coated
+// polymer, not metal); at a near-black base color even a non-metal's
+// fixed ~4% specular reflectance reads as a clear, legible highlight,
+// because there's so little diffuse brightness underneath it to
+// compete with.
+export const OPTICAL_WINDOW_MATERIAL_PROPS = {
+  color: "#0A0E14",
+  roughness: 0.05,
+  metalness: 0,
+  side: THREE.DoubleSide,
+} as const;
+
+// The two gold charging pogo pads.
+export const POGO_PAD_MATERIAL_PROPS = {
+  color: "#C9A44C",
+  roughness: 0.3,
+  metalness: 1,
+  side: THREE.DoubleSide,
+} as const;
+
+/** Fixed array indices into `hardwareMeshes` (sorted by vertex count
+ *  descending, see the `shellMeshes`/`hardwareMeshes` useMemo below) —
+ *  see this file's own header comment for how each was actually
+ *  confirmed (isolated rendering, not inference from a combined view).
+ *
+ *  ECG_ELECTRODE_INDEX re-verified directly against this exact GLB (not
+ *  re-derived from memory of an earlier file): resolves to node
+ *  "empty_9", 1.0 x 10.3 x 3.3mm. That's smaller than the product
+ *  spec's rough ~15 x 10 x 4mm estimate, but an isolated render leaves
+ *  no doubt — it's a flat pill with a genuine engraved zigzag waveform
+ *  mark on its face, unlike anything else in this file. The 48.4 x 10.2
+ *  x 6.9mm mesh worth double-checking here isn't this one — that's
+ *  "empty_13", the strap lug/pin (see this file's own header comment),
+ *  which never reaches `hardwareMeshes` at all: it's excluded from
+ *  `moduleMeshes` by the maxDimension filter below before indices are
+ *  even assigned. */
+export const BUTTON_INDEX = 0;
+export const ECG_ELECTRODE_INDEX = 1;
+export const OPTICAL_WINDOW_INDEX = 2;
+export const STEEL_ELECTRODE_INDICES = new Set([5, 6]);
+export const POGO_PAD_INDICES = new Set([7, 8]);
 
 // Desktop 22 (was 18) — the "Built To"/"Read You" sandwich (see
 // BuiltToReadYouSection.tsx) now closes its text blocks together at the
@@ -127,7 +299,12 @@ const MODEL_SCALE_MOBILE = 20;
  *  combining unpredictably. Applied in the model's own local space
  *  instead, so the outer group's spin/tilt keep behaving exactly as
  *  before regardless. */
-const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
+// Exported — HowToGetStartedScene.tsx needs this exact same correction to
+// align its own separately-rendered strap mesh with the module's corrected
+// orientation, since it can't reach inside <Band>'s own internal group to
+// attach sibling content directly. Any change here must stay in sync with
+// that file's own replica.
+export const BASE_ROTATION: readonly [number, number, number] = [0, 0, Math.PI / 2];
 
 /** Multiplier on the lock rotation — `Math.PI * 2` (2π) is a full turn,
  *  which lands the model back at its exact starting orientation, and
@@ -225,6 +402,66 @@ function sampleShowcasePose(p: number) {
  *  BandScrollShowcase's and TheSpecs' models each sit in their own
  *  differently-framed container and need their own independently-tuned
  *  value. */
+
+/** Extracted so HowToGetStartedScene.tsx can reuse the exact same
+ *  module/strap split (and the exact same excluded-mesh thresholds) when
+ *  rendering the module WITHOUT going through <Band> itself — that
+ *  component unconditionally applies BASE_ROTATION internally, which
+ *  HowToGetStartedSection.tsx's whole premise explicitly rules out (the
+ *  raw, uncorrected export orientation is already the vertical, face-on
+ *  pose that section wants). Same logic Band.tsx always ran inline here,
+ *  now just callable from outside it too — not a behavior change. */
+export function useModuleMeshes(nodes: Record<string, THREE.Mesh>) {
+  return useMemo(() => {
+    const allMeshes = Object.values(nodes).filter(
+      (n): n is THREE.Mesh => Boolean((n as THREE.Mesh)?.isMesh)
+    );
+    // The updated CAD export bundles the strap/buckle/clasp sub-assembly
+    // in the SAME file as the sensor module, offset far down the Y axis
+    // (geometry-space center around y=-0.13, vs. the module cluster's
+    // own ~-0.01..0.02) — a real, confirmed ~260mm-long strap mesh
+    // sitting alongside an ~25-40mm module, per direct inspection of the
+    // raw GLB. None of <Band>'s three scenes are set up to frame a
+    // full strap (camera/scale/lighting all tuned for just the module),
+    // so it's filtered out here rather than rendered at the wrong scale.
+    const box = new THREE.Box3();
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    const moduleMeshes = allMeshes.filter((m) => {
+      box.setFromBufferAttribute(
+        m.geometry.attributes.position as THREE.BufferAttribute
+      );
+      box.getSize(size);
+      box.getCenter(center);
+      // Two checks, not one — a real bug the first (center-only) version
+      // had: the strap mesh is long enough (~260mm) that it straddles
+      // the origin and its CENTER lands right back near y=0, same as
+      // the module itself, so a center-distance check alone let it
+      // straight through. maxDimension catches that case (nothing in
+      // the real module exceeds ~48mm on any axis); centerDistance
+      // catches the separate buckle/clasp pieces, which are small
+      // enough individually but sit far from the module (~130mm away).
+      // 0.045, not the 0.06 first tried — one mesh ("empty_13", the strap
+      // lug/pin — see this file's own header comment) still slipped
+      // through at 0.06 and rendered as a spike visibly taller than the
+      // whole shell. 0.045 sits between the shell's own real 0.0428 max
+      // and this mesh's 0.0484, excluding just this one piece.
+      const maxDimension = Math.max(size.x, size.y, size.z);
+      const centerDistance = center.length();
+      return maxDimension < 0.045 && centerDistance < 0.08;
+    });
+    const byVertexCountDesc = [...moduleMeshes].sort(
+      (a, b) =>
+        (b.geometry.attributes.position?.count ?? 0) -
+        (a.geometry.attributes.position?.count ?? 0)
+    );
+    return {
+      shellMeshes: byVertexCountDesc.slice(0, 2),
+      hardwareMeshes: byVertexCountDesc.slice(2),
+    };
+  }, [nodes]);
+}
+
 export function Band({
   scrollProgress,
   reduceMotion,
@@ -268,20 +505,7 @@ export function Band({
   const group = useRef<THREE.Group>(null);
   const modelScale = scale ?? (isMobile ? MODEL_SCALE_MOBILE : MODEL_SCALE_DESKTOP);
 
-  const { shellMeshes, hardwareMeshes } = useMemo(() => {
-    const meshes = Object.values(nodes).filter(
-      (n): n is THREE.Mesh => Boolean((n as THREE.Mesh)?.isMesh)
-    );
-    const byVertexCountDesc = [...meshes].sort(
-      (a, b) =>
-        (b.geometry.attributes.position?.count ?? 0) -
-        (a.geometry.attributes.position?.count ?? 0)
-    );
-    return {
-      shellMeshes: byVertexCountDesc.slice(0, 2),
-      hardwareMeshes: byVertexCountDesc.slice(2),
-    };
-  }, [nodes]);
+  const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
 
   useFrame((_state, delta) => {
     const g = group.current;
@@ -359,17 +583,29 @@ export function Band({
             <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
           </mesh>
         ))}
-        {hardwareMeshes.map((mesh, i) => (
-          <mesh
-            key={`hardware-${i}`}
-            geometry={mesh.geometry}
-            position={mesh.position}
-            rotation={mesh.rotation}
-            scale={mesh.scale}
-          >
-            <meshStandardMaterial {...HARDWARE_MATERIAL_PROPS} />
-          </mesh>
-        ))}
+        {hardwareMeshes.map((mesh, i) => {
+          const materialProps =
+            i === BUTTON_INDEX
+              ? BUTTON_MATERIAL_PROPS
+              : i === ECG_ELECTRODE_INDEX || STEEL_ELECTRODE_INDICES.has(i)
+                ? STEEL_ELECTRODE_MATERIAL_PROPS
+                : i === OPTICAL_WINDOW_INDEX
+                  ? OPTICAL_WINDOW_MATERIAL_PROPS
+                  : POGO_PAD_INDICES.has(i)
+                    ? POGO_PAD_MATERIAL_PROPS
+                    : HARDWARE_MATERIAL_PROPS;
+          return (
+            <mesh
+              key={`hardware-${i}`}
+              geometry={mesh.geometry}
+              position={mesh.position}
+              rotation={mesh.rotation}
+              scale={mesh.scale}
+            >
+              <meshStandardMaterial {...materialProps} />
+            </mesh>
+          );
+        })}
 
         {/* The leader line's target — a real 3D object living in the
            SAME group as the mesh geometry above, so it inherits both

@@ -1,7 +1,14 @@
+import Image from "next/image";
 import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
+import { VitalsDashboard } from "@/components/VitalsDashboard";
+import { NeuroWaveVisual } from "@/components/NeuroWaveVisual";
+import { HrvDetailCard } from "@/components/HrvDetailCard";
+import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { CeoBreathScreen } from "@/components/CeoBreathScreen";
+import { StressAgeCard } from "@/components/StressAgeCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -55,6 +62,7 @@ export default function HowItWorksPage() {
         headline={"Here Is What Tracking\nNever Fixed"}
         subhead="Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds."
         ctas={[]}
+        heroImage="/photos/how-it-works-hero.png"
       />
       <HeroBoundary />
 
@@ -80,18 +88,20 @@ export default function HowItWorksPage() {
              the jump to md (768px) keeps this a clean single column
              through the whole foldable tier instead of a premature
              3-up split. */}
-          <div className="mt-16 grid gap-12 md:grid-cols-3">
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
             {loopSteps.map((step, i) => (
               <Reveal
                 key={step.label}
                 delay={i * 0.1}
-                className="text-center md:text-left"
+                className="card-glass bg-transparent p-8 text-center md:text-left"
               >
-                <span className="eyebrow">{`0${i + 1}`}</span>
-                <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl">
-                  {step.label}
-                </h3>
-                <p className="mt-3 text-balance font-serif text-lg text-gold-soft">
+                <div className="flex items-baseline gap-3 md:justify-start justify-center">
+                  <span className="eyebrow">{`0${i + 1}`}</span>
+                  <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl">
+                    {step.label}
+                  </h3>
+                </div>
+                <p className="mt-3 text-nowrap font-serif text-lg text-gold-soft">
                   {step.tagline}
                 </p>
                 <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
@@ -127,6 +137,11 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
+        media={
+          <div className="card-glass-light flex size-full items-center justify-center p-6">
+            <VitalsDashboard />
+          </div>
+        }
       />
 
       {/* 4. Intervene - heading option A ("Built With Neuroscience") over
@@ -137,35 +152,37 @@ export default function HowItWorksPage() {
         body="NeuroAtlas is built around how the brain and nervous system respond to stress, focus and recovery. It combines the body’s signals with neuroscience-backed techniques to help you understand your state and use simple, targeted tools to shift it."
         imageSide="left"
         background="navy-soft"
+        media={<NeuroWaveVisual />}
       />
 
       {/* 5. Measure again - headline A: "The Proof, Not The Promise" adds a
           new angle rather than repeating the body's own closing phrase.
           Given real weight (navy, the one bg-navy section on this page)
           since this is the step that makes the loop's claim credible. The
-          HRV stat card already IS this section's visual - passed in as
-          `media` rather than buried behind a generic placeholder. The HRV
-          number stays marked as an illustrative placeholder, not real
-          pilot data - same honesty convention as the /band specs panel's
-          "To be confirmed" values. Text left, media right. */}
+          HRV detail screen (Figma node 15312:18742, minus its own "About
+          this metric" section per explicit instruction) IS this
+          section's visual - passed in as `media` rather than buried
+          behind a generic placeholder. Text left, media right. */}
       <FeatureSplitSection
         heading="The Proof, Not The Promise"
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
         media={
-          <div className="card-glass bg-transparent flex size-full flex-col items-center justify-center gap-2 px-10 py-6 text-center">
-            <p className="eyebrow">HRV</p>
-            <p className="font-serif font-normal uppercase tracking-normal text-4xl text-cream lg:text-5xl">
-              42 <span className="text-gold">→</span> 61
-            </p>
-            <p className="mt-1 text-pretty text-sm text-cream/70">
-              A higher HRV typically reflects greater recovery and lower
-              physiological stress.
-            </p>
-            <p className="mt-1 text-pretty text-xs italic text-cream/50">
-              Illustrative example, pending real pilot data
-            </p>
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup className="h-full">
+              <div
+                className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
+                  backgroundColor: "var(--color-navy)",
+                }}
+              >
+                <HrvDetailCard />
+              </div>
+            </IPhoneMockup>
           </div>
         }
       />
@@ -188,6 +205,15 @@ export default function HowItWorksPage() {
         body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak."
         imageSide="left"
         background="cream"
+        media={
+          <Image
+            src="/photos/pattern-recognition.png"
+            alt="A hand wearing the NeuroAtlas band, arm raised"
+            fill
+            sizes="(min-width: 1024px) 40vw, 90vw"
+            className="object-cover"
+          />
+        }
       />
 
       {/* 7. A worked example - eyebrow kept (it's this section's own
@@ -200,6 +226,14 @@ export default function HowItWorksPage() {
         body="It is late afternoon. Focus starts to slip, the kind of drop that usually goes unnoticed until it costs you something. The band picks it up. A short reset runs before the next meeting. By the time you are back at your desk, the numbers show it worked."
         imageSide="right"
         background="navy-soft"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        media={
+          <div className="flex size-full items-center justify-center">
+            <IPhoneMockup className="h-full">
+              <CeoBreathScreen />
+            </IPhoneMockup>
+          </div>
+        }
       />
 
       {/* 8. What it does not claim to do. Text right, media left. */}
@@ -208,6 +242,12 @@ export default function HowItWorksPage() {
         body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and help you manage it."
         imageSide="left"
         background="cream"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        media={
+          <div className="card-glass-light flex size-full items-center justify-center p-6">
+            <StressAgeCard />
+          </div>
+        }
       />
 
       {/* 9. Closing CTA */}

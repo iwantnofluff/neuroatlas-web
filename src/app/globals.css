@@ -76,6 +76,29 @@
   --color-gold-muted: #998b6f;
   --color-line: #e3dac2;
   --color-line-dark: rgb(242 242 242 / 10%);
+  /* From the "Masterclass" Figma file (Ok6qYziHfAl50GRs0YRC6O) — the
+     body-silhouette background layer's own named fill style,
+     "Masterclass Gradient", is linear-gradient(180deg, #998B6F 0%,
+     #08243F 100%). The first stop is already --color-gold-muted; the
+     second isn't an existing brand color, so it gets its own token
+     here rather than a hardcoded hex at the call site. */
+  --color-navy-abyss: #08243f;
+  --gradient-masterclass: linear-gradient(
+    180deg,
+    var(--color-gold-muted) 0%,
+    var(--color-navy-abyss) 100%
+  );
+  /* Same file's "Stroke Linear For Cards" style — the body silhouette's
+     own outline, linear-gradient(#C4B38E 0%, #6D644F 100%). First stop
+     is already --color-gold-deep; second is a new, distinctly cooler/
+     browner tone than the gold-* family, so it gets its own name
+     rather than being squeezed into that scale. */
+  --color-bronze: #6d644f;
+  --gradient-card-stroke: linear-gradient(
+    180deg,
+    var(--color-gold-deep) 0%,
+    var(--color-bronze) 100%
+  );
   /* shadcn semantic tokens, reconciled to the brand palette above so
      any shadcn component (Button, Dialog, Card, …) inherits the
      navy/gold/cream look instead of generic Tailwind grayscale. */
@@ -127,6 +150,8 @@
   --color-gold-muted: var(--color-gold-muted);
   --color-line: var(--color-line);
   --color-line-dark: var(--color-line-dark);
+  --color-navy-abyss: var(--color-navy-abyss);
+  --color-bronze: var(--color-bronze);
 
   /* Token names unchanged (font-serif/font-sans are the Tailwind utility
      classes every component in this codebase already calls) — only the
@@ -367,6 +392,18 @@
     50% { transform: translate(-3%, -4%) scale(1.05); }
   }
 
+  /* NeuroWaveVisual's animated ECG trace (see that component) — the
+     wrapper is two identical strips side by side at 200% width;
+     scrolling it exactly -50% loops seamlessly back to the start
+     with no visible seam or reset jump. */
+  .animate-ecg-scroll {
+    animation: ecg-scroll 6s linear infinite;
+  }
+  @keyframes ecg-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
   /* "One Signal, Just Stress" gradient text-mask (see OneSignalSection.tsx)
      — a slow-shifting fade painted INSIDE the headline's own glyphs via
      bg-clip-text (applied as a Tailwind utility at the call site;
@@ -410,6 +447,46 @@
   @keyframes signal-mask-drift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
+  }
+
+  /* Global film-grain overlay (see layout.tsx, rendered once as a fixed
+     sibling ahead of <SiteChrome>). White feTurbulence noise (see
+     public/textures/grain.svg) at a near-invisible opacity — deliberately
+     white rather than gold/navy-tinted: over this site's dark navy
+     sections it reads as felt cinematic texture, and over its own cream
+     sections the same white-on-near-white pixels self-cancel to
+     effectively nothing, satisfying "cinematic on navy, invisible on
+     cream" with one asset instead of per-section conditional logic.
+     transform-only keyframes (never background-position) — this stays on
+     the compositor thread with no layout/paint cost per frame, the
+     standard requirement for anything animating under a page people also
+     scroll on mobile. steps() over ease-in-out is deliberate: a flicker
+     reads as "active grain," a smooth drift reads as a slow-panning
+     photograph, which is the opposite of the brief. background-repeat
+     tiles the 180px SVG edge-to-edge with stitchTiles="stitch" baked into
+     the filter itself, so every transform offset below still lines up
+     seamlessly with no visible seam at any point in the loop. */
+  .grain-overlay {
+    background-image: url("/textures/grain.svg");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+    opacity: 0.035;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .grain-overlay {
+      animation: grain-shift 8s steps(8) infinite;
+    }
+  }
+  @keyframes grain-shift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    12.5% { transform: translate3d(-2%, -4%, 0); }
+    25% { transform: translate3d(3%, 2%, 0); }
+    37.5% { transform: translate3d(-1%, 4%, 0); }
+    50% { transform: translate3d(4%, -2%, 0); }
+    62.5% { transform: translate3d(-3%, 1%, 0); }
+    75% { transform: translate3d(2%, -3%, 0); }
+    87.5% { transform: translate3d(-4%, 3%, 0); }
   }
 
   /* Bento glass — the "Beyond Heart Rate" bento grid's card recipe (see

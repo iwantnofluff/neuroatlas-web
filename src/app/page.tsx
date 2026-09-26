@@ -8,6 +8,10 @@ import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
+import { BodySilhouette } from "@/components/BodySilhouette";
+import { BreathingCard } from "@/components/BreathingCard";
+import { SyncRingCard } from "@/components/SyncRingCard";
+import { GlowOrbCard } from "@/components/GlowOrbCard";
 import { cn } from "@/lib/utils";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
@@ -17,11 +21,26 @@ import { cn } from "@/lib/utils";
 // Four scattered, differently sized/rotated tiles rather than a tidy grid
 // — see the "Inside the app" section below, and the client's own "Float
 // Boxes" sketch.
+//
+// `silhouette` on tile 1 (the "top-right", h-52%/w-42% one) — the
+// tallest/narrowest of the four, and the only one whose own aspect
+// ratio (1.24:1) comes anywhere close to the silhouette's real 168.26 x
+// 396 (~1:2.35). Tile 0 (h-42%/w-46%) is actually slightly WIDER than
+// tall, which is why it read as adrift with dead space on either side
+// the first time. Not a claim that tile 1 is the semantically right
+// card, only the right shape for a tall vector.
+//
 const floatTiles = [
-  { className: "top-0 left-0 h-[42%] w-[46%] -rotate-6" },
-  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3" },
-  { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6" },
-  { className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3" },
+  {
+    className: "top-0 left-0 h-[42%] w-[46%] -rotate-6",
+    breathingCard: true,
+  },
+  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
+  { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6", syncRing: true },
+  {
+    className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3",
+    glowOrb: true,
+  },
 ];
 
 const trustPoints = [
@@ -155,7 +174,30 @@ export default function Home() {
                     "card-glass absolute bg-transparent transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:bg-gold/10",
                     tile.className,
                   )}
-                />
+                >
+                  {tile.silhouette && (
+                    // Background layer, not the card's content — the
+                    // full node (body + six sensor-point hexes), sized
+                    // by height only (width follows from its own real
+                    // aspect ratio) and centered on both axes, so it
+                    // reads as inset within the card rather than filling
+                    // it. Opacity is NOT applied here: the body and each
+                    // hex marker already carry their own distinct
+                    // opacities inside the component (0.3 for the body,
+                    // 0.1-0.2 for the hexes), matching Figma exactly —
+                    // an outer opacity would flatten that difference.
+                    <BodySilhouette className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto" />
+                  )}
+                  {tile.breathingCard && (
+                    <BreathingCard className="pointer-events-none absolute inset-0" />
+                  )}
+                  {tile.syncRing && (
+                    <SyncRingCard className="pointer-events-none absolute inset-0 m-auto h-[80%] w-auto" />
+                  )}
+                  {tile.glowOrb && (
+                    <GlowOrbCard className="pointer-events-none absolute inset-0 m-auto h-[75%] w-auto" />
+                  )}
+                </Reveal>
               ))}
             </Parallax>
             {/* Copy: the block itself centers within the column, but the

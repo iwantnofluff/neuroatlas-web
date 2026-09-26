@@ -2,7 +2,9 @@
 
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
+import { ContactShadows } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
+import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
 
@@ -68,7 +70,23 @@ export function BuiltToReadYouScene({
       // shades 4x the pixels of 1x).
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
-      gl={{ alpha: true, antialias: true }}
+      // toneMapping/outputColorSpace/toneMappingExposure pinned explicitly
+      // rather than left to R3F's own defaults (which already resolve to
+      // exactly these three values as of @react-three/fiber 9.7.0, per
+      // that package's own source — see the sibling scenes' identical
+      // comment) — a silent default is one dependency bump away from
+      // changing this render's entire color pipeline with no diff to
+      // review. R3F applies extra `gl` keys straight onto the renderer
+      // instance (confirmed in its own source, not assumed), so this is
+      // the correct place for renderer-instance properties, not just
+      // WebGLRenderer constructor options.
+      gl={{
+        alpha: true,
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        outputColorSpace: THREE.SRGBColorSpace,
+        toneMappingExposure: 1,
+      }}
     >
       {/* alpha: true above + no <color attach="background"> here is what
          keeps this transparent, so the section's own Deep Navy
@@ -132,6 +150,24 @@ export function BuiltToReadYouScene({
       <Suspense fallback={null}>
         <Band scrollProgress={progress} reduceMotion={reduceMotion} isMobile={isMobile} />
       </Suspense>
+      {/* Bounds computed against the real mesh geometry, same method as
+         TheSpecsScene's own ContactShadows — swept rotation.y across the
+         "reveal" variant's full 0 -> LOCK_ROTATION_TURNS*Pi range at its
+         fixed rotation.x (0.4, never animated in this variant) and this
+         scene's own default desktop scale (32, the larger of the two
+         breakpoints — sized for it so the smaller mobile footprint is
+         automatically covered too, rather than branching on isMobile
+         for a second set of numbers). Worst case: minY ~-0.62, maxY
+         ~0.62, max XZ radius ~0.78. position.y=-0.7 and matching
+         far/scale margin below. */}
+      <ContactShadows
+        position={[0, -0.7, 0]}
+        opacity={0.45}
+        scale={1.8}
+        blur={2.5}
+        far={1.5}
+        resolution={512}
+      />
     </Canvas>
   );
 }

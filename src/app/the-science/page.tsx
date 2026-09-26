@@ -1,9 +1,9 @@
 import { LivingSignalHero } from "@/components/LivingSignalHero";
 import { NeuralAccordion } from "@/components/NeuralAccordion";
-import { HRVSignalSection } from "@/components/HRVSignalSection";
-import { LimitsOfWearablesSection } from "@/components/LimitsOfWearablesSection";
+import { HRVAndLimitsSection } from "@/components/HRVAndLimitsSection";
 import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSection";
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
+import { DotGrid } from "@/components/ui/dot-grid";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
 export const metadata = { title: "The science - NeuroAtlas" };
@@ -20,6 +20,11 @@ export const metadata = { title: "The science - NeuroAtlas" };
 // 2. Three Systems, One Method - see NeuralAccordion.tsx.
 // 3. The Signal That Does Not Lie - see HRVSignalSection.tsx.
 // 4. The Limits Of Wearables - see LimitsOfWearablesSection.tsx (new).
+//    Sections 3 and 4 render together via HRVAndLimitsSection.tsx, not
+//    as separate top-level entries here - a shared Champagne Gold wave
+//    draws continuously from section 3's own heading down through the
+//    end of section 4, which needs one scroll-linked wrapper spanning
+//    both rather than two independent per-section animations.
 // 5. Built On Neuroscience - see BuiltOnNeuroscienceSection.tsx (new).
 // 6. Guided By Experts ("The Editorial Index", repurposed from its
 //    previous "Peer-Reviewed, Not Promised" copy - same research-card
@@ -43,24 +48,49 @@ export default function TheSciencePage() {
     <main>
       <LivingSignalHero />
       <NeuralAccordion />
-      <HRVSignalSection />
-      <LimitsOfWearablesSection />
+      <HRVAndLimitsSection />
       <BuiltOnNeuroscienceSection />
       <ScienceClosingSection />
       {/* References - the full bibliographic citations for "Guided By
          Experts"'s own "Backed by" lines (see EditorialIndexSection.tsx,
          which exports RESEARCH_CARDS as the single source of truth for
-         both). Plain small print at the very bottom of the page, after
-         ScienceClosingSection's own CurtainReveal pair - safe to append
-         here since CurtainReveal's stacking math depends only on
-         viewport height, not on what comes after it (see that
-         component's own doc comment). */}
-      <section className="bg-navy px-6 py-12 text-center lg:px-10">
-        <ol className="mx-auto max-w-2xl space-y-3 text-pretty text-xs text-cream/50">
-          {RESEARCH_CARDS.map((card) => (
-            <li key={card.field}>{card.citation}</li>
-          ))}
-        </ol>
+         both). Safe to append here since CurtainReveal's stacking math
+         depends only on viewport height, not on what comes after it
+         (see that component's own doc comment).
+         A direct "redesign this" request: the previous version was an
+         unlabeled, undifferentiated wall of small print - three run-on
+         citations with no visual structure connecting them back to the
+         numbered fields ("01 Autonomic Regulation" etc.) a reader just
+         scrolled past in "Guided By Experts". Each entry now repeats
+         that same index + field as its own small gold label (the exact
+         "01 — Autonomic Regulation" pairing, reusing RESEARCH_CARDS'
+         own index/field fields rather than just its citation string),
+         with a left rule threading them together like a real endnotes
+         page, so the list reads as organized reference material rather
+         than an anonymous block of text. */}
+      <section className="relative overflow-hidden bg-navy px-6 py-16 text-left md:py-20 lg:px-10 lg:py-24">
+        {/* DotGrid — the citation column only ever fills a narrow
+           centered max-w-2xl, leaving the entire rest of this
+           section's own width (its "either end", flanking that
+           column) completely flat, unstyled navy — reported live as
+           looking bare/unfinished right next to ScienceClosingSection's
+           own now-textured panel directly above it. CSS-only DotGrid,
+           not DotPattern's live motion-component cloud — see
+           dot-grid.tsx's own doc comment for why. */}
+        <DotGrid size={28} />
+        <div className="relative mx-auto max-w-2xl">
+          <p className="eyebrow text-center">References</p>
+          <ol className="mt-10 space-y-8">
+            {RESEARCH_CARDS.map((card) => (
+              <li key={card.field} className="border-l border-gold/25 pl-5">
+                <p className="text-xs tracking-[0.15em] text-gold-deep uppercase">
+                  {card.index} &mdash; {card.field}
+                </p>
+                <p className="mt-2 text-pretty text-sm text-cream/55">{card.citation}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
     </main>
   );

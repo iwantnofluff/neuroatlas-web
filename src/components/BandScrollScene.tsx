@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
+import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
 
@@ -48,7 +49,22 @@ export function BandScrollScene({
       // above the headline's z-[-1] regardless of default stacking
       // order, so any deliberate slight overlap at the very bottom
       // edge of the text still shows the model in front of it.
-      className="!absolute inset-x-0 bottom-0 z-0 h-[72%]"
+      //
+      // bottom-[77px], not bottom-0, below xl — a direct "the band
+      // should sit centered between the title and the cards, it's
+      // currently closer to the cards" correction: at bottom-0 the
+      // model's own rendered silhouette (not this box's own edges —
+      // the model sits higher in its box than the box's true center,
+      // confirmed live via screenshot pixel measurement at 390×844) sat
+      // ~153px under the headline but only ~41px above the mobile card
+      // stack, nowhere near centered. Shifting this whole box up by the
+      // same 77px the model needs to move (the box's height is
+      // unchanged, so the model inside it moves with it 1:1) puts equal
+      // ~97px daylight above and below the model, confirmed the same
+      // way. xl:bottom-0 restores the untouched original for the
+      // desktop floating-card composition, which was never the
+      // complaint here.
+      className="!absolute inset-x-0 bottom-[77px] z-0 h-[72%] xl:bottom-0"
       // pan-y — a global responsiveness-audit finding, applied for
       // consistency: R3F's <Canvas> renders its OWN wrapper div around
       // the actual <canvas> element, which is where this `style` prop
@@ -73,7 +89,23 @@ export function BandScrollScene({
       // to see on a canvas this size.
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
-      gl={{ alpha: true, antialias: true }}
+      // toneMapping/outputColorSpace/toneMappingExposure pinned explicitly
+      // rather than left to R3F's own defaults (which already resolve to
+      // exactly these three values as of @react-three/fiber 9.7.0, per
+      // that package's own source — see the sibling scenes' identical
+      // comment) — a silent default is one dependency bump away from
+      // changing this render's entire color pipeline with no diff to
+      // review. R3F applies extra `gl` keys straight onto the renderer
+      // instance (confirmed in its own source, not assumed), so this is
+      // the correct place for renderer-instance properties, not just
+      // WebGLRenderer constructor options.
+      gl={{
+        alpha: true,
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        outputColorSpace: THREE.SRGBColorSpace,
+        toneMappingExposure: 1,
+      }}
     >
       {/* Ambient trimmed 0.5->0.35 — see BuiltToReadYouScene.tsx's own
          comment: a flat ambient fill lights shadow recesses evenly,

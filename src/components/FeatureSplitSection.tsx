@@ -21,6 +21,13 @@ type FeatureSplitSectionProps = {
    *  serves as this section's visual, rather than burying it behind a
    *  generic box. */
   media?: ReactNode;
+  /** Overrides the media panel's own sizing classes (default
+   *  `aspect-square` + the md/lg max-height caps below) — e.g. a taller
+   *  aspect ratio for a phone-mockup visual (see /how-it-works' own
+   *  HRV detail screen) that reads wrong squeezed into a square. Only
+   *  the sizing utilities need overriding; `overflow-hidden` and
+   *  `rounded-3xl` still apply underneath via cn()'s merge. */
+  mediaClassName?: string;
 };
 
 /** Enter → hold pacing shared by both halves below.
@@ -142,6 +149,7 @@ export function FeatureSplitSection({
   imageSide,
   background,
   media,
+  mediaClassName,
 }: FeatureSplitSectionProps) {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -282,7 +290,8 @@ export function FeatureSplitSection({
                 "relative aspect-square overflow-hidden rounded-3xl",
                 "max-md:mx-auto max-md:w-full max-md:max-h-[50vh]",
                 "md:mx-auto md:w-full md:max-h-[55vh] lg:max-h-none",
-                imageSide === "right" && "md:order-2"
+                imageSide === "right" && "md:order-2",
+                mediaClassName
               )}
             >
               {media ?? (

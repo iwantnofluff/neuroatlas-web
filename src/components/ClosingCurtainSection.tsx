@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { CurtainReveal } from "@/components/CurtainReveal";
 import { Reveal } from "@/components/Reveal";
+import { DotGrid } from "@/components/ui/dot-grid";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
@@ -72,6 +73,20 @@ export function ClosingCurtainSection() {
       revealClassName="flex flex-col items-center justify-center bg-navy px-6 text-center text-cream"
       reveal={
         <>
+          {/* DotGrid — same "this section acts weird" fix applied to
+             /the-science's own equivalent CTA (see ScienceClosingSection.tsx's
+             own doc comment for the full mechanics): this reveal pins at
+             a full h-[100svh] via CurtainReveal's shared sticky child,
+             but the heading/body/button only occupy a small centered
+             band of it, and the radial glow below fades to fully
+             transparent well before the box's own edges — leaving a
+             large stretch of the scroll (both while pinned, and while
+             this box slides off after release) reading as flat,
+             unstyled black. A uniform dot texture across the whole box
+             guarantees no stretch of it ever reads as empty. CSS-only
+             DotGrid, not DotPattern's live motion-component cloud — see
+             dot-grid.tsx's own doc comment for why. */}
+          <DotGrid size={28} />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_50%,color-mix(in_oklab,var(--color-gold)_20%,transparent),transparent_70%)]"

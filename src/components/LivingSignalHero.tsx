@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -31,6 +32,16 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
  *
  * reduceMotion drops the animate prop entirely (the wave sits static,
  * a single visible copy — not a moving one frozen mid-frame).
+ *
+ * the-science-hero.png — client-supplied banner (a macro shot of the
+ * band's own woven strap on a wrist) added behind the wave layers and
+ * scrim, same "full-bleed photo + scrim + ambient decoration on top"
+ * shape Hero.tsx's own HeroMedia already uses elsewhere, adapted here
+ * rather than switching this page over to the shared <Hero> component
+ * — this page's own bespoke animated wave background is still the
+ * brief's own explicit ask (see this file's own top comment) and stays
+ * exactly as before, just layered over a real photo now instead of
+ * flat navy.
  */
 function SignalWaveLayer({
   reduceMotion,
@@ -72,6 +83,24 @@ export function LivingSignalHero() {
         id="hero"
         className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-navy px-6 text-center text-cream"
       >
+        <Image
+          src="/photos/the-science-hero.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+
+        {/* Scrim over the photo — same two-layer treatment Hero.tsx's
+           own background image gets, so the headline stays legible
+           regardless of how bright/dark the photo's own frame is. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-navy/45" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-navy/70 via-transparent to-navy/85"
+        />
+
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
           <SignalWaveLayer
             reduceMotion={reduceMotion}

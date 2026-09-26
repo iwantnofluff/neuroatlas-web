@@ -93,13 +93,14 @@ const signals = [
 function useSignalReveal(
   progress: MotionValue<number>,
   range: readonly [number, number],
-  reduceMotion: boolean
+  reduceMotion: boolean,
+  travel = 16
 ) {
   const [start, end] = range;
   const eased = (p: number) =>
     reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
   const opacity = useTransform(progress, (p) => eased(p));
-  const y = useTransform(progress, (p) => (reduceMotion ? 0 : 16 * (1 - eased(p))));
+  const y = useTransform(progress, (p) => (reduceMotion ? 0 : travel * (1 - eased(p))));
   return { opacity, y };
 }
 
@@ -320,10 +321,70 @@ function OrganicSignalCallout({
   );
 }
 
-/** Below xl there's no room for floating cards — a compact, still-
- *  persistent (not swapping) stacked list instead, sitting above the
- *  bottom-left subtext/CTA. Same glass-card treatment, no step numbers,
- *  just a tighter footprint. */
+/** Mobile card travel (px) — a direct "each card should come in frame
+ *  as you scroll" request: the desktop cards' own 16px nudge reads as a
+ *  settle, not an arrival, because each one lands in its own distinct
+ *  floating spot with nothing behind it to compare against. Here every
+ *  card shares the exact same slot (see MobileSignalCard's own
+ *  className: `absolute inset-0`, no per-card offset), so the incoming
+ *  card visibly sliding up from further below into that fixed rect —
+ *  landing exactly flush over whichever card was there before it — is
+ *  what actually sells "arriving", not just fading up in place. */
+const MOBILE_CARD_TRAVEL_PX = 48;
+
+/** Mobile-stack-only reveal — a hard opacity cut at the range's own
+ *  start, not useSignalReveal's smooth fade. Every card here shares the
+ *  exact same `absolute inset-0` rect (see MobileSignalCard below), so
+ *  a gradual opacity fade would mean two glass cards sitting at partial
+ *  alpha in the identical spot at once — their labels/body copy
+ *  literally double-exposed through each other's blur, confirmed live
+ *  (this is exactly what a smooth crossfade produced here). Two cards
+ *  CAN legitimately both be "on" at once for a moment (adjacent ranges
+ *  share a sliver, e.g. [0,0.26]/[0.25,0.51]), but as long as each is
+ *  either fully off or fully opaque, never in between, the later one
+ *  in DOM order simply paints solidly over the earlier one — a clean
+ *  cut, not a blend. `y` still eases smoothly across the range —
+ *  that's what makes the (fully opaque, from the instant it appears)
+ *  incoming card visibly slide up and cover the previous one, rather
+ *  than just popping into place. */
+function useStackedSignalReveal(
+  progress: MotionValue<number>,
+  range: readonly [number, number],
+  reduceMotion: boolean,
+  travel: number
+) {
+  const [start, end] = range;
+  const eased = (p: number) =>
+    reduceMotion ? 1 : p <= start ? 0 : p >= end ? 1 : (p - start) / (end - start);
+  const opacity = useTransform(progress, (p) => (reduceMotion || p >= start ? 1 : 0));
+  const y = useTransform(progress, (p) => (reduceMotion ? 0 : travel * (1 - eased(p))));
+  return { opacity, y };
+}
+
+/** Below xl there's no room for floating cards. Every card renders at
+ *  the exact same `absolute inset-0` rect (a direct "each card has to
+ *  land exactly over the previous one" correction — an earlier pass
+ *  gave each card its own slight vertical offset, a peeking-deck look,
+ *  which is a different composition than what was actually being
+ *  asked for), so only one is ever visibly on top at a given scroll
+ *  position: DOM order (later signal = later sibling) puts the most
+ *  recently revealed one above the last, which is already fully
+ *  opaque and holding its resting position underneath (see
+ *  useSignalReveal's own "reveal, don't cross-fade back out"
+ *  comment) — so the incoming card visibly covers it edge-to-edge,
+ *  not just alongside it. Emotional Regulation, last in `signals`,
+ *  ends up on top permanently once fully scrolled.
+ *
+ * bg-navy-soft/95, not the desktop cards' own bg-white/5 — a direct
+ * consequence of full-rect overlap: the desktop floating cards never
+ * sit on top of each other, so a near-transparent glass panel reads as
+ * premium there. Here the whole point is the incoming card physically
+ * occluding the one behind it, which a mostly-see-through panel can't
+ * do — confirmed live, it let the covered card's own text bleed
+ * through as visual noise. --color-navy-soft at 95% is solid enough to
+ * actually cover while still reading as the same glass family (same
+ * hue, still blurred, still bordered) rather than a flat, unrelated
+ * opaque card. */
 function MobileSignalCard({
   signal,
   progress,
@@ -333,11 +394,16 @@ function MobileSignalCard({
   progress: MotionValue<number>;
   reduceMotion: boolean;
 }) {
-  const { opacity, y } = useSignalReveal(progress, signal.range, reduceMotion);
+  const { opacity, y } = useStackedSignalReveal(
+    progress,
+    signal.range,
+    reduceMotion,
+    MOBILE_CARD_TRAVEL_PX
+  );
   return (
     <motion.div
       style={{ opacity, y }}
-      className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md"
+      className="absolute inset-0 rounded-2xl border border-white/10 bg-navy-soft/95 p-4 text-left shadow-[0_16px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-md"
     >
       <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
       <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
@@ -349,16 +415,28 @@ export function BandScrollShowcase() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
-  // comment for the full mechanics: "start start" leaves scrollYProgress
-  // clamped at exactly 0 for the whole approach window while this
-  // taller-than-viewport wrapper is still scrolling up from below (its
-  // content already on screen), which for anything gated by progress
-  // rather than always-on renders as genuinely blank/frozen for that
-  // whole stretch, not just briefly.
+  // offset ["start start", "end end"], not ["start end", "end end"] —
+  // FeatureSplitSection.tsx's own comment argues for "start end"
+  // specifically because ITS wrapper sits further down the page,
+  // approached by scrolling up from below with the wrapper's own start
+  // still off-screen at load; "start start" would leave its progress
+  // clamped at 0 for that whole approach. This component is different:
+  // it's always the very FIRST thing in the page (see band/page.tsx —
+  // nothing but a fixed, non-flow header sits above it), so its own
+  // wrapper's top already coincides with the viewport's top at the
+  // moment the page loads, scroll position 0. With "start end", that
+  // "start" vs. "end" pairing never actually happens at a real
+  // (non-negative) scroll position — the crossing point it's defined
+  // against is already behind the page by the time scroll can be 0 — so
+  // progress opens already ~35% of the way in before the user scrolls
+  // at all (confirmed live: Cognitive Load's own [0.25, 0.51] reveal
+  // window was already underway, its card visibly covering Stress
+  // Age's, right at page load with zero scroll). "start start" instead
+  // aligns progress 0 with the genuine start of the page, so Stress Age
+  // reads clean and alone until the user actually scrolls.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start end", "end end"],
+    offset: ["start start", "end end"],
   });
 
   return (
@@ -413,7 +491,23 @@ export function BandScrollShowcase() {
             reduceMotion={reduceMotion}
           />
         ))}
-        <div className="pointer-events-none absolute inset-x-6 bottom-44 z-10 flex flex-col gap-3 xl:hidden">
+        {/* h-[112px] — just tall enough for one card's own real content
+           (a serif label + up to a 2-line text-xs body + p-4), confirmed
+           via screenshot at 390px wide; every MobileSignalCard fills
+           this exact rect (`absolute inset-0`), so the box never grows
+           past one card no matter how many signals reveal into it.
+           bottom-[218px] (was bottom-44/176px) — a direct "keep equal
+           distance between all the elements in this section" request,
+           paired with BandScrollScene's own bottom-[77px] fix: with the
+           model's own daylight above and below it now equalized at
+           ~97px each (see that file's own comment), the old 176px left
+           this stack's own gap up to the model at ~97px but its gap
+           down to the subtext/CTA at only ~34px — the same "closer to
+           one neighbor than the other" problem, just one level down.
+           218px (its own bottom edge sitting 626px from the top of an
+           844px-tall test viewport, confirmed via screenshot) splits
+           the same ~76px evenly on both sides of this stack instead. */}
+        <div className="pointer-events-none absolute inset-x-6 bottom-[218px] z-10 h-[112px] xl:hidden">
           {signals.map((s) => (
             <MobileSignalCard
               key={s.label}

@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import type { RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows } from "@react-three/drei";
 import { useMotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Band } from "@/components/Band";
@@ -163,7 +164,23 @@ export function TheSpecsScene({
       // shades 4x the pixels of 1x).
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 4.2], fov: 42 }}
-      gl={{ alpha: true, antialias: true }}
+      // toneMapping/outputColorSpace/toneMappingExposure pinned explicitly
+      // rather than left to R3F's own defaults (which already resolve to
+      // exactly these three values as of @react-three/fiber 9.7.0, per
+      // that package's own source — see the sibling scenes' identical
+      // comment) — a silent default is one dependency bump away from
+      // changing this render's entire color pipeline with no diff to
+      // review. R3F applies extra `gl` keys straight onto the renderer
+      // instance (confirmed in its own source, not assumed), so this is
+      // the correct place for renderer-instance properties, not just
+      // WebGLRenderer constructor options.
+      gl={{
+        alpha: true,
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        outputColorSpace: THREE.SRGBColorSpace,
+        toneMappingExposure: 1,
+      }}
     >
       {/* 0.4 -> 0.75 ambient, 2.2 -> 3.2 key spotlight — a direct "too
          dark to see the hardware details" request: this rig's original
@@ -206,6 +223,31 @@ export function TheSpecsScene({
           autoRotate={autoRotate}
         />
       </Suspense>
+      {/* Bounds computed, not guessed: swept rotation.x across
+         [0.15, 1.3] (every named spec pose's x range) and rotation.y
+         across the full [0, 2*Pi] (every spec's y target, PLUS every
+         angle the damped lerp passes through while easing between two
+         poses — confirmed live this matters: a screenshot taken
+         mid-transition, not at any of the 5 settled targets, showed the
+         model dipping to a lower min-Y than all 5 targets' own bounds),
+         against the real mesh geometry. Worst case across that full
+         sweep: minY ~-0.83, maxY ~0.83, max XZ radius ~0.83 (at
+         XRAY_MODEL_SCALE_DESKTOP=34). position.y=-0.9 sits below the
+         true worst-case minY (an earlier -0.6 guess, based on only the
+         5 named poses' own bounds, sat ABOVE the true worst case —
+         confirmed live as the cause of the shadow vanishing entirely
+         mid-transition, not just shrinking: part of the model dipping
+         below the shadow-catcher plane maps outside the depth
+         material's intended near/far range). far=2.2 and scale=2.4
+         carry matching margin above the swept maxY/maxRadius. */}
+      <ContactShadows
+        position={[0, -0.9, 0]}
+        opacity={0.45}
+        scale={2.4}
+        blur={2.5}
+        far={2.2}
+        resolution={512}
+      />
       {onProjected && <AnchorProjector anchorRef={anchorRef} onProjected={onProjected} />}
     </Canvas>
   );

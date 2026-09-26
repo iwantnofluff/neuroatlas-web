@@ -5,6 +5,8 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { TextLink } from "@/components/TextLink";
+import { IPhoneMockup } from "@/components/IPhoneMockup";
+import { EmotionalWheelScreen } from "@/components/EmotionalWheelScreen";
 
 /**
  * "Signal vs. Noise" — replaces three separate, plainer pieces (the
@@ -28,9 +30,10 @@ import { TextLink } from "@/components/TextLink";
  *    swap opacity in a narrow window fully contained inside the moment
  *    the gold is opaque and covering everything, so the swap itself is
  *    invisible; the section's own background color swaps the same way.
- * 4. APP REVEAL (0.78–0.95): a premium app-UI placeholder glides up
- *    into its resting position behind the new copy, holding there
- *    through the rest of the scroll.
+ * 4. APP REVEAL (0.78–0.95): the real "Emotional wheel" app screen,
+ *    life-size inside an iPhone mockup, glides up into its resting
+ *    position behind the new copy, holding there through the rest of
+ *    the scroll.
  *
  * Every value below is computed via the function-transformer form of
  * useTransform (this codebase's established defensive pattern — the
@@ -253,12 +256,15 @@ export function SignalVsNoiseSection() {
             </div>
           </div>
 
-          {/* Beat 4 — premium app-UI placeholder. */}
-          <motion.div
-            style={{ opacity: appOpacity, y: appY }}
-            className="h-[260px] w-[164px] rounded-[32px] border border-black/5 bg-white shadow-2xl sm:h-[340px] sm:w-[216px] lg:h-[480px] lg:w-[256px] lg:rounded-[40px]"
-          >
-            <div className="mx-auto mt-3 h-1.5 w-24 rounded-full bg-black/10 lg:mt-4" />
+          {/* Beat 4 — the real "Emotional wheel" resonance-check
+             screen (Figma node 13178:9091), life-size inside an
+             iPhone 17 Pro Max mockup — a direct "make it life size,
+             exactly the way it is in the Figma, interactive" request,
+             replacing the earlier plain white placeholder card. */}
+          <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[56svh]">
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <EmotionalWheelScreen />
+            </IPhoneMockup>
           </motion.div>
         </motion.div>
 
