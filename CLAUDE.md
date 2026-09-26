@@ -62,3 +62,15 @@ this sandbox as unverified, even when the code and math check out — qualitativ
 checks (does the expected element appear, is it roughly aligned, does a color
 read as intended) remain trustworthy; precise edge-of-frame pixel counts do
 not, without an independent real-browser/real-GPU check.
+
+## Usage efficiency
+
+- Prefer the main agent over subagents unless parallel work provides a clear benefit.
+- Never spawn subagents merely to "double check" simple work.
+- For routine implementation, prefer Sonnet.
+- Before exploring broadly, identify the specific files/directories relevant to the task.
+- Do not reread the entire repository unless explicitly necessary.
+- When switching to an unrelated task, recommend /clear.
+- When the context becomes large, recommend /compact.
+- Preserve durable project knowledge in CLAUDE.md rather than conversation history.
+- Before starting an unusually expensive operation, explain why it is necessary.
