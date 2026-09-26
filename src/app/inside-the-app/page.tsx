@@ -1,7 +1,7 @@
-import { BookOpen, Target, Wind, Sparkles } from "lucide-react";
+import { Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
-import { AppScreenMock } from "@/components/AppScreenMock";
+import { ClarityProtocolScreen } from "@/components/ClarityProtocolScreen";
 import { ComposureAlignmentScreen } from "@/components/ComposureAlignmentScreen";
 import { DashboardDetailCard } from "@/components/DashboardDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
@@ -28,11 +28,11 @@ export const metadata = { title: "Inside the app - NeuroAtlas" };
 // different visual, 5 because the brief marks its screenshot optional,
 // 8 because a two-badge row doesn't need a whole cinematic pinned beat.
 //
-// No real app UI has been designed/exported yet, so every "screenshot"
-// here is AppScreenMock (a generic phone-frame silhouette + icon/label,
-// not a fabricated trace of a real screen) or TrendGraph (a hand-drawn
-// illustrative line, explicitly labeled as such) - same honesty
-// convention /how-it-works' own HRV stat card already uses.
+// Every "screenshot" on this page is now a real Figma-sourced screen
+// (SleepDetailCard, DashboardDetailCard, ComposureAlignmentScreen,
+// ClarityProtocolScreen) except TrendGraph, a hand-drawn illustrative
+// line explicitly labeled as such - same honesty convention
+// /how-it-works' own HRV stat card already uses.
 
 export default function InsideTheAppPage() {
   return (
@@ -273,8 +273,10 @@ export default function InsideTheAppPage() {
             the picture.
           </p>
         </Reveal>
-        <Reveal delay={0.1} y={20}>
-          <AppScreenMock icon={BookOpen} label="Daily Check-In" tone="light" />
+        <Reveal delay={0.1} y={20} className="flex justify-center">
+          <IPhoneMockup variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
+            <ClarityProtocolScreen />
+          </IPhoneMockup>
         </Reveal>
       </div>
 
