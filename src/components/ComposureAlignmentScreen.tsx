@@ -181,7 +181,7 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
             type="button"
             onClick={() => toggle(metric.id)}
             className={cn(
-              "flex h-[9.5cqw] items-center justify-center gap-[3.05cqw] rounded-[3.05cqw] border px-[3.05cqw] text-[3.56cqw] transition-colors duration-300",
+              "flex h-[9.5cqw] items-center justify-center gap-[2.3cqw] rounded-[3.05cqw] border px-[2.3cqw] text-[3.05cqw] whitespace-nowrap transition-colors duration-300",
               active === metric.id
                 ? "border-transparent text-[#f2f2f2]"
                 : "border-white/10 bg-gold-soft/10 text-[#f2f2f2]"
