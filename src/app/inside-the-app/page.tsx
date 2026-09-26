@@ -199,7 +199,7 @@ export default function InsideTheAppPage() {
           // last one or two clipping against its own overflow-hidden,
           // confirmed live via screenshot at a real mobile width, not
           // assumed from the class change alone.
-          <div className="card-glass-light grid size-full grid-cols-1 gap-2 p-4 md:grid-cols-2 md:gap-3 md:p-8">
+          <div className="grid size-full grid-cols-1 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
             {[
               "Breathing",
               "Focus Reset",
@@ -210,7 +210,7 @@ export default function InsideTheAppPage() {
             ].map((category) => (
               <div
                 key={category}
-                className="flex items-center justify-center rounded-xl border border-gold-soft/50 bg-navy/90 px-3 py-3 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-gold hover:text-cream hover:shadow-xl hover:shadow-black/30 md:py-4"
+                className="flex items-center justify-center rounded-xl border border-gold-soft/40 bg-cream/10 px-3 py-3 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-gold hover:bg-cream/15 hover:text-cream hover:shadow-xl hover:shadow-black/30 md:py-4"
               >
                 {category}
               </div>

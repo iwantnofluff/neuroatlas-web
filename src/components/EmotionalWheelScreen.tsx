@@ -50,11 +50,13 @@ import { cn } from "@/lib/utils";
  * (tap any petal, see ITS OWN label), the other 7 labels are filled in
  * using Plutchik's wheel of emotions — the standard, scientifically-
  * grounded 8-emotion circumplex whose own opposite-pairs (Joy/Sadness,
- * Trust/Disgust, Fear/Anger, Anticipation/Surprise sit 180° apart)
+ * Love/Disgust, Fear/Anger, Anticipation/Surprise sit 180° apart)
  * already land 4 petals apart on an 8-petal wheel, exactly matching
  * this wheel's own geometry once rotated so Anger sits at the given
  * 67.5deg petal — not an arbitrary invention, the one constraint the
- * source file provides pins down the other 7 uniquely.
+ * source file provides pins down the other 7 uniquely. Trust's usual
+ * slot is relabeled Love, the colloquial substitute requested for
+ * this wheel.
  */
 const PETAL_ANGLES = [22.5, 67.5, 112.5, 157.5, -157.5, -112.5, -67.5, -22.5];
 
@@ -63,7 +65,7 @@ const EMOTIONS = [
   "Anger",
   "Anticipation",
   "Joy",
-  "Trust",
+  "Love",
   "Fear",
   "Surprise",
   "Sadness",
