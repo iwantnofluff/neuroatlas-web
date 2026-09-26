@@ -1,7 +1,8 @@
-import { Gauge, Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
+import { Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { AppScreenMock } from "@/components/AppScreenMock";
+import { DashboardDetailCard } from "@/components/DashboardDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { TrendGraph } from "@/components/TrendGraph";
@@ -134,6 +135,12 @@ export default function InsideTheAppPage() {
         heading="Your Day At A Glance"
         imageSide="right"
         background="navy-soft"
+        // Same tiered height override every other life-size phone
+        // mockup on this site uses (see /how-it-works' own
+        // HrvDetailCard/CeoBreathScreen sections) — the shared square
+        // aspect-ratio this component's media panel defaults to would
+        // otherwise crop or squash a tall iPhone frame.
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
         body={
           <>
             <p className="text-pretty">
@@ -147,15 +154,18 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <AppScreenMock
-              icon={Gauge}
-              label="Dashboard"
-              className="max-w-[200px]"
-              annotations={[
-                { label: "Readiness: 82", className: "top-12 -right-4" },
-                { label: "Today's Trend ↑", className: "bottom-16 -left-4" },
-              ]}
-            />
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <div
+                className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
+                  backgroundColor: "var(--color-navy)",
+                }}
+              >
+                <DashboardDetailCard />
+              </div>
+            </IPhoneMockup>
           </div>
         }
       />
