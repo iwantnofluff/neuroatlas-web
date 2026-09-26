@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Calendar, Sparkle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -55,10 +56,19 @@ import { cn } from "@/lib/utils";
  * phone width, consistent with this session's own "size everything
  * down if needed for a clean view" instruction.
  *
- * Static: this is a read-only detail screen in the source design (no
- * interaction affordances specified) — the close/calendar buttons
- * render for visual fidelity only, same as HrvDetailCard.tsx's own
- * non-interactive elements.
+ * Live interactive: tapping any of the 7 Sleep Trend bars selects that
+ * night — the hero duration, its NORMAL/LOW status badge, the insight
+ * line, the range-graph marker's position, and the trend chart's own
+ * tooltip all update to that night's real data, matching this
+ * codebase's established "every metric screen genuinely responds to
+ * input, never a static screenshot" convention (VitalsDashboard,
+ * CeoBreathScreen, StressAgeCard, EmotionalWheelScreen). The hypnogram
+ * stays fixed to the one night the source design actually specifies
+ * (a full 24-hour sleep-stage trace isn't data this source provides
+ * per OTHER night, and fabricating six more wouldn't be selectable
+ * data so much as invented noise) — the close/calendar buttons remain
+ * visual-only, same as HrvDetailCard.tsx's own non-interactive
+ * elements.
  */
 
 type Stage = "light" | "deep" | "rem" | "awake";
@@ -113,21 +123,36 @@ const X_AXIS_LABELS = ["12A", "6A", "12P", "6P", "12A"];
 // rem, light, deep), values are the source's own px heights out of a
 // shared 78px-max scale, converted to % of that scale below so the
 // whole chart is proportionally resizable.
+//
+// `hours`/`markerPct` — the source design only gives a real duration
+// for one night ("08/20": 7h 23m, its own labeled tooltip target).
+// Every other night's duration is derived from that same anchor,
+// scaled by that night's own bar height relative to "08/20"'s (a
+// direct, proportional read of the one real data point the design
+// provides, not an arbitrary invention) — 7.383h * (thisNight's own
+// total / "08/20"'s own total of 68). `markerPct` (this night's
+// position along the Range Graph's 4hr-10hr bar) is derived the same
+// way, anchored to "08/20"'s own given 78.2% marker position.
 const TREND_MAX = 78;
-const TREND_DAYS: { date: string; awake: number; rem: number; light: number; deep: number }[] = [
-  { date: "08/17", awake: 1.9, rem: 16.6, light: 42.5, deep: 11 },
-  { date: "08/18", awake: 6, rem: 16.6, light: 15, deep: 11 },
-  { date: "08/19", awake: 1.9, rem: 5, light: 5, deep: 31 },
-  { date: "08/20", awake: 11, rem: 28, light: 7, deep: 22 },
-  { date: "08/21", awake: 10, rem: 7, light: 10, deep: 16 },
-  { date: "08/22", awake: 10, rem: 7, light: 4, deep: 21 },
-  { date: "08/33", awake: 5, rem: 3, light: 42.5, deep: 6 },
+const TREND_DAYS: {
+  date: string;
+  awake: number;
+  rem: number;
+  light: number;
+  deep: number;
+  hours: string;
+  markerPct: number;
+  normal: boolean;
+}[] = [
+  { date: "08/17", awake: 1.9, rem: 16.6, light: 42.5, deep: 11, hours: "7h 49m", markerPct: 82.6, normal: true },
+  { date: "08/18", awake: 6, rem: 16.6, light: 15, deep: 11, hours: "5h 17m", markerPct: 57.1, normal: false },
+  { date: "08/19", awake: 1.9, rem: 5, light: 5, deep: 31, hours: "4h 39m", markerPct: 51, normal: false },
+  { date: "08/20", awake: 11, rem: 28, light: 7, deep: 22, hours: "7h 23m", markerPct: 78.2, normal: true },
+  { date: "08/21", awake: 10, rem: 7, light: 10, deep: 16, hours: "4h 40m", markerPct: 51.1, normal: false },
+  { date: "08/22", awake: 10, rem: 7, light: 4, deep: 21, hours: "4h 34m", markerPct: 50, normal: false },
+  { date: "08/33", awake: 5, rem: 3, light: 42.5, deep: 6, hours: "6h 08m", markerPct: 65.2, normal: false },
 ];
-// The 4th bar ("08/20", index 3) is this card's own tooltip target —
-// matches the source's "Value Tooltip" callout, permanently shown
-// rather than hover-triggered (this whole screen is a static detail
-// view, not an interactive chart).
-const TREND_TOOLTIP_INDEX = 3;
+const TREND_DEFAULT_INDEX = 3;
 
 function HypnogramChart() {
   return (
@@ -184,7 +209,13 @@ function HypnogramChart() {
   );
 }
 
-function SleepTrendChart() {
+function SleepTrendChart({
+  selected,
+  onSelect,
+}: {
+  selected: number;
+  onSelect: (i: number) => void;
+}) {
   return (
     <div className="relative w-full overflow-hidden rounded-[4.07cqw] bg-navy-soft px-[11.5cqw] pt-[9.4cqw] pb-[6.9cqw]">
       {/* Gridlines */}
@@ -205,10 +236,20 @@ function SleepTrendChart() {
         {TREND_DAYS.map((day, i) => {
           const total = day.awake + day.rem + day.light + day.deep;
           return (
-            <div key={day.date} className="relative flex h-full w-[6.6cqw] flex-col justify-end">
-              {i === TREND_TOOLTIP_INDEX && (
+            <button
+              key={day.date}
+              type="button"
+              aria-pressed={selected === i}
+              aria-label={`${day.date}, ${day.hours}`}
+              onClick={() => onSelect(i)}
+              className={cn(
+                "relative flex h-full w-[6.6cqw] flex-col justify-end transition-opacity",
+                selected === i ? "opacity-100" : "opacity-60 hover:opacity-85"
+              )}
+            >
+              {selected === i && (
                 <div className="absolute -top-[8cqw] left-1/2 flex -translate-x-1/2 items-center justify-center rounded-[3.06cqw] border border-bronze bg-[rgba(22,20,16,0.5)] px-[1.53cqw] py-[1.27cqw] whitespace-nowrap backdrop-blur-sm">
-                  <span className="text-[2.4cqw] text-gold-deep">7h 23m</span>
+                  <span className="text-[2.4cqw] text-gold-deep">{day.hours}</span>
                 </div>
               )}
               {/* Explicit height (this day's own share of TREND_MAX), not
@@ -236,7 +277,7 @@ function SleepTrendChart() {
                   style={{ flex: `${day.deep} 0 0%`, backgroundColor: STAGE_COLOR.deep }}
                 />
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -252,6 +293,9 @@ function SleepTrendChart() {
 }
 
 export function SleepDetailCard({ className }: { className?: string }) {
+  const [selected, setSelected] = useState(TREND_DEFAULT_INDEX);
+  const night = TREND_DAYS[selected];
+
   return (
     <div
       className={cn("relative flex w-full flex-col", className)}
@@ -278,10 +322,17 @@ export function SleepDetailCard({ className }: { className?: string }) {
       <div className="flex flex-col gap-[6.6cqw]">
         <div className="flex items-start justify-between">
           <div className="flex items-end gap-[1.53cqw] text-[#f2f2f2]">
-            <span className="text-[10.7cqw] leading-none">7h 23m</span>
-            <span className="text-[4.6cqw] text-[#f2f2f2]/30">last night</span>
+            <span className="text-[10.7cqw] leading-none">{night.hours}</span>
+            <span className="text-[4.6cqw] text-[#f2f2f2]/30">
+              {selected === TREND_DEFAULT_INDEX ? "last night" : night.date}
+            </span>
           </div>
-          <p className="mt-[1.53cqw] text-[3cqw] whitespace-nowrap text-[#4ade80]">NORMAL</p>
+          <p
+            className="mt-[1.53cqw] text-[3cqw] whitespace-nowrap"
+            style={{ color: night.normal ? "#4ade80" : "#dd416b" }}
+          >
+            {night.normal ? "NORMAL" : "LOW"}
+          </p>
         </div>
 
         <div className="flex flex-col gap-[3.56cqw]">
@@ -294,7 +345,10 @@ export function SleepDetailCard({ className }: { className?: string }) {
             }}
           >
             <span className="absolute inset-y-0 left-[64%] w-[27.2%] rounded-full bg-[#f2f2f2]/25 backdrop-blur-[2px]" />
-            <span className="absolute top-1/2 left-[78.2%] size-[3.56cqw] -translate-x-1/2 -translate-y-1/2 rounded-full border-[0.5cqw] border-[#c3d1de] bg-[#f2f2f2]" />
+            <span
+              className="absolute top-1/2 size-[3.56cqw] -translate-x-1/2 -translate-y-1/2 rounded-full border-[0.5cqw] border-[#c3d1de] bg-[#f2f2f2] transition-[left] duration-300"
+              style={{ left: `${night.markerPct}%` }}
+            />
           </div>
           <div className="flex justify-between text-[2.8cqw] text-[#5e6165]">
             <span>4 hrs</span>
@@ -307,14 +361,15 @@ export function SleepDetailCard({ className }: { className?: string }) {
         <div className="flex items-start gap-[4.07cqw] rounded-[4.07cqw] border border-gold-soft/30 bg-gold/10 px-[4.07cqw] py-[5.09cqw]">
           <Sparkle className="mt-[0.5cqw] size-[8.5cqw] shrink-0 fill-gold text-gold" />
           <p className="text-[3.56cqw] leading-relaxed text-[#c6c7c9]">
-            You slept 7h 23m. Normal for your age is 7 to 9 hours. You are
-            right in that range.
+            {night.normal
+              ? `You slept ${night.hours}. Normal for your age is 7 to 9 hours. You are right in that range.`
+              : `You slept ${night.hours} on ${night.date}. Normal for your age is 7 to 9 hours. This night was short of that.`}
           </p>
         </div>
 
         <div className="flex flex-col gap-[5.09cqw]">
           <p className="text-[3.56cqw] text-gold">Sleep Trend</p>
-          <SleepTrendChart />
+          <SleepTrendChart selected={selected} onSelect={setSelected} />
         </div>
 
         <div className="flex flex-col gap-[2.04cqw]">
