@@ -1,0 +1,25 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="172" height="172" viewBox="0 0 172 172" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 3">
+<circle id="E1" opacity="0.9" cx="69.5" cy="69.5" r="69" transform="matrix(-1 0 0 1 155.5 16.5)" stroke="url(#paint0_linear_0_51)"/>
+<g id="E1_2" opacity="0.2" filter="url(#filter0_f_0_51)">
+<circle cx="69.5" cy="69.5" r="69.5" transform="matrix(-1 0 0 1 155.5 16.5)" stroke="url(#paint1_linear_0_51)" stroke-width="3"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_51" x="0" y="0" width="172" height="172" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="7.5" result="effect1_foregroundBlur_0_51"/>
+</filter>
+<linearGradient id="paint0_linear_0_51" x1="0" y1="69.5" x2="139" y2="69.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#092511"/>
+<stop offset="0.5" stop-color="#4AC286"/>
+<stop offset="1" stop-color="#42B885"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_51" x1="0" y1="69.5" x2="139" y2="69.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#092511"/>
+<stop offset="0.5" stop-color="#4AC286"/>
+<stop offset="1" stop-color="#42B885"/>
+</linearGradient>
+</defs>
+</svg>

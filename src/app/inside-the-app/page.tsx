@@ -1,7 +1,8 @@
-import { Users, BookOpen, Target, Wind, Sparkles } from "lucide-react";
+import { BookOpen, Target, Wind, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { FeatureSplitSection } from "@/components/FeatureSplitSection";
 import { AppScreenMock } from "@/components/AppScreenMock";
+import { ComposureAlignmentScreen } from "@/components/ComposureAlignmentScreen";
 import { DashboardDetailCard } from "@/components/DashboardDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
@@ -232,6 +233,7 @@ export default function InsideTheAppPage() {
         heading="Composure On Demand"
         imageSide="right"
         background="navy"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
         body={
           <>
             <p className="text-pretty">
@@ -246,12 +248,9 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <AppScreenMock
-              icon={Users}
-              label="Boardroom Mode"
-              className="max-w-[200px]"
-              annotations={[{ label: "T-2:00", className: "top-10 -left-4 sm:-left-10" }]}
-            />
+            <IPhoneMockup variant="pro-max" className="h-full">
+              <ComposureAlignmentScreen />
+            </IPhoneMockup>
           </div>
         }
       />
