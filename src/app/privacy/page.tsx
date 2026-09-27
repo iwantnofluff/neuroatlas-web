@@ -77,7 +77,6 @@ export default function PrivacyPage() {
         subhead="This is not small print you have to go looking for. Protecting your data is built into how NeuroAtlas works, not something we promise to remember."
         ctas={[]}
         heroImage="/photos/privacy-hero.png"
-        heroImageShimmer
       />
       <HeroBoundary />
 
