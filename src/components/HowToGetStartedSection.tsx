@@ -90,23 +90,24 @@ function StepContent({ index, step, side }: { index: number; step: Step; side?: 
 }
 
 /** Mobile / plain-stacked fallback only — normal document flow, each
- *  step spaced by its own vertical padding as it scrolls past. */
-function TimelineStep({
-  progress,
-  index,
-  step,
-  reduceMotion,
-}: {
-  progress: MotionValue<number>;
-  index: number;
-  step: Step;
-  reduceMotion: boolean;
-}) {
-  const { opacity, y } = useStepReveal(progress, index, reduceMotion);
+ *  step fading/rising in via Reveal as it's scrolled into view.
+ *
+ * NOT useStepReveal/scrollYProgress-driven — a real, confirmed bug this
+ * replaces: that progress comes from useScroll's `trackRef`, which is
+ * only ever attached to a DOM node in the DESKTOP branch below (the
+ * pinned scroll track). On mobile that ref never mounts, so
+ * scrollYProgress stays frozen at its initial value forever — every
+ * step sat permanently at useStepReveal's OWN "not yet revealed" floor
+ * (35% opacity), regardless of how far the page was actually scrolled,
+ * confirmed live via computed-style inspection at a real mobile
+ * viewport. Reveal triggers off each step's own on-screen intersection
+ * instead, the same mechanism the heading right above it already uses
+ * successfully. */
+function TimelineStep({ index, step }: { index: number; step: Step }) {
   return (
-    <motion.div style={{ opacity, y }} className="py-16 first:pt-0 last:pb-0 md:py-32">
+    <Reveal delay={index * 0.05} y={16} className="py-8 first:pt-0 last:pb-0 sm:py-10">
       <StepContent index={index} step={step} />
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -220,15 +221,9 @@ export function HowToGetStartedSection() {
       <section>
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           {heading}
-          <div className="mx-auto mt-16 max-w-xl divide-y divide-navy/10">
+          <div className="mx-auto mt-10 max-w-xl divide-y divide-navy/10">
             {STEPS.map((step, i) => (
-              <TimelineStep
-                key={step.label}
-                progress={scrollYProgress}
-                index={i}
-                step={step}
-                reduceMotion={reduceMotion}
-              />
+              <TimelineStep key={step.label} index={i} step={step} />
             ))}
           </div>
         </div>
