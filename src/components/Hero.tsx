@@ -88,6 +88,14 @@ type HeroProps = {
    *  passed through to HeroMedia's own `image` prop, and takes priority
    *  over HERO_VIDEO_SRC when set. */
   heroImage?: string;
+  /** Adds a slow-traveling gold gleam over `heroImage` (see
+   *  .hero-gold-shimmer in globals.css) — opt-in, not part of every
+   *  static hero photo: it only reads correctly over art that already
+   *  has its own light-streak lines running through it (/privacy's own
+   *  banner), not over a photograph of a person or object, where a
+   *  moving light band would look like a rendering glitch rather than
+   *  ambient light. */
+  heroImageShimmer?: boolean;
 };
 
 /**
@@ -106,6 +114,7 @@ export function Hero({
   tagline,
   ctas = DEFAULT_CTAS,
   heroImage,
+  heroImageShimmer = false,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
   // comment) — [headline] with no split at all when there's no "\n",
@@ -163,6 +172,9 @@ export function Hero({
             "radial-gradient(ellipse 40% 35% at 12% 12%, color-mix(in oklab, var(--color-cream) 10%, transparent), transparent 75%)",
         }}
       />
+      {heroImageShimmer && (
+        <div aria-hidden="true" className="hero-gold-shimmer absolute inset-0" />
+      )}
       <DotPattern
         glow={false}
         width={28}

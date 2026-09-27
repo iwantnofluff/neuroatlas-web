@@ -392,6 +392,35 @@
     50% { transform: translate(-3%, -4%) scale(1.05); }
   }
 
+  /* A slow-traveling gleam over a static hero photo whose own art already
+     has literal light-streak lines running through it (see /privacy) —
+     mix-blend-mode: screen only brightens what's under it, so this reads
+     as those existing streaks catching a moving light rather than a
+     wash of color sitting on top of the photo. Same background-size +
+     animated background-position technique as .signal-mask-gradient
+     above, just screen-blended onto a photo instead of clipped to text. */
+  .hero-gold-shimmer {
+    background: linear-gradient(
+      100deg,
+      transparent 35%,
+      color-mix(in oklab, var(--color-gold) 85%, white 15%) 49%,
+      color-mix(in oklab, var(--color-gold) 85%, white 15%) 51%,
+      transparent 65%
+    );
+    background-size: 260% 260%;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-gold-shimmer {
+      animation: hero-gold-sweep 10s ease-in-out infinite;
+    }
+  }
+  @keyframes hero-gold-sweep {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+  }
+
   /* NeuroWaveVisual's animated ECG trace (see that component) — the
      wrapper is two identical strips side by side at 200% width;
      scrolling it exactly -50% loops seamlessly back to the start
