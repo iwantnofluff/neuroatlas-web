@@ -66,6 +66,7 @@ export default function ForOrganisationsPage() {
         headline="Composure Training For Your Organisation"
         subhead="Pressure affects decisions long before it shows up as a resignation letter or a sick day. NeuroAtlas gives leadership a way to see that pattern early and act on it."
         ctas={[{ label: "Book A Presentation", href: "/contact" }]}
+        heroImage="/photos/for-organisations-hero.png"
       />
       <HeroBoundary />
 
