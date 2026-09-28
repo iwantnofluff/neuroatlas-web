@@ -218,11 +218,13 @@ export function FeatureSplitSection({
          is the small/guaranteed-visible size. Below md the stacked image
          and text can outgrow a short phone's 100svh, so the panel grows
          with its content there instead of clipping it; only the sideways
-         slide still needs clipping. */}
+         slide still needs clipping. Once it grows, max-md:pt-24/pb-20 keep
+         the media clear of the fixed 72px header and the copy clear of the
+         next section. */}
       <section
         data-visual-section={sectionName}
         className={cn(
-          "sticky top-0 flex min-h-[100svh] w-full items-center overflow-x-clip md:h-[100svh] md:overflow-hidden",
+          "sticky top-0 flex min-h-[100svh] w-full items-center overflow-x-clip max-md:pt-24 max-md:pb-20 md:h-[100svh] md:overflow-hidden",
           sectionClassName
         )}
       >
