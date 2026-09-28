@@ -392,6 +392,50 @@
     50% { transform: translate(-3%, -4%) scale(1.05); }
   }
 
+  /* Perpetual decorative loops run as CSS animations, not Framer
+     `repeat: Infinity` JS loops: a JS loop costs a main-thread callback
+     every frame for the life of the page, which a CSS animation doesn't —
+     that matters on low-end Android and integrated-GPU laptops. (Being a
+     CSS animation also makes them visible to the browser's own animation
+     APIs, which the visual test suite relies on.) Reduced motion leaves
+     both at their static rest pose via the same media-query gating as
+     .hero-ambient-a/b above. */
+
+  /* Hero scroll cue — same 0 → 6px → 0 bounce over 1.8s as the Framer
+     keyframes it replaces; Framer's easeInOut is cubic-bezier(0.42, 0,
+     0.58, 1), identical to CSS ease-in-out, and both apply it per
+     keyframe segment. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-scroll-cue {
+      animation: hero-scroll-cue 1.8s ease-in-out infinite;
+    }
+  }
+  @keyframes hero-scroll-cue {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* BeyondHeartSection's traveling ring pulse — a full turn every 20s,
+     linear, from each ring's own --ring-start angle. The rotation origin
+     is the circle's own center (transform-box: fill-box + origin center,
+     unchanged from what the Framer version set explicitly), so it spins
+     in place rather than orbiting. Under reduced motion the arc rests at
+     --ring-start, the same still frame the Framer version resolved to. */
+  .ring-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: rotate(var(--ring-start));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ring-pulse {
+      animation: ring-pulse-spin 20s linear infinite;
+    }
+  }
+  @keyframes ring-pulse-spin {
+    from { transform: rotate(var(--ring-start)); }
+    to { transform: rotate(calc(var(--ring-start) + 360deg)); }
+  }
+
   /* NeuroWaveVisual's animated ECG trace (see that component) — the
      wrapper is two identical strips side by side at 200% width;
      scrolling it exactly -50% loops seamlessly back to the start

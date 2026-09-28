@@ -45,7 +45,7 @@ export function HeroMedia({ src, poster, image, className, reduceMotion = false 
       video.pause();
       video.currentTime = 0;
     } else {
-      void video.play();
+      video.play().catch(() => {});
     }
   }, [reduceMotion]);
 
