@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowDown, ArrowRight, ArrowUp, type LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { cn } from "@/lib/utils";
 
 // Rebuilt again per the client's own explicit "Spaced Arch" spec — the
 // previous "fanned hand of cards" version (see this file's own git
@@ -21,27 +23,41 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 // a subtle arch, reported live, so nothing here is a genuine height or
 // position difference between cards. The dynamic feel comes entirely
 // from the ±6° tilt on the ends.
-// Placeholder content — this section is being repurposed from a
-// generic measure/intervene/measure process explainer into one
-// dedicated entirely to Stress Age (an explicit "for now just keep a
-// placeholder, copy needs to be added, the copy team has to rewrite
-// this section" request). The Spaced Arch layout/motion below is
-// untouched and still fully wired up; only these three cards' own
-// copy is a stand-in, using this same codebase's own existing "Copy to
-// be added." convention (see BeyondHeartSection.tsx's RINGS array)
-// rather than inventing a different placeholder style.
-const methodSteps = [
+type StressAgeState = {
+  age: number;
+  title: string;
+  body: string;
+  trend: string;
+  TrendIcon: LucideIcon;
+  trendColor: string;
+  matchesAge?: boolean;
+};
+
+const STRESS_AGE_STATES: StressAgeState[] = [
   {
-    label: "Stress Age",
-    body: "Copy to be added.",
+    age: 20,
+    title: "Recovery trending above your usual pattern",
+    body: "Your recent autonomic recovery is mapping younger on the Stress Age reference scale.",
+    trend: "Improving",
+    TrendIcon: ArrowDown,
+    trendColor: "#7fd1a4",
   },
   {
-    label: "Stress Age",
-    body: "Copy to be added.",
+    age: 24,
+    title: "Close to your usual pattern",
+    body: "Your recent recovery is broadly aligned with your established baseline.",
+    trend: "Stable",
+    TrendIcon: ArrowRight,
+    trendColor: "var(--color-gold-soft)",
+    matchesAge: true,
   },
   {
-    label: "Stress Age",
-    body: "Copy to be added.",
+    age: 31,
+    title: "Recovery trending below your usual pattern",
+    body: "Your recent autonomic recovery is mapping older on the Stress Age reference scale.",
+    trend: "Increasing",
+    TrendIcon: ArrowUp,
+    trendColor: "#f0a0ae",
   },
 ];
 
@@ -90,7 +106,7 @@ function MethodCard({
   isMobile,
   reduceMotion,
 }: {
-  step: (typeof methodSteps)[number];
+  step: StressAgeState;
   index: number;
   isMobile: boolean;
   reduceMotion: boolean;
@@ -187,11 +203,27 @@ function MethodCard({
       // min-w-0 overrides flex's own default min-width:auto, which
       // would otherwise floor each card at its longest unbroken word's
       // width and defeat the shrinking flex-1 is here to do.
-      className="card-glass w-full min-w-0 bg-transparent p-4 text-center md:w-auto md:max-w-72 md:flex-1 md:p-6 md:text-left lg:p-8"
+      className={cn(
+        "card-glass flex w-full min-w-0 flex-col items-center bg-transparent p-6 text-center md:w-auto md:max-w-72 md:flex-1 md:items-start md:text-left lg:p-8",
+        step.matchesAge && "border-gold/50"
+      )}
     >
-      <span className="eyebrow">{`0${index + 1}`}</span>
-      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-cream">{step.label}</h3>
-      <p className="mt-3 text-pretty text-base text-cream/70">{step.body}</p>
+      <span className="eyebrow">Stress Age</span>
+      <p className="mt-3 font-serif text-6xl leading-none font-normal text-cream tabular-nums">{step.age}</p>
+      <h3 className="mt-6 text-pretty text-base font-medium text-cream">{step.title}</h3>
+      <p className="mt-2 text-pretty text-sm text-cream/70">{step.body}</p>
+      <p className="mt-auto pt-6">
+        <span
+          className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs tracking-wide"
+          style={{
+            color: step.trendColor,
+            borderColor: `color-mix(in oklab, ${step.trendColor} 40%, transparent)`,
+          }}
+        >
+          <step.TrendIcon aria-hidden="true" className="size-3.5" />
+          {step.trend}
+        </span>
+      </p>
     </motion.div>
   );
 }
@@ -212,17 +244,36 @@ export function MethodScrollCards() {
   return (
     <section id="the-method" data-visual-section="the-method" className="dark-glow bg-navy-soft text-cream">
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
-        <Reveal y={20}>
-          <h2 className="text-center text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight sm:text-3xl lg:text-4xl">
-            Stress Age
-          </h2>
+        <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-14">
+          <Reveal y={20} className="lg:col-span-7">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              Your Age Tells One Story. Your Stress Age Tells Another.
+            </h2>
+          </Reveal>
+          <Reveal y={20} delay={0.1} className="lg:col-span-5">
+            <p className="text-pretty text-lg text-cream/75">
+              We all know how old we are. What&rsquo;s harder to see is how well
+              our system is keeping up.
+            </p>
+            <p className="mt-4 text-pretty text-base text-cream/65">
+              Stress Age gives you a simple, age-like view of your recent
+              recovery — helping you see when your system is recovering well,
+              holding steady, or showing signs of greater strain.
+            </p>
+          </Reveal>
+        </div>
+
+        <Reveal y={20} className="mt-16 lg:mt-24">
+          <h3 className="mx-auto max-w-2xl text-balance text-center font-serif font-normal uppercase tracking-normal text-xl leading-snug lg:text-2xl">
+            24 Years Old. But What State Is Your System In?
+          </h3>
         </Reveal>
         {/* Spaced Arch: a plain gapped flex row, no negative margins, no
            absolute positioning, no elevated z-index — every card gets
            real, physical space from its neighbors regardless of
            breakpoint. gap-8 lg:gap-16 widens the gap again once there's
-           real room for it; md:mt-24 keeps this section's own extra
-           top-clearance (unchanged from the previous fanned version).
+           real room for it; md:mt-16 gives the tilted cards clearance below the
+           subhead.
            md:items-stretch, not md:items-center — a real, confirmed
            mismatch this fixes: centering let each card size itself off
            its OWN content, so card 01 (the longest body copy) stood
@@ -232,10 +283,31 @@ export function MethodScrollCards() {
            setting a fixed height by hand) is what makes every card match
            the row's tallest card automatically, including if the copy
            ever changes later. */}
-        <div className="mt-10 flex flex-col items-center gap-6 md:mt-24 md:flex-row md:items-stretch md:justify-center md:gap-8 lg:gap-16">
-          {methodSteps.map((step, i) => (
-            <MethodCard key={`${step.label}-${i}`} step={step} index={i} isMobile={isMobile} reduceMotion={reduceMotion} />
+        <div className="mt-10 flex flex-col items-center gap-6 md:mt-16 md:flex-row md:items-stretch md:justify-center md:gap-8 lg:gap-16">
+          {STRESS_AGE_STATES.map((step, i) => (
+            <MethodCard key={step.age} step={step} index={i} isMobile={isMobile} reduceMotion={reduceMotion} />
           ))}
+        </div>
+
+        <div className="mt-16 grid gap-8 border-t border-line-dark pt-12 lg:mt-24 lg:grid-cols-12 lg:gap-14 lg:pt-16">
+          <Reveal y={20} className="lg:col-span-5">
+            <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight lg:text-3xl">
+              It&rsquo;s Not Your Biological Age.
+            </h3>
+          </Reveal>
+          <Reveal y={20} delay={0.1} className="lg:col-span-6 lg:col-start-7">
+            <p className="text-pretty text-lg text-cream/75">
+              Stress Age is a wellness estimate, not a diagnosis and not a
+              measure of how many years stress has added to your life.
+            </p>
+            <p className="mt-4 text-pretty text-base text-cream/65">
+              It is designed to help make changes in your recovery pattern
+              easier to see and understand over time.
+            </p>
+            <p className="mt-4 text-pretty text-base italic text-cream/55">
+              Think of it as a trend, not a verdict.
+            </p>
+          </Reveal>
         </div>
       </div>
     </section>

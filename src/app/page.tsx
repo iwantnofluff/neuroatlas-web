@@ -6,7 +6,6 @@ import { Reveal } from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
 import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
-import { StressAgeSection } from "@/components/StressAgeSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
 import { BodySilhouette } from "@/components/BodySilhouette";
@@ -139,9 +138,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* The method — pinned scroll reveal (see MethodScrollCards.tsx):
-          card 1 appears on the first scroll into the section, card 2 on
-          the next, card 3 on the one after that, then the pin releases. */}
+      {/* Stress Age — intro, three Stress Age states in the Spaced Arch
+          (see MethodScrollCards.tsx), and the "not your biological age"
+          disclaimer. */}
       <MethodScrollCards />
 
       {/* The NA·01 band — cinematic sticky-scroll WebGL section (see
@@ -293,8 +292,6 @@ export default function Home() {
       </section>
 
       <BeyondHeartSection />
-
-      <StressAgeSection />
 
       {/* How it's different — was a side-by-side card layout (image
           left, text right in two even columns); now a full-bleed
