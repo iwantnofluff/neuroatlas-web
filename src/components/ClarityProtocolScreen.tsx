@@ -97,7 +97,6 @@ export function ClarityProtocolScreen({ className }: { className?: string }) {
       </div>
 
       <div
-        data-lenis-prevent
         className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="flex flex-col gap-[7.13cqw] px-[6.11cqw] pt-[7.63cqw] pb-[8cqw]">

@@ -263,7 +263,7 @@ export function SignalVsNoiseSection() {
              exactly the way it is in the Figma, interactive" request,
              replacing the earlier plain white placeholder card. */}
           <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[min(56svh,calc(100svh-22rem))]">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <EmotionalWheelScreen />
             </IPhoneMockup>
           </motion.div>

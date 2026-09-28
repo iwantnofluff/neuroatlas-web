@@ -606,3 +606,21 @@
     @apply border-border outline-ring/50;
   }
 }
+/* Interactive phone mockups (IPhoneMockup `interactive`): until the phone
+   is engaged, its inner scroll areas are held still so wheel and touch
+   swipes over it scroll the page instead of the screen. Unlayered so it
+   beats the overflow-y-auto utility on those scroll areas. */
+[data-mockup-screen="idle"] .overflow-y-auto {
+  overflow-y: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mockup-cue-dot {
+    animation: mockup-cue-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes mockup-cue-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-gold) 55%, transparent); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-gold) 0%, transparent); }
+}

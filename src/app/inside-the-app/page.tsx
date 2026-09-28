@@ -70,10 +70,10 @@ export default function InsideTheAppPage() {
         <Reveal delay={0.1} y={20} className="flex justify-center px-6 pb-20 lg:pb-24">
           <IPhoneMockup
             variant="pro-max"
+            interactive
             className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
           >
             <div
-              data-lenis-prevent
               className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               style={{
                 backgroundImage:
@@ -163,9 +163,8 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <div
-                data-lenis-prevent
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                   backgroundImage:
@@ -252,7 +251,7 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <ComposureAlignmentScreen />
             </IPhoneMockup>
           </div>
@@ -276,7 +275,7 @@ export default function InsideTheAppPage() {
           </p>
         </Reveal>
         <Reveal delay={0.1} y={20} className="flex justify-center">
-          <IPhoneMockup variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
+          <IPhoneMockup interactive variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
             <ClarityProtocolScreen />
           </IPhoneMockup>
         </Reveal>
@@ -302,7 +301,7 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <JournalScreen />
             </IPhoneMockup>
           </div>
