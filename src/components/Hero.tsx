@@ -88,6 +88,9 @@ type HeroProps = {
    *  passed through to HeroMedia's own `image` prop, and takes priority
    *  over HERO_VIDEO_SRC when set. */
   heroImage?: string;
+  /** Focal point for `heroImage` where a portrait phone crop would
+   *  otherwise cut its subject, e.g. "object-[72%_50%] md:object-center". */
+  heroImageClassName?: string;
 };
 
 /**
@@ -106,6 +109,7 @@ export function Hero({
   tagline,
   ctas = DEFAULT_CTAS,
   heroImage,
+  heroImageClassName,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
   // comment) — [headline] with no split at all when there's no "\n",
@@ -130,6 +134,7 @@ export function Hero({
         src={heroImage ? undefined : HERO_VIDEO_SRC}
         poster="/photos/hero-band.jpg"
         image={heroImage}
+        className={heroImageClassName}
         reduceMotion={reduceMotion}
       />
 

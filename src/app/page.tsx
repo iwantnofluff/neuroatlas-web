@@ -336,7 +336,7 @@ export default function Home() {
           alt=""
           fill
           sizes="100vw"
-          className="-z-10 object-cover object-center"
+          className="-z-10 object-cover object-[41%_50%] md:object-center"
         />
         {/* Left-to-right legibility gradient — transparent over the
            hardware itself (photographed left-of-center), solid toward

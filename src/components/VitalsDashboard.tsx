@@ -86,7 +86,7 @@ function Ring({ percent, color }: { percent: number; color: string }) {
   const r = 16;
   const c = 2 * Math.PI * r;
   return (
-    <svg viewBox="0 0 40 40" className="size-10 shrink-0 -rotate-90">
+    <svg viewBox="0 0 40 40" className="size-8 shrink-0 -rotate-90 sm:size-10">
       <circle cx="20" cy="20" r={r} fill="none" stroke="#2a2d33" strokeWidth="4" />
       <circle
         cx="20"
@@ -226,7 +226,7 @@ export function VitalsDashboard({ className }: { className?: string }) {
             refresh(setSkinBusy, () => setSkinTemp(Math.round(randomBetween(970, 995)) / 10))
           }
         />
-        <p className="text-[11px] text-cream/50">Skin Temperature</p>
+        <p className="pr-5 text-[11px] text-cream/50">Skin Temperature</p>
         <p className="text-lg text-[#f2f2f2]">{skinTemp.toFixed(1)}°F</p>
         <BarTrack percent={((skinTemp - 96) / (100 - 96)) * 100} color={SUCCESS} />
         <Pill label="Normal" color={SUCCESS} />
@@ -240,9 +240,9 @@ export function VitalsDashboard({ className }: { className?: string }) {
           }
         />
         <Ring percent={sleepScore} color={sleepScore >= 60 ? SUCCESS : DANGER} />
-        <div>
+        <div className="min-w-0 pr-4">
           <p className="text-[11px] text-cream/50">Sleep Score</p>
-          <p className="text-base text-[#f2f2f2]">{sleepScore}/100</p>
+          <p className="text-sm text-[#f2f2f2] sm:text-base">{sleepScore}/100</p>
         </div>
       </Tile>
 
@@ -254,9 +254,9 @@ export function VitalsDashboard({ className }: { className?: string }) {
           }
         />
         <Ring percent={stress} color={stress <= 40 ? SUCCESS : DANGER} />
-        <div>
+        <div className="min-w-0 pr-4">
           <p className="text-[11px] text-cream/50">Stress</p>
-          <p className="text-base text-[#f2f2f2]">{stress}/100</p>
+          <p className="text-sm text-[#f2f2f2] sm:text-base">{stress}/100</p>
         </div>
       </Tile>
     </div>

@@ -209,10 +209,13 @@ export function FeatureSplitSection({
          the browser's toolbar chrome is fully hidden, so a real phone's
          actual visible area can be shorter than 100vh, clipping this
          pinned section's bottom against its own overflow-hidden. `svh`
-         is the small/guaranteed-visible size. */}
+         is the small/guaranteed-visible size. Below md the stacked image
+         and text can outgrow a short phone's 100svh, so the panel grows
+         with its content there instead of clipping it; only the sideways
+         slide still needs clipping. */}
       <section
         className={cn(
-          "sticky top-0 flex h-[100svh] w-full items-center overflow-hidden",
+          "sticky top-0 flex min-h-[100svh] w-full items-center overflow-x-clip md:h-[100svh] md:overflow-hidden",
           sectionClassName
         )}
       >

@@ -189,18 +189,11 @@ export default function InsideTheAppPage() {
           </>
         }
         media={
-          // grid-cols-1 md:grid-cols-2 - this panel is FeatureSplitSection's
-          // own fixed aspect-square/overflow-hidden media box, sitting
-          // inside a pinned h-[100svh] section: below `lg` that box's
-          // actual pixel size is genuinely small (a mobile viewport's own
-          // width, minus this section's own px-6), so a single column of
-          // 6 tiles needs real vertical room that 3 rows of 2 didn't —
-          // p-4/gap-2/py-3 (down from p-8/gap-3/py-4) below `md` is what
-          // actually keeps all 6 tiles inside that fixed box without the
-          // last one or two clipping against its own overflow-hidden,
-          // confirmed live via screenshot at a real mobile width, not
-          // assumed from the class change alone.
-          <div className="grid size-full grid-cols-1 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
+          // Two columns at every width: this panel is FeatureSplitSection's
+          // fixed aspect-square/overflow-hidden media box, and six tiles in
+          // one column clipped the last tile at a 344px fold cover. Three
+          // rows of two fit that square with room to spare.
+          <div className="grid size-full grid-cols-2 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
             {[
               "Breathing",
               "Focus Reset",

@@ -153,13 +153,11 @@ export function NeuralAccordion() {
             response patterns over time.
           </p>
         </Reveal>
-        {/* md:flex-row, not sm: — three panels side by side (one
-           expanded to flex-[3], two shrunk to flex-1, each with its own
-           label + body) get genuinely cramped at a 640px foldable-open
-           width; the already-working vertical stack (every phone below
-           640px already renders this way) is the better fit for the
-           whole foldable tier too, not just phones. */}
-        <div className="mt-16 flex h-[420px] flex-col gap-4 md:flex-row">
+        {/* Side by side only from lg: at md a shrunk flex-1 panel leaves
+           ~73px for its heading, clipping "Prefrontal-". Below lg the
+           stack sizes to its content — a fixed 420px column cut both the
+           open panel's body and the closed panels' headings. */}
+        <div className="mt-16 flex flex-col gap-4 lg:h-[420px] lg:flex-row">
           {SYSTEMS.map((system, i) => (
             <AccordionPanel
               key={system.label}

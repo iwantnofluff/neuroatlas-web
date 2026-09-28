@@ -38,23 +38,22 @@ export default async function JournalPage() {
             <Reveal y={20}>
               <a
                 href={`/journal/${featured.slug}`}
-                className="group relative block overflow-hidden rounded-3xl"
+                className="group relative grid grid-cols-1 overflow-hidden rounded-3xl"
               >
-                <div className="relative aspect-video sm:aspect-[21/9]">
-                  <Image
-                    src={urlForImage(featured.image).width(1600).height(686).fit("crop").url()}
-                    alt={featured.title}
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 1152px, 100vw"
-                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                  />
-                </div>
+                <Image
+                  src={urlForImage(featured.image).width(1600).height(686).fit("crop").url()}
+                  alt={featured.title}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 1152px, 100vw"
+                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                />
+                <div aria-hidden="true" className="col-start-1 row-start-1 aspect-video sm:aspect-[21/9]" />
                 <div
                   aria-hidden="true"
                   className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent"
                 />
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+                <div className="relative col-start-1 row-start-1 self-end p-6 sm:p-10 lg:p-12">
                   <div className="max-w-xl rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md sm:p-8">
                     <p className="text-xs tracking-[0.15em] text-gold-soft uppercase">
                       {featured.category}

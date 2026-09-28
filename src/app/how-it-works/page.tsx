@@ -137,6 +137,7 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
+        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none"
         media={
           <div className="card-glass-light flex size-full items-center justify-center p-6">
             <VitalsDashboard />

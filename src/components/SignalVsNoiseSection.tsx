@@ -261,7 +261,7 @@ export function SignalVsNoiseSection() {
              iPhone 17 Pro Max mockup — a direct "make it life size,
              exactly the way it is in the Figma, interactive" request,
              replacing the earlier plain white placeholder card. */}
-          <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[56svh]">
+          <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[min(56svh,calc(100svh-22rem))]">
             <IPhoneMockup variant="pro-max" className="h-full">
               <EmotionalWheelScreen />
             </IPhoneMockup>

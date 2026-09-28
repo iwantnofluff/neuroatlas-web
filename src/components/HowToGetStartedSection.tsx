@@ -232,7 +232,7 @@ export function HowToGetStartedSection() {
   }
 
   return (
-    <section className="bg-cream px-6 lg:px-10">
+    <section className="bg-cream px-6 max-md:hidden lg:px-10">
       <div className="mx-auto max-w-6xl pt-24 lg:pt-32">{heading}</div>
       {/* my-16/lg:my-24 is MARGIN, not padding — deliberately, per the
          step-1 timing bug this section already fixed once: useScroll's
