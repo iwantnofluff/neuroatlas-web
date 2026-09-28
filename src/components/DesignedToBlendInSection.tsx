@@ -74,7 +74,7 @@ export function DesignedToBlendInSection() {
     // track just makes the same expansion play out over less scroll
     // distance, not a different animation.
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[180vh]")}>
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
+      <div data-visual-section="designed-to-blend-in" className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
         {/* The cinematic slit — the real photo, object-cover so it
            always fills this box's current shape regardless of its
            in-flight aspect ratio as the clip-path expands. A scrim (not

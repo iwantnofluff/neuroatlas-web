@@ -456,6 +456,7 @@ export function TheSpecs() {
   return (
     <section
       ref={sectionRef}
+      data-visual-section="the-specs"
       // min-h-[max(100svh,820px)] — a real, confirmed bug this replaces:
       // `min-h-screen md:min-h-[820px]` doesn't combine the two the way
       // it reads — at md+ the second rule fully REPLACES the first

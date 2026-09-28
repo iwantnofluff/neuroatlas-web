@@ -14,6 +14,13 @@
 /coverage
 /.audit
 
+# Playwright — reports/traces are regenerated per run, not committed;
+# baseline snapshots (tests/**/*-snapshots/) ARE committed deliberately,
+# see docs/playwright-testing-spec.md Phase 4 on updating them.
+/playwright-report/
+/test-results/
+/blob-report/
+
 # next.js
 /.next/
 /out/

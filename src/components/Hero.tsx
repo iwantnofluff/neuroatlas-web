@@ -124,6 +124,7 @@ export function Hero({
   return (
     <section
       id="hero"
+      data-visual-section="hero"
       className="relative flex min-h-[100svh] flex-col items-center overflow-hidden bg-navy text-cream"
     >
       {/* Full-bleed background: a page-specific still (`heroImage`) takes

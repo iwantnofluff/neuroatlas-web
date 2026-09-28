@@ -40,6 +40,8 @@ export function ClosingCurtainSection() {
   return (
     <CurtainReveal
       curtainRef={curtainRef}
+      curtainSection="closing-curtain-front"
+      revealSection="closing-curtain-cta"
       curtainClassName="flex min-h-[100svh] flex-col items-center justify-center bg-cream px-6 text-center"
       curtain={
         <>

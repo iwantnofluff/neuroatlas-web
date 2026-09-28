@@ -210,7 +210,7 @@ export function MethodScrollCards() {
   const reduceMotion = useSafeReducedMotion();
 
   return (
-    <section id="the-method" className="dark-glow bg-navy-soft text-cream">
+    <section id="the-method" data-visual-section="the-method" className="dark-glow bg-navy-soft text-cream">
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
           <h2 className="text-center text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight sm:text-3xl lg:text-4xl">

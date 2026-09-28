@@ -218,7 +218,7 @@ export function HowToGetStartedSection() {
     // AlternatingStep means there's no `side` prop anywhere in this
     // branch, so it can't accidentally zigzag in a narrow column.
     return (
-      <section>
+      <section data-visual-section="how-to-get-started">
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           {heading}
           <div className="mx-auto mt-10 max-w-xl divide-y divide-navy/10">
@@ -249,7 +249,7 @@ export function HowToGetStartedSection() {
         className="relative my-16 lg:my-24"
         style={{ height: `${SCROLL_TRACK_VH}vh` }}
       >
-        <div className="sticky top-0 h-screen">
+        <div data-visual-section="how-to-get-started" className="sticky top-0 h-screen">
           {/* Centre column fixed at 240px — comfortably wider than the
              strap's ~99px on-screen width (see HowToGetStartedScene.tsx's
              FRAMING note) without being wide enough to read as its own

@@ -175,7 +175,7 @@ export function LeadershipDashboardSection() {
 
   if (isMobile) {
     return (
-      <section className="dark-glow bg-navy-soft text-cream">
+      <section data-visual-section="leadership-dashboard" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-6xl px-6 py-16 lg:px-10">
           {heading}
           <div className="relative mt-10 overflow-hidden rounded-3xl">
@@ -222,7 +222,7 @@ export function LeadershipDashboardSection() {
          renders at md+ (see the isMobile fallback above), but keeping
          the same svh convention here too costs nothing and avoids the
          exact same bug on a short tablet viewport. */}
-      <div className="sticky top-0 flex min-h-[100svh] items-center bg-navy-soft px-6 py-16 md:py-24 lg:px-10">
+      <div data-visual-section="leadership-dashboard" className="sticky top-0 flex min-h-[100svh] items-center bg-navy-soft px-6 py-16 md:py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 md:grid-cols-2 md:items-center">
           {heading}
           <div className="relative overflow-hidden rounded-3xl">

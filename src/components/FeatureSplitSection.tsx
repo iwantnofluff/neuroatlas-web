@@ -28,6 +28,11 @@ type FeatureSplitSectionProps = {
    *  the sizing utilities need overriding; `overflow-hidden` and
    *  `rounded-3xl` still apply underneath via cn()'s merge. */
   mediaClassName?: string;
+  /** `data-visual-section` value for the Playwright visual suite (see
+   *  docs/playwright-testing-spec.md), placed on the sticky inner
+   *  `<section>` this component pins — not on the tall outer scroll-track
+   *  div (`id`, above), which is mostly empty space at rest. */
+  sectionName?: string;
 };
 
 /** Enter → hold pacing shared by both halves below.
@@ -150,6 +155,7 @@ export function FeatureSplitSection({
   background,
   media,
   mediaClassName,
+  sectionName,
 }: FeatureSplitSectionProps) {
   const reduceMotion = useSafeReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -214,6 +220,7 @@ export function FeatureSplitSection({
          with its content there instead of clipping it; only the sideways
          slide still needs clipping. */}
       <section
+        data-visual-section={sectionName}
         className={cn(
           "sticky top-0 flex min-h-[100svh] w-full items-center overflow-x-clip md:h-[100svh] md:overflow-hidden",
           sectionClassName

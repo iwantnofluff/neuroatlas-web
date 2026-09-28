@@ -198,6 +198,7 @@ export function SignalVsNoiseSection() {
     // already reading as a quick cut rather than a gradual fade.
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[260vh]")}>
       <motion.div
+        data-visual-section="signal-vs-noise"
         style={{ backgroundColor }}
         className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden px-6 text-center"
       >

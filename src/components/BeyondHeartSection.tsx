@@ -250,7 +250,7 @@ function Ring({
 
 export function BeyondHeartSection() {
   return (
-    <section id="beyond-heart-rate" className="dark-glow bg-navy-soft text-cream">
+    <section id="beyond-heart-rate" data-visual-section="beyond-heart-rate" className="dark-glow bg-navy-soft text-cream">
       {/* min-h-screen + flex centering — a real, confirmed complaint
          this replaces: the previous py-24/py-32 block, plus a big
          mt-16 gap before the rings, plus an unconstrained aspect-square
