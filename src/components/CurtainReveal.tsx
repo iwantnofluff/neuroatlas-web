@@ -100,12 +100,20 @@ export function CurtainReveal({
   reveal,
   curtainClassName,
   revealClassName,
+  curtainSection,
+  revealSection,
 }: {
   curtainRef: RefObject<HTMLDivElement | null>;
   curtain: ReactNode;
   reveal: ReactNode;
   curtainClassName?: string;
   revealClassName?: string;
+  /** `data-visual-section` values for the Playwright visual suite (see
+   *  docs/playwright-testing-spec.md) — the curtain and the reveal are
+   *  two independent on-screen states of this same mechanism, so each
+   *  gets its own identifier rather than sharing one. */
+  curtainSection?: string;
+  revealSection?: string;
 }) {
   const reduceMotion = useSafeReducedMotion();
   const [metrics, setMetrics] = useState<{ overlap: number; height: number } | null>(null);
@@ -136,11 +144,14 @@ export function CurtainReveal({
 
   return (
     <>
-      <div ref={curtainRef} className={cn("relative z-10", curtainClassName)}>
+      <div ref={curtainRef} data-visual-section={curtainSection} className={cn("relative z-10", curtainClassName)}>
         {curtain}
       </div>
       <div style={wrapperStyle} className="relative">
-        <div className={cn("sticky top-0 h-[100svh] w-full overflow-hidden", revealClassName)}>
+        <div
+          data-visual-section={revealSection}
+          className={cn("sticky top-0 h-[100svh] w-full overflow-hidden", revealClassName)}
+        >
           {reveal}
         </div>
       </div>

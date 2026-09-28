@@ -1,8 +1,8 @@
-import { PlayCircle } from "lucide-react";
 import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
+import { HeroMedia } from "@/components/HeroMedia";
 import { FounderStorySection } from "@/components/FounderStorySection";
 import { LivePulseDot } from "@/components/LivePulseDot";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
@@ -92,10 +92,8 @@ export default function AboutPage() {
       </section>
 
       {/* 5. The Approach - an asymmetrical split matching
-          FounderStorySection's own layout and honest-placeholder
-          convention: no real product-in-use footage exists in this
-          codebase yet, so this holds a labelled aspect-video placeholder
-          rather than inventing one. */}
+          FounderStorySection's own layout, with the homepage banner's
+          band footage as the product-in-use visual. */}
       <section className="bg-cream">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-14">
@@ -117,16 +115,7 @@ export default function AboutPage() {
             <Parallax offset={20} className="md:w-1/2">
               <Reveal delay={0.1}>
                 <div className="relative aspect-video w-full overflow-hidden rounded-3xl card-glass-light">
-                  <div className="flex size-full flex-col items-center justify-center gap-3 text-navy/25">
-                    <PlayCircle
-                      strokeWidth={1}
-                      className="size-16"
-                      aria-hidden="true"
-                    />
-                    <span className="text-xs font-medium tracking-[-0.04em] text-navy/40 uppercase">
-                      Product in use
-                    </span>
-                  </div>
+                  <HeroMedia src="/video/hero-band.mp4" poster="/photos/hero-band.jpg" />
                 </div>
               </Reveal>
             </Parallax>

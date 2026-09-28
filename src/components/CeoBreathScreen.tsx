@@ -60,15 +60,15 @@ export function CeoBreathScreen({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn("relative flex size-full flex-col overflow-hidden", className)}
+      className={cn("relative flex size-full flex-col overflow-hidden [container-type:size]", className)}
       style={{ backgroundColor: "#080911" }}
     >
       {/* Status bar */}
-      <div className="flex items-center justify-between px-6 pt-3 text-[#f2f2f2]">
-        <span className="text-sm font-semibold tracking-tight">9:41</span>
-        <div className="flex items-center gap-1.5">
-          <Wifi className="size-3.5" />
-          <BatteryFull className="size-4" />
+      <div className="flex items-center justify-between px-[9cqw] pt-[4.5cqw] text-[#f2f2f2]">
+        <span className="text-[5.2cqw] font-semibold tracking-tight">9:41</span>
+        <div className="flex items-center gap-[2cqw]">
+          <Wifi className="size-[5.2cqw]" />
+          <BatteryFull className="size-[6cqw]" />
         </div>
       </div>
 
@@ -76,46 +76,46 @@ export function CeoBreathScreen({ className }: { className?: string }) {
           positioning over a centered flex row) so the back button and
           the progress segments sit in separate tracks and can never
           visually overlap, however narrow the phone renders. */}
-      <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center px-6">
+      <div className="mt-[6cqw] grid grid-cols-[1fr_auto_1fr] items-center px-[9cqw]">
         <button type="button" aria-label="Back" className="justify-self-start text-gold-soft">
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="size-[7.5cqw]" />
         </button>
-        <div className="flex items-center gap-2 justify-self-center">
+        <div className="flex items-center gap-[3cqw] justify-self-center">
           <span
-            className="h-1 w-5 rounded-full"
+            className="h-[1.5cqw] w-[7.5cqw] rounded-full"
             style={{ background: "linear-gradient(90deg, #998b6f, var(--color-gold))" }}
           />
           <span
-            className="h-1 w-5 rounded-full"
+            className="h-[1.5cqw] w-[7.5cqw] rounded-full"
             style={{ background: "linear-gradient(90deg, #998b6f, var(--color-gold))" }}
           />
-          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
-          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
-          <span className="h-1 w-5 rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-[1.5cqw] w-[7.5cqw] rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-[1.5cqw] w-[7.5cqw] rounded-full border border-black/20 bg-[#f2f2f2]/10" />
+          <span className="h-[1.5cqw] w-[7.5cqw] rounded-full border border-black/20 bg-[#f2f2f2]/10" />
         </div>
         <div />
       </div>
-      <div className="mt-4 border-b border-white/10" />
+      <div className="mt-[4.5cqw] border-b border-white/10" />
 
       {/* Title */}
-      <div className="mt-8 flex flex-col items-center gap-1 px-6 text-center">
-        <p className="text-2xl text-gold-soft">CEO Breath</p>
-        <p className="text-base font-light text-[#c6c7c9]">
+      <div className="mt-[7cqw] flex flex-col items-center gap-[1cqw] px-[9cqw] text-center">
+        <p className="text-[9cqw] leading-tight text-gold-soft">CEO Breath</p>
+        <p className="text-[5.8cqw] leading-snug font-light text-[#c6c7c9]">
           Stabilise heart rate, tone, and presence.
         </p>
       </div>
 
       {/* Breathing card */}
-      <div className="mx-6 mt-8 flex flex-col items-center gap-4 rounded-3xl bg-gold/10 px-3 pt-4 pb-2.5">
-        <p className="text-xs text-[#c6c7c9]">Authoritative Mode</p>
+      <div className="mx-[9cqw] mt-[6cqw] flex flex-col items-center gap-[4cqw] rounded-[9cqw] bg-gold/10 px-[4cqw] pt-[5cqw] pb-[4cqw]">
+        <p className="text-[4.5cqw] text-[#c6c7c9]">Authoritative Mode</p>
         <div className="h-px w-full bg-white/15" />
 
-        <div className="flex flex-col items-center gap-0.5">
-          <p className="font-serif text-2xl tracking-[0.3em] text-gold-soft">505</p>
-          <p className="text-[10px] font-light text-[#c6c7c9]">Inhale • Hold • Exhale</p>
+        <div className="flex flex-col items-center gap-[0.5cqw]">
+          <p className="font-serif text-[9cqw] leading-tight tracking-[0.3em] text-gold-soft">505</p>
+          <p className="text-[3.8cqw] font-light text-[#c6c7c9]">Inhale • Hold • Exhale</p>
         </div>
 
-        <div className="relative my-1 flex aspect-square w-[48%] items-center justify-center">
+        <div className="relative flex aspect-square w-[42%] items-center justify-center">
           <div
             className="absolute inset-0 rounded-full"
             style={{
@@ -158,24 +158,24 @@ export function CeoBreathScreen({ className }: { className?: string }) {
             }}
           />
           <div className="absolute inset-[24%] flex flex-col items-center justify-center">
-            <span className="font-serif text-sm leading-none text-[#f2f2f2] tabular-nums">
+            <span className="font-serif text-[5.2cqw] leading-none text-[#f2f2f2] tabular-nums">
               {secondsLeft}
             </span>
-            <span className="mt-0.5 text-[0.5rem] leading-none text-[#9b9c9d]">sec</span>
+            <span className="mt-[0.5cqw] text-[3cqw] leading-none text-[#9b9c9d]">sec</span>
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2.5 pb-1">
+        <div className="flex flex-col items-center gap-[3cqw]">
           <div className="flex flex-col items-center">
-            <p className="text-base font-light text-[#f2f2f2]">{phase.label}</p>
-            <p className="max-w-[220px] text-center text-xs text-[#5e6165]">{phase.body}</p>
+            <p className="text-[5.8cqw] leading-snug font-light text-[#f2f2f2]">{phase.label}</p>
+            <p className="max-w-[80cqw] text-center text-[4.5cqw] leading-snug text-[#5e6165]">{phase.body}</p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-[1.5cqw]">
             {PHASES.map((p, i) => (
               <span
                 key={p.label}
                 className={cn(
-                  "size-[7px] rounded-full transition-colors duration-300",
+                  "size-[2.6cqw] rounded-full transition-colors duration-300",
                   i === phaseIndex ? "bg-[#f2f2f2]" : "bg-[#f2f2f2]/20",
                 )}
               />
@@ -187,10 +187,10 @@ export function CeoBreathScreen({ className }: { className?: string }) {
       <div className="flex-1" />
 
       {/* Next button */}
-      <div className="px-6 pb-8">
+      <div className="px-[9cqw] pt-[4cqw] pb-[9cqw]">
         <button
           type="button"
-          className="w-full rounded-xl bg-gold-soft py-3 text-sm text-[#161410]"
+          className="w-full rounded-[4.5cqw] bg-gold-soft py-[4cqw] text-[5.2cqw] text-[#161410]"
         >
           Next
         </button>

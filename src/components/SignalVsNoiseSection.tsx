@@ -198,6 +198,7 @@ export function SignalVsNoiseSection() {
     // already reading as a quick cut rather than a gradual fade.
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[260vh]")}>
       <motion.div
+        data-visual-section="signal-vs-noise"
         style={{ backgroundColor }}
         className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden px-6 text-center"
       >
@@ -261,8 +262,8 @@ export function SignalVsNoiseSection() {
              iPhone 17 Pro Max mockup — a direct "make it life size,
              exactly the way it is in the Figma, interactive" request,
              replacing the earlier plain white placeholder card. */}
-          <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[56svh]">
-            <IPhoneMockup variant="pro-max" className="h-full">
+          <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[min(56svh,calc(100svh-22rem))]">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <EmotionalWheelScreen />
             </IPhoneMockup>
           </motion.div>

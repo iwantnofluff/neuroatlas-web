@@ -452,7 +452,7 @@ export function BandScrollShowcase() {
          hidden, so a real phone's actual visible area can be shorter than
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
+      <div data-visual-section="band-hero" className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_16%,transparent),transparent_70%)]"

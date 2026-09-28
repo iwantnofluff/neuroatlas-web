@@ -185,7 +185,7 @@ export function BuiltToReadYouSection() {
          hidden, so a real phone's actual visible area can be shorter than
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
-      <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
+      <div data-visual-section="the-band" className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
         {/* Two structurally DIFFERENT layouts below md vs. at/above it —
            not the same markup nudged with a transform. A previous pass
            tried shifting the desktop "sandwich" up as one rigid unit on

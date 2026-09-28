@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
 
@@ -8,15 +8,8 @@ import { Parallax } from "@/components/Parallax";
  * drift, the same wrapper the homepage already uses for its focal
  * panels), the narrative vertically centered on the other.
  *
- * No real founder photo exists in this codebase yet (confirmed: nothing
- * under public/photos or public/brand resembling a portrait) — this
- * renders an honest placeholder panel (a plain person glyph in a
- * portrait-ratio card) rather than inventing a fake one, the same
- * "real content over a generic box, honestly labelled" standard
- * FeatureSplitSection's own default media panel already holds itself to.
- * Swap the placeholder div below for a real <Image> once a photo exists;
- * everything else (the Parallax wrapper, the aspect ratio, the layout)
- * is already built around it.
+ * The portrait is a 2:3 photo in a 3:4 card; object-[50%_28%] keeps
+ * the face in the upper third of the frame as the crop trims height.
  *
  * `flex flex-col md:flex-row` — stacks on mobile and the whole foldable
  * tier, splits into the side-by-side editorial layout only at true
@@ -32,12 +25,13 @@ export function FounderStorySection() {
           <Parallax offset={20} className="md:w-1/2">
             <Reveal>
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl card-glass-light">
-                <div className="flex size-full flex-col items-center justify-center gap-3 text-navy/25">
-                  <User strokeWidth={1} className="size-16" aria-hidden="true" />
-                  <span className="text-xs font-medium tracking-[-0.04em] text-navy/40 uppercase">
-                    Founder portrait
-                  </span>
-                </div>
+                <Image
+                  src="/photos/founder-vanshika-dhoot.jpg"
+                  alt="Vanshika Dhoot, founder of NeuroAtlas"
+                  fill
+                  sizes="(min-width: 1152px) 551px, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover object-[50%_28%]"
+                />
               </div>
             </Reveal>
           </Parallax>

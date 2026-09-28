@@ -109,7 +109,7 @@ export function OneSignalSection() {
          block's top edge can never sit above pt-24 (96px) regardless of
          how little slack centering leaves, comfortably clearing the
          header with margin to spare. */}
-      <div className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pt-24 pb-12 text-center">
+      <div data-visual-section="one-signal" className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pt-24 pb-12 text-center">
         <motion.h2
           style={{ scale }}
           // clamp(), not a bare text-[12vw] — 12vw alone runs away to an

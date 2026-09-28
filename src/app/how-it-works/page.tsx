@@ -137,6 +137,7 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
+        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none"
         media={
           <div className="card-glass-light flex size-full items-center justify-center p-6">
             <VitalsDashboard />
@@ -171,9 +172,8 @@ export default function HowItWorksPage() {
         mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup className="h-full">
+            <IPhoneMockup interactive className="h-full">
               <div
-                data-lenis-prevent
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                   backgroundImage:

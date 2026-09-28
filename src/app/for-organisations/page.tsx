@@ -67,13 +67,14 @@ export default function ForOrganisationsPage() {
         subhead="Pressure affects decisions long before it shows up as a resignation letter or a sick day. NeuroAtlas gives leadership a way to see that pattern early and act on it."
         ctas={[{ label: "Book A Presentation", href: "/contact" }]}
         heroImage="/photos/for-organisations-hero.png"
+        heroImageClassName="object-[72%_50%] md:object-center"
       />
       <HeroBoundary />
 
       {/* 2. The cost of burnout - Count-Up Kinetics on the three stat
           cards below, each animating from 0 once it scrolls into view
           (see CountUp.tsx). */}
-      <section className="dark-glow bg-navy-soft text-cream">
+      <section data-visual-section="burnout-stats" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-4xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
@@ -126,7 +127,7 @@ export default function ForOrganisationsPage() {
           demonstrated directly via a tactile toggle (see
           DataPrivacyToggle.tsx) rather than described in a static bullet
           list. */}
-      <section>
+      <section data-visual-section="data-privacy">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
@@ -162,7 +163,7 @@ export default function ForOrganisationsPage() {
       <HowToGetStartedSection />
 
       {/* 6. The business case */}
-      <section className="dark-glow bg-navy-soft text-cream">
+      <section data-visual-section="business-case" className="dark-glow bg-navy-soft text-cream">
         <Reveal
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
           y={20}
@@ -188,7 +189,7 @@ export default function ForOrganisationsPage() {
       </section>
 
       {/* 7. Security, compliance and data ownership */}
-      <section>
+      <section data-visual-section="security-compliance">
         <Reveal
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
           y={20}
@@ -223,7 +224,7 @@ export default function ForOrganisationsPage() {
       </section>
 
       {/* 8. Downloadable overview */}
-      <section id="download-overview" className="dark-glow bg-navy-soft text-cream">
+      <section id="download-overview" data-visual-section="download-overview" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
@@ -244,7 +245,7 @@ export default function ForOrganisationsPage() {
           ClosingCurtainSection's curtain-reveal mechanic (that component
           is purpose-built for /band's own scroll choreography, not a
           general-purpose "two closing options" layout). */}
-      <section className="dark-glow bg-navy text-cream">
+      <section data-visual-section="closing-cta" className="dark-glow bg-navy text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">

@@ -108,13 +108,13 @@ export function Header() {
           NeuroAtlas
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-8 xl:flex">
           {primaryNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm transition-[color,text-shadow] duration-300",
+                "whitespace-nowrap text-sm transition-[color,text-shadow] duration-300",
                 "hover:[text-shadow:0_0_14px_color-mix(in_oklab,var(--color-gold)_65%,transparent)]",
                 "focus-visible:[text-shadow:0_0_14px_color-mix(in_oklab,var(--color-gold)_65%,transparent)]",
                 // A light gold reads fine over the dark hero, but is too
@@ -143,17 +143,17 @@ export function Header() {
           }
           shimmerColor={scrolled ? "var(--color-gold-deep)" : "var(--color-cream)"}
           className={cn(
-            // lg:inline-flex, not lg:flex — this specifically needs to
-            // override the base `hidden` (display:none) at the lg
+            // xl:inline-flex, not xl:flex — this specifically needs to
+            // override the base `hidden` (display:none) at the xl
             // breakpoint, and tailwind-merge drops the root's own base
             // `inline-flex` in favor of this same-bucket `hidden` (no
-            // variant prefix on either), so this lg-scoped override is
-            // still required even though the root defaults to
-            // inline-flex now — without it the button would just stay
-            // hidden past lg too. Keeping it `inline-flex` specifically
-            // (not `flex`) is what keeps this content-sized rather than
-            // stretching to fill the header's flex row.
-            "hidden py-2.5 text-sm tracking-wide lg:inline-flex",
+            // variant prefix on either), so this xl-scoped override is
+            // still required. Keeping it `inline-flex` specifically (not
+            // `flex`) is what keeps this content-sized rather than
+            // stretching to fill the header's flex row. xl, not lg: at
+            // 1024px the seven links, logo and button touched with no
+            // space between them.
+            "hidden py-2.5 text-sm tracking-wide xl:inline-flex",
             scrolled ? "text-navy" : "text-cream"
           )}
         >
@@ -166,7 +166,7 @@ export function Header() {
               type="button"
               aria-label="Open menu"
               className={cn(
-                "btn-glass-icon size-9 lg:hidden",
+                "btn-glass-icon size-9 xl:hidden",
                 scrolled ? "text-navy" : "text-cream"
               )}
             >

@@ -62,6 +62,7 @@ export default function Home() {
           from Hero into this section lands edge-to-edge. */}
       <section
         id="the-problem"
+        data-visual-section="the-problem"
         className="flex min-h-[100svh] flex-col justify-center px-6 py-16 lg:px-10 lg:py-20"
       >
         <div className="mx-auto w-full max-w-6xl">
@@ -137,9 +138,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* The method — pinned scroll reveal (see MethodScrollCards.tsx):
-          card 1 appears on the first scroll into the section, card 2 on
-          the next, card 3 on the one after that, then the pin releases. */}
+      {/* Stress Age — intro, three Stress Age states in the Spaced Arch
+          (see MethodScrollCards.tsx), and the "not your biological age"
+          disclaimer. */}
       <MethodScrollCards />
 
       {/* The NA·01 band — cinematic sticky-scroll WebGL section (see
@@ -149,7 +150,7 @@ export default function Home() {
       <BuiltToReadYouSection />
 
       {/* Inside the app */}
-      <section id="app-teaser" className="dark-glow bg-navy-soft text-cream">
+      <section id="app-teaser" data-visual-section="app-teaser" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <div className="grid items-center gap-14 lg:grid-cols-2">
             {/* Four tiles floating loose in the column — no framing box
@@ -249,7 +250,7 @@ export default function Home() {
           same light-section convention: text-navy for headings, text-mist
           for body copy, rather than the text-cream/cream-75 pairing a
           dark section uses. */}
-      <section id="privacy">
+      <section id="privacy" data-visual-section="privacy">
         <div className="mx-auto max-w-4xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-32">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
@@ -304,6 +305,7 @@ export default function Home() {
           to it. */}
       <section
         id="how-different"
+        data-visual-section="how-different"
         // z-0, not just `relative` alone — a real, confirmed bug this
         // fixes: `position: relative` with no explicit z-index does NOT
         // establish a new stacking context on its own, so this section's
@@ -336,7 +338,7 @@ export default function Home() {
           alt=""
           fill
           sizes="100vw"
-          className="-z-10 object-cover object-center"
+          className="-z-10 object-cover object-[41%_50%] md:object-center"
         />
         {/* Left-to-right legibility gradient — transparent over the
            hardware itself (photographed left-of-center), solid toward
@@ -390,6 +392,7 @@ export default function Home() {
           hardware goes unseen by removing it from here specifically. */}
       <section
         id="founder"
+        data-visual-section="founder"
         // z-0, not just `relative` alone — see "how-different"'s own
         // identical fix just above for the full mechanics: without an
         // explicit z-index, `position: relative` doesn't create a real
@@ -450,7 +453,7 @@ export default function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section id="closing-cta" className="dark-glow bg-navy-soft text-cream">
+      <section id="closing-cta" data-visual-section="closing-cta" className="dark-glow bg-navy-soft text-cream">
         <Reveal
           className="mx-auto max-w-3xl px-6 py-16 md:py-24 text-center lg:px-10 lg:py-28"
           y={20}

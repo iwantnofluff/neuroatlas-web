@@ -34,7 +34,7 @@ export function BuiltOnNeuroscienceSection() {
         alt=""
         fill
         sizes="100vw"
-        className="object-cover"
+        className="object-cover object-[62%_50%] md:object-center"
       />
       <div aria-hidden="true" className="absolute inset-0 bg-navy-soft/55" />
       <div

@@ -88,6 +88,9 @@ type HeroProps = {
    *  passed through to HeroMedia's own `image` prop, and takes priority
    *  over HERO_VIDEO_SRC when set. */
   heroImage?: string;
+  /** Focal point for `heroImage` where a portrait phone crop would
+   *  otherwise cut its subject, e.g. "object-[72%_50%] md:object-center". */
+  heroImageClassName?: string;
 };
 
 /**
@@ -106,6 +109,7 @@ export function Hero({
   tagline,
   ctas = DEFAULT_CTAS,
   heroImage,
+  heroImageClassName,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
   // comment) — [headline] with no split at all when there's no "\n",
@@ -120,6 +124,7 @@ export function Hero({
   return (
     <section
       id="hero"
+      data-visual-section="hero"
       className="relative flex min-h-[100svh] flex-col items-center overflow-hidden bg-navy text-cream"
     >
       {/* Full-bleed background: a page-specific still (`heroImage`) takes
@@ -130,6 +135,7 @@ export function Hero({
         src={heroImage ? undefined : HERO_VIDEO_SRC}
         poster="/photos/hero-band.jpg"
         image={heroImage}
+        className={heroImageClassName}
         reduceMotion={reduceMotion}
       />
 
@@ -318,15 +324,19 @@ export function Hero({
         )}
       </div>
 
+      {/* Framer owns only the one-off fade-in here. The perpetual bounce
+         is a CSS animation (.hero-scroll-cue in globals.css) on the inner
+         circle, not a Framer `repeat: Infinity` loop — a JS loop costs a
+         main-thread callback every frame for as long as the hero is
+         mounted, a CSS animation doesn't, which matters on low-end
+         Android and integrated-GPU laptops. Same 0 → 6px → 0 over 1.8s,
+         measured against the Framer version; reduced motion holds it at
+         rest via the stylesheet's own media query. */}
       <motion.div
         aria-hidden="true"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: reduceMotion ? 0 : [0, 6, 0] }}
-        transition={
-          reduceMotion
-            ? { duration: 0.5, delay: 1 }
-            : { opacity: { delay: 1, duration: 0.5 }, y: { repeat: Infinity, duration: 1.8, ease: "easeInOut" } }
-        }
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1 }}
         className="relative mb-8 flex justify-center"
       >
         {/* A real, confirmed fidelity bug this replaces: a bare icon at
@@ -341,7 +351,7 @@ export function Hero({
            than faded on its own. hover: proves it reads as interactive
            even though it's still purely decorative (aria-hidden,
            no onClick) — a visual affordance, not new behavior. */}
-        <div className="flex size-11 items-center justify-center rounded-full border border-cream/40 text-cream transition-all duration-300 hover:border-cream hover:bg-cream/5">
+        <div className="hero-scroll-cue flex size-11 items-center justify-center rounded-full border border-cream/40 text-cream transition-[border-color,background-color] duration-300 hover:border-cream hover:bg-cream/5">
           <ChevronDown className="size-5" />
         </div>
       </motion.div>

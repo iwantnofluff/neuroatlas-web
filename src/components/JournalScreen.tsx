@@ -101,7 +101,6 @@ export function JournalScreen({ className }: { className?: string }) {
       />
 
       <div
-        data-lenis-prevent
         className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="relative flex items-center justify-between px-[6.11cqw] pt-[3cqw] text-[#f2f2f2]">

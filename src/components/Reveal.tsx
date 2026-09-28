@@ -11,8 +11,15 @@ type RevealProps = {
   delay?: number;
   /** Starting vertical offset in px. */
   y?: number;
-  /** Root element — "li" when used inside a <ul>/<ol>. */
-  as?: "div" | "li";
+  /** Root element — "li" when used inside a <ul>/<ol>, "section" when
+   *  this Reveal IS a page's top-level section rather than content
+   *  nested inside one. */
+  as?: "div" | "li" | "section";
+  /** `data-visual-section` value for the Playwright visual suite (see
+   *  docs/playwright-testing-spec.md) — only meaningful when this
+   *  Reveal's root doubles as a page section (`as="section"`, or any
+   *  top-level usage a screenshot should be able to target directly). */
+  sectionName?: string;
 };
 
 /**
@@ -61,13 +68,15 @@ export function Reveal({
   delay = 0,
   y = 24,
   as = "div",
+  sectionName,
 }: RevealProps) {
   const reduceMotion = useSafeReducedMotion();
-  const MotionTag = as === "li" ? motion.li : motion.div;
+  const MotionTag = as === "li" ? motion.li : as === "section" ? motion.section : motion.div;
 
   return (
     <MotionTag
       className={className}
+      data-visual-section={sectionName}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}

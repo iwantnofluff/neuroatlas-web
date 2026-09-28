@@ -1,9 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import type { CSSProperties } from "react";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
-import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 // Concentric-rings "radar" infographic, replacing the previous bento
 // grid (which itself replaced an EARLIER concentric-rings version — a
@@ -160,19 +159,22 @@ const RINGS = [
  *  get wrong the way a hand-rolled dashoffset-vs-circumference
  *  calculation would require.
  *
- *  `initial={{ rotate: startAngle }}` -> `animate={{ rotate:
- *  startAngle + 360 }}` is the standard "seamless infinite spin"
- *  trick: a full 360° turn ends up looking IDENTICAL to where it
- *  started, so `repeat: Infinity`'s own reset-to-initial-value at the
- *  top of each loop is visually imperceptible — it never actually
- *  "snaps back", it just keeps going.
+ *  The spin is a CSS animation (.ring-pulse in globals.css), not a
+ *  Framer `repeat: Infinity` loop: a perpetual JS animation costs a
+ *  main-thread callback every frame for the life of the page, a CSS
+ *  one doesn't — which matters on low-end Android and integrated-GPU
+ *  laptops. Same motion as before, measured, not assumed: 18°/s (a
+ *  full turn per 20s, linear), zero centre drift (spins in place), and
+ *  each ring's own phase offset preserved via --ring-start. A full
+ *  360° turn looks identical to where it started, so the loop never
+ *  visibly snaps back.
  *
- *  reduceMotion collapses the transition to `duration: 0` rather than
- *  omitting the animation altogether — it still resolves to the same
- *  `animate` target (startAngle + 360, which looks identical to
- *  startAngle), so each ring shows one static gold arc at its own
- *  offset angle: a meaningful, deliberately-still frame of the same
- *  animation, not a different, conditionally-rendered element.
+ *  Reduced motion leaves each arc at its own --ring-start angle: one
+ *  static gold arc per ring at its offset, the same still frame the
+ *  animation passes through. The media query reacts to the preference
+ *  natively, so the old remount-on-hydration workaround (Framer
+ *  ignored a later reduced-motion change to an in-flight loop) is gone
+ *  with the JS loop that needed it.
  *
  * The pulse itself is a real gradient "comet" now, not a solid-color
  * dash — matching the client's own reference: the same travelling-light
@@ -196,12 +198,10 @@ function Ring({
   radius,
   startAngle,
   gradientId,
-  reduceMotion,
 }: {
   radius: number;
   startAngle: number;
   gradientId: string;
-  reduceMotion: boolean;
 }) {
   const circumference = 2 * Math.PI * radius;
   const arcLength = circumference * ARC_FRACTION;
@@ -231,23 +231,8 @@ function Ring({
       {/* Base ring — a full, solid, faint circle (not dashed): the
          "track" the pulse travels along. */}
       <circle cx={CX} cy={CY} r={radius} fill="none" stroke="#F4EFE6" strokeOpacity={0.14} strokeWidth={0.5} />
-      <motion.circle
-        // key toggles a full remount on reduceMotion change — a real,
-        // confirmed bug this replaces: useSafeReducedMotion() is always
-        // false on the very first render by design (the SSR-hydration-
-        // safe convention every reduced-motion check in this codebase
-        // uses), so this animation's 20s/Infinity transition already
-        // started before React ever re-rendered with the real value.
-        // Once framer-motion has an animation in flight, changing only
-        // the `transition` prop on a later render — the target `animate`
-        // VALUE never changes here, only its timing — doesn't interrupt
-        // it; confirmed live via two screenshots 2s apart under
-        // prefers-reduced-motion: reduce, both showing the arcs having
-        // visibly moved. Keying by reduceMotion forces React to treat
-        // it as a brand-new element the instant reduceMotion resolves,
-        // discarding whatever was already animating and mounting fresh
-        // with the correct (frozen) transition from the start.
-        key={reduceMotion ? "static" : "spinning"}
+      <circle
+        className="ring-pulse"
         cx={CX}
         cy={CY}
         r={radius}
@@ -257,24 +242,15 @@ function Ring({
         strokeLinecap="round"
         strokeDasharray={pulseDash}
         filter="url(#pulse-glow)"
-        style={{ transformBox: "fill-box", transformOrigin: "center" }}
-        initial={{ rotate: startAngle }}
-        animate={{ rotate: startAngle + 360 }}
-        transition={
-          reduceMotion
-            ? { duration: 0 }
-            : { duration: 20, repeat: Infinity, ease: "linear" }
-        }
+        style={{ "--ring-start": `${startAngle}deg` } as CSSProperties}
       />
     </>
   );
 }
 
 export function BeyondHeartSection() {
-  const reduceMotion = useSafeReducedMotion();
-
   return (
-    <section id="beyond-heart-rate" className="dark-glow bg-navy-soft text-cream">
+    <section id="beyond-heart-rate" data-visual-section="beyond-heart-rate" className="dark-glow bg-navy-soft text-cream">
       {/* min-h-screen + flex centering — a real, confirmed complaint
          this replaces: the previous py-24/py-32 block, plus a big
          mt-16 gap before the rings, plus an unconstrained aspect-square
@@ -290,8 +266,11 @@ export function BeyondHeartSection() {
          pb-0 unchanged, so the min-h-screen + justify-center balance
          this whole block's own comment describes is untouched — a
          smaller top pad on mobile only ever gives the centered content
-         MORE room, never less. */}
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-0 md:pt-24 lg:px-10 lg:pt-32">
+         MORE room, never less. Below md the rings give way to a stacked
+         card list that runs past one viewport, so pb-16 gives its last
+         card room before the next section; md:pb-0 keeps the desktop
+         balance above. */}
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-16 md:pt-24 md:pb-0 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate
@@ -378,7 +357,6 @@ export function BeyondHeartSection() {
                 radius={ring.radius}
                 startAngle={ring.startAngle}
                 gradientId={`pulse-gradient-${ring.key}`}
-                reduceMotion={reduceMotion}
               />
             ))}
           </svg>

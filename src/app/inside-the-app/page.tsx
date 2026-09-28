@@ -35,51 +35,59 @@ export const metadata = { title: "Inside the app - NeuroAtlas" };
 export default function InsideTheAppPage() {
   return (
     <main>
-      {/* 1. Hero */}
-      {/* pt-24 md:pt-32 lg:pt-48 (was a flat pt-40, unprefixed - 160px
-         of top padding on every mobile screen regardless of width,
-         confirmed real via audit: this codebase's own homepage already
-         steps its section padding up progressively (py-16 md:py-24
-         lg:py-32, see page.tsx), this page's hero just hadn't been
-         brought in line with that same pattern). */}
-      <div className="mx-auto max-w-3xl px-6 pt-24 pb-16 text-center md:pt-32 lg:px-10 lg:pt-48">
-        <Reveal y={20}>
-          <p className="eyebrow">Inside The App</p>
-          <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-navy lg:text-5xl">
-            This Is Where It Actually Happens
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
-            Every reading turns into something you can act on. The app reads
-            your data, runs the right reset, and shows you it worked.
-          </p>
-        </Reveal>
-      </div>
-      {/* Real "Sleep" detail screen (Figma node 15348:17273), life-size
-         inside an iPhone 17 Pro Max — replaces AppScreenMock's generic
-         placeholder for this page's own hero media. h-[62svh]/68svh/74svh
-         mirrors the same tiered sizing every other phone-mockup section
-         on this site already uses (see /how-it-works' own HrvDetailCard/
-         CeoBreathScreen sections). */}
-      <Reveal delay={0.1} y={20} className="flex justify-center px-6 pb-20 lg:pb-24">
-        <IPhoneMockup
-          variant="pro-max"
-          className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
-        >
-          <div
-            data-lenis-prevent
-            className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{
-              backgroundImage:
-                "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
-              backgroundColor: "var(--color-navy)",
-            }}
+      {/* 1. Hero — one section, not two independent top-level siblings:
+         the headline block and the phone-mockup media below it are one
+         logical hero beat (this page's own "1. Hero" comment already
+         called it that), just never had a shared wrapping element.
+         data-visual-section (see docs/playwright-testing-spec.md) needs
+         exactly one element per section to target, which is the actual
+         reason this now has a real <section> around both. */}
+      <section data-visual-section="hero">
+        {/* pt-24 md:pt-32 lg:pt-48 (was a flat pt-40, unprefixed - 160px
+           of top padding on every mobile screen regardless of width,
+           confirmed real via audit: this codebase's own homepage already
+           steps its section padding up progressively (py-16 md:py-24
+           lg:py-32, see page.tsx), this page's hero just hadn't been
+           brought in line with that same pattern). */}
+        <div className="mx-auto max-w-3xl px-6 pt-24 pb-16 text-center md:pt-32 lg:px-10 lg:pt-48">
+          <Reveal y={20}>
+            <p className="eyebrow">Inside The App</p>
+            <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-navy lg:text-5xl">
+              This Is Where It Actually Happens
+            </h1>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
+              Every reading turns into something you can act on. The app reads
+              your data, runs the right reset, and shows you it worked.
+            </p>
+          </Reveal>
+        </div>
+        {/* Real "Sleep" detail screen (Figma node 15348:17273), life-size
+           inside an iPhone 17 Pro Max — replaces AppScreenMock's generic
+           placeholder for this page's own hero media. h-[62svh]/68svh/74svh
+           mirrors the same tiered sizing every other phone-mockup section
+           on this site already uses (see /how-it-works' own HrvDetailCard/
+           CeoBreathScreen sections). */}
+        <Reveal delay={0.1} y={20} className="flex justify-center px-6 pb-20 lg:pb-24">
+          <IPhoneMockup
+            variant="pro-max"
+            interactive
+            className="h-[62svh] sm:h-[68svh] lg:h-[74svh]"
           >
-            <SleepDetailCard />
-          </div>
-        </IPhoneMockup>
-      </Reveal>
+            <div
+              className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              style={{
+                backgroundImage:
+                  "linear-gradient(230deg, color-mix(in oklab, var(--color-gold-deep) 20%, transparent) 4%, rgba(16,17,23,0.04) 68%)",
+                backgroundColor: "var(--color-navy)",
+              }}
+            >
+              <SleepDetailCard />
+            </div>
+          </IPhoneMockup>
+        </Reveal>
+      </section>
 
-      <section id="train">
+      <section id="train" data-visual-section="train">
         <div className="mx-auto max-w-5xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20}>
             <p className="eyebrow">Train</p>
@@ -133,6 +141,7 @@ export default function InsideTheAppPage() {
 
       <FeatureSplitSection
         heading="Your Day At A Glance"
+        sectionName="your-day-at-a-glance"
         imageSide="right"
         background="navy-soft"
         // Same tiered height override every other life-size phone
@@ -154,9 +163,8 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <div
-                data-lenis-prevent
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                   backgroundImage:
@@ -174,6 +182,7 @@ export default function InsideTheAppPage() {
       {/* 3. The NeuroLibrary */}
       <FeatureSplitSection
         heading="Find What Fits"
+        sectionName="find-what-fits"
         imageSide="left"
         background="cream"
         body={
@@ -189,18 +198,11 @@ export default function InsideTheAppPage() {
           </>
         }
         media={
-          // grid-cols-1 md:grid-cols-2 - this panel is FeatureSplitSection's
-          // own fixed aspect-square/overflow-hidden media box, sitting
-          // inside a pinned h-[100svh] section: below `lg` that box's
-          // actual pixel size is genuinely small (a mobile viewport's own
-          // width, minus this section's own px-6), so a single column of
-          // 6 tiles needs real vertical room that 3 rows of 2 didn't —
-          // p-4/gap-2/py-3 (down from p-8/gap-3/py-4) below `md` is what
-          // actually keeps all 6 tiles inside that fixed box without the
-          // last one or two clipping against its own overflow-hidden,
-          // confirmed live via screenshot at a real mobile width, not
-          // assumed from the class change alone.
-          <div className="grid size-full grid-cols-1 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
+          // Two columns at every width: this panel is FeatureSplitSection's
+          // fixed aspect-square/overflow-hidden media box, and six tiles in
+          // one column clipped the last tile at a 344px fold cover. Three
+          // rows of two fit that square with room to spare.
+          <div className="grid size-full grid-cols-2 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
             {[
               "Breathing",
               "Focus Reset",
@@ -231,6 +233,7 @@ export default function InsideTheAppPage() {
       <FeatureSplitSection
         eyebrow="Boardroom Mode"
         heading="Composure On Demand"
+        sectionName="composure-on-demand"
         imageSide="right"
         background="navy"
         mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
@@ -248,7 +251,7 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <ComposureAlignmentScreen />
             </IPhoneMockup>
           </div>
@@ -260,7 +263,7 @@ export default function InsideTheAppPage() {
          FeatureSplitSection treatment. */}
       {/* py-16 md:py-24 lg:py-32 (was a flat py-24) - same progressive
          step every other section on this page now uses. */}
-      <div className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
+      <section data-visual-section="journal-teaser" className="mx-auto grid max-w-5xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2 lg:px-10 lg:py-32">
         <Reveal y={20} className="text-center lg:text-left">
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
             A Minute Before The Day Moves On
@@ -272,15 +275,16 @@ export default function InsideTheAppPage() {
           </p>
         </Reveal>
         <Reveal delay={0.1} y={20} className="flex justify-center">
-          <IPhoneMockup variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
+          <IPhoneMockup interactive variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
             <ClarityProtocolScreen />
           </IPhoneMockup>
         </Reveal>
-      </div>
+      </section>
 
       {/* 6. Progress tracking */}
       <FeatureSplitSection
         heading="The Long View"
+        sectionName="the-long-view"
         imageSide="left"
         background="navy-soft"
         mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
@@ -297,7 +301,7 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup variant="pro-max" className="h-full">
+            <IPhoneMockup interactive variant="pro-max" className="h-full">
               <JournalScreen />
             </IPhoneMockup>
           </div>
@@ -306,6 +310,8 @@ export default function InsideTheAppPage() {
 
       {/* 8. Availability */}
       <Reveal
+        as="section"
+        sectionName="availability"
         className="mx-auto max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32"
         y={20}
       >
@@ -332,7 +338,7 @@ export default function InsideTheAppPage() {
       </Reveal>
 
       {/* 9. Closing CTA */}
-      <section className="dark-glow bg-navy-soft text-cream">
+      <section data-visual-section="closing-cta" className="dark-glow bg-navy-soft text-cream">
         <Reveal
           className="mx-auto max-w-2xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-28"
           y={20}

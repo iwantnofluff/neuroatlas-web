@@ -149,7 +149,6 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
       </div>
 
       <div
-        data-lenis-prevent
         className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
       <div className="relative mx-auto mt-[9.67cqw] flex aspect-square w-[58.78cqw] items-center justify-center">
