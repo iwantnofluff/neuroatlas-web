@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 type HeroMediaProps = {
   /** Real footage goes here once it's ready — e.g. "/video/hero-band.mp4".
@@ -23,8 +24,8 @@ type HeroMediaProps = {
    *  `autoPlay` on the <video> tag itself has no awareness of the media
    *  query, so without this the background video ignored reduced-motion
    *  entirely — confirmed live, a real gap the rest of this codebase
-   *  doesn't have anywhere else. Omit (or false) for the default
-   *  autoplay/loop background video. */
+   *  doesn't have anywhere else. Omit to follow the visitor's own
+   *  reduced-motion setting (useSafeReducedMotion). */
   reduceMotion?: boolean;
 };
 
@@ -35,8 +36,10 @@ type HeroMediaProps = {
  * its own component so that swap never touches Hero.tsx's layout — see
  * HERO_VIDEO_SRC at the top of Hero.tsx.
  */
-export function HeroMedia({ src, poster, image, className, reduceMotion = false }: HeroMediaProps) {
+export function HeroMedia({ src, poster, image, className, reduceMotion: reduceMotionProp }: HeroMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const prefersReducedMotion = useSafeReducedMotion();
+  const reduceMotion = reduceMotionProp ?? prefersReducedMotion;
 
   useEffect(() => {
     const video = videoRef.current;

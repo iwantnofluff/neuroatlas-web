@@ -266,8 +266,11 @@ export function BeyondHeartSection() {
          pb-0 unchanged, so the min-h-screen + justify-center balance
          this whole block's own comment describes is untouched — a
          smaller top pad on mobile only ever gives the centered content
-         MORE room, never less. */}
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-0 md:pt-24 lg:px-10 lg:pt-32">
+         MORE room, never less. Below md the rings give way to a stacked
+         card list that runs past one viewport, so pb-16 gives its last
+         card room before the next section; md:pb-0 keeps the desktop
+         balance above. */}
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 pt-16 pb-16 md:pt-24 md:pb-0 lg:px-10 lg:pt-32">
         <Reveal y={20} className="text-center">
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
             Beyond Heart Rate
