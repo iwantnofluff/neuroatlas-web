@@ -143,6 +143,7 @@ export function IPhoneMockup({
         {/* Screen */}
         <div
           ref={screenRef}
+          data-device-screen
           data-mockup-screen={interactive ? (engaged ? "engaged" : "idle") : undefined}
           className="relative size-full overflow-hidden rounded-[10%] bg-black"
         >

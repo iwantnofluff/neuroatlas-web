@@ -624,3 +624,36 @@
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-gold) 55%, transparent); }
   50% { opacity: 0.6; box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-gold) 0%, transparent); }
 }
+
+/* Phone type scale. Below sm the desktop ramp read oversized and cramped
+   at 320-430px (30px section headings, 36-48px page titles, 18px body),
+   so every step from text-lg up is scaled down here, once, keeping the
+   hierarchy intact; sm: and wider sizes are untouched. Screens inside a
+   phone mockup keep the full ramp, since they depict a real phone. */
+@media (max-width: 639px) {
+  :root {
+    --text-lg: 1rem;
+    --text-lg--line-height: 1.65;
+    --text-xl: 1.125rem;
+    --text-xl--line-height: 1.5;
+    --text-2xl: 1.3125rem;
+    --text-3xl: 1.625rem;
+    --text-4xl: 1.875rem;
+    --text-5xl: 2.25rem;
+    --text-6xl: 2.625rem;
+    --text-7xl: 3rem;
+  }
+
+  [data-device-screen] {
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+  }
+}

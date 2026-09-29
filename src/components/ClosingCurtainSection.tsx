@@ -46,7 +46,7 @@ export function ClosingCurtainSection() {
       curtain={
         <>
           <Reveal y={20} className="mx-auto max-w-4xl">
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] text-navy">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-[clamp(2.125rem,9vw,6rem)] sm:text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] text-navy">
               Another Device To Charge And Wear?
             </h2>
           </Reveal>
