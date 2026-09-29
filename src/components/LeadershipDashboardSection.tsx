@@ -53,17 +53,16 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
-/** Even hold-then-reveal quarters, same shape as EditorialIndexSection's
- *  own CARD_WINDOWS (see that file's doc comment for the full mechanics)
- *  — metric `i` holds invisible through every earlier metric's own
- *  reveal, then gets its own slice of the track to ease in and settle
- *  before the next one starts, so a reader who stops anywhere mid-scroll
- *  always sees a coherent, already-settled state, never a half-revealed
- *  row. */
+/** Reveal windows across the pinned track. The first row is already
+ *  fully revealed at progress 0 (its window ends there), so the card never
+ *  opens empty; the rest follow in equal slices and all finish by 80% of
+ *  the track, leaving a settled hold before the pin releases. */
+const REVEAL_END = 0.8;
+const IDLE_OPACITY = 0.28;
+
 function windowFor(index: number, total: number) {
-  const start = index / total;
-  const end = (index + 1) / total;
-  return { start, end };
+  const slice = REVEAL_END / (total - 1);
+  return { start: (index - 1) * slice, end: index * slice };
 }
 
 /** Ties this row's own numeric readout to the SAME scroll progress
@@ -80,7 +79,7 @@ function useCountFromProgress(
   target: number,
   reduceMotion: boolean
 ) {
-  const [display, setDisplay] = useState(reduceMotion ? target : 0);
+  const [display, setDisplay] = useState(reduceMotion || end <= 0 ? target : 0);
   useMotionValueEvent(progress, "change", (p) => {
     if (reduceMotion) return;
     const eased = clamp01((p - start) / (end - start));
@@ -102,7 +101,7 @@ function DashboardRow({
 }) {
   const { start, end } = windowFor(index, METRICS.length);
   const eased = (p: number) => (reduceMotion ? 1 : clamp01((p - start) / (end - start)));
-  const opacity = useTransform(progress, (p) => eased(p));
+  const opacity = useTransform(progress, (p) => IDLE_OPACITY + (1 - IDLE_OPACITY) * eased(p));
   const x = useTransform(progress, (p) => (reduceMotion ? 0 : 20 * (1 - eased(p))));
   // The floating annotation badge gets its own, slightly delayed-reading
   // pop (scale + a small lift) on top of the row's own fade — the
