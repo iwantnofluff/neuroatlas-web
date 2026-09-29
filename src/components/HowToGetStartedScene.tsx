@@ -642,6 +642,55 @@ const MODULE_KICKER_INTENSITY = 1.8;
 const MODULE_RAKE_POSITION: readonly [number, number, number] = [3.5, 1, 1.2];
 const MODULE_RAKE_INTENSITY = 1.4;
 
+// The brand mark is engraved into the module's front bar in band.glb
+// (confirmed against logo-mark.svg: same shape and orientation), 6.9mm
+// square, centred on the origin, cut 0.25mm deep from the bar's Z 6.9mm
+// face. This section's camera is orthographic and dead-on, so the groove
+// floor and the bar face shade identically and the edge-on walls cover no
+// pixels: the engraving vanished. The groove's own triangles are split
+// out and rendered darker and matte, so the mark reads exactly where it
+// is cut rather than as a separate decal.
+const ENGRAVING_HALF_EXTENT = 0.0036;
+const ENGRAVING_FLOOR_Z = 0.0063;
+const ENGRAVING_FACE_Z = 0.00685;
+const ENGRAVING_MATERIAL_PROPS = {
+  color: "#010a1c",
+  roughness: 0.85,
+  metalness: 0.35,
+  side: THREE.DoubleSide,
+} as const;
+
+/** Splits a shell geometry into the logo groove's triangles and the rest,
+ *  sharing the original attributes. `engraving` is null when the geometry
+ *  has no triangles inside the engraving volume. */
+function splitEngraving(geometry: THREE.BufferGeometry) {
+  const index = geometry.index;
+  const position = geometry.attributes.position;
+  if (!index) return { base: geometry, engraving: null };
+  const base: number[] = [];
+  const engraving: number[] = [];
+  for (let t = 0; t < index.count; t += 3) {
+    const a = index.getX(t), b = index.getX(t + 1), c = index.getX(t + 2);
+    const cx = (position.getX(a) + position.getX(b) + position.getX(c)) / 3;
+    const cy = (position.getY(a) + position.getY(b) + position.getY(c)) / 3;
+    const cz = (position.getZ(a) + position.getZ(b) + position.getZ(c)) / 3;
+    const inGroove =
+      Math.abs(cx) < ENGRAVING_HALF_EXTENT &&
+      Math.abs(cy) < ENGRAVING_HALF_EXTENT &&
+      cz > ENGRAVING_FLOOR_Z &&
+      cz < ENGRAVING_FACE_Z;
+    (inGroove ? engraving : base).push(a, b, c);
+  }
+  if (engraving.length === 0) return { base: geometry, engraving: null };
+  const withIndex = (indices: number[]) => {
+    const part = new THREE.BufferGeometry();
+    for (const [name, attribute] of Object.entries(geometry.attributes)) part.setAttribute(name, attribute);
+    part.setIndex(indices);
+    return part;
+  };
+  return { base: withIndex(base), engraving: withIndex(engraving) };
+}
+
 /** The module's own meshes, rendered directly rather than through
  *  <Band> — that component unconditionally applies BASE_ROTATION
  *  internally, which this section's whole premise rules out. Same
@@ -665,13 +714,21 @@ function ModulePiece() {
     nodes: Record<string, THREE.Mesh>;
   };
   const { shellMeshes, hardwareMeshes } = useModuleMeshes(nodes);
+  const shellParts = useMemo(() => shellMeshes.map((mesh) => splitEngraving(mesh.geometry)), [shellMeshes]);
 
   return (
     <>
-      {shellMeshes.map((mesh, i) => (
-        <mesh key={`shell-${i}`} geometry={mesh.geometry}>
-          <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
-        </mesh>
+      {shellParts.map(({ base, engraving }, i) => (
+        <group key={`shell-${i}`}>
+          <mesh geometry={base}>
+            <meshStandardMaterial {...SHELL_MATERIAL_PROPS} />
+          </mesh>
+          {engraving && (
+            <mesh geometry={engraving}>
+              <meshStandardMaterial {...ENGRAVING_MATERIAL_PROPS} />
+            </mesh>
+          )}
+        </group>
       ))}
       {hardwareMeshes.map((mesh, i) => {
         const materialProps =
