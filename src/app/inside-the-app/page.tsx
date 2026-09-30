@@ -179,48 +179,47 @@ export default function InsideTheAppPage() {
         }
       />
 
-      {/* 3. The NeuroLibrary */}
-      <FeatureSplitSection
-        heading="Find What Fits"
-        sectionName="find-what-fits"
-        imageSide="left"
-        background="cream"
-        body={
-          <>
-            <p className="text-pretty">
-              The NeuroLibrary brings together toolkits and drills designed
-              for different moments, so you can quickly find an intervention
-              that fits what you need.
-            </p>
-            <p className="mt-4 text-pretty text-base italic text-mist/80">
-              The right tool, right when you need it.
-            </p>
-          </>
-        }
-        media={
-          // Two columns at every width: this panel is FeatureSplitSection's
-          // fixed aspect-square/overflow-hidden media box, and six tiles in
-          // one column clipped the last tile at a 344px fold cover. Three
-          // rows of two fit that square with room to spare.
-          <div className="grid size-full grid-cols-2 gap-2 rounded-2xl border border-gold-soft/20 bg-navy p-4 md:grid-cols-2 md:gap-3 md:p-8">
-            {[
-              "Breathing",
-              "Focus Reset",
-              "Pre-Meeting",
-              "Recovery",
-              "Sleep Wind-Down",
-              "Quick Reset",
-            ].map((category) => (
-              <div
-                key={category}
-                className="flex items-center justify-center rounded-xl border border-gold-soft/40 bg-cream/10 px-3 py-3 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-gold hover:bg-cream/15 hover:text-cream hover:shadow-xl hover:shadow-black/30 md:py-4"
-              >
-                {category}
-              </div>
-            ))}
-          </div>
-        }
-      />
+      {/* 3. The NeuroLibrary - a full-width stack (copy above, the six
+          categories as one wide row) rather than another image-and-text
+          split: the one section on this page that isn't a phone. */}
+      <section data-visual-section="find-what-fits">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <Reveal y={20} className="mx-auto max-w-2xl text-center">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
+              Find What Fits
+            </h2>
+            <div className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
+              <p className="text-pretty">
+                The NeuroLibrary brings together toolkits and drills designed
+                for different moments, so you can quickly find an intervention
+                that fits what you need.
+              </p>
+              <p className="mt-4 text-pretty text-base italic text-mist/80">
+                The right tool, right when you need it.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1} y={20} className="mt-12 lg:mt-16">
+            <ul className="grid grid-cols-2 gap-3 rounded-3xl border border-gold-soft/20 bg-navy p-4 sm:grid-cols-3 md:p-6 lg:grid-cols-6 lg:gap-4">
+              {[
+                "Breathing",
+                "Focus Reset",
+                "Pre-Meeting",
+                "Recovery",
+                "Sleep Wind-Down",
+                "Quick Reset",
+              ].map((category) => (
+                <li
+                  key={category}
+                  className="flex min-h-20 items-center justify-center rounded-2xl border border-gold-soft/40 bg-cream/10 px-3 py-5 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:border-gold [@media(hover:hover)]:hover:bg-cream/15 [@media(hover:hover)]:hover:text-cream md:min-h-24"
+                >
+                  {category}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </section>
 
       {/* 4. Boardroom Mode - the one flagship, full-navy section, same as
          the original pass: the copy itself calls this out as the feature
