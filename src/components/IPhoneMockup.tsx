@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Pointer } from "lucide-react";
+import { ExploreCue } from "@/components/ExploreCue";
 import { cn } from "@/lib/utils";
 
 type WheelEventWithLenis = WheelEvent & { lenisStopPropagation?: boolean };
@@ -39,8 +39,10 @@ function canScrollInside(target: EventTarget | null, root: HTMLElement, deltaY: 
  * the physical case ratio (close but not identical, since bezel
  * proportions differ from the pixel grid).
  *
- * `interactive` marks a screen visitors can play with. It shows a
- * "Tap to explore" cue and uses click-to-engage, like an embedded map:
+ * `interactive` marks a screen visitors can play with. It shows an
+ * ExploreCue outside the phone (beside it on `cueSide` from xl, below it
+ * otherwise; any clipping media box must allow overflow) and uses
+ * click-to-engage, like an embedded map:
  * until the phone is tapped, clicked or focused (click, not pointerdown:
  * a touch swipe also starts with pointerdown, and must scroll the page),
  * its inner scroll areas
@@ -56,11 +58,15 @@ export function IPhoneMockup({
   className,
   variant = "pro",
   interactive = false,
+  cueSide = "right",
+  cueSideFrom = "xl",
 }: {
   children: React.ReactNode;
   className?: string;
   variant?: "pro" | "pro-max";
   interactive?: boolean;
+  cueSide?: "left" | "right";
+  cueSideFrom?: "md" | "xl";
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
@@ -152,28 +158,13 @@ export function IPhoneMockup({
           {/* Dynamic Island */}
           <div className="absolute top-[1.6%] left-1/2 h-[3%] w-[28%] -translate-x-1/2 rounded-full bg-black" />
 
-          {interactive && (
-            <div
-              aria-hidden="true"
-              className={cn(
-                "pointer-events-none absolute inset-x-0 bottom-[5%] z-20 flex justify-center transition-opacity duration-300",
-                engaged ? "opacity-0" : "opacity-100"
-              )}
-            >
-              <span className="flex items-center gap-1.5 rounded-full border border-gold-soft/35 bg-navy/75 px-3 py-1.5 text-[11px] tracking-wide whitespace-nowrap text-cream shadow-[0_8px_24px_-8px_rgba(0,0,0,0.6)] backdrop-blur-md">
-                <span className="mockup-cue-dot size-1.5 rounded-full bg-gold" />
-                <Pointer className="size-3.5 text-gold-soft" />
-                <span className="[@media(hover:hover)]:hidden">Tap to explore</span>
-                <span className="hidden [@media(hover:hover)]:inline">Click to explore</span>
-              </span>
-            </div>
-          )}
-
           {/* Home indicator — #F4F0E9 is an exact match for
               --color-cream, reused rather than hardcoded again. */}
           <div className="absolute bottom-[1%] left-1/2 h-[0.4%] w-[32%] -translate-x-1/2 rounded-full bg-cream" />
         </div>
       </div>
+
+      {interactive && <ExploreCue side={cueSide} sideFrom={cueSideFrom} hidden={engaged} />}
     </div>
   );
 }

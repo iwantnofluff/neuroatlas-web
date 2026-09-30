@@ -9,6 +9,7 @@ import { HrvDetailCard } from "@/components/HrvDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { CeoBreathScreen } from "@/components/CeoBreathScreen";
 import { StressAgeCard } from "@/components/StressAgeCard";
+import { Explorable } from "@/components/ExploreCue";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -137,11 +138,13 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
-        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none"
+        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none overflow-visible max-md:mb-16"
         media={
-          <div className="card-glass-light flex size-full items-center justify-center p-6">
-            <VitalsDashboard />
-          </div>
+          <Explorable className="size-full">
+            <div className="card-glass-light flex size-full items-center justify-center p-6">
+              <VitalsDashboard />
+            </div>
+          </Explorable>
         }
       />
 
@@ -169,7 +172,7 @@ export default function HowItWorksPage() {
         body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
         imageSide="right"
         background="navy"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh] overflow-visible max-xl:mb-16"
         media={
           <div className="flex size-full items-center justify-center">
             <IPhoneMockup interactive className="h-full">
@@ -243,11 +246,13 @@ export default function HowItWorksPage() {
         body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and help you manage it."
         imageSide="left"
         background="cream"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh] overflow-visible max-md:mb-16"
         media={
-          <div className="card-glass-light flex size-full items-center justify-center p-6">
-            <StressAgeCard />
-          </div>
+          <Explorable className="size-full">
+            <div className="card-glass-light flex size-full items-center justify-center p-6">
+              <StressAgeCard />
+            </div>
+          </Explorable>
         }
       />
 

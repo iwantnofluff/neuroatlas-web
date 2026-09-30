@@ -149,7 +149,7 @@ export default function InsideTheAppPage() {
         // HrvDetailCard/CeoBreathScreen sections) — the shared square
         // aspect-ratio this component's media panel defaults to would
         // otherwise crop or squash a tall iPhone frame.
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh] overflow-visible max-xl:mb-16"
         body={
           <>
             <p className="text-pretty">
@@ -236,7 +236,7 @@ export default function InsideTheAppPage() {
         sectionName="composure-on-demand"
         imageSide="right"
         background="navy"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh] overflow-visible max-xl:mb-16"
         body={
           <>
             <p className="text-pretty">
@@ -274,7 +274,7 @@ export default function InsideTheAppPage() {
             the picture.
           </p>
         </Reveal>
-        <Reveal delay={0.1} y={20} className="flex justify-center">
+        <Reveal delay={0.1} y={20} className="flex justify-center max-xl:pb-16">
           <IPhoneMockup interactive variant="pro-max" className="h-[62svh] sm:h-[68svh] lg:h-[74svh]">
             <ClarityProtocolScreen />
           </IPhoneMockup>
@@ -287,7 +287,7 @@ export default function InsideTheAppPage() {
         sectionName="the-long-view"
         imageSide="left"
         background="navy-soft"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[64svh] md:w-auto md:max-h-none lg:h-[68svh] overflow-visible max-xl:mb-16"
         body={
           <>
             <p className="text-pretty">
@@ -301,7 +301,7 @@ export default function InsideTheAppPage() {
         }
         media={
           <div className="flex size-full items-center justify-center">
-            <IPhoneMockup interactive variant="pro-max" className="h-full">
+            <IPhoneMockup interactive cueSide="left" variant="pro-max" className="h-full">
               <JournalScreen />
             </IPhoneMockup>
           </div>
