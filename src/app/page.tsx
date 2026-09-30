@@ -347,6 +347,7 @@ export default function Home() {
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent to-navy/80"
         />
+        <div aria-hidden="true" className="banner-text-scrim -z-10 lg:[--scrim-x:72%]" />
         {/* Supplemental scrim below `lg` — matches the text block's own
            `lg:ml-auto` breakpoint below: until the text actually shifts
            into the clear right-side negative space at `lg`, it sits
@@ -424,7 +425,8 @@ export default function Home() {
            own; the wash just gives it a guaranteed safety margin over
            the texture's own lighter mid-band, without flattening the
            mesh pattern into invisibility. */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/45" />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/55" />
+        <div aria-hidden="true" className="banner-text-scrim -z-10" />
 
         <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal

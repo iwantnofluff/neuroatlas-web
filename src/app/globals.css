@@ -657,3 +657,31 @@
     --text-7xl: 4.5rem;
   }
 }
+
+/* Legibility wash for text set over photos or video. The flat tints and
+   top/bottom gradients on these banners fade out mid-frame, exactly where
+   the copy sits, so this adds a soft navy ellipse centred on the text.
+   --scrim-x moves it for off-centre copy; phones get a taller, wider
+   ellipse because the copy wraps into more lines there. */
+.banner-text-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 72% 58% at var(--scrim-x, 50%) var(--scrim-y, 50%),
+    color-mix(in oklab, var(--color-navy-deep) 70%, transparent) 0%,
+    color-mix(in oklab, var(--color-navy-deep) 42%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+@media (max-width: 639px) {
+  .banner-text-scrim {
+    background: radial-gradient(
+      ellipse 120% 62% at var(--scrim-x, 50%) var(--scrim-y, 50%),
+      color-mix(in oklab, var(--color-navy-deep) 70%, transparent) 0%,
+      color-mix(in oklab, var(--color-navy-deep) 42%, transparent) 60%,
+      transparent 100%
+    );
+  }
+}

@@ -94,7 +94,8 @@ export function DesignedToBlendInSection() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-navy/50" />
+          <div className="absolute inset-0 bg-navy/60" />
+          <div className="banner-text-scrim" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"

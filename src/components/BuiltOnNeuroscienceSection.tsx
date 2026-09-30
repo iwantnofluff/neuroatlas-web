@@ -36,11 +36,12 @@ export function BuiltOnNeuroscienceSection() {
         sizes="100vw"
         className="object-cover object-[62%_50%] md:object-center"
       />
-      <div aria-hidden="true" className="absolute inset-0 bg-navy-soft/55" />
+      <div aria-hidden="true" className="absolute inset-0 bg-navy-soft/60" />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-b from-navy-soft/80 via-transparent to-navy-soft/90"
       />
+      <div aria-hidden="true" className="banner-text-scrim" />
 
       <div className="relative mx-auto w-full max-w-3xl px-6 py-16 text-center md:py-24 lg:px-10 lg:py-32">
         <Reveal y={20}>
