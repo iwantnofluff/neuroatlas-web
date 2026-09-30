@@ -27,8 +27,7 @@ export default function PricingPage() {
       <section className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-2xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <Reveal y={20} className="card-glass bg-transparent p-8 text-center lg:p-12">
-            <p className="eyebrow">Future Pricing</p>
-            <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
               The Foundation Pilot
             </h2>
 

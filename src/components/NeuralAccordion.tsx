@@ -72,8 +72,7 @@ function AccordionPanel({
         isActive ? "flex-[3] border-gold/40" : "flex-1"
       )}
     >
-      <span className="eyebrow">{`0${index + 1}`}</span>
-      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl whitespace-normal text-cream sm:text-2xl">
+      <h3 className="text-balance font-serif font-normal uppercase tracking-normal text-xl whitespace-normal text-cream sm:text-2xl">
         {system.label}
       </h3>
       <AnimatePresence>

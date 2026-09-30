@@ -7,6 +7,7 @@ export default function RequestAccessPage() {
     <PlaceholderPage
       eyebrow="Request access"
       title="Apply for access"
+      hideRequestAccess
       body="This is an application, not a sign-up. The short form - name, role, organisation, sector and reason for interest - along with the invite-code entry point, is being built next."
     />
   );

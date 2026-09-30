@@ -48,8 +48,7 @@ export default function AboutPage() {
       <section className="dark-glow bg-navy text-cream">
         <div className="mx-auto flex min-h-[60vh] max-w-4xl flex-col items-center justify-center px-6 py-24 text-center lg:px-10">
           <Reveal y={20}>
-            <p className="eyebrow">The Core Belief</p>
-            <h2 className="mt-6 text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1]">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1]">
               What Stress Actually Costs You Over Time
             </h2>
             <p className="mx-auto mt-8 max-w-xl text-pretty text-lg text-cream/70">
@@ -98,8 +97,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-14">
             <Reveal y={20} className="md:w-1/2">
-              <p className="eyebrow">The Approach</p>
-              <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl leading-tight text-navy">
+              <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl leading-tight text-navy">
                 Technology That Meets The Human Element
               </h2>
               <p className="mt-6 text-pretty text-lg text-mist">

@@ -125,6 +125,19 @@
   --chart-3: oklch(0.442 0.017 285.786);
   --chart-4: oklch(0.37 0.013 285.805);
   --chart-5: oklch(0.274 0.006 286.033);
+  /* Corner-radius scale (one rule, used everywhere outside device screens):
+     - Interactive controls are full pills (rounded-full): every button,
+       icon button, chip, toggle track and single-line input.
+     - Cards and panels are rounded-2xl (1.35rem): glass cards, stat and
+       feature cards, the dashboard tiles' outer panel.
+     - Large media frames are rounded-3xl (1.65rem): photo, video and
+       mockup containers.
+     - Multi-line and multi-field forms use rounded-lg (0.6rem) fields,
+       since a textarea cannot be a pill (ContactForm keeps its single-line
+       fields at the same radius so the form reads as one set).
+     - Screens inside IPhoneMockup follow the app's own Figma radii in cqw
+       units and are exempt; so is the phone bezel itself.
+     Everything derives from --radius via the --radius-* steps in @theme. */
   --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
@@ -683,5 +696,44 @@
       color-mix(in oklab, var(--color-navy-deep) 42%, transparent) 60%,
       transparent 100%
     );
+  }
+}
+
+/* Reduced transparency: blur and see-through fills go, and every glass
+   surface that carries text becomes an opaque fill of the colour it
+   visibly resolved to, so contrast no longer depends on what scrolls
+   behind it. The translucent-white utility fills are only used on glass
+   surfaces over dark sections (bg-white/50 and /20 over cream), so they
+   are matched here by class rather than tagging each component. */
+@media (prefers-reduced-transparency: reduce) {
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+  }
+
+  .card-glass {
+    background: color-mix(in oklab, var(--color-cream) 12%, var(--color-navy-soft));
+  }
+
+  .bento-glass {
+    background: var(--color-navy);
+  }
+
+  .bg-white\/5,
+  .bg-white\/10,
+  .bg-cream\/10 {
+    background-color: color-mix(in oklab, var(--color-cream) 10%, var(--color-navy-soft)) !important;
+  }
+
+  .bg-white\/20,
+  .bg-white\/50 {
+    background-color: var(--color-cream-deep) !important;
+  }
+
+  .bg-navy\/85,
+  .bg-navy\/90,
+  .bg-navy-soft\/95 {
+    background-color: var(--color-navy) !important;
   }
 }
