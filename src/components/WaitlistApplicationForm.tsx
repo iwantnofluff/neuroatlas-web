@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
 import { Reveal } from "@/components/Reveal";
 import Link from "next/link";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { cn } from "@/lib/utils";
+import { useFormSubmit } from "@/lib/useFormSubmit";
+import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 
 const FIELDS = [
   { id: "name", label: "Name", type: "text", autoComplete: "name", required: true },
@@ -25,28 +26,7 @@ const LABEL_CLASS = "text-xs tracking-[0.15em] text-cream/60 uppercase";
  * with an inline error, so nothing they typed is lost.
  */
 export function WaitlistApplicationForm() {
-  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
-  const submittingRef = useRef(false);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (submittingRef.current) return;
-    submittingRef.current = true;
-    setStatus("submitting");
-    const data = { ...Object.fromEntries(new FormData(event.currentTarget)), source: "waitlist-page" };
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      setStatus(response.ok ? "done" : "error");
-    } catch {
-      setStatus("error");
-    } finally {
-      submittingRef.current = false;
-    }
-  }
+  const { status, submitting, onSubmit } = useFormSubmit("/api/waitlist", { source: "waitlist-page" });
 
   if (status === "done") {
     return (
@@ -73,8 +53,6 @@ export function WaitlistApplicationForm() {
     );
   }
 
-  const submitting = status === "submitting";
-
   return (
     <div className="card-glass bg-transparent p-6 sm:p-8 lg:p-10">
       <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-2xl leading-tight text-cream lg:text-3xl">
@@ -83,7 +61,7 @@ export function WaitlistApplicationForm() {
       <p className="mt-4 text-pretty text-base text-cream/75">
         Fill in your details below and we&rsquo;ll keep you updated on NeuroAtlas.
       </p>
-    <form onSubmit={handleSubmit} className="relative mt-8 grid gap-4 text-left">
+    <form onSubmit={onSubmit} className="relative mt-8 grid gap-4 text-left">
       <div className="grid gap-4 sm:grid-cols-2">
         {FIELDS.map((field) => (
           <div key={field.id} className={cn(field.id === "sector" && "sm:col-span-2")}>
@@ -107,13 +85,10 @@ export function WaitlistApplicationForm() {
         </label>
         <textarea id="waitlist-reason" name="reason" rows={4} className={cn(FIELD_CLASS, "resize-none")} />
       </div>
-      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-        <label htmlFor="waitlist-company-website">Company website</label>
-        <input id="waitlist-company-website" name="company_website" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
+      <FormHoneypot id="waitlist-company-website" />
       {status === "error" && (
         <p role="alert" className="text-pretty text-sm text-[#f0a0ae]">
-          Something went wrong and your details were not sent. Please try again.
+          {FORM_ERROR_MESSAGE}
         </p>
       )}
       <ShimmerButton

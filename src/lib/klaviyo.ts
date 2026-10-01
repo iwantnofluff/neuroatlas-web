@@ -13,13 +13,16 @@ export type WaitlistSignup = {
 
 export class KlaviyoConfigError extends Error {}
 
-function config() {
-  const apiKey = process.env.KLAVIYO_PRIVATE_API_KEY;
-  const listId = process.env.KLAVIYO_WAITLIST_LIST_ID;
-  if (!apiKey || !listId) {
-    throw new KlaviyoConfigError("KLAVIYO_PRIVATE_API_KEY and KLAVIYO_WAITLIST_LIST_ID must be set");
-  }
-  return { apiKey, listId };
+function apiKey() {
+  const key = process.env.KLAVIYO_PRIVATE_API_KEY;
+  if (!key) throw new KlaviyoConfigError("KLAVIYO_PRIVATE_API_KEY must be set");
+  return key;
+}
+
+function listId(name: "KLAVIYO_WAITLIST_LIST_ID" | "KLAVIYO_NEWSLETTER_LIST_ID") {
+  const id = process.env[name];
+  if (!id) throw new KlaviyoConfigError(`${name} must be set`);
+  return id;
 }
 
 async function klaviyo(path: string, apiKey: string, body: unknown) {
@@ -46,6 +49,30 @@ function splitName(name?: string) {
   return { first_name: parts[0], ...(parts.length > 1 && { last_name: parts.slice(1).join(" ") }) };
 }
 
+/** Adds an email to a list with email marketing consent, which Klaviyo
+ *  timestamps. The subscribe endpoint accepts no profile properties. */
+async function subscribe(key: string, email: string, list: string) {
+  await klaviyo("/profile-subscription-bulk-create-jobs", key, {
+    data: {
+      type: "profile-subscription-bulk-create-job",
+      attributes: {
+        profiles: {
+          data: [
+            {
+              type: "profile",
+              attributes: {
+                email,
+                subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } },
+              },
+            },
+          ],
+        },
+      },
+      relationships: { list: { data: { type: "list", id: list } } },
+    },
+  });
+}
+
 /**
  * Adds a waitlist signup to Klaviyo in two calls, because the subscribe
  * endpoint accepts no profile properties:
@@ -53,11 +80,11 @@ function splitName(name?: string) {
  *    details (role as `title`, organisation as `organization`, sector,
  *    reason and source as custom properties). Omitted fields are left
  *    untouched on an existing profile.
- * 2. `profile-subscription-bulk-create-jobs` adds the email to the waitlist
- *    list with email marketing consent, which Klaviyo timestamps.
+ * 2. The email is subscribed to the waitlist list.
  */
 export async function addToWaitlist(signup: WaitlistSignup) {
-  const { apiKey, listId } = config();
+  const key = apiKey();
+  const list = listId("KLAVIYO_WAITLIST_LIST_ID");
   const properties = Object.fromEntries(
     Object.entries({
       waitlist_sector: signup.sector,
@@ -66,7 +93,7 @@ export async function addToWaitlist(signup: WaitlistSignup) {
     }).filter(([, value]) => value)
   );
 
-  await klaviyo("/profile-import", apiKey, {
+  await klaviyo("/profile-import", key, {
     data: {
       type: "profile",
       attributes: {
@@ -79,23 +106,36 @@ export async function addToWaitlist(signup: WaitlistSignup) {
     },
   });
 
-  await klaviyo("/profile-subscription-bulk-create-jobs", apiKey, {
+  await subscribe(key, signup.email, list);
+}
+
+/** Subscribes an email to the newsletter list. `source` (footer, journal)
+ *  is recorded on the profile as `newsletter_source`. */
+export async function addToNewsletter(email: string, source: string) {
+  const key = apiKey();
+  const list = listId("KLAVIYO_NEWSLETTER_LIST_ID");
+  await klaviyo("/profile-import", key, {
+    data: { type: "profile", attributes: { email, properties: { newsletter_source: source } } },
+  });
+  await subscribe(key, email, list);
+}
+
+/**
+ * Records a contact form enquiry as a "Submitted Contact Form" event on
+ * the sender's profile (created if new), with the message as an event
+ * property. No marketing consent is given: an enquiry is not a newsletter
+ * signup. A Klaviyo flow triggered by this metric can email the team an
+ * internal alert. Needs the API key's Events scope.
+ */
+export async function recordContactEnquiry(enquiry: { email: string; name?: string; message: string }) {
+  await klaviyo("/events", apiKey(), {
     data: {
-      type: "profile-subscription-bulk-create-job",
+      type: "event",
       attributes: {
-        profiles: {
-          data: [
-            {
-              type: "profile",
-              attributes: {
-                email: signup.email,
-                subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } },
-              },
-            },
-          ],
-        },
+        properties: { message: enquiry.message, name: enquiry.name ?? "", source: "contact-page" },
+        metric: { data: { type: "metric", attributes: { name: "Submitted Contact Form" } } },
+        profile: { data: { type: "profile", attributes: { email: enquiry.email, ...splitName(enquiry.name) } } },
       },
-      relationships: { list: { data: { type: "list", id: listId } } },
     },
   });
 }
