@@ -8,11 +8,7 @@ import { MethodScrollCards } from "@/components/MethodScrollCards";
 import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
-import { BodySilhouette } from "@/components/BodySilhouette";
-import { BreathingCard } from "@/components/BreathingCard";
-import { SyncRingCard } from "@/components/SyncRingCard";
-import { GlowOrbCard } from "@/components/GlowOrbCard";
-import { cn } from "@/lib/utils";
+import { AppTeaserVitals } from "@/components/AppTeaserVitals";
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
 // client's latest full pass over the homepage content doc.
@@ -30,19 +26,6 @@ import { cn } from "@/lib/utils";
 // the first time. Not a claim that tile 1 is the semantically right
 // card, only the right shape for a tall vector.
 //
-const floatTiles = [
-  {
-    className: "top-0 left-0 h-[42%] w-[46%] -rotate-6",
-    breathingCard: true,
-  },
-  { className: "top-[6%] right-0 h-[52%] w-[42%] rotate-3", silhouette: true },
-  { className: "bottom-0 left-[12%] h-[38%] w-[36%] rotate-6", syncRing: true },
-  {
-    className: "right-[4%] bottom-[4%] h-[34%] w-[40%] -rotate-3",
-    glowOrb: true,
-  },
-];
-
 const trustPoints = [
   "Nothing leaves your account without your permission.",
   "Enterprise dashboards show only aggregate trends, never individual results.",
@@ -153,53 +136,14 @@ export default function Home() {
       <section id="app-teaser" data-visual-section="app-teaser" className="dark-glow bg-navy-soft text-cream">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
           <div className="grid items-center gap-14 lg:grid-cols-2">
-            {/* Four tiles floating loose in the column — no framing box
-                around them any more (per the client's sketch: "Float
-                Boxes"). Same treatment as MethodScrollCards' three cards:
-                .card-glass's own edge (border + inset-highlight glow)
-                with bg-transparent overriding its tinted fill, rather
-                than a filled panel — these are meant to read as loose
-                floating outlines, not solid tiles. Scattered at slightly
-                different sizes/positions/rotations rather than a tidy
-                grid, which is what actually reads as "floating". */}
+            {/* Four vitals tiles from the app (see AppTeaserVitals.tsx),
+                floating loose in the column at slight rotations rather
+                than a tidy grid. */}
             <Parallax
               offset={24}
               className="relative aspect-square w-full max-w-md justify-self-center"
             >
-              {floatTiles.map((tile, i) => (
-                <Reveal
-                  key={i}
-                  delay={i * 0.1}
-                  y={16}
-                  className={cn(
-                    "card-glass absolute bg-transparent transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:bg-gold/10",
-                    tile.className,
-                  )}
-                >
-                  {tile.silhouette && (
-                    // Background layer, not the card's content — the
-                    // full node (body + six sensor-point hexes), sized
-                    // by height only (width follows from its own real
-                    // aspect ratio) and centered on both axes, so it
-                    // reads as inset within the card rather than filling
-                    // it. Opacity is NOT applied here: the body and each
-                    // hex marker already carry their own distinct
-                    // opacities inside the component (0.3 for the body,
-                    // 0.1-0.2 for the hexes), matching Figma exactly —
-                    // an outer opacity would flatten that difference.
-                    <BodySilhouette className="pointer-events-none absolute inset-0 m-auto aspect-[168.26/396] h-[72%] w-auto" />
-                  )}
-                  {tile.breathingCard && (
-                    <BreathingCard className="pointer-events-none absolute inset-0" />
-                  )}
-                  {tile.syncRing && (
-                    <SyncRingCard className="pointer-events-none absolute inset-0 m-auto h-[80%] w-auto" />
-                  )}
-                  {tile.glowOrb && (
-                    <GlowOrbCard className="pointer-events-none absolute inset-0 m-auto h-[75%] w-auto" />
-                  )}
-                </Reveal>
-              ))}
+              <AppTeaserVitals />
             </Parallax>
             {/* Copy: the block itself centers within the column, but the
                 text inside it stays left-aligned rather than each line
