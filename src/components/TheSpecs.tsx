@@ -16,6 +16,7 @@ import { useIsMobile } from "@/lib/useIsMobile";
 import { Reveal } from "@/components/Reveal";
 import { TheSpecsSceneClient } from "@/components/TheSpecsSceneClient";
 import type { SpecKey } from "@/lib/specAnchors";
+import { ExploreCue } from "@/components/ExploreCue";
 
 // Values are all placeholders pending the real spec doc — this exists to
 // give the section its real shape now (the Leader Line Annotation system)
@@ -647,6 +648,15 @@ export function TheSpecs() {
          that's the layout a plain list needs; it doesn't join the
          absolutely-positioned layer the desktop annotation system
          above lives in. */}
+      {/* The spec nodes are only clickable from md (mobile shows a plain
+         list), so the cue is too: one badge at the foot of the band,
+         its leader line pointing up, gone after the first spec click. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-[7%] z-20 hidden md:block">
+        <div className="relative mx-auto h-0 w-0 -translate-y-14">
+          <ExploreCue hidden={pulseKey > 0} />
+        </div>
+      </div>
+
       {isMobile && (
         <div className="relative z-10 flex flex-col gap-4 px-6 pt-10 pb-16">
           {specs.map((spec) => {

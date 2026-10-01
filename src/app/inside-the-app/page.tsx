@@ -343,15 +343,15 @@ export default function InsideTheAppPage() {
           y={20}
         >
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-            Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
+            Composure Isn&rsquo;t A Personality Trait. It&rsquo;s Trained.
           </h2>
           <ShimmerLink
-            href="/request-access"
+            href="/waitlist"
             background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
             shimmerColor="var(--color-cream)"
             className="mt-8 text-sm tracking-wide text-cream"
           >
-            Request Access
+            Join The Waitlist
           </ShimmerLink>
         </Reveal>
       </section>

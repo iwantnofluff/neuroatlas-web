@@ -14,7 +14,7 @@ const EMPHASIS_WORD = "First";
 const SUBHEAD = "Know when pressure is building, and reset before it takes over.";
 
 const DEFAULT_CTAS: HeroCta[] = [
-  { label: "Enquire Now", href: "/request-access" },
+  { label: "Enquire Now", href: "/waitlist" },
   { label: "Book A Pilot", href: "/for-organisations" },
 ];
 
@@ -41,6 +41,8 @@ const wordItem = {
 type HeroCta = { label: string; href: string };
 
 type HeroProps = {
+  /** An empty string drops the eyebrow (e.g. /waitlist, whose headline
+   *  already names NeuroAtlas). */
   eyebrow?: string;
   /** A literal "\n" forces a line break at that exact word boundary
    *  (see the word-wrap comment further down for why plain
@@ -191,14 +193,16 @@ export function Hero({
          confirmed live across the homepage, /the-science,
          /for-organisations, and /privacy. */}
       <div className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center lg:pt-24">
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="eyebrow"
-        >
-          {eyebrow}
-        </motion.p>
+        {eyebrow && (
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="eyebrow"
+          >
+            {eyebrow}
+          </motion.p>
+        )}
 
         {/* No text-balance here — a real, confirmed no-op this note
            replaces a silent one with: this h1's line-wrapping is driven

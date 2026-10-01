@@ -5,7 +5,8 @@ import { Pointer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * "Tap to explore" callout for interactive mockups and cards, drawn
+ * "Click to interact" (touch: "Tap to interact") callout for every
+ * interactive mockup, card and control on the site, drawn
  * outside the element it points at and joined to it by a thin leader line.
  *
  * `side` places it beside the element from `sideFrom` up (xl by default,
@@ -48,26 +49,36 @@ export function ExploreCue({
       )}
     >
       <span className={cn("block h-5 w-px bg-gold-deep/70", side && SIDE_CLASSES[sideFrom].line)} />
-      <span className="flex items-center gap-2 rounded-full border border-gold-soft/35 bg-navy/85 py-1.5 pr-3.5 pl-1.5 text-[11px] tracking-wide whitespace-nowrap text-cream shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md">
-        <span className="relative flex size-6 items-center justify-center rounded-full bg-gold/15">
+      <span className="flex items-center gap-2.5 rounded-full border border-gold/50 bg-navy/90 py-1.5 pr-4 pl-1.5 text-xs tracking-wide whitespace-nowrap text-cream shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md">
+        <span className="relative flex size-7 items-center justify-center rounded-full bg-gold/20">
           <span className="mockup-cue-dot absolute inset-0 rounded-full" />
-          <Pointer className="size-3.5 text-gold-soft" />
+          <Pointer className="size-4 text-gold" />
         </span>
-        <span className="[@media(hover:hover)]:hidden">Tap to explore</span>
-        <span className="hidden [@media(hover:hover)]:inline">Click to explore</span>
+        <span className="[@media(hover:hover)]:hidden">Tap to interact</span>
+        <span className="hidden [@media(hover:hover)]:inline">Click to interact</span>
       </span>
     </div>
   );
 }
 
-/** Wraps an interactive card (not a phone) with an ExploreCue that fades
- *  after the visitor's first press inside it. */
-export function Explorable({ children, className }: { children: ReactNode; className?: string }) {
+/** Wraps an interactive card or control (not a phone) with an ExploreCue
+ *  that fades after the visitor's first press inside it. */
+export function Explorable({
+  children,
+  className,
+  side,
+  sideFrom,
+}: {
+  children: ReactNode;
+  className?: string;
+  side?: "left" | "right";
+  sideFrom?: "md" | "xl";
+}) {
   const [used, setUsed] = useState(false);
   return (
     <div className={cn("relative", className)} onPointerDownCapture={() => setUsed(true)}>
       {children}
-      <ExploreCue hidden={used} />
+      <ExploreCue side={side} sideFrom={sideFrom} hidden={used} />
     </div>
   );
 }

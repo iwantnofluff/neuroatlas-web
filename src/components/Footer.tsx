@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useRef, type PointerEvent as ReactPointerEvent } from "react";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { contactEmail, footerNav, legalNav, socialLinks, type NavLink } from "@/lib/nav";
 import { LogoMark } from "@/components/LogoMark";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useFormSubmit } from "@/lib/useFormSubmit";
+import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
+import { cn } from "@/lib/utils";
 
 /**
  * The Global Footer — "Spotlight Reveal": a tall, substantial container
@@ -71,7 +74,7 @@ const EXPLORE_HREFS = [
   "/for-organisations",
   "/privacy",
 ];
-const COMPANY_HREFS = ["/about", "/pricing", "/contact", "/faq", "/journal", "/request-access"];
+const COMPANY_HREFS = ["/about", "/pricing", "/contact", "/faq", "/journal", "/waitlist"];
 
 function resolveLinks(hrefs: string[]): NavLink[] {
   return hrefs
@@ -104,7 +107,7 @@ const WORDMARK_CLASSNAME =
 
 export function Footer() {
   const reduceMotion = useSafeReducedMotion();
-  const [submitted, setSubmitted] = useState(false);
+  const newsletter = useFormSubmit("/api/newsletter", { source: "footer" });
   const wordmarkRef = useRef<HTMLDivElement>(null);
 
   // Starts well off-canvas (not 0,0) so nothing is lit before the
@@ -157,23 +160,19 @@ export function Footer() {
             <p className="mt-4 max-w-sm text-pretty text-sm text-cream/60">
               One email a month. No noise, just what&rsquo;s useful.
             </p>
-            {submitted ? (
+            {newsletter.status === "done" ? (
               <p className="mt-4 text-pretty text-sm text-gold-soft">
                 You are on the list. We will be in touch.
               </p>
             ) : (
-              <form
-                className="mt-4 flex max-w-sm gap-2"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSubmitted(true);
-                }}
-              >
+              <form className="relative mt-4 max-w-sm" onSubmit={newsletter.onSubmit}>
+                <div className="flex gap-2">
                 <label htmlFor="footer-email" className="sr-only">
                   Email address
                 </label>
                 <input
                   id="footer-email"
+                  name="email"
                   type="email"
                   required
                   placeholder="Your email"
@@ -181,12 +180,23 @@ export function Footer() {
                 />
                 <ShimmerButton
                   type="submit"
+                  disabled={newsletter.submitting}
                   background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
                   shimmerColor="var(--color-cream)"
-                  className="shrink-0 py-2.5 text-sm tracking-wide text-cream"
+                  className={cn(
+                    "shrink-0 py-2.5 text-sm tracking-wide text-cream",
+                    newsletter.submitting && "cursor-not-allowed opacity-60"
+                  )}
                 >
                   Join
                 </ShimmerButton>
+                </div>
+                <FormHoneypot id="footer-company-website" />
+                {newsletter.status === "error" && (
+                  <p role="alert" className="mt-3 text-pretty text-sm text-[#f0a0ae]">
+                    {FORM_ERROR_MESSAGE}
+                  </p>
+                )}
               </form>
             )}
           </div>

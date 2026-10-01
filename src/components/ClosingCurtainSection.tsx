@@ -108,12 +108,12 @@ export function ClosingCurtainSection() {
               className="mt-10 inline-block"
             >
               <ShimmerLink
-                href="/request-access"
+                href="/waitlist"
                 background="color-mix(in oklab, var(--color-gold) 35%, transparent)"
                 shimmerColor="var(--color-gold-soft)"
                 className="px-8 py-4 text-sm tracking-wide text-cream"
               >
-                Request Access
+                Join The Waitlist
               </ShimmerLink>
             </motion.div>
           </div>

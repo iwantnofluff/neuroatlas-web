@@ -34,7 +34,7 @@ export const footerNav: NavLink[] = [
   { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy And Your Data", href: "/privacy" },
   { label: "About Us", href: "/about" },
-  { label: "Request Access", href: "/request-access" },
+  { label: "Join The Waitlist", href: "/waitlist" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/contact" },
   { label: "FAQ", href: "/faq" },

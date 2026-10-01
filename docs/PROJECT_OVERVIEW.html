@@ -111,11 +111,11 @@
     <li><code>/contact</code></li>
     <li><code>/faq</code></li>
     <li><code>/journal</code> + <code>/journal/[slug]</code> — CMS-driven blog</li>
+    <li><code>/waitlist</code> — waitlist form sending to Klaviyo (<code>/request-access</code> redirects here); goes live once <code>KLAVIYO_PRIVATE_API_KEY</code> and <code>KLAVIYO_WAITLIST_LIST_ID</code> are set</li>
   </ul>
 
   <p><span class="status left">Left</span> — still placeholder content, per plan</p>
   <ul>
-    <li><code>/request-access</code></li>
     <li><code>/legal/privacy-policy</code></li>
     <li><code>/legal/terms-of-use</code></li>
   </ul>
@@ -134,6 +134,25 @@
     <li><strong>Login / sign-up</strong> — no auth provider chosen yet (item 1 above), so there's nothing to build against.</li>
     <li><strong>Subscription / checkout page</strong> — the real Razorpay pricing grid <code>/pricing</code> is deliberately structured to become. Waitlist form only, today.</li>
     <li><strong>Payment integration</strong> — <code>razorpay</code> SDK is installed but no account, keys, checkout flow, or webhook exist yet (item 3 above).</li>
+  </ul>
+
+  <p><span class="status left">Go-live checklist</span> — needs the domain owner (DNS access and OTP), done last in one sitting</p>
+  <ul>
+    <li><strong>Confirm the live domain</strong> — Klaviyo was set up for <code>mail.neuroatlas.com</code>; confirm whether the site launches on <code>neuroatlas.com</code> or <code>neuroatlas.in</code>, and that the same domain is used everywhere below.</li>
+    <li><strong>Connect the domain to Vercel</strong> — add it under Project → Settings → Domains and create the A/CNAME records Vercel shows; set <code>NEXT_PUBLIC_SITE_URL</code> to the final address.</li>
+    <li><strong>Klaviyo branded sending domain</strong> — at the registrar, add the four NS records delegating <code>mail.&lt;domain&gt;</code> to <code>ns1</code>–<code>ns4.klaviyo.com</code> and the TXT verification record on <code>@</code>, then press Verify in Klaviyo → Settings → Domains. Until then Klaviyo sends from its shared domain.</li>
+    <li><strong>Klaviyo keys in Vercel</strong> — <code>KLAVIYO_PRIVATE_API_KEY</code> (Lists, Profiles and Subscriptions set to Full Access; nothing else) and <code>KLAVIYO_WAITLIST_LIST_ID</code> for Production and Preview, then redeploy.</li>
+    <li><strong>Final checks</strong> — one real signup on the live domain, confirmed in Klaviyo with its profile fields; double opt-in email arrives from the branded domain.</li>
+  </ul>
+
+  <p><span class="status left">Waiting on copy and client decisions</span> — none of these block signups being saved to Klaviyo</p>
+  <ul>
+    <li><strong>Double opt-in confirmation email</strong> (copy team) — Klaviyo sends its default wording to every new signup while the waitlist list is double opt-in. Rewrite it under the list's Settings, or switch the list to single opt-in until the copy is ready.</li>
+    <li><strong>Welcome flow</strong> (copy team) — Flows → Build your own, trigger "Added to List" on the waitlist list, one email. Needs the business postal address set under Settings → Organization, since every marketing email must carry it with an unsubscribe link.</li>
+    <li><strong>Consent line under the waitlist form</strong> (client and copy team) — a short line on how signup data is used, linking to the privacy policy. The privacy policy page is still a placeholder, so both are needed together.</li>
+    <li><strong>Segments</strong> (optional, later) — group the waitlist by sector or role from the saved <code>waitlist_sector</code> and job title fields once signups arrive.</li>
+    <li><strong>Newsletter form</strong> — built: the footer and journal forms subscribe to the list set in <code>KLAVIYO_NEWSLETTER_LIST_ID</code>, which still needs creating and setting.</li>
+    <li><strong>Contact form</strong> — built: each enquiry is a "Submitted Contact Form" event on the sender's Klaviyo profile, with the message. Needs an API key that includes Events access, and an internal-alert flow on that metric so the team is emailed.</li>
   </ul>
 
   <footer class="doc-foot">

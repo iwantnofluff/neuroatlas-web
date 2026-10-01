@@ -38,7 +38,7 @@ export function ScienceClosingSection() {
              scrolls (both while pinned-at-top, showing its own lower
              half, and while sliding off after release), a large
              stretch read as flat, unstyled black — confirmed live via
-             screenshot, right where "Composure Isn't A Personality"
+             screenshot, right where "Composure Isn't A Personality Trait"
              scrolls past and before the References list begins. A
              uniform dot texture across the WHOLE box guarantees no
              stretch of it ever reads as truly empty. DotGrid, not
@@ -53,7 +53,7 @@ export function ScienceClosingSection() {
           />
           <div className="relative">
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-gold-soft lg:text-5xl">
-              Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
+              Composure Isn&rsquo;t A Personality Trait. It&rsquo;s Trained.
             </h2>
             <motion.div
               whileHover={{ scale: reduceMotion ? 1 : 1.05 }}
@@ -62,12 +62,12 @@ export function ScienceClosingSection() {
               className="mt-10 inline-block"
             >
               <ShimmerLink
-                href="/request-access"
+                href="/waitlist"
                 background="color-mix(in oklab, var(--color-gold) 35%, transparent)"
                 shimmerColor="var(--color-gold-soft)"
                 className="px-8 py-4 text-sm tracking-wide text-cream"
               >
-                Request Access
+                Join The Waitlist
               </ShimmerLink>
             </motion.div>
           </div>
