@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
+import { Explorable } from "@/components/ExploreCue";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
@@ -156,7 +157,7 @@ export function NeuralAccordion() {
            ~73px for its heading, clipping "Prefrontal-". Below lg the
            stack sizes to its content — a fixed 420px column cut both the
            open panel's body and the closed panels' headings. */}
-        <div className="mt-16 flex flex-col gap-4 lg:h-[420px] lg:flex-row">
+        <Explorable className="mt-16 mb-16 flex flex-col gap-4 lg:h-[420px] lg:flex-row">
           {SYSTEMS.map((system, i) => (
             <AccordionPanel
               key={system.label}
@@ -167,7 +168,7 @@ export function NeuralAccordion() {
               reduceMotion={reduceMotion}
             />
           ))}
-        </div>
+        </Explorable>
       </div>
     </section>
   );

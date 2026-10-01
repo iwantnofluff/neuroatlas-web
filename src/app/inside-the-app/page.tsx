@@ -343,7 +343,7 @@ export default function InsideTheAppPage() {
           y={20}
         >
           <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
-            Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
+            Composure Isn&rsquo;t A Personality Trait. It&rsquo;s Trained.
           </h2>
           <ShimmerLink
             href="/waitlist"

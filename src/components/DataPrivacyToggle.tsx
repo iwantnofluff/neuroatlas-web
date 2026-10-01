@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { Explorable } from "@/components/ExploreCue";
 
 type View = "individual" | "organisation";
 
@@ -87,6 +88,7 @@ export function DataPrivacyToggle() {
          own hoverBackground default), so the selected state reads as
          unmistakably "the brand's own gold," not just a generic light
          pill. */}
+      <Explorable side="right" sideFrom="md" className="mx-auto w-full max-w-xs max-md:mb-16">
       <div
         role="tablist"
         aria-label="View NeuroAtlas data as"
@@ -118,6 +120,7 @@ export function DataPrivacyToggle() {
           </motion.button>
         ))}
       </div>
+      </Explorable>
 
       <div className="relative mt-8 min-h-[230px]">
         <AnimatePresence mode="wait">
