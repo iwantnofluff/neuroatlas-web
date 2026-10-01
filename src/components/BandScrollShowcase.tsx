@@ -535,12 +535,12 @@ export function BandScrollShowcase() {
           </p>
           <div className="mt-4 flex justify-center sm:mt-6">
             <ShimmerLink
-              href="/request-access"
+              href="/waitlist"
               background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
               shimmerColor="var(--color-cream)"
               className="px-6 py-3 text-sm tracking-wide text-cream"
             >
-              Request Access
+              Join The Waitlist
             </ShimmerLink>
           </div>
         </div>

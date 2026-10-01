@@ -39,7 +39,7 @@ const INDIVIDUAL_FAQS = [
     question:
       "When will it be available, what will it cost, and how does the waiting list work?",
     answer:
-      "Pricing and the exact launch timeline are still being finalised. Request access and we'll be in touch as soon as we're ready to bring you in.",
+      "Pricing and the exact launch timeline are still being finalised. Join the waitlist and we'll be in touch as soon as we're ready to bring you in.",
   },
 ];
 

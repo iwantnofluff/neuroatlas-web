@@ -71,7 +71,7 @@ const EXPLORE_HREFS = [
   "/for-organisations",
   "/privacy",
 ];
-const COMPANY_HREFS = ["/about", "/pricing", "/contact", "/faq", "/journal", "/request-access"];
+const COMPANY_HREFS = ["/about", "/pricing", "/contact", "/faq", "/journal", "/waitlist"];
 
 function resolveLinks(hrefs: string[]): NavLink[] {
   return hrefs

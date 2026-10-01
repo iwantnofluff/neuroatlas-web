@@ -246,7 +246,7 @@
    no native-smooth-scroll behavior to preserve here. */
 
 /*
-  Global button system. Every CTA on the site (the "Request Access"/
+  Global button system. Every CTA on the site (the "Join The Waitlist"/
   "Enquire Now"/etc. pills) is a <ShimmerButton>/<ShimmerLink> instance
   (see ui/shimmer-button.tsx) rather than a plain CSS class — that
   component is what actually produces glass-at-rest, fills-to-color-on-

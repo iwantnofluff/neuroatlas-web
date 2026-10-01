@@ -346,12 +346,12 @@ export default function InsideTheAppPage() {
             Composure Isn&rsquo;t A Personality. It&rsquo;s Trained.
           </h2>
           <ShimmerLink
-            href="/request-access"
+            href="/waitlist"
             background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
             shimmerColor="var(--color-cream)"
             className="mt-8 text-sm tracking-wide text-cream"
           >
-            Request Access
+            Join The Waitlist
           </ShimmerLink>
         </Reveal>
       </section>

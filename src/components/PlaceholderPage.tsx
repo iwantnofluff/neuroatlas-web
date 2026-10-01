@@ -4,8 +4,6 @@ type PlaceholderPageProps = {
   eyebrow: string;
   title: string;
   body: string;
-  /** For /request-access itself, where the button would link to the page it sits on. */
-  hideRequestAccess?: boolean;
 };
 
 /**
@@ -14,7 +12,7 @@ type PlaceholderPageProps = {
  * instead of a 404 while content is pending — swap in the real
  * page build once copy lands.
  */
-export function PlaceholderPage({ eyebrow, title, body, hideRequestAccess = false }: PlaceholderPageProps) {
+export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) {
   return (
     // pt-20 pb-16 md:pt-28 md:pb-20 lg:pt-32 lg:pb-24 — was a flat
     // pt-32 pb-24 with no responsive step at all (128px+96px of
@@ -29,16 +27,14 @@ export function PlaceholderPage({ eyebrow, title, body, hideRequestAccess = fals
       </h1>
       <p className="mt-6 max-w-xl text-pretty text-lg text-mist">{body}</p>
       <div className="mt-10 flex flex-wrap gap-4">
-        {!hideRequestAccess && (
-          <ShimmerLink
-            href="/request-access"
-            background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
-            shimmerColor="var(--color-gold-deep)"
-            className="text-sm tracking-wide text-navy"
-          >
-            Request Access
-          </ShimmerLink>
-        )}
+        <ShimmerLink
+          href="/waitlist"
+          background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
+          shimmerColor="var(--color-gold-deep)"
+          className="text-sm tracking-wide text-navy"
+        >
+          Join The Waitlist
+        </ShimmerLink>
         <ShimmerLink
           href="/"
           background="color-mix(in oklab, var(--color-navy) 25%, transparent)"

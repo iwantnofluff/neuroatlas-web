@@ -123,7 +123,7 @@ export default function AboutPage() {
 
       {/* 6. Where we are today, leading straight into 8. the closing CTA
           - kept as one section, matching the brief's own "Status & CTA"
-          grouping ("...before leading into the final Request Access
+          grouping ("...before leading into the final Join The Waitlist
           button"). The India pilot mention carries the pulsing live
           indicator; London and the 2026 launch date sit alongside it as
           a small milestone strip (the brief's own "optional milestone
@@ -161,12 +161,12 @@ export default function AboutPage() {
               part of it.
             </p>
             <ShimmerLink
-              href="/request-access"
+              href="/waitlist"
               background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
               shimmerColor="var(--color-cream)"
               className="mt-8 text-sm tracking-wide text-cream"
             >
-              Request Access
+              Join The Waitlist
             </ShimmerLink>
           </div>
         </Reveal>

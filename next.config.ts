@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
         destination: "/inside-the-app",
         permanent: true,
       },
+      {
+        source: "/request-access",
+        destination: "/waitlist",
+        permanent: true,
+      },
     ];
   },
 };

@@ -135,7 +135,7 @@ export function Header() {
             — same idea as the nav links above. Hover is unaffected: every
             button on the site fills to the same gold regardless. */}
         <ShimmerLink
-          href="/request-access"
+          href="/waitlist"
           background={
             scrolled
               ? "color-mix(in oklab, var(--color-navy) 25%, transparent)"
@@ -157,7 +157,7 @@ export function Header() {
             scrolled ? "text-navy" : "text-cream"
           )}
         >
-          Request Access
+          Join The Waitlist
         </ShimmerLink>
 
         <Sheet open={open} onOpenChange={setOpen}>
@@ -195,13 +195,13 @@ export function Header() {
                 </Link>
               ))}
               <ShimmerLink
-                href="/request-access"
+                href="/waitlist"
                 onClick={() => setOpen(false)}
                 background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
                 shimmerColor="var(--color-gold-deep)"
                 className="mt-2 w-fit text-sm tracking-wide text-navy"
               >
-                Request Access
+                Join The Waitlist
               </ShimmerLink>
             </nav>
           </SheetContent>
