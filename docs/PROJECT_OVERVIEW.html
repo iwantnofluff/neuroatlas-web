@@ -145,6 +145,16 @@
     <li><strong>Final checks</strong> — one real signup on the live domain, confirmed in Klaviyo with its profile fields; double opt-in email arrives from the branded domain.</li>
   </ul>
 
+  <p><span class="status left">Waiting on copy and client decisions</span> — none of these block signups being saved to Klaviyo</p>
+  <ul>
+    <li><strong>Double opt-in confirmation email</strong> (copy team) — Klaviyo sends its default wording to every new signup while the waitlist list is double opt-in. Rewrite it under the list's Settings, or switch the list to single opt-in until the copy is ready.</li>
+    <li><strong>Welcome flow</strong> (copy team) — Flows → Build your own, trigger "Added to List" on the waitlist list, one email. Needs the business postal address set under Settings → Organization, since every marketing email must carry it with an unsubscribe link.</li>
+    <li><strong>Consent line under the waitlist form</strong> (client and copy team) — a short line on how signup data is used, linking to the privacy policy. The privacy policy page is still a placeholder, so both are needed together.</li>
+    <li><strong>Segments</strong> (optional, later) — group the waitlist by sector or role from the saved <code>waitlist_sector</code> and job title fields once signups arrive.</li>
+    <li><strong>Newsletter form</strong> (needs a Klaviyo list ID) — the footer and journal forms still post to a placeholder route.</li>
+    <li><strong>Contact form</strong> (needs a decision) — where enquiries go: an inbox (usual) or Klaviyo. Still posts to a placeholder route.</li>
+  </ul>
+
   <footer class="doc-foot">
     Prepared from the <code>neuroatlas-web</code> repository as of the current commit.
   </footer>
