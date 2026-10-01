@@ -201,13 +201,16 @@ export function StressAgeCard({ className }: { className?: string }) {
               gap are the same length as the full circumference, so at
               small percentages it was rendering as TWO separate
               visible segments (a wraparound artifact) instead of one
-              clean arc starting at the badge. -scale-x-100 alongside
-              -rotate-90 mirrors the whole circle so the single arc
-              sweeps from the top badge toward the left, matching the
-              reference, rather than the right. */}
+              clean arc starting at the badge. rotate-90 -scale-x-100
+              starts the arc under the top badge and sweeps it left:
+              Tailwind v4 emits these as the separate CSS `scale` and
+              `rotate` properties, which apply the mirror first (moving
+              the circle's 3 o'clock start to 9 o'clock) and then the
+              rotation, so +90deg lands it at 12. -rotate-90 here put
+              the start at 6 o'clock instead. */}
           <svg
             viewBox="0 0 100 100"
-            className="absolute inset-0 size-full -rotate-90 -scale-x-100 blur-[6px]"
+            className="absolute inset-0 size-full rotate-90 -scale-x-100 blur-[6px]"
           >
             <circle
               cx="50"
@@ -223,7 +226,7 @@ export function StressAgeCard({ className }: { className?: string }) {
             />
           </svg>
 
-          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90 -scale-x-100">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full rotate-90 -scale-x-100">
             <circle
               cx="50"
               cy="50"
