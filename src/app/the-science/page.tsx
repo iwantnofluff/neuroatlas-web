@@ -60,11 +60,10 @@ export default function TheSciencePage() {
          A direct "redesign this" request: the previous version was an
          unlabeled, undifferentiated wall of small print - three run-on
          citations with no visual structure connecting them back to the
-         numbered fields ("01 Autonomic Regulation" etc.) a reader just
-         scrolled past in "Guided By Experts". Each entry now repeats
-         that same index + field as its own small gold label (the exact
-         "01 — Autonomic Regulation" pairing, reusing RESEARCH_CARDS'
-         own index/field fields rather than just its citation string),
+         fields ("Autonomic Regulation" etc.) a reader just scrolled past
+         in "Guided By Experts". Each entry now repeats that field as its
+         own small gold label (RESEARCH_CARDS' own field, not just its
+         citation string),
          with a left rule threading them together like a real endnotes
          page, so the list reads as organized reference material rather
          than an anonymous block of text. */}
@@ -84,7 +83,7 @@ export default function TheSciencePage() {
             {RESEARCH_CARDS.map((card) => (
               <li key={card.field} className="border-l border-gold/25 pl-5">
                 <p className="text-xs tracking-[0.15em] text-gold-deep uppercase">
-                  {card.index} &mdash; {card.field}
+                  {card.field}
                 </p>
                 <p className="mt-2 text-pretty text-sm text-cream/55">{card.citation}</p>
               </li>

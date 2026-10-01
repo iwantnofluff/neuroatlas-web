@@ -530,7 +530,7 @@ export function DashboardDetailCard({ className }: { className?: string }) {
 
       <div className="mt-[2.6cqw] flex flex-col gap-[2.6cqw] rounded-[5.2cqw] border border-gold-soft/30 bg-navy p-[3.5cqw]">
         <div className="flex items-center justify-between">
-          <p className="text-[2.8cqw] text-[#909396]">ECG — Electrocardiogram</p>
+          <p className="text-[2.8cqw] text-[#909396]">Electrocardiogram (ECG)</p>
           <p className="text-[5.6cqw] text-[#f2f2f2]">{heartRate}</p>
         </div>
         <div

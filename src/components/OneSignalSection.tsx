@@ -126,7 +126,7 @@ export function OneSignalSection() {
           // headings, and this headline's own heavy-weight/tight-tracking
           // exception no longer holds, same reasoning as the homepage's
           // "Built To Read You" headline earlier this session.
-          className="signal-mask-gradient text-balance bg-clip-text text-[clamp(3rem,12vw,13rem)] leading-none font-normal tracking-[0] text-transparent uppercase"
+          className="signal-mask-gradient text-balance bg-clip-text text-[clamp(2.25rem,10vw,13rem)] sm:text-[clamp(3rem,12vw,13rem)] leading-none font-normal tracking-[0] text-transparent uppercase"
         >
           Built For One Focus:
           <br />

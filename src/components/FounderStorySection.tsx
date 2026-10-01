@@ -37,8 +37,7 @@ export function FounderStorySection() {
           </Parallax>
 
           <Reveal y={20} className="md:w-1/2">
-            <p className="eyebrow">The Founder&rsquo;s Story</p>
-            <h2 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl leading-tight text-navy">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl sm:text-4xl md:text-5xl leading-tight text-navy">
               A Problem Nobody Was Solving
             </h2>
             <p className="mt-6 text-pretty text-lg text-mist">

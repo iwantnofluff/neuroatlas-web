@@ -143,12 +143,13 @@ export function Hero({
           regardless of what's playing underneath. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-navy/45"
+        className="absolute inset-0 bg-navy/55"
       />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-b from-navy/70 via-transparent to-navy/85"
       />
+      <div aria-hidden="true" className="banner-text-scrim" />
 
       {/* Static "studio lighting" — replaces a previous cursor-tracking
           glow (real interactivity, removed per client direction: this is

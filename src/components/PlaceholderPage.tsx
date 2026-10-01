@@ -4,6 +4,8 @@ type PlaceholderPageProps = {
   eyebrow: string;
   title: string;
   body: string;
+  /** For /request-access itself, where the button would link to the page it sits on. */
+  hideRequestAccess?: boolean;
 };
 
 /**
@@ -12,7 +14,7 @@ type PlaceholderPageProps = {
  * instead of a 404 while content is pending — swap in the real
  * page build once copy lands.
  */
-export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) {
+export function PlaceholderPage({ eyebrow, title, body, hideRequestAccess = false }: PlaceholderPageProps) {
   return (
     // pt-20 pb-16 md:pt-28 md:pb-20 lg:pt-32 lg:pb-24 — was a flat
     // pt-32 pb-24 with no responsive step at all (128px+96px of
@@ -20,21 +22,23 @@ export function PlaceholderPage({ eyebrow, title, body }: PlaceholderPageProps) 
     // justify-center still centers this content either way, so
     // tapering the base down for mobile only ever gives it more
     // room, never less.
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center px-6 pt-20 pb-16 md:pt-28 md:pb-20 lg:px-10 lg:pt-32 lg:pb-24">
+    <main className="mx-auto flex min-h-[100svh] max-w-3xl flex-col items-start justify-center px-6 pt-20 pb-16 md:pt-28 md:pb-20 lg:px-10 lg:pt-32 lg:pb-24">
       <p className="eyebrow">{eyebrow}</p>
       <h1 className="mt-4 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-tight text-navy lg:text-5xl">
         {title}
       </h1>
       <p className="mt-6 max-w-xl text-pretty text-lg text-mist">{body}</p>
       <div className="mt-10 flex flex-wrap gap-4">
-        <ShimmerLink
-          href="/request-access"
-          background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
-          shimmerColor="var(--color-gold-deep)"
-          className="text-sm tracking-wide text-navy"
-        >
-          Request access
-        </ShimmerLink>
+        {!hideRequestAccess && (
+          <ShimmerLink
+            href="/request-access"
+            background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
+            shimmerColor="var(--color-gold-deep)"
+            className="text-sm tracking-wide text-navy"
+          >
+            Request Access
+          </ShimmerLink>
+        )}
         <ShimmerLink
           href="/"
           background="color-mix(in oklab, var(--color-navy) 25%, transparent)"

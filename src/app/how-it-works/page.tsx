@@ -9,6 +9,7 @@ import { HrvDetailCard } from "@/components/HrvDetailCard";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { CeoBreathScreen } from "@/components/CeoBreathScreen";
 import { StressAgeCard } from "@/components/StressAgeCard";
+import { Explorable } from "@/components/ExploreCue";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 
 export const metadata = { title: "How it works - NeuroAtlas" };
@@ -137,11 +138,13 @@ export default function HowItWorksPage() {
         body="The band reads your heart rate, breathing, and more - all day - picking up signs of pressure before you may notice them yourself."
         imageSide="right"
         background="cream"
-        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none"
+        mediaClassName="max-lg:aspect-auto max-md:max-h-none md:max-h-none overflow-visible max-md:mb-16"
         media={
-          <div className="card-glass-light flex size-full items-center justify-center p-6">
-            <VitalsDashboard />
-          </div>
+          <Explorable className="size-full">
+            <div className="card-glass-light flex size-full items-center justify-center p-6">
+              <VitalsDashboard />
+            </div>
+          </Explorable>
         }
       />
 
@@ -163,16 +166,21 @@ export default function HowItWorksPage() {
           HRV detail screen (Figma node 15312:18742, minus its own "About
           this metric" section per explicit instruction) IS this
           section's visual - passed in as `media` rather than buried
-          behind a generic placeholder. Text left, media right. */}
-      <FeatureSplitSection
-        heading="The Proof, Not The Promise"
-        body="Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling."
-        imageSide="right"
-        background="navy"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[58svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
-        media={
-          <div className="flex size-full items-center justify-center">
-            <IPhoneMockup interactive className="h-full">
+          behind a generic placeholder. Centred phone rather than another
+          split: it breaks the page's run of alternating image-and-text
+          sections at the moment the page makes its proof. */}
+      <section data-visual-section="the-proof" className="dark-glow bg-navy text-cream">
+        <div className="mx-auto max-w-6xl px-6 pt-16 md:pt-24 lg:px-10 lg:pt-32">
+          <Reveal y={20} className="mx-auto max-w-2xl text-center">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              The Proof, Not The Promise
+            </h2>
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
+              Once the reset is done, the band reads you again, so you see the shift for yourself, shown as a number, not a feeling.
+            </p>
+          </Reveal>
+          <Reveal delay={0.1} y={20} className="mt-12 flex justify-center pb-24 md:mt-16 md:pb-16">
+            <IPhoneMockup interactive cueSideFrom="md" className="h-[62svh] sm:h-[68svh] lg:h-[72svh]">
               <div
                 className="h-full overflow-y-auto px-4 pt-[15%] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 style={{
@@ -184,9 +192,9 @@ export default function HowItWorksPage() {
                 <HrvDetailCard />
               </div>
             </IPhoneMockup>
-          </div>
-        }
-      />
+          </Reveal>
+        </div>
+      </section>
       {/* Disclaimer for the HRV stat card above - a direct "add a
          disclaimer in the footer" request: placed as its own small-print
          line directly under this one section rather than inside the
@@ -200,22 +208,41 @@ export default function HowItWorksPage() {
         </p>
       </div>
 
-      {/* 6. Pattern recognition. Text right, media left. */}
-      <FeatureSplitSection
-        heading="Pattern Recognition Technology"
-        body="Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak."
-        imageSide="left"
-        background="cream"
-        media={
+      {/* 6. Pattern recognition - a full-bleed photo banner, the copy in the
+          photo anchored right on desktop and blended into navy so the copy
+          sits clear of the band on the left, breaking the run of
+          alternating image-and-text splits. On phones the copy sits at the
+          foot of the banner so the band itself stays visible above it. */}
+      <section
+        data-visual-section="pattern-recognition"
+        className="relative z-0 flex min-h-[85svh] items-end overflow-hidden bg-navy text-cream lg:items-center"
+      >
+        <div className="absolute inset-0 -z-10 lg:left-auto lg:w-[62%]">
           <Image
             src="/photos/pattern-recognition.png"
             alt="A hand wearing the NeuroAtlas band, arm raised"
             fill
-            sizes="(min-width: 1024px) 40vw, 90vw"
-            className="object-cover"
+            sizes="(min-width: 1024px) 62vw, 100vw"
+            className="object-cover object-[60%_42%] lg:object-[50%_46%]"
           />
-        }
-      />
+          <div
+            aria-hidden="true"
+            className="absolute inset-y-0 left-0 hidden w-2/3 bg-gradient-to-r from-navy via-navy/60 to-transparent lg:block"
+          />
+        </div>
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-navy/20 via-navy/35 to-navy/90 lg:hidden" />
+        <div aria-hidden="true" className="banner-text-scrim -z-10 [--scrim-y:78%] lg:hidden" />
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-24 lg:px-10 lg:py-32">
+          <Reveal y={20} className="mx-auto max-w-xl text-center lg:max-w-md xl:max-w-xl lg:mx-0 lg:text-left">
+            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight lg:text-4xl">
+              Pattern Recognition Technology
+            </h2>
+            <p className="mt-6 text-pretty text-lg text-cream/80">
+              Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
       {/* 7. A worked example - eyebrow kept (it's this section's own
           name), heading updated to the client's final copy, body
@@ -243,11 +270,13 @@ export default function HowItWorksPage() {
         body="NeuroAtlas will not make the pressure disappear. It will show you exactly where it is landing, and help you manage it."
         imageSide="left"
         background="cream"
-        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh]"
+        mediaClassName="aspect-auto max-md:mx-auto max-md:h-[62svh] max-md:w-auto max-md:max-h-none md:mx-auto md:h-[68svh] md:w-auto md:max-h-none lg:h-[70svh] overflow-visible max-md:mb-16"
         media={
-          <div className="card-glass-light flex size-full items-center justify-center p-6">
-            <StressAgeCard />
-          </div>
+          <Explorable className="size-full">
+            <div className="card-glass-light flex size-full items-center justify-center p-6">
+              <StressAgeCard />
+            </div>
+          </Explorable>
         }
       />
 
