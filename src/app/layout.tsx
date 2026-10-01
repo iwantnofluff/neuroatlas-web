@@ -42,8 +42,9 @@ const mont = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "NeuroAtlas - The First Stress Management Band",
-  description:
-    "Know when pressure is building, and reset before it takes over.",
+  description: "Know when pressure is building, and reset before it takes over.",
+  openGraph: { siteName: "NeuroAtlas", type: "website", locale: "en_GB" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

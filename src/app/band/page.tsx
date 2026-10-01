@@ -5,8 +5,13 @@ import { OneSignalSection } from "@/components/OneSignalSection";
 import { DesignedToBlendInSection } from "@/components/DesignedToBlendInSection";
 import { SignalVsNoiseSection } from "@/components/SignalVsNoiseSection";
 import { ClosingCurtainSection } from "@/components/ClosingCurtainSection";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "The NA·01 band - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "The NA·01 band - NeuroAtlas",
+  "Lightweight, screenless, and made to disappear into your day. Charges quickly, when it needs it.",
+  "/band"
+);
 
 // Copy: client's full pass over the /band page content doc. BandScrollShowcase
 // covers sections 1 ("Hero") and 2 ("What It Reads") together - see the

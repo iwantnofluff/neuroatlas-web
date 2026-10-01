@@ -7,6 +7,7 @@ import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
+import { useOnScreenFrameloop } from "@/lib/useOnScreenFrameloop";
 
 /** The actual WebGL scene, kept in its own module (see
  *  BuiltToReadYouSection's dynamic() import) so @react-three/fiber is
@@ -45,8 +46,12 @@ export function BuiltToReadYouScene({
   progress: MotionValue<number>;
   isMobile: boolean;
 }) {
+  const { ref: frameloopRef, frameloop } = useOnScreenFrameloop();
+
   return (
     <Canvas
+      ref={frameloopRef}
+      frameloop={frameloop}
       // z-0, explicit — guarantees this paints above the text layer's
       // z-[-1] (BuiltToReadYouSection.tsx) regardless of default stacking
       // order, since the model is now meant to visually overlap into

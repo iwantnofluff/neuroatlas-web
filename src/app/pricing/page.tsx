@@ -3,8 +3,13 @@ import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Pricing and plans - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Pricing and plans - NeuroAtlas",
+  "NeuroAtlas is currently rolling out to select organizations and individuals. Secure your place on the waitlist to get early access to the NA·01 band and the full protocol library.",
+  "/pricing"
+);
 
 const FOUNDATION_PILOT_FEATURES = [
   "The NA·01 Neural Band (Pantone 282 CP Navy finish)",

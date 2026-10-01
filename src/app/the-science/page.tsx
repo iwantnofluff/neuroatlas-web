@@ -5,8 +5,13 @@ import { BuiltOnNeuroscienceSection } from "@/components/BuiltOnNeuroscienceSect
 import { ScienceClosingSection } from "@/components/ScienceClosingSection";
 import { DotGrid } from "@/components/ui/dot-grid";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "The science - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "The science - NeuroAtlas",
+  "Every protocol maps to established neuroscience & psychology, not a wellness trend.",
+  "/the-science"
+);
 
 // The client's final copy pass for /the-science names seven sections —
 // up from the five-section spec this page was originally built

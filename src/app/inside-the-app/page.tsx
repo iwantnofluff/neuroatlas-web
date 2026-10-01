@@ -8,8 +8,13 @@ import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Inside the app - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Inside the app - NeuroAtlas",
+  "Every reading turns into something you can act on. The app reads your data, runs the right reset, and shows you it worked.",
+  "/inside-the-app"
+);
 
 // Copy: client's full pass over the /inside-the-app content doc (second
 // pass - replaces the earlier all-text version). Section numbering below

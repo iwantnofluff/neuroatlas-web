@@ -6,8 +6,13 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { FounderStorySection } from "@/components/FounderStorySection";
 import { LivePulseDot } from "@/components/LivePulseDot";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "About us - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "About us - NeuroAtlas",
+  "NeuroAtlas exists because the people carrying the highest stakes were never given a real tool for the pressure that comes with it.",
+  "/about"
+);
 
 // Copy: client's final pass over the /about content doc. Section
 // numbering in the comments below matches the doc's own 1–8 numbering

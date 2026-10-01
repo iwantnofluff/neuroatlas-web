@@ -4,8 +4,13 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { PrivacyBoundarySplit } from "@/components/PrivacyBoundarySplit";
 import { TextLink } from "@/components/TextLink";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Privacy and your data - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Privacy and your data - NeuroAtlas",
+  "This is not small print you have to go looking for. Protecting your data is built into how NeuroAtlas works, not something we promise to remember.",
+  "/privacy"
+);
 
 // Copy: client's final pass over the /privacy content doc. Section
 // numbering below matches the doc's own 1–6 numbering.

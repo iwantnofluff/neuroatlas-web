@@ -6,6 +6,7 @@ import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
+import { useOnScreenFrameloop } from "@/lib/useOnScreenFrameloop";
 
 /** Model scale for THIS scene. A previous pass scaled this "way up" to
  *  deliberately overlap the CENTERED headline behind it — client
@@ -40,8 +41,12 @@ export function BandScrollScene({
   progress: MotionValue<number>;
   isMobile: boolean;
 }) {
+  const { ref: frameloopRef, frameloop } = useOnScreenFrameloop();
+
   return (
     <Canvas
+      ref={frameloopRef}
+      frameloop={frameloop}
       // Confined to the bottom ~72% of the viewport (was full-bleed
       // inset-0) — this is what actually keeps the model out of the
       // headline's territory at the top, rather than relying on scale

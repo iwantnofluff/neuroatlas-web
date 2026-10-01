@@ -5,8 +5,13 @@ import { JournalGrid } from "@/components/JournalGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getArticles } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Journal - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Journal - NeuroAtlas",
+  "Explore ideas on focus, pressure and composure, and what we’re learning as we build NeuroAtlas.",
+  "/journal"
+);
 
 export default async function JournalPage() {
   const articles = await getArticles();

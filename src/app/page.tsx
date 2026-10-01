@@ -9,6 +9,13 @@ import { BeyondHeartSection } from "@/components/BeyondHeartSection";
 import { BuiltToReadYouSection } from "@/components/BuiltToReadYouSection";
 import { SpotlightPhoto } from "@/components/SpotlightPhoto";
 import { AppTeaserVitals } from "@/components/AppTeaserVitals";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "NeuroAtlas - The First Stress Management Band",
+  "Know when pressure is building, and reset before it takes over.",
+  ""
+);
 
 // Copy: V2 throughout (punchier, Title Case headings/buttons) — the
 // client's latest full pass over the homepage content doc.

@@ -9,6 +9,7 @@ import * as THREE from "three";
 import { Band } from "@/components/Band";
 import { StudioEnvironment } from "@/components/StudioEnvironment";
 import type { SpecKey } from "@/lib/specAnchors";
+import { useOnScreenFrameloop } from "@/lib/useOnScreenFrameloop";
 
 const XRAY_MODEL_SCALE_DESKTOP = 34;
 // 22 -> 30 — this value's old tuning was for a completely different
@@ -132,8 +133,12 @@ export function TheSpecsScene({
   const staticProgress = useMotionValue(0);
   const anchorRef = useRef<THREE.Mesh>(null);
 
+  const { ref: frameloopRef, frameloop } = useOnScreenFrameloop();
+
   return (
     <Canvas
+      ref={frameloopRef}
+      frameloop={frameloop}
       className="!absolute inset-0"
       // touchAction/pointerEvents here, not as Tailwind classes on
       // TheSpecs.tsx's own wrapper div — a real, confirmed bug those

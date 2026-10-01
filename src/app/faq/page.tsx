@@ -3,8 +3,13 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "FAQ - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "FAQ - NeuroAtlas",
+  "Whether you're exploring NeuroAtlas for yourself or your organisation, start here.",
+  "/faq"
+);
 
 export default function FaqPage() {
   return (

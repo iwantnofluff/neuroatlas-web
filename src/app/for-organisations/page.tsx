@@ -7,8 +7,13 @@ import { LeadershipDashboardSection } from "@/components/LeadershipDashboardSect
 import { HowToGetStartedSection } from "@/components/HowToGetStartedSection";
 import { DownloadOverviewForm } from "@/components/DownloadOverviewForm";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "For organisations - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "For organisations - NeuroAtlas",
+  "Pressure affects decisions long before it shows up as a resignation letter or a sick day. NeuroAtlas gives leadership a way to see that pattern early and act on it.",
+  "/for-organisations"
+);
 
 // Copy: client's final pass over the /for-organisations content doc.
 // Section numbering below matches the doc's own 1–9 numbering.
