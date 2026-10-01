@@ -136,6 +136,15 @@
     <li><strong>Payment integration</strong> — <code>razorpay</code> SDK is installed but no account, keys, checkout flow, or webhook exist yet (item 3 above).</li>
   </ul>
 
+  <p><span class="status left">Go-live checklist</span> — needs the domain owner (DNS access and OTP), done last in one sitting</p>
+  <ul>
+    <li><strong>Confirm the live domain</strong> — Klaviyo was set up for <code>mail.neuroatlas.com</code>; confirm whether the site launches on <code>neuroatlas.com</code> or <code>neuroatlas.in</code>, and that the same domain is used everywhere below.</li>
+    <li><strong>Connect the domain to Vercel</strong> — add it under Project → Settings → Domains and create the A/CNAME records Vercel shows; set <code>NEXT_PUBLIC_SITE_URL</code> to the final address.</li>
+    <li><strong>Klaviyo branded sending domain</strong> — at the registrar, add the four NS records delegating <code>mail.&lt;domain&gt;</code> to <code>ns1</code>–<code>ns4.klaviyo.com</code> and the TXT verification record on <code>@</code>, then press Verify in Klaviyo → Settings → Domains. Until then Klaviyo sends from its shared domain.</li>
+    <li><strong>Klaviyo keys in Vercel</strong> — <code>KLAVIYO_PRIVATE_API_KEY</code> (Lists, Profiles and Subscriptions set to Full Access; nothing else) and <code>KLAVIYO_WAITLIST_LIST_ID</code> for Production and Preview, then redeploy.</li>
+    <li><strong>Final checks</strong> — one real signup on the live domain, confirmed in Klaviyo with its profile fields; double opt-in email arrives from the branded domain.</li>
+  </ul>
+
   <footer class="doc-foot">
     Prepared from the <code>neuroatlas-web</code> repository as of the current commit.
   </footer>
