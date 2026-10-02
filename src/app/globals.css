@@ -789,3 +789,40 @@
     animation: var(--animate-shimmer-slide);
   }
 }
+
+/* Never show the browser's own play button over a background video. */
+.hero-video::-webkit-media-controls,
+.hero-video::-webkit-media-controls-start-playback-button,
+.hero-video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Phones and tablets: scrolling performance and button finish.
+   - The full-screen grain layer and every backdrop blur are re-composited
+     on each scrolled frame, which is what made phones feel laggy; touch
+     screens get flat tints instead (the glass reads almost the same over
+     these dark sections).
+   - ShimmerButton's travelling spark rests at the button's left edge,
+     which on a phone (no hover to move it) read as a white smudge. It is
+     hidden at rest and only runs while the button is pressed. */
+@media (hover: none), (pointer: coarse) {
+  .grain-overlay {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+  }
+
+  .shimmer-press-spark {
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  .shimmer-press:active .shimmer-press-spark {
+    opacity: 1;
+  }
+}

@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useMotionValue, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
@@ -152,10 +152,24 @@ export function BuiltToReadYouSection() {
   // that other case), so there's no downside to it here, and it removes
   // the early-completion bug entirely: the model now rises, spins, and
   // locks entirely within the section's own pinned scroll, not before it.
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: pinnedProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end end"],
   });
+  // Phones scroll this section normally instead of pinning it: a 200vh
+  // pin sat blank while the 3D model loaded, then the next section slid
+  // up over it. The same reveal now plays as the section scrolls in,
+  // from its top at 85% of the screen (0) to 15% (1).
+  const { scrollYProgress: inFlowProgress } = useScroll({
+    target: wrapperRef,
+    offset: ["start 0.85", "start 0.15"],
+  });
+  const inFlowMode = useMotionValue(0);
+  useEffect(() => inFlowMode.set(isMobile ? 1 : 0), [isMobile, inFlowMode]);
+  const scrollYProgress = useTransform(
+    [pinnedProgress, inFlowProgress, inFlowMode],
+    ([pinned, inFlow, mode]: number[]) => (mode ? inFlow : pinned)
+  );
 
   const headline = useHeadlineMotion(scrollYProgress, reduceMotion);
   const subtext = useSubtextMotion(scrollYProgress, reduceMotion);
@@ -178,14 +192,14 @@ export function BuiltToReadYouSection() {
       // Remaining ~30vh is the settled hold before release, comparable
       // to what the previous 150vh/0.4 pairing already held for, not a
       // reintroduction of the original "way too tall" complaint.
-      className={cn(!reduceMotion && "h-[200vh]")}
+      className={cn(!reduceMotion && "md:h-[200vh]")}
     >
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully
          hidden, so a real phone's actual visible area can be shorter than
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
-      <div data-visual-section="the-band" className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy">
+      <div data-visual-section="the-band" className="relative isolate top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-navy md:sticky">
         {/* Two structurally DIFFERENT layouts below md vs. at/above it —
            not the same markup nudged with a transform. A previous pass
            tried shifting the desktop "sandwich" up as one rigid unit on
