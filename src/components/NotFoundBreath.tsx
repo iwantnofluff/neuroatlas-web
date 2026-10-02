@@ -8,14 +8,15 @@ import { cn } from "@/lib/utils";
 const WIDTH = 760;
 const HEIGHT = 160;
 const POINTS = 96;
-const INHALE_MS = 4000;
+const INHALE_S = 4;
+const EXHALE_S = 4;
 
 type Phase = "scattered" | "inhale" | "exhale" | "composed";
 
 const PROMPT: Record<Phase, string> = {
-  scattered: "Your signal looks a little scattered. Hold the button and breathe in.",
+  scattered: "Your signal looks a little scattered. Tap the button and take one slow breath.",
   inhale: "Breathe in…",
-  exhale: "And out.",
+  exhale: "And slowly out…",
   composed: "Composed. Now let’s get you back on track.",
 };
 
@@ -30,18 +31,18 @@ function jitter(i: number, t: number) {
 
 /**
  * The 404 page's breathing reset: a stressed, jittery signal line that
- * calms into a slow wave while the visitor holds "Hold to breathe" for
- * one 4-second inhale. Letting go early lets it drift back; a full
- * inhale settles it and highlights the way home. Works with pointer,
- * touch and keyboard (Space or Enter held). Under reduced motion the line
- * is drawn still and a single press completes the breath.
+ * calms into a slow wave over one guided breath. A single tap (or click,
+ * or Enter/Space) starts it: a 4-second inhale while the ring expands,
+ * then a 4-second exhale while it settles, then the way home is
+ * highlighted. Tap-to-start rather than press-and-hold, because holding
+ * on a touch screen fights scrolling and the long-press menu. Under
+ * reduced motion the line is drawn still and the tap completes at once.
  */
 export function NotFoundBreath({ onComposed }: { onComposed?: () => void }) {
   const reduceMotion = useSafeReducedMotion();
   const [phase, setPhase] = useState<Phase>("scattered");
   const calm = useMotionValue(0);
   const time = useMotionValue(0);
-  const ring = useTransform(calm, [0, 1], [0.85, 1.15]);
   const glow = useTransform(calm, [0, 1], [0.15, 0.55]);
   const path = useTransform([calm, time], ([c, t]: number[]) => {
     let d = "";
@@ -54,8 +55,10 @@ export function NotFoundBreath({ onComposed }: { onComposed?: () => void }) {
     }
     return d;
   });
-  const holdAnimation = useRef<ReturnType<typeof animate> | null>(null);
   const phaseRef = useRef<Phase>("scattered");
+  const breath = useRef<ReturnType<typeof animate> | null>(null);
+  const exhaleRing = useMotionValue(0);
+  const ringScale = useTransform([calm, exhaleRing], ([c, e]: number[]) => 0.85 + 0.3 * Math.min(c / 0.75, 1) - 0.18 * e);
 
   useAnimationFrame((elapsed) => {
     if (!reduceMotion) time.set(elapsed / 1000);
@@ -66,33 +69,32 @@ export function NotFoundBreath({ onComposed }: { onComposed?: () => void }) {
     if (phase === "composed") onComposed?.();
   }, [phase, onComposed]);
 
-  function startBreath() {
-    if (phaseRef.current === "composed") return;
+  useEffect(() => () => breath.current?.stop(), []);
+
+  function beginBreath() {
+    if (phaseRef.current !== "scattered") return;
     if (reduceMotion) {
       calm.set(1);
       setPhase("composed");
       return;
     }
     setPhase("inhale");
-    holdAnimation.current?.stop();
-    holdAnimation.current = animate(calm, 1, {
-      duration: (INHALE_MS / 1000) * (1 - calm.get()),
+    breath.current = animate(calm, 0.75, {
+      duration: INHALE_S,
       ease: "easeInOut",
       onComplete: () => {
         setPhase("exhale");
-        window.setTimeout(() => setPhase("composed"), 1200);
+        animate(exhaleRing, 1, { duration: EXHALE_S, ease: "easeInOut" });
+        breath.current = animate(calm, 1, {
+          duration: EXHALE_S,
+          ease: "easeInOut",
+          onComplete: () => setPhase("composed"),
+        });
       },
     });
   }
 
-  function endBreath() {
-    if (phaseRef.current !== "inhale") return;
-    holdAnimation.current?.stop();
-    setPhase("scattered");
-    holdAnimation.current = animate(calm, 0, { duration: 1.2, ease: "easeOut" });
-  }
-
-  const composed = phase === "composed" || phase === "exhale";
+  const composed = phase === "composed";
 
   return (
     <div className="mt-10 flex flex-col items-center">
@@ -119,41 +121,26 @@ export function NotFoundBreath({ onComposed }: { onComposed?: () => void }) {
       <div className="relative mt-6 flex size-36 items-center justify-center">
         <motion.span
           aria-hidden="true"
-          style={{ scale: ring, opacity: glow }}
+          style={{ scale: ringScale, opacity: glow }}
           className="absolute inset-0 rounded-full bg-gold/30 blur-xl"
         />
         <motion.span
           aria-hidden="true"
-          style={{ scale: ring }}
+          style={{ scale: ringScale }}
           className="absolute inset-3 rounded-full border border-gold/40"
         />
         <button
           type="button"
-          disabled={phase === "composed"}
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            startBreath();
-          }}
-          onPointerUp={endBreath}
-          onPointerCancel={endBreath}
-          onKeyDown={(e) => {
-            if ((e.key === " " || e.key === "Enter") && !e.repeat) {
-              e.preventDefault();
-              startBreath();
-            }
-          }}
-          onKeyUp={(e) => {
-            if (e.key === " " || e.key === "Enter") endBreath();
-          }}
-          onContextMenu={(e) => e.preventDefault()}
+          disabled={phase !== "scattered"}
+          onClick={beginBreath}
           className={cn(
-            "relative size-24 touch-none rounded-full border text-xs tracking-[0.15em] uppercase transition-colors duration-500 select-none",
+            "relative size-24 rounded-full border px-2 text-xs tracking-[0.15em] uppercase transition-colors duration-500 select-none disabled:cursor-default",
             composed
               ? "border-gold bg-gold/20 text-gold-soft"
               : "border-gold/50 bg-navy/80 text-cream [@media(hover:hover)]:hover:border-gold"
           )}
         >
-          {composed ? "Composed" : "Hold to breathe"}
+          {phase === "scattered" ? "Begin a breath" : phase === "composed" ? "Composed" : phase === "inhale" ? "In" : "Out"}
         </button>
       </div>
     </div>

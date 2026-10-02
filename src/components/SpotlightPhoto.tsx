@@ -5,6 +5,7 @@ import { useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEve
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useTouchSpotlight } from "@/lib/useTouchSpotlight";
 
 /**
  * A grayscale product photo that reveals its real color inside a small
@@ -135,6 +136,7 @@ export function SpotlightPhoto({
   // blurred rim, not a fade-throughout blob). The remaining 65%->100%
   // band is where it actually feathers out to fully transparent.
   const maskImage = useMotionTemplate`radial-gradient(circle ${radius}px at ${mouseX}px ${mouseY}px, black 0%, black 65%, transparent 100%)`;
+  useTouchSpotlight(wrapperRef, mouseX, mouseY, !reduceMotion);
   const maskSizeValue = maskSize ? `${maskSize.width}px ${maskSize.height}px` : undefined;
 
   function handlePointerMove(e: ReactPointerEvent<HTMLDivElement>) {

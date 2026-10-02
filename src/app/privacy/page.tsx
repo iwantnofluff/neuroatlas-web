@@ -111,7 +111,7 @@ export default function PrivacyPage() {
                 key={column.label}
                 as="li"
                 delay={i * 0.1}
-                className="card-glass-light rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/5"
+                className="tap-press card-glass-light rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/5"
               >
                 <p className="eyebrow">{column.label}</p>
                 <ul className="mt-4 space-y-2 text-pretty text-base text-navy/80">

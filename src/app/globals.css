@@ -737,3 +737,55 @@
     background-color: var(--color-navy) !important;
   }
 }
+
+/* Touch screens. Hover effects are off on touch (see the hover variant at
+   the top of this file), so a press shows what a mouse hover shows on
+   desktop: ShimmerButton fills gold, its label turns navy, the glow
+   blooms and the spark runs once; the button also dips slightly. Touch
+   targets are at least 44px tall. The grey tap flash is replaced by these
+   press states. iOS only applies :active to elements once the page has a
+   touchstart listener, which SiteChrome adds. */
+@media (hover: none), (pointer: coarse) {
+  a,
+  button,
+  [role="button"],
+  [role="tab"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .shimmer-press {
+    min-height: 2.75rem;
+  }
+
+  .shimmer-press:active {
+    transform: scale(0.97);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--glow) 55%, transparent),
+      0 0 28px 4px color-mix(in oklab, var(--glow) 65%, transparent);
+  }
+
+  .shimmer-press:active .shimmer-press-fill {
+    opacity: 1;
+    transition-duration: 120ms;
+  }
+
+  .shimmer-press:active .shimmer-press-label {
+    color: var(--color-navy);
+    transition-duration: 120ms;
+  }
+
+  .tap-press {
+    transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+  }
+
+  .tap-press:active {
+    transform: scale(0.97);
+    border-color: color-mix(in oklab, var(--color-gold) 60%, transparent);
+  }
+}
+
+@media (hover: none) and (prefers-reduced-motion: no-preference), (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .shimmer-press:active .shimmer-press-spark {
+    animation: var(--animate-shimmer-slide);
+  }
+}
