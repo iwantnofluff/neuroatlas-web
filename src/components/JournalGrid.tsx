@@ -46,7 +46,8 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
             key={filter}
             type="button"
             onClick={() => setActive(filter)}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: reduceMotion ? 1 : 1.05 }}
+            whileTap={{ scale: reduceMotion ? 1 : 0.96 }}
             className={cn(
               "relative shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-sm transition-colors duration-300",
               active === filter ? "text-navy" : "text-mist hover:text-navy"
@@ -74,7 +75,7 @@ export function JournalGrid({ articles }: { articles: Article[] }) {
       >
         {filtered.map((article) => (
           <motion.div key={article.slug} variants={cardVariants(reduceMotion)}>
-            <a href={`/journal/${article.slug}`} className="group block">
+            <a href={`/journal/${article.slug}`} className="tap-press group block rounded-2xl">
               <div className="relative aspect-video overflow-hidden rounded-2xl border border-navy/10 bg-navy/5">
                 <Image
                   src={urlForImage(article.image).width(800).height(450).fit("crop").url()}

@@ -8,6 +8,7 @@ import { LogoMark } from "@/components/LogoMark";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useFormSubmit } from "@/lib/useFormSubmit";
+import { useTouchSpotlight } from "@/lib/useTouchSpotlight";
 import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 import { cn } from "@/lib/utils";
 
@@ -117,6 +118,7 @@ export function Footer() {
   const springX = useSpring(mouseX, { damping: 30, stiffness: 200, mass: 0.4 });
   const springY = useSpring(mouseY, { damping: 30, stiffness: 200, mass: 0.4 });
   const maskImage = useMotionTemplate`radial-gradient(circle ${SPOTLIGHT_RADIUS}px at ${springX}px ${springY}px, black 0%, transparent 100%)`;
+  useTouchSpotlight(wordmarkRef, mouseX, mouseY, !reduceMotion);
 
   function handlePointerMove(e: ReactPointerEvent<HTMLElement>) {
     const rect = wordmarkRef.current?.getBoundingClientRect();

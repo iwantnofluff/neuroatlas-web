@@ -138,7 +138,7 @@
 
   <p><span class="status left">Go-live checklist</span> — needs the domain owner (DNS access and OTP), done last in one sitting</p>
   <ul>
-    <li><strong>Confirm the live domain</strong> — Klaviyo was set up for <code>mail.neuroatlas.com</code>; confirm whether the site launches on <code>neuroatlas.com</code> or <code>neuroatlas.in</code>, and that the same domain is used everywhere below.</li>
+    <li><strong>Live domain: neuroatlas.in</strong> — the site address defaults to <code>https://neuroatlas.in</code>. Klaviyo's sending domain was first set up as <code>mail.neuroatlas.com</code> and must be redone as <code>mail.neuroatlas.in</code>. <code>neuroatlas.org.uk</code> (and <code>www</code>) redirect to <code>.in</code> once added to the Vercel project.</li>
     <li><strong>Connect the domain to Vercel</strong> — add it under Project → Settings → Domains and create the A/CNAME records Vercel shows; set <code>NEXT_PUBLIC_SITE_URL</code> to the final address.</li>
     <li><strong>Klaviyo branded sending domain</strong> — at the registrar, add the four NS records delegating <code>mail.&lt;domain&gt;</code> to <code>ns1</code>–<code>ns4.klaviyo.com</code> and the TXT verification record on <code>@</code>, then press Verify in Klaviyo → Settings → Domains. Until then Klaviyo sends from its shared domain.</li>
     <li><strong>Klaviyo keys in Vercel</strong> — <code>KLAVIYO_PRIVATE_API_KEY</code> (Lists, Profiles and Subscriptions set to Full Access; nothing else) and <code>KLAVIYO_WAITLIST_LIST_ID</code> for Production and Preview, then redeploy.</li>

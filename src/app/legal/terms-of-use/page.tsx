@@ -1,6 +1,11 @@
 import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Terms of use - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Terms of use - NeuroAtlas",
+  undefined,
+  "/legal/terms-of-use"
+);
 
 export default function TermsOfUsePage() {
   return (

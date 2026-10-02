@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         destination: "/waitlist",
         permanent: true,
       },
+      // neuroatlas.org.uk (and www) send every path to the live .in domain.
+      // Takes effect once that domain is added to the Vercel project.
+      ...["neuroatlas.org.uk", "www.neuroatlas.org.uk"].map((host) => ({
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        destination: "https://neuroatlas.in/:path*",
+        permanent: true,
+      })),
     ];
   },
 };

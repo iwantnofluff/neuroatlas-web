@@ -2,11 +2,13 @@ import { Hero } from "@/components/Hero";
 import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { WaitlistApplicationForm } from "@/components/WaitlistApplicationForm";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Join The Waitlist - NeuroAtlas",
-  description: "Join the waitlist to be the first to know when NeuroAtlas is available.",
-};
+export const metadata = pageMetadata(
+  "Join The Waitlist - NeuroAtlas",
+  "Join the waitlist to be the first to know when NeuroAtlas is available.",
+  "/waitlist"
+);
 
 export default function WaitlistPage() {
   return (

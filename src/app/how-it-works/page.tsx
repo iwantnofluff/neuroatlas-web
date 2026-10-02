@@ -11,8 +11,13 @@ import { CeoBreathScreen } from "@/components/CeoBreathScreen";
 import { StressAgeCard } from "@/components/StressAgeCard";
 import { Explorable } from "@/components/ExploreCue";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "How it works - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "How it works - NeuroAtlas",
+  "Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds.",
+  "/how-it-works"
+);
 
 // Copy: client's full pass over the /how-it-works content doc, headline
 // options resolved per section (see the note above each pick). Section

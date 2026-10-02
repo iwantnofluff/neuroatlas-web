@@ -8,8 +8,13 @@ import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Inside the app - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Inside the app - NeuroAtlas",
+  "Every reading turns into something you can act on. The app reads your data, runs the right reset, and shows you it worked.",
+  "/inside-the-app"
+);
 
 // Copy: client's full pass over the /inside-the-app content doc (second
 // pass - replaces the earlier all-text version). Section numbering below
@@ -211,7 +216,7 @@ export default function InsideTheAppPage() {
               ].map((category) => (
                 <li
                   key={category}
-                  className="flex min-h-20 items-center justify-center rounded-2xl border border-gold-soft/40 bg-cream/10 px-3 py-5 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:border-gold [@media(hover:hover)]:hover:bg-cream/15 [@media(hover:hover)]:hover:text-cream md:min-h-24"
+                  className="tap-press flex min-h-20 items-center justify-center rounded-2xl border border-gold-soft/40 bg-cream/10 px-3 py-5 text-center text-xs font-medium text-cream/90 uppercase tracking-[-0.04em] backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:border-gold [@media(hover:hover)]:hover:bg-cream/15 [@media(hover:hover)]:hover:text-cream md:min-h-24"
                 >
                   {category}
                 </li>

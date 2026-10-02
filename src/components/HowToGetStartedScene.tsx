@@ -26,6 +26,7 @@ import {
   moduleStopMM,
   STRAP_VISIBLE_HEIGHT_MM,
 } from "@/lib/howToGetStartedProgress";
+import { useOnScreenFrameloop } from "@/lib/useOnScreenFrameloop";
 
 /**
  * STRAP RENDERING — GEOMETRY, MATERIAL, AND TEXTURE NOTES
@@ -827,8 +828,12 @@ export function HowToGetStartedScene({
   progress: MotionValue<number>;
   reduceMotion: boolean;
 }) {
+  const { ref: frameloopRef, frameloop } = useOnScreenFrameloop();
+
   return (
     <Canvas
+      ref={frameloopRef}
+      frameloop={frameloop}
       className="!absolute inset-0"
       style={{ touchAction: "pan-y" }}
       orthographic

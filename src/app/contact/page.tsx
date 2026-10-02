@@ -3,8 +3,13 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 import { contactEmail } from "@/lib/nav";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Contact - NeuroAtlas" };
+export const metadata = pageMetadata(
+  "Contact - NeuroAtlas",
+  "Send us your question and we'll get back to you by email.",
+  "/contact"
+);
 
 export default function ContactPage() {
   return (

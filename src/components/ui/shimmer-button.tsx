@@ -68,7 +68,7 @@ const rootClassName = (className?: string) =>
     // with the spinning spark drawn on top of it, which is what reads as a
     // line of light travelling around the border.
     "border [border-color:color-mix(in_oklab,var(--bg)_50%,transparent)]",
-    "transform-gpu transition-[box-shadow,transform,color] duration-300 ease-in-out active:translate-y-px",
+    "shimmer-press transform-gpu transition-[box-shadow,transform,color] duration-300 ease-in-out active:translate-y-px",
     // Rest state is now a 2-shadow list (a fully transparent ring shadow
     // + the original ambient shadow), matching hover's 2-shadow list
     // entry-for-entry — a real, confirmed bug this replaces: box-shadow
@@ -103,7 +103,7 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
         )}
       >
         {/* spark */}
-        <div className="absolute inset-0 aspect-[1] h-[100cqh] rounded-none [mask:none] group-hover:motion-safe:animate-shimmer-slide group-focus-visible:motion-safe:animate-shimmer-slide">
+        <div className="shimmer-press-spark absolute inset-0 aspect-[1] h-[100cqh] rounded-none [mask:none] group-hover:motion-safe:animate-shimmer-slide group-focus-visible:motion-safe:animate-shimmer-slide">
           {/* spark before */}
           <div className="absolute -inset-full w-auto [translate:0_0] rotate-0 [background:conic-gradient(from_calc(270deg-(var(--spread)*0.5)),transparent_0,var(--shimmer-color)_var(--spread),transparent_var(--spread))] group-hover:motion-safe:animate-spin-around group-focus-visible:motion-safe:animate-spin-around" />
         </div>
@@ -122,7 +122,7 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
           shared span, so this is the single place the brand book's "Mont
           Medium for buttons/emphasis" rule needs to live, rather than
           repeating a weight utility at each of the ~20 call sites. */}
-      <span className="relative z-10 font-medium transition-colors duration-300 group-hover:text-navy group-focus-visible:text-navy">
+      <span className="shimmer-press-label relative z-10 font-medium transition-colors duration-300 group-hover:text-navy group-focus-visible:text-navy">
         {children}
       </span>
 
@@ -171,7 +171,7 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
       <div
         aria-hidden
         className={cn(
-          "absolute inset-(--cut) -z-20 [border-radius:var(--radius)] opacity-0",
+          "shimmer-press-fill absolute inset-(--cut) -z-20 [border-radius:var(--radius)] opacity-0",
           "[background:linear-gradient(180deg,color-mix(in_oklab,var(--hover-bg)_92%,white_16%),var(--hover-bg))]",
           "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]",
           "transition-opacity duration-300 ease-in-out",
