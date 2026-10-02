@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -41,9 +41,15 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
   const prefersReducedMotion = useSafeReducedMotion();
   const reduceMotion = reduceMotionProp ?? prefersReducedMotion;
 
+  const [playing, setPlaying] = useState(false);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    // React does not put `muted` in the server-rendered HTML, and iOS only
+    // autoplays muted video, so it is set here before play() is called.
+    video.muted = true;
+    video.defaultMuted = true;
     if (reduceMotion) {
       video.pause();
       video.currentTime = 0;
@@ -53,18 +59,35 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
   }, [reduceMotion]);
 
   if (src) {
+    // The poster is a real image underneath, and the video fades in only
+    // once it is actually playing. When a phone refuses autoplay (Low
+    // Power Mode, data saver, some private windows) the visitor sees the
+    // still frame, never the browser's play button.
     return (
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster={poster}
-        className={cn("absolute inset-0 size-full object-cover", className)}
-      >
-        <source src={src} />
-      </video>
+      <div aria-hidden="true" className={cn("absolute inset-0 overflow-hidden", className)}>
+        {poster && (
+          <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
+        )}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          controls={false}
+          poster={poster}
+          onPlaying={() => setPlaying(true)}
+          className={cn(
+            "hero-video absolute inset-0 size-full object-cover transition-opacity duration-700",
+            playing || reduceMotion ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <source src={src} />
+        </video>
+      </div>
     );
   }
 
