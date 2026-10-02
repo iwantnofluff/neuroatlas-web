@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import dynamic from "next/dynamic";
 import {
+  animate,
   motion,
+  useInView,
+  useMotionValue,
   useScroll,
   useTransform,
   type MotionValue,
@@ -332,6 +335,47 @@ function OrganicSignalCallout({
  *  what actually sells "arriving", not just fading up in place. */
 const MOBILE_CARD_TRAVEL_PX = 48;
 
+const PHONE_SEQUENCE_STOPS = [0.2499, 0.5099, 0.7599, 1];
+const PHONE_SEQUENCE_HOLD_S = 2.8;
+const PHONE_SEQUENCE_MOVE_S = 1.1;
+
+/** Phones: the band hero is one ordinary screen, not a 280vh pin, so its
+ *  signal cards and model turn play on their own instead of from scroll.
+ *  Holds on each signal, moves to the next, then plays back the other
+ *  way (mirror, so the model never snaps from its last pose to its
+ *  first). Paused while the hero is off screen. */
+function usePhoneSequence(target: RefObject<HTMLElement | null>, enabled: boolean) {
+  const progress = useMotionValue(PHONE_SEQUENCE_STOPS[0]);
+  const inView = useInView(target, { amount: 0.3 });
+  useEffect(() => {
+    if (!enabled || !inView) return;
+    const values: number[] = [];
+    const times: number[] = [];
+    const total =
+      PHONE_SEQUENCE_STOPS.length * PHONE_SEQUENCE_HOLD_S +
+      (PHONE_SEQUENCE_STOPS.length - 1) * PHONE_SEQUENCE_MOVE_S;
+    let elapsed = 0;
+    PHONE_SEQUENCE_STOPS.forEach((stop, i) => {
+      if (i > 0) elapsed += PHONE_SEQUENCE_MOVE_S;
+      values.push(stop);
+      times.push(elapsed / total);
+      elapsed += PHONE_SEQUENCE_HOLD_S;
+      values.push(stop);
+      times.push(elapsed / total);
+    });
+    progress.set(values[0]);
+    const controls = animate(progress, values, {
+      duration: total,
+      times,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "mirror",
+    });
+    return () => controls.stop();
+  }, [enabled, inView, progress]);
+  return progress;
+}
+
 /** Mobile-stack-only reveal — a hard opacity cut at the range's own
  *  start, not useSignalReveal's smooth fade. Every card here shares the
  *  exact same `absolute inset-0` rect (see MobileSignalCard below), so
@@ -434,10 +478,17 @@ export function BandScrollShowcase() {
   // Age's, right at page load with zero scroll). "start start" instead
   // aligns progress 0 with the genuine start of the page, so Stress Age
   // reads clean and alone until the user actually scrolls.
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: pinnedProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end end"],
   });
+  const phoneProgress = usePhoneSequence(wrapperRef, isMobile && !reduceMotion);
+  const phoneMode = useMotionValue(0);
+  useEffect(() => phoneMode.set(isMobile ? 1 : 0), [isMobile, phoneMode]);
+  const scrollYProgress = useTransform(
+    [pinnedProgress, phoneProgress, phoneMode],
+    ([pinned, phone, mode]: number[]) => (mode ? phone : pinned)
+  );
 
   return (
     // 520vh -> 280vh — per an explicit "too much scrolling to reveal"
@@ -446,13 +497,13 @@ export function BandScrollShowcase() {
     // 280vh each still gets ~92vh of real scroll distance, comfortably
     // legible — 520vh was just excess dead scroll on top of that, not
     // extra room any specific beat needed.
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[280vh]")}>
+    <div ref={wrapperRef} className={cn(!reduceMotion && "md:h-[280vh]")}>
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx for the full
          explanation: `vh` assumes the browser's toolbar chrome is fully
          hidden, so a real phone's actual visible area can be shorter than
          100vh, clipping this pinned section's bottom against its own
          overflow-hidden. `svh` is the small/guaranteed-visible size. */}
-      <div data-visual-section="band-hero" className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
+      <div data-visual-section="band-hero" className="relative isolate top-0 h-[100svh] w-full overflow-hidden bg-navy md:sticky">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_16%,transparent),transparent_70%)]"

@@ -144,7 +144,7 @@ function ShimmerLayers({ children }: { children?: React.ReactNode }) {
           for why — it just stays permanently visible underneath it. */}
       <div
         className={cn(
-          "absolute inset-(--cut) -z-20 [border-radius:var(--radius)] backdrop-blur-lg backdrop-saturate-150",
+          "shimmer-press-backdrop absolute inset-(--cut) -z-20 [border-radius:var(--radius)] backdrop-blur-lg backdrop-saturate-150",
           "[background:color-mix(in_oklab,var(--bg)_18%,transparent)]",
           "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16)]"
         )}

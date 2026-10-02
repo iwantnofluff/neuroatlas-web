@@ -4,6 +4,8 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useIsMobile } from "@/lib/useIsMobile";
+import { Reveal } from "@/components/Reveal";
 import { TextLink } from "@/components/TextLink";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { EmotionalWheelScreen } from "@/components/EmotionalWheelScreen";
@@ -125,8 +127,81 @@ function NoiseElement({
   );
 }
 
+function PrecisionCopy() {
+  return (
+    <>
+      <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
+        Precision, Not Guesswork
+      </h2>
+      <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-cream/75">
+        Every reading is checked against your own resting baseline, not
+        a general average, then filtered to separate real stress from
+        caffeine, a workout, or the cold. What shows up on your
+        dashboard is your signal, not noise.
+      </p>
+    </>
+  );
+}
+
+function AppReadsYouCopy() {
+  return (
+    <>
+      <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
+        The App Reads You
+      </h2>
+      {/* max-w-lg (was max-w-xl) + text-balance (was text-pretty)
+         — a real, confirmed bug this replaces: at the wider max-
+         width this wrapped awkwardly (a short trailing line),
+         reported live. text-balance evens out the line lengths
+         within a tighter box instead of just trimming the last
+         line's widow the way text-pretty does. */}
+      <p className="mx-auto mt-6 max-w-lg text-balance text-lg text-mist">
+        The band reads your signals. The app turns them into something
+        you can act on.
+      </p>
+      <div className="flex justify-center">
+        <TextLink href="/inside-the-app">Learn More</TextLink>
+      </div>
+    </>
+  );
+}
+
+function EmotionalWheelMockup() {
+  return (
+    <IPhoneMockup interactive cueSideFrom="md" variant="pro-max" className="h-full">
+      <EmotionalWheelScreen />
+    </IPhoneMockup>
+  );
+}
+
+/** Phones: the two scenes stacked in normal flow, each revealing as it
+ *  scrolls in. The pinned version swaps one full-screen scene for the
+ *  other, which on a phone meant a long stretch of scrolling with the
+ *  page apparently stuck. */
+function SignalVsNoiseStacked() {
+  return (
+    <div data-visual-section="signal-vs-noise">
+      <section className="bg-[#0b1016] px-6 py-24 text-center">
+        <Reveal y={20}>
+          <PrecisionCopy />
+        </Reveal>
+        <Reveal y={0} delay={0.2} className="mx-auto mt-12 h-px w-24 bg-gold" />
+      </section>
+      <section className="bg-[#f4f0e9] px-6 pt-20 pb-24 text-center">
+        <Reveal y={20}>
+          <AppReadsYouCopy />
+        </Reveal>
+        <Reveal y={40} delay={0.1} className="mt-10 h-[60svh]">
+          <EmotionalWheelMockup />
+        </Reveal>
+      </section>
+    </div>
+  );
+}
+
 export function SignalVsNoiseSection() {
   const reduceMotion = useSafeReducedMotion();
+  const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
   // offset ["start end", "end end"] — see FeatureSplitSection.tsx's own
   // comment for the full mechanics: "start start" leaves scrollYProgress
@@ -186,6 +261,8 @@ export function SignalVsNoiseSection() {
   const appOpacity = useTransform(scrollYProgress, (p) => appEased(p));
   const appY = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 120 * (1 - appEased(p))));
 
+  if (isMobile) return <SignalVsNoiseStacked />;
+
   return (
     // 400vh -> 260vh — per an explicit "too much scrolling to reveal"
     // pass, kept more conservative than this codebase's other pinned
@@ -212,15 +289,7 @@ export function SignalVsNoiseSection() {
             <NoiseElement key={i} shape={shape} progress={scrollYProgress} reduceMotion={reduceMotion} />
           ))}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
-              Precision, Not Guesswork
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-cream/75">
-              Every reading is checked against your own resting baseline, not
-              a general average, then filtered to separate real stress from
-              caffeine, a workout, or the cold. What shows up on your
-              dashboard is your signal, not noise.
-            </p>
+            <PrecisionCopy />
           </div>
         </motion.div>
 
@@ -239,22 +308,7 @@ export function SignalVsNoiseSection() {
           className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 pt-20 text-center"
         >
           <div>
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
-              The App Reads You
-            </h2>
-            {/* max-w-lg (was max-w-xl) + text-balance (was text-pretty)
-               — a real, confirmed bug this replaces: at the wider max-
-               width this wrapped awkwardly (a short trailing line),
-               reported live. text-balance evens out the line lengths
-               within a tighter box instead of just trimming the last
-               line's widow the way text-pretty does. */}
-            <p className="mx-auto mt-6 max-w-lg text-balance text-lg text-mist">
-              The band reads your signals. The app turns them into something
-              you can act on.
-            </p>
-            <div className="flex justify-center">
-              <TextLink href="/inside-the-app">Learn More</TextLink>
-            </div>
+            <AppReadsYouCopy />
           </div>
 
           {/* Beat 4 — the real "Emotional wheel" resonance-check
@@ -263,9 +317,7 @@ export function SignalVsNoiseSection() {
              exactly the way it is in the Figma, interactive" request,
              replacing the earlier plain white placeholder card. */}
           <motion.div style={{ opacity: appOpacity, y: appY }} className="h-[38svh] sm:h-[44svh] lg:h-[min(56svh,calc(100svh-22rem))]">
-            <IPhoneMockup interactive cueSideFrom="md" variant="pro-max" className="h-full">
-              <EmotionalWheelScreen />
-            </IPhoneMockup>
+            <EmotionalWheelMockup />
           </motion.div>
         </motion.div>
 

@@ -739,11 +739,11 @@
 }
 
 /* Touch screens. Hover effects are off on touch (see the hover variant at
-   the top of this file), so a press shows what a mouse hover shows on
-   desktop: ShimmerButton fills gold, its label turns navy, the glow
-   blooms and the spark runs once; the button also dips slightly. Touch
-   targets are at least 44px tall. The grey tap flash is replaced by these
-   press states. iOS only applies :active to elements once the page has a
+   the top of this file). A press is deliberately quieter than a desktop
+   hover: no gold fill, glow or spark, which under a thumb read as a flash
+   of colour. The button dips, its edge firms up to gold and its glass
+   brightens a touch, then eases back on release. Touch targets are at
+   least 44px tall. iOS only applies :active once the page has a
    touchstart listener, which SiteChrome adds. */
 @media (hover: none), (pointer: coarse) {
   a,
@@ -755,38 +755,40 @@
 
   .shimmer-press {
     min-height: 2.75rem;
+    box-shadow: none;
+    transition:
+      transform 220ms ease-out,
+      border-color 220ms ease-out;
+  }
+
+  .shimmer-press-spark,
+  .shimmer-press-fill {
+    display: none;
+  }
+
+  .shimmer-press-backdrop {
+    transition: background 220ms ease-out;
   }
 
   .shimmer-press:active {
     transform: scale(0.97);
-    box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--glow) 55%, transparent),
-      0 0 28px 4px color-mix(in oklab, var(--glow) 65%, transparent);
+    border-color: color-mix(in oklab, var(--color-gold) 70%, transparent);
+    transition-duration: 90ms;
   }
 
-  .shimmer-press:active .shimmer-press-fill {
-    opacity: 1;
-    transition-duration: 120ms;
-  }
-
-  .shimmer-press:active .shimmer-press-label {
-    color: var(--color-navy);
-    transition-duration: 120ms;
+  .shimmer-press:active .shimmer-press-backdrop {
+    background: color-mix(in oklab, var(--bg) 32%, transparent);
+    transition-duration: 90ms;
   }
 
   .tap-press {
-    transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+    transition: transform 220ms ease-out, border-color 220ms ease-out, background-color 220ms ease-out;
   }
 
   .tap-press:active {
     transform: scale(0.97);
     border-color: color-mix(in oklab, var(--color-gold) 60%, transparent);
-  }
-}
-
-@media (hover: none) and (prefers-reduced-motion: no-preference), (pointer: coarse) and (prefers-reduced-motion: no-preference) {
-  .shimmer-press:active .shimmer-press-spark {
-    animation: var(--animate-shimmer-slide);
+    transition-duration: 90ms;
   }
 }
 
@@ -803,9 +805,8 @@
      on each scrolled frame, which is what made phones feel laggy; touch
      screens get flat tints instead (the glass reads almost the same over
      these dark sections).
-   - ShimmerButton's travelling spark rests at the button's left edge,
-     which on a phone (no hover to move it) read as a white smudge. It is
-     hidden at rest and only runs while the button is pressed. */
+   - The One Signal headline's drifting gradient repaints a screen-wide
+     block of text every frame; on touch it holds still. */
 @media (hover: none), (pointer: coarse) {
   .grain-overlay {
     display: none;
@@ -817,12 +818,7 @@
     backdrop-filter: none !important;
   }
 
-  .shimmer-press-spark {
-    opacity: 0;
-    transition: opacity 120ms ease;
-  }
-
-  .shimmer-press:active .shimmer-press-spark {
-    opacity: 1;
+  .signal-mask-gradient {
+    animation: none;
   }
 }
