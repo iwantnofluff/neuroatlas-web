@@ -206,12 +206,12 @@ export default function ForOrganisationsPage() {
             The questions your team will ask before signing are the ones we
             have already answered.
           </p>
-          <ul className="mx-auto mt-8 flex max-w-xl flex-wrap justify-center gap-x-8 gap-y-3 text-pretty text-base text-navy/80">
+          <ul className="mx-auto mt-8 flex w-fit max-w-xl flex-col items-start gap-y-3 text-left text-pretty text-base text-navy/80 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8">
             {SECURITY_ITEMS.map((item) => (
-              <li key={item} className="flex items-center gap-2">
+              <li key={item} className="flex items-start gap-3 sm:items-center sm:gap-2">
                 <span
                   aria-hidden="true"
-                  className="size-1 shrink-0 rounded-full bg-gold-deep"
+                  className="mt-[0.7em] size-1 shrink-0 rounded-full bg-gold-deep sm:mt-0"
                 />
                 {item}
               </li>
