@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { RESEARCH_CARDS } from "@/lib/researchCitations";
 
 // Real citations, not placeholders — a direct client update replacing
@@ -48,6 +49,25 @@ const CARD_WINDOWS: ReadonlyArray<{ start: number; end: number } | null> = [
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function ResearchCardContent({ card }: { card: (typeof RESEARCH_CARDS)[number] }) {
+  return (
+    <>
+      <span className="text-xs font-medium tracking-[-0.04em] text-gold-deep uppercase">
+        {card.index}
+      </span>
+      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">{card.field}</h3>
+      <p className="mt-3 text-pretty text-sm text-mist">{card.note}</p>
+      {/* "Backed by" — the short, at-a-glance citation. The full
+         bibliographic reference lives in a shared "References" list
+         on the page itself (see page.tsx), not repeated here — this
+         card is already tightly height-constrained. */}
+      <p className="mt-3 border-t border-navy/10 pt-3 text-xs text-navy/60">
+        Backed by: {card.backedBy}
+      </p>
+    </>
+  );
 }
 
 function StackedResearchCard({
@@ -94,18 +114,7 @@ function StackedResearchCard({
       }}
       className="absolute inset-0 flex flex-col justify-center rounded-3xl border border-navy/10 bg-white/50 p-8 shadow-[0_20px_45px_-25px_rgba(11,16,22,0.35)] backdrop-blur-md"
     >
-      <span className="text-xs font-medium tracking-[-0.04em] text-gold-deep uppercase">
-        {card.index}
-      </span>
-      <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">{card.field}</h3>
-      <p className="mt-3 text-pretty text-sm text-mist">{card.note}</p>
-      {/* "Backed by" — the short, at-a-glance citation. The full
-         bibliographic reference lives in a shared "References" list
-         on the page itself (see page.tsx), not repeated here — this
-         card is already tightly height-constrained. */}
-      <p className="mt-3 border-t border-navy/10 pt-3 text-xs text-navy/60">
-        Backed by: {card.backedBy}
-      </p>
+      <ResearchCardContent card={card} />
     </motion.div>
   );
 }
@@ -132,6 +141,7 @@ function StackedResearchCard({
  */
 export function EditorialIndexSection() {
   const reduceMotion = useSafeReducedMotion();
+  const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
   // offset ["start start", "end end"] — was ["start end", "end end"], a
   // real, confirmed bug this replaces: "start end" starts counting
@@ -168,7 +178,7 @@ export function EditorialIndexSection() {
     // gives ~280vh of real pinned scroll distance across the full
     // sequence — still a hold-reveal-hold-reveal-hold shape, just with
     // real room for each phase rather than a compressed one.
-    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "h-[380vh]")}>
+    <div ref={wrapperRef} className={cn("relative", !reduceMotion && "md:h-[380vh]")}>
       {/* min-h-[100svh], not h-screen — h-screen (100vh) assumes the
          browser's own toolbar chrome is fully hidden, which isn't true
          on a real phone; the established fix throughout this codebase
@@ -180,7 +190,7 @@ export function EditorialIndexSection() {
          phone still never gets clipped either. py-16 md:py-24 (was a
          flat py-24) — same progressive step the homepage's own
          sections already use (see page.tsx). */}
-      <div className="sticky top-0 flex min-h-[100svh] items-center bg-cream px-6 py-16 md:py-24 lg:px-10">
+      <div className="relative top-0 flex items-center bg-cream px-6 py-16 md:sticky md:min-h-[100svh] md:py-24 lg:px-10">
         <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
           <Reveal y={20}>
             <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-navy lg:text-4xl">
@@ -198,17 +208,31 @@ export function EditorialIndexSection() {
              card's own `absolute inset-0` sizes itself against, so it
              needs the same increase or the new line would overflow the
              card's own box rather than the container growing to fit it. */}
-          <div className="relative h-[380px] sm:h-[420px]">
-            {RESEARCH_CARDS.map((card, i) => (
-              <StackedResearchCard
-                key={card.field}
-                progress={scrollYProgress}
-                index={i}
-                reduceMotion={reduceMotion}
-                card={card}
-              />
-            ))}
-          </div>
+          {isMobile ? (
+            <div className="flex flex-col gap-4">
+              {RESEARCH_CARDS.map((card) => (
+                <Reveal
+                  key={card.field}
+                  y={20}
+                  className="rounded-3xl border border-navy/10 bg-white/50 p-6 shadow-[0_20px_45px_-25px_rgba(11,16,22,0.35)]"
+                >
+                  <ResearchCardContent card={card} />
+                </Reveal>
+              ))}
+            </div>
+          ) : (
+            <div className="relative h-[380px] sm:h-[420px]">
+              {RESEARCH_CARDS.map((card, i) => (
+                <StackedResearchCard
+                  key={card.field}
+                  progress={scrollYProgress}
+                  index={i}
+                  reduceMotion={reduceMotion}
+                  card={card}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

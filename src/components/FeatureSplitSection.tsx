@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useTransform, type MotionValue } from "framer-motion";
+import { useSectionProgress } from "@/lib/useSectionProgress";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -181,10 +182,7 @@ export function FeatureSplitSection({
   // don't need rescaling for this — they just complete as a fraction of
   // a now-larger 0–1 range (physically ~410px of scroll instead of
   // ~95px), which reads as a touch more gradual, not broken.
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start end", "end end"],
-  });
+  const { progress: scrollYProgress } = useSectionProgress(wrapperRef, ["start end", "end end"]);
 
   // The text half enters from whichever side is OPPOSITE the media —
   // e.g. imageSide="right" puts text on the left, so it should arrive
@@ -209,7 +207,7 @@ export function FeatureSplitSection({
     // one component is reused across many pages (/how-it-works,
     // /inside-the-app, etc.), so this single change tightens all of
     // them at once.
-    <div id={id} ref={wrapperRef} className={cn(!reduceMotion && "h-[130vh]")}>
+    <div id={id} ref={wrapperRef} className={cn(!reduceMotion && "md:h-[130vh]")}>
       {/* h-[100svh], not h-screen — see MethodScrollCards.tsx/
          BuiltToReadYouSection.tsx for the full explanation: `vh` assumes
          the browser's toolbar chrome is fully hidden, so a real phone's
@@ -224,7 +222,7 @@ export function FeatureSplitSection({
       <section
         data-visual-section={sectionName}
         className={cn(
-          "sticky top-0 flex min-h-[100svh] w-full items-center overflow-x-clip max-md:pt-24 max-md:pb-20 md:h-[100svh] md:overflow-hidden",
+          "relative isolate top-0 flex w-full items-center overflow-x-clip max-md:py-20 md:min-h-[100svh] md:sticky md:h-[100svh] md:overflow-hidden",
           sectionClassName
         )}
       >

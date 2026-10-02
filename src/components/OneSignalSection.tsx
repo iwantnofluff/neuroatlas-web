@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
+import { useSectionProgress } from "@/lib/useSectionProgress";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
@@ -42,10 +43,7 @@ export function OneSignalSection() {
   // clamped at exactly 0 for the whole approach window while this
   // taller-than-viewport wrapper is still scrolling up from below (its
   // content already on screen).
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start end", "end end"],
-  });
+  const { progress: scrollYProgress } = useSectionProgress(wrapperRef, ["start end", "end end"]);
 
   // 1.5 -> 1.0 across the first ~55% of the pinned track, then holds —
   // "scales down... locking into the center".
@@ -72,7 +70,7 @@ export function OneSignalSection() {
     // pass: the headline scale (0-0.55) and subtext (0.35-0.7) windows
     // still get real scroll distance at this height — 200vh was excess
     // dead scroll beyond what either beat needed.
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[130vh]")}>
+    <div ref={wrapperRef} className={cn(!reduceMotion && "md:h-[130vh]")}>
       {/* min-h-[100svh], not the previous fixed h-[100svh] — a real,
          confirmed bug this replaces: the giant headline (up to 3 lines
          at a clamp()-ed size approaching 13rem) plus the six-sentence
@@ -109,7 +107,7 @@ export function OneSignalSection() {
          block's top edge can never sit above pt-24 (96px) regardless of
          how little slack centering leaves, comfortably clearing the
          header with margin to spare. */}
-      <div data-visual-section="one-signal" className="sticky top-0 flex min-h-[100svh] w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 pt-24 pb-12 text-center">
+      <div data-visual-section="one-signal" className="relative isolate top-0 flex w-full flex-col items-center justify-center overflow-x-hidden bg-cream px-6 py-20 text-center md:sticky md:min-h-[100svh] md:pt-24 md:pb-12">
         <motion.h2
           style={{ scale }}
           // clamp(), not a bare text-[12vw] — 12vw alone runs away to an

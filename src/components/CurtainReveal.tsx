@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode, type RefObject } from "react";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { cn } from "@/lib/utils";
 
 // Overlap (how far the reveal's document position is pulled up into the
@@ -93,6 +94,11 @@ const HOLD_RATIO = 0.3;
  * `useScroll` target, and two separate refs can't both resolve to one
  * element. Passing the ref in once and using it for both jobs avoids
  * that conflict entirely.
+ *
+ * Below md there is no overlap and no pin: the two blocks simply stack,
+ * the same as reduced motion. On a phone the pinned reveal read as the
+ * page stalling, and iOS fires `resize` as its toolbar shows and hides,
+ * which re-measured the track mid-scroll.
  */
 export function CurtainReveal({
   curtainRef,
@@ -116,6 +122,7 @@ export function CurtainReveal({
   revealSection?: string;
 }) {
   const reduceMotion = useSafeReducedMotion();
+  const isMobile = useIsMobile();
   const [metrics, setMetrics] = useState<{ overlap: number; height: number } | null>(null);
 
   useEffect(() => {
@@ -140,7 +147,7 @@ export function CurtainReveal({
   // motion is preferred — the wrapper then simply renders at its
   // natural height with zero margin, i.e. plain sequential stacking.
   const wrapperStyle =
-    !reduceMotion && metrics ? { marginTop: -metrics.overlap, height: metrics.height } : undefined;
+    !reduceMotion && !isMobile && metrics ? { marginTop: -metrics.overlap, height: metrics.height } : undefined;
 
   return (
     <>
@@ -150,7 +157,7 @@ export function CurtainReveal({
       <div style={wrapperStyle} className="relative">
         <div
           data-visual-section={revealSection}
-          className={cn("sticky top-0 h-[100svh] w-full overflow-hidden", revealClassName)}
+          className={cn("relative min-h-[80svh] w-full overflow-hidden py-24 md:sticky md:top-0 md:h-[100svh] md:py-0", revealClassName)}
         >
           {reveal}
         </div>

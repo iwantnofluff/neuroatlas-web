@@ -2,7 +2,8 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
+import { useSectionProgress } from "@/lib/useSectionProgress";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
@@ -52,10 +53,7 @@ export function DesignedToBlendInSection() {
   // content already on screen) — here that means the clip-path sits at
   // its narrowest, least-open state for that whole stretch rather than
   // starting to open as soon as the section is actually visible.
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start end", "end end"],
-  });
+  const { progress: scrollYProgress } = useSectionProgress(wrapperRef, ["start end", "end end"]);
 
   const clipPath = useTransform(scrollYProgress, (p) => {
     const t = reduceMotion ? 1 : Math.min(1, Math.max(0, p));
@@ -73,8 +71,8 @@ export function DesignedToBlendInSection() {
     // with no internal staged sub-windows to protect, so shortening the
     // track just makes the same expansion play out over less scroll
     // distance, not a different animation.
-    <div ref={wrapperRef} className={cn(!reduceMotion && "h-[180vh]")}>
-      <div data-visual-section="designed-to-blend-in" className="sticky top-0 h-[100svh] w-full overflow-hidden bg-navy">
+    <div ref={wrapperRef} className={cn(!reduceMotion && "md:h-[180vh]")}>
+      <div data-visual-section="designed-to-blend-in" className="relative isolate top-0 h-[100svh] w-full overflow-hidden bg-navy md:sticky">
         {/* The cinematic slit — the real photo, object-cover so it
            always fills this box's current shape regardless of its
            in-flight aspect ratio as the clip-path expands. A scrim (not
