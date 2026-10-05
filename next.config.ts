@@ -19,6 +19,13 @@ const nextConfig: NextConfig = {
         destination: "/waitlist",
         permanent: true,
       },
+      // GoDaddy's parked page lived at /lander, and browsers that saw it
+      // before the domain moved cached the redirect there.
+      {
+        source: "/lander",
+        destination: "/",
+        permanent: true,
+      },
       // neuroatlas.org.uk (and www) send every path to the live .in domain.
       // Takes effect once that domain is added to the Vercel project.
       ...["neuroatlas.org.uk", "www.neuroatlas.org.uk"].map((host) => ({
