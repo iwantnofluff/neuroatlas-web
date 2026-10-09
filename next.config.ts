@@ -26,9 +26,12 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: true,
       },
-      // neuroatlas.org.uk (and www) send every path to the live .in domain.
-      // Takes effect once that domain is added to the Vercel project.
-      ...["neuroatlas.org.uk", "www.neuroatlas.org.uk"].map((host) => ({
+      // Every other hostname that reaches this project sends each path to the
+      // one canonical address, https://neuroatlas.in. That covers the old
+      // .org.uk domain and Vercel's built-in production alias, which would
+      // otherwise serve a duplicate copy of the site. Preview deployments use
+      // their own per-branch hostnames, so they are unaffected.
+      ...["neuroatlas.org.uk", "www.neuroatlas.org.uk", "neuroatlas-web.vercel.app"].map((host) => ({
         source: "/:path*",
         has: [{ type: "host" as const, value: host }],
         destination: "https://neuroatlas.in/:path*",

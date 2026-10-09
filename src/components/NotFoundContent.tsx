@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { NotFoundBreath } from "@/components/NotFoundBreath";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
-import { cn } from "@/lib/utils";
 
 export function NotFoundContent() {
   const [composed, setComposed] = useState(false);
@@ -23,21 +22,21 @@ export function NotFoundContent() {
       <motion.div
         animate={{ scale: composed ? 1.04 : 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 18 }}
-        className={cn("mt-10 flex flex-wrap justify-center gap-4 transition-opacity duration-500", composed ? "opacity-100" : "opacity-80")}
+        className="mt-10 flex flex-wrap justify-center gap-4"
       >
         <ShimmerLink
           href="/"
           background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
           shimmerColor="var(--color-cream)"
-          className="text-sm tracking-wide text-cream"
+          className="px-6 py-3 text-sm tracking-wide text-cream"
         >
           Back To Home
         </ShimmerLink>
         <ShimmerLink
           href="/waitlist"
-          background="color-mix(in oklab, var(--color-gold) 35%, transparent)"
-          shimmerColor="var(--color-gold-soft)"
-          className="text-sm tracking-wide text-cream"
+          background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
+          shimmerColor="var(--color-cream)"
+          className="px-6 py-3 text-sm tracking-wide text-cream"
         >
           Join The Waitlist
         </ShimmerLink>
