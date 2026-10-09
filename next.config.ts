@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
   },
+  // Media in /public (photos, hero video, band model, icons) is served by
+  // Vercel's CDN, which drops its copy on every deploy. Browsers otherwise
+  // get max-age=0 and re-check every file on every visit. These names are
+  // not content-hashed, so the browser cache is 7 days rather than a year,
+  // then a further 30 days of serving the stored copy while it refreshes.
+  // Optimised images (/_next/image) inherit this max-age from their source.
+  async headers() {
+    const mediaCache = [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=2592000" }];
+    return ["/photos/:path*", "/video/:path*", "/wheel/:path*", "/composure/:path*", "/figma/:path*", "/textures/:path*", "/brand/:path*", "/band.glb"].map(
+      (source) => ({ source, headers: mediaCache })
+    );
+  },
   async redirects() {
     return [
       {
