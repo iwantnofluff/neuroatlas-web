@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
         destination: "/waitlist",
         permanent: true,
       },
+      // The journal is the one home for articles. /blog and /resources are
+      // the addresses people most often guess, so they lead there too.
+      ...["/blog", "/resources"].flatMap((root) => [
+        { source: root, destination: "/journal", permanent: true },
+        { source: `${root}/:slug`, destination: "/journal/:slug", permanent: true },
+      ]),
       // GoDaddy's parked page lived at /lander, and browsers that saw it
       // before the domain moved cached the redirect there.
       {
