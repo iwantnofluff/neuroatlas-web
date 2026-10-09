@@ -1,0 +1,16 @@
+url,primary_keyword,intent,secondary_keywords,current_title,keyword_in_title,keyword_in_h1,india_volume,keyword_difficulty,cpc_inr,status
+/,stress management band,Commercial investigation,stress tracker wearable; stress monitoring device; stress management device,NeuroAtlas - The First Stress Management Band,Yes,Yes,,,,Draft
+/band,wearable stress tracker,Commercial investigation,stress tracker band; screenless fitness band; HRV band,The NA·01 band - NeuroAtlas,No,No,,,,Draft
+/how-it-works,how stress tracking works,Informational,stress tracking; measure stress with heart rate; HRV stress tracking,How it works - NeuroAtlas,No,No,,,,Draft
+/inside-the-app,stress management app,Commercial investigation,stress relief app; breathing exercise app; stress reset app,Inside the app - NeuroAtlas,No,No,,,,Draft
+/the-science,heart rate variability and stress,Informational,HRV and stress; science of stress; vagus nerve breathing,The science - NeuroAtlas,No,No,,,,Draft
+/for-organisations,employee stress management,Commercial investigation,corporate wellness programme India; employee wellbeing programme; workplace stress management,For organisations - NeuroAtlas,No,No,,,,Draft
+/pricing,NeuroAtlas price,Transactional,stress band price India; NeuroAtlas pilot,Pricing and plans - NeuroAtlas,Partial (brand only),No,,,,Draft
+/waitlist,NeuroAtlas waitlist,Transactional,NeuroAtlas early access; NeuroAtlas launch,Join The Waitlist - NeuroAtlas,Partial,Yes,,,,Draft
+/journal,stress management tips,Informational,how to manage stress at work; focus under pressure; composure,Journal - NeuroAtlas,No,No,,,,Draft
+/about,NeuroAtlas,Navigational,NeuroAtlas company; NeuroAtlas founders,About us - NeuroAtlas,Yes,No,,,,Draft
+/faq,NeuroAtlas FAQ,Navigational,stress band questions; does a stress tracker work,FAQ - NeuroAtlas,Yes,No,,,,Draft
+/privacy,wearable health data privacy,Informational,is my health data safe; stress tracker data privacy,Privacy and your data - NeuroAtlas,No,No,,,,Draft
+/contact,contact NeuroAtlas,Navigational,NeuroAtlas email; NeuroAtlas support,Contact - NeuroAtlas,Partial,No,,,,Draft
+/legal/privacy-policy,NeuroAtlas privacy policy,Navigational,,Privacy policy - NeuroAtlas,Yes,Partial,,,,Draft
+/legal/terms-of-use,NeuroAtlas terms of use,Navigational,,Terms of use - NeuroAtlas,Yes,Partial,,,,Draft
