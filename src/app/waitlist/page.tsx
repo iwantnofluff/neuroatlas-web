@@ -3,6 +3,7 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { WaitlistApplicationForm } from "@/components/WaitlistApplicationForm";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "Join The Waitlist - NeuroAtlas",
@@ -31,7 +32,7 @@ export default function WaitlistPage() {
               What You&rsquo;re Joining
             </h2>
             <p className="mt-6 text-pretty text-lg text-cream/75">
-              Joining the waitlist means you&rsquo;ll be among the first to hear about NeuroAtlas as access opens.
+              Joining the waitlist means you&rsquo;ll be among the first to hear about <InlineLink href="/how-it-works">NeuroAtlas</InlineLink> as access opens.
             </p>
             <p className="mt-4 text-pretty text-base text-cream/65">
               We&rsquo;ll share updates on availability and next steps as we move towards launch.
@@ -47,7 +48,7 @@ export default function WaitlistPage() {
               What Happens Next
             </h2>
             <p className="mt-6 text-pretty text-base text-cream/75">
-              Once you join the waitlist, we&rsquo;ll keep your details on file and contact you by email when there is an
+              Once you join the waitlist, we&rsquo;ll keep <InlineLink href="/privacy">your details</InlineLink> on file and contact you by email when there is an
               update on availability.
             </p>
           </Reveal>

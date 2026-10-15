@@ -7,6 +7,7 @@ import { FounderStorySection } from "@/components/FounderStorySection";
 import { LivePulseDot } from "@/components/LivePulseDot";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "About us - NeuroAtlas",
@@ -87,7 +88,8 @@ export default function AboutPage() {
             <Reveal delay={0.1} y={20}>
               <p className="eyebrow">Mission</p>
               <p className="mt-4 text-pretty text-lg text-mist">
-                We use neuroscience and wearable biometrics to help make
+                We use <InlineLink href="/the-science">neuroscience</InlineLink> and{" "}
+                <InlineLink href="/band">wearable biometrics</InlineLink> to help make
                 stress measurable, understandable, and easier to manage.
               </p>
             </Reveal>
@@ -143,8 +145,8 @@ export default function AboutPage() {
             Where We Are Today
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75">
-            NeuroAtlas is currently running a corporate pilot programme in
-            India. The pilot is helping us test and refine the NeuroAtlas
+            NeuroAtlas is currently running a{" "}
+            <InlineLink href="/for-organisations">corporate pilot programme</InlineLink> in India. The pilot is helping us test and refine the NeuroAtlas
             experience ahead of public launch.
           </p>
 

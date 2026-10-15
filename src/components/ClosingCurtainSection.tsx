@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { DotGrid } from "@/components/ui/dot-grid";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { InlineLink } from "@/components/InlineLink";
 
 /**
  * /band's closing two sections, replacing two standard centered-text
@@ -98,7 +99,8 @@ export function ClosingCurtainSection() {
               Join Our Pilot Project
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-balance text-cream/75">
-              Be part of the NeuroAtlas pilot project and help us understand
+              Be part of the{" "}
+              <InlineLink href="/for-organisations">NeuroAtlas pilot project</InlineLink> and help us understand
               how the product works in real-world settings.
             </p>
             <motion.div

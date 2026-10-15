@@ -12,6 +12,7 @@ import { Reveal } from "@/components/Reveal";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { STEP_COUNT, moduleStopScreenFraction } from "@/lib/howToGetStartedProgress";
+import { InlineLink } from "@/components/InlineLink";
 
 // Genuinely lazy — @react-three/fiber's Canvas is only pulled in once this
 // resolves client-side, never touched during the server render.
@@ -202,7 +203,7 @@ export function HowToGetStartedSection() {
         How To Get Started
       </h2>
       <p className="mt-4 text-pretty text-lg text-mist">
-        A NeuroAtlas pilot gives your organization a structured way to
+        A <InlineLink href="/pricing">NeuroAtlas pilot</InlineLink> gives your organization a structured way to
         introduce the platform, measure the experience, and review the
         results.
       </p>

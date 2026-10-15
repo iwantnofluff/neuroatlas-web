@@ -4,6 +4,7 @@ import { HeroBoundary } from "@/components/HeroBoundary";
 import { Reveal } from "@/components/Reveal";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "Pricing and plans - NeuroAtlas",
@@ -12,10 +13,10 @@ export const metadata = pageMetadata(
 );
 
 const FOUNDATION_PILOT_FEATURES = [
-  "The NA·01 Neural Band (Pantone 282 CP Navy finish)",
-  "Full access to the NeuroAtlas Mobile Application",
-  "Boardroom Mode & High-Stakes protocols",
-  "Priority support and hardware upgrades",
+  { id: "band", content: <><InlineLink href="/band">The NA·01 Neural Band</InlineLink> (Pantone 282 CP Navy finish)</> },
+  { id: "app", content: <>Full access to the <InlineLink href="/inside-the-app">NeuroAtlas Mobile Application</InlineLink></> },
+  { id: "protocols", content: "Boardroom Mode & High-Stakes protocols" },
+  { id: "support", content: "Priority support and hardware upgrades" },
 ];
 
 export default function PricingPage() {
@@ -38,12 +39,12 @@ export default function PricingPage() {
 
             <ul className="mt-8 grid gap-4 text-left">
               {FOUNDATION_PILOT_FEATURES.map((feature) => (
-                <li key={feature} className="flex items-start gap-3">
+                <li key={feature.id} className="flex items-start gap-3">
                   <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-gold">
                     <Check className="size-3.5" strokeWidth={3} />
                   </span>
                   <span className="text-pretty text-base text-cream/85">
-                    {feature}
+                    {feature.content}
                   </span>
                 </li>
               ))}
