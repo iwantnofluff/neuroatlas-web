@@ -14,10 +14,14 @@ export const primaryNav: NavLink[] = [
   { label: "The Band", href: "/band" },
   { label: "The Science", href: "/the-science" },
   { label: "Inside The App", href: "/inside-the-app" },
-  { label: "For Organisations", href: "/for-organisations" },
   { label: "Privacy", href: "/privacy" },
   { label: "About", href: "/about" },
 ];
+
+// The business route sits apart from the consumer links: the header shows it
+// as its own outlined button beside "Join The Waitlist", so HR and operations
+// buyers reach the enterprise case without reading consumer pages first.
+export const organisationsNav: NavLink = { label: "For Organisations", href: "/for-organisations" };
 
 // Full footer site menu — Title Case per Copy V2. "The Science" was
 // previously removed from this list specifically (the "Final Copy for

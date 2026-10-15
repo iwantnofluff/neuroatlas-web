@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { primaryNav } from "@/lib/nav";
+import { organisationsNav, primaryNav } from "@/lib/nav";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import {
   Sheet,
@@ -130,35 +130,49 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Rest-tint follows the header's own transparent/solid state —
-            cream glass over the dark hero, navy glass once it solidifies
-            — same idea as the nav links above. Hover is unaffected: every
-            button on the site fills to the same gold regardless. */}
-        <ShimmerLink
-          href="/waitlist"
-          background={
-            scrolled
-              ? "color-mix(in oklab, var(--color-navy) 25%, transparent)"
-              : "color-mix(in oklab, var(--color-cream) 30%, transparent)"
-          }
-          shimmerColor={scrolled ? "var(--color-gold-deep)" : "var(--color-cream)"}
-          className={cn(
-            // xl:inline-flex, not xl:flex — this specifically needs to
-            // override the base `hidden` (display:none) at the xl
-            // breakpoint, and tailwind-merge drops the root's own base
-            // `inline-flex` in favor of this same-bucket `hidden` (no
-            // variant prefix on either), so this xl-scoped override is
-            // still required. Keeping it `inline-flex` specifically (not
-            // `flex`) is what keeps this content-sized rather than
-            // stretching to fill the header's flex row. xl, not lg: at
-            // 1024px the seven links, logo and button touched with no
-            // space between them.
-            "hidden py-2.5 text-sm tracking-wide xl:inline-flex",
-            scrolled ? "text-navy" : "text-cream"
-          )}
-        >
-          Join The Waitlist
-        </ShimmerLink>
+        <div className="hidden items-center gap-3 xl:flex">
+          <Link
+            href={organisationsNav.href}
+            className={cn(
+              "tap-press inline-flex items-center whitespace-nowrap rounded-full border px-5 py-2.5 text-sm font-medium tracking-wide transition-colors duration-300",
+              scrolled
+                ? "border-navy/25 text-navy hover:border-gold-deep hover:text-gold-deep focus-visible:border-gold-deep focus-visible:text-gold-deep"
+                : "border-cream/35 text-cream hover:border-gold hover:text-gold focus-visible:border-gold focus-visible:text-gold"
+            )}
+          >
+            {organisationsNav.label}
+          </Link>
+
+          {/* Rest-tint follows the header's own transparent/solid state —
+              cream glass over the dark hero, navy glass once it solidifies
+              — same idea as the nav links above. Hover is unaffected: every
+              button on the site fills to the same gold regardless. */}
+          <ShimmerLink
+            href="/waitlist"
+            background={
+              scrolled
+                ? "color-mix(in oklab, var(--color-navy) 25%, transparent)"
+                : "color-mix(in oklab, var(--color-cream) 30%, transparent)"
+            }
+            shimmerColor={scrolled ? "var(--color-gold-deep)" : "var(--color-cream)"}
+            className={cn(
+              // xl:inline-flex, not xl:flex — this specifically needs to
+              // override the base `hidden` (display:none) at the xl
+              // breakpoint, and tailwind-merge drops the root's own base
+              // `inline-flex` in favor of this same-bucket `hidden` (no
+              // variant prefix on either), so this xl-scoped override is
+              // still required. Keeping it `inline-flex` specifically (not
+              // `flex`) is what keeps this content-sized rather than
+              // stretching to fill the header's flex row. xl, not lg: at
+              // 1024px the seven links, logo and button touched with no
+              // space between them.
+              "hidden py-2.5 text-sm tracking-wide xl:inline-flex",
+              scrolled ? "text-navy" : "text-cream"
+            )}
+          >
+            Join The Waitlist
+          </ShimmerLink>
+        </div>
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -194,12 +208,19 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href={organisationsNav.href}
+                onClick={() => setOpen(false)}
+                className="tap-press mt-4 inline-flex min-h-11 w-fit items-center rounded-full border border-navy/25 px-6 text-sm font-medium tracking-wide text-navy transition-colors duration-300 hover:border-gold-deep hover:text-gold-deep focus-visible:border-gold-deep focus-visible:text-gold-deep"
+              >
+                {organisationsNav.label}
+              </Link>
               <ShimmerLink
                 href="/waitlist"
                 onClick={() => setOpen(false)}
                 background="color-mix(in oklab, var(--color-navy) 25%, transparent)"
                 shimmerColor="var(--color-gold-deep)"
-                className="mt-2 w-fit text-sm tracking-wide text-navy"
+                className="w-fit text-sm tracking-wide text-navy"
               >
                 Join The Waitlist
               </ShimmerLink>
