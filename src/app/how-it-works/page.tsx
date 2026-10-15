@@ -12,6 +12,7 @@ import { StressAgeCard } from "@/components/StressAgeCard";
 import { Explorable } from "@/components/ExploreCue";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "How it works - NeuroAtlas",
@@ -159,7 +160,12 @@ export default function HowItWorksPage() {
           neuroscience" phrase directly. Text right, media left. */}
       <FeatureSplitSection
         heading="Built With Neuroscience"
-        body="NeuroAtlas is built around how the brain and nervous system respond to stress, focus and recovery. It combines the body’s signals with neuroscience-backed techniques to help you understand your state and use simple, targeted tools to shift it."
+        body={
+          <>
+            NeuroAtlas is built around how the brain and nervous system respond to stress, focus and recovery. It combines the body’s signals with{" "}
+            <InlineLink href="/the-science">neuroscience-backed techniques</InlineLink> to help you understand your state and use simple, targeted tools to shift it.
+          </>
+        }
         imageSide="left"
         background="navy-soft"
         media={<NeuroWaveVisual />}
@@ -244,7 +250,7 @@ export default function HowItWorksPage() {
               Pattern Recognition Technology
             </h2>
             <p className="mt-6 text-pretty text-lg text-cream/80">
-              Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from your data, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak.
+              Over time, NeuroAtlas learns how your stress, recovery and regulation shift. It builds personal trends from <InlineLink href="/privacy">your data</InlineLink>, revealing recurring patterns and early signs of rising pressure - so you can understand your system better and respond before it reaches its peak.
             </p>
           </Reveal>
         </div>

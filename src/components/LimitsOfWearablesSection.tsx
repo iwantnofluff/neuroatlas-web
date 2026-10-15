@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/Reveal";
+import { InlineLink } from "@/components/InlineLink";
 
 /**
  * "The Limits Of Wearables" — /the-science's section 4 per the client's
@@ -27,7 +28,7 @@ export function LimitsOfWearablesSection() {
             Most wearables leave you with charts, scores and another
             number to think about. NeuroAtlas gives those signals a job:
             helping you understand when something is shifting, why it
-            matters, and what you can do next.
+            matters, and <InlineLink href="/inside-the-app">what you can do next</InlineLink>.
           </p>
         </Reveal>
       </div>

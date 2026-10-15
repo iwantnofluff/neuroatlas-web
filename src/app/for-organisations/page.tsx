@@ -8,6 +8,7 @@ import { HowToGetStartedSection } from "@/components/HowToGetStartedSection";
 import { DownloadOverviewForm } from "@/components/DownloadOverviewForm";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "For organisations - NeuroAtlas",
@@ -141,7 +142,7 @@ export default function ForOrganisationsPage() {
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-mist">
               Individuals own their personal NeuroAtlas data. Organizations
-              only see anonymous, group-level trends and never an
+              only see <InlineLink href="/privacy">anonymous, group-level trends</InlineLink> and never an
               individual&rsquo;s results.
             </p>
           </Reveal>

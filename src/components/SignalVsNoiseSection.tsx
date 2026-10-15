@@ -7,6 +7,7 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { TextLink } from "@/components/TextLink";
 import { IPhoneMockup } from "@/components/IPhoneMockup";
 import { EmotionalWheelScreen } from "@/components/EmotionalWheelScreen";
+import { InlineLink } from "@/components/InlineLink";
 
 /**
  * "Signal vs. Noise" — replaces three separate, plainer pieces (the
@@ -249,8 +250,8 @@ export function SignalVsNoiseSection() {
                within a tighter box instead of just trimming the last
                line's widow the way text-pretty does. */}
             <p className="mx-auto mt-6 max-w-lg text-balance text-lg text-mist">
-              The band reads your signals. The app turns them into something
-              you can act on.
+              The band reads your signals.{" "}
+              <InlineLink href="/inside-the-app">The app</InlineLink> turns them into something you can act on.
             </p>
             <div className="flex justify-center">
               <TextLink href="/inside-the-app">Learn More</TextLink>

@@ -6,6 +6,7 @@ import { Reveal } from "@/components/Reveal";
 import { Explorable } from "@/components/ExploreCue";
 import { cn } from "@/lib/utils";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { InlineLink } from "@/components/InlineLink";
 
 const SYSTEMS = [
   {
@@ -146,8 +147,8 @@ export function NeuralAccordion() {
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-cream/75">
             NeuroAtlas brings neuroscience and psychology together to
-            understand how stress affects the way you feel, think and
-            respond. Its interventions are built around three core
+            understand{" "}
+            <InlineLink href="/how-it-works">how stress affects the way you feel, think and respond</InlineLink>. Its interventions are built around three core
             mechanisms: regulating the nervous system, strengthening
             cognitive and emotional control, and reinforcing healthier
             response patterns over time.

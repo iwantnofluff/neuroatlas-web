@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InlineLink } from "@/components/InlineLink";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 type View = "individual" | "organisation";
@@ -11,8 +12,12 @@ type View = "individual" | "organisation";
 const INDIVIDUAL_FAQS = [
   {
     question: "How is this different from a wellness or meditation app?",
-    answer:
-      "Wellness and meditation apps offer general exercises. NeuroAtlas reads your actual physiological signals through the NA·01 band, so what you're offered is based on what's happening in your system right now, and you can see whether it worked.",
+    answer: (
+      <>
+        Wellness and meditation apps offer general exercises. NeuroAtlas reads your actual physiological signals through the{" "}
+        <InlineLink href="/band">NA·01 band</InlineLink>, so what you&apos;re offered is based on what&apos;s happening in your system right now, and you can see whether it worked.
+      </>
+    ),
   },
   {
     question: "How does it compare to other fitness or health trackers?",
@@ -21,8 +26,12 @@ const INDIVIDUAL_FAQS = [
   },
   {
     question: "Does the app work without the band?",
-    answer:
-      "The NA·01 band is required for the full NeuroAtlas experience. It's what reads the physiological signals the app relies on, so the app is built to work alongside it rather than as a standalone tool.",
+    answer: (
+      <>
+        The NA·01 band is required for the full NeuroAtlas experience. It&apos;s what reads the physiological signals{" "}
+        <InlineLink href="/inside-the-app">the app</InlineLink> relies on, so the app is built to work alongside it rather than as a standalone tool.
+      </>
+    ),
   },
   {
     question:
@@ -85,7 +94,7 @@ function FaqItem({
   reduceMotion,
 }: {
   question: string;
-  answer: string;
+  answer: ReactNode;
   isOpen: boolean;
   onToggle: () => void;
   reduceMotion: boolean;
@@ -112,6 +121,7 @@ function FaqItem({
       <motion.div
         initial={false}
         animate={{ height: isOpen ? "auto" : 0 }}
+        inert={!isOpen}
         transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="overflow-hidden"
       >

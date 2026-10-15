@@ -9,6 +9,7 @@ import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
+import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
   "Inside the app - NeuroAtlas",
@@ -102,8 +103,9 @@ export default function InsideTheAppPage() {
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-mist">
               Some moments call for sharper focus. Others need a reset, a
               steadier response, or space to recover. NeuroAtlas brings
-              together targeted tools for performance, stress and
-              wellness - so you can choose what fits the moment.
+              together{" "}
+              <InlineLink href="/the-science">targeted tools for performance, stress and wellness</InlineLink>{" "}
+              - so you can choose what fits the moment.
             </p>
           </Reveal>
           <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -326,7 +328,7 @@ export default function InsideTheAppPage() {
           NeuroAtlas is available on iOS and Android.
         </p>
         <p className="mx-auto mt-4 max-w-xl text-pretty text-base italic text-mist/80">
-          The NA·01 band is required to access the full NeuroAtlas
+          The <InlineLink href="/band">NA·01 band</InlineLink> is required to access the full NeuroAtlas
           experience.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
