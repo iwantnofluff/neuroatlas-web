@@ -1,11 +1,12 @@
 import { PlaceholderPage } from "@/components/PlaceholderPage";
-import { pageMetadata } from "@/lib/seo";
+import { NOT_YET_INDEXABLE, pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata(
-  "Terms of use - NeuroAtlas",
-  undefined,
-  "/legal/terms-of-use"
-);
+// Placeholder until the counsel-drafted text arrives. Kept out of search
+// results (and the sitemap) until then; remove robots when it is replaced.
+export const metadata = {
+  ...pageMetadata("Terms of use - NeuroAtlas", undefined, "/legal/terms-of-use"),
+  robots: NOT_YET_INDEXABLE,
+};
 
 export default function TermsOfUsePage() {
   return (

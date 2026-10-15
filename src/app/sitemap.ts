@@ -10,15 +10,14 @@ const PAGES: { path: string; priority: number; changeFrequency: "weekly" | "mont
   { path: "/the-science", priority: 0.8, changeFrequency: "monthly" },
   { path: "/for-organisations", priority: 0.8, changeFrequency: "monthly" },
   { path: "/waitlist", priority: 0.9, changeFrequency: "monthly" },
-  { path: "/journal", priority: 0.8, changeFrequency: "weekly" },
   { path: "/privacy", priority: 0.6, changeFrequency: "yearly" },
   { path: "/about", priority: 0.6, changeFrequency: "yearly" },
   { path: "/pricing", priority: 0.6, changeFrequency: "monthly" },
   { path: "/faq", priority: 0.5, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.5, changeFrequency: "yearly" },
-  { path: "/legal/privacy-policy", priority: 0.3, changeFrequency: "yearly" },
-  { path: "/legal/terms-of-use", priority: 0.3, changeFrequency: "yearly" },
 ];
+// /legal/privacy-policy and /legal/terms-of-use go back in here once their
+// final text replaces the placeholder (they are noindex until then).
 
 /** Static pages plus every published journal article from Sanity,
  *  refreshed hourly so new posts reach Google without a redeploy. */
@@ -32,6 +31,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency,
       priority,
     })),
+    ...(articles.length
+      ? [{ url: `${siteUrl}/journal`, changeFrequency: "weekly" as const, priority: 0.8 }]
+      : []),
     ...articles.map((article) => ({
       url: `${siteUrl}/journal/${article.slug}`,
       lastModified: article.publishedAt ? new Date(article.publishedAt) : undefined,
