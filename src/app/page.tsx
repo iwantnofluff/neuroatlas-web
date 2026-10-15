@@ -286,7 +286,7 @@ export default function Home() {
            it rather than sitting invisibly behind it. */}
         <Image
           src="/photos/homepage_bottom.png"
-          alt=""
+          alt="The NA·01 band standing upright on a dark display plinth"
           fill
           sizes="100vw"
           className="-z-10 object-cover object-[41%_50%] md:object-center"

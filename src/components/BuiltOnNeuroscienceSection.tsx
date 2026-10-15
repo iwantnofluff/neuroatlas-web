@@ -31,7 +31,7 @@ export function BuiltOnNeuroscienceSection() {
     <section className="dark-glow relative flex min-h-[85svh] items-center overflow-hidden bg-navy-soft text-cream">
       <Image
         src="/photos/built-with-evidence.png"
-        alt=""
+        alt="Close-up of the NA·01 band's metal module and woven strap, with the NeuroAtlas mark"
         fill
         sizes="100vw"
         className="object-cover object-[62%_50%] md:object-center"

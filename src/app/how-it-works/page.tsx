@@ -69,6 +69,7 @@ export default function HowItWorksPage() {
         subhead="Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds."
         ctas={[]}
         heroImage="/photos/how-it-works-hero.png"
+        heroImageAlt="A man in a dark suit checking the NA·01 band on his wrist at his desk"
       />
       <HeroBoundary />
 

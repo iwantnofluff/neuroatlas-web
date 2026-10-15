@@ -137,6 +137,8 @@ export function TheSpecsScene({
 
   return (
     <Canvas
+      role="img"
+      aria-label="X-ray view of the NA·01 band, with its components labelled"
       ref={frameloopRef}
       frameloop={frameloop}
       className="!absolute inset-0"

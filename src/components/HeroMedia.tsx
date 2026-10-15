@@ -27,6 +27,9 @@ type HeroMediaProps = {
    *  doesn't have anywhere else. Omit to follow the visitor's own
    *  reduced-motion setting (useSafeReducedMotion). */
   reduceMotion?: boolean;
+  /** Describes the still (the poster under the video, or `image`). Leave it
+   *  out for purely atmospheric backgrounds, which stay decorative. */
+  alt?: string;
 };
 
 /**
@@ -36,7 +39,7 @@ type HeroMediaProps = {
  * its own component so that swap never touches Hero.tsx's layout — see
  * HERO_VIDEO_SRC at the top of Hero.tsx.
  */
-export function HeroMedia({ src, poster, image, className, reduceMotion: reduceMotionProp }: HeroMediaProps) {
+export function HeroMedia({ src, poster, image, className, reduceMotion: reduceMotionProp, alt = "" }: HeroMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useSafeReducedMotion();
   const reduceMotion = reduceMotionProp ?? prefersReducedMotion;
@@ -64,12 +67,13 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
     // Power Mode, data saver, some private windows) the visitor sees the
     // still frame, never the browser's play button.
     return (
-      <div aria-hidden="true" className={cn("absolute inset-0 overflow-hidden", className)}>
+      <div aria-hidden={alt ? undefined : true} className={cn("absolute inset-0 overflow-hidden", className)}>
         {poster && (
-          <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
+          <Image src={poster} alt={alt} fill priority sizes="100vw" className="object-cover" />
         )}
         <video
           ref={videoRef}
+          aria-hidden="true"
           autoPlay
           muted
           loop
@@ -95,7 +99,7 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
     return (
       <Image
         src={image}
-        alt=""
+        alt={alt}
         fill
         priority
         sizes="100vw"

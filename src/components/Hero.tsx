@@ -93,6 +93,9 @@ type HeroProps = {
   /** Focal point for `heroImage` where a portrait phone crop would
    *  otherwise cut its subject, e.g. "object-[72%_50%] md:object-center". */
   heroImageClassName?: string;
+  /** Describes `heroImage` when it shows the product or real context; leave
+   *  it out for atmospheric backgrounds, which stay decorative. */
+  heroImageAlt?: string;
 };
 
 /**
@@ -112,6 +115,7 @@ export function Hero({
   ctas = DEFAULT_CTAS,
   heroImage,
   heroImageClassName,
+  heroImageAlt,
 }: HeroProps = {}) {
   // One entry per forced line (see the `headline` prop's own doc
   // comment) — [headline] with no split at all when there's no "\n",
@@ -139,6 +143,7 @@ export function Hero({
         image={heroImage}
         className={heroImageClassName}
         reduceMotion={reduceMotion}
+        alt={heroImage ? heroImageAlt : "The NA·01 band, a woven navy strap with a matte metal module"}
       />
 
       {/* Scrim over the video/placeholder — keeps the headline legible
