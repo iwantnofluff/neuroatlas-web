@@ -143,7 +143,7 @@ export function Hero({
         image={heroImage}
         className={heroImageClassName}
         reduceMotion={reduceMotion}
-        alt={heroImage ? heroImageAlt : "The NA·01 band, a woven navy strap with a matte metal module"}
+        alt={heroImage ? heroImageAlt : "NeuroAtlas stress management band"}
       />
 
       {/* Scrim over the video/placeholder — keeps the headline legible

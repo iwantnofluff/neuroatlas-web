@@ -72,7 +72,7 @@ export default function ForOrganisationsPage() {
         subhead="Pressure affects decisions long before it shows up as a resignation letter or a sick day. NeuroAtlas gives leadership a way to see that pattern early and act on it."
         ctas={[{ label: "Book A Presentation", href: "/contact" }]}
         heroImage="/photos/for-organisations-hero.png"
-        heroImageAlt="A senior executive listening during a one-to-one meeting"
+        heroImageAlt="Team composure under pressure"
         heroImageClassName="object-[72%_50%] md:object-center"
       />
       <HeroBoundary />

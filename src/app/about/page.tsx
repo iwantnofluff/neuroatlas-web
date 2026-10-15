@@ -118,7 +118,7 @@ export default function AboutPage() {
             <Parallax offset={20} className="md:w-1/2">
               <Reveal delay={0.1}>
                 <div className="relative aspect-video w-full overflow-hidden rounded-3xl card-glass-light">
-                  <HeroMedia src="/video/hero-band.mp4" poster="/photos/hero-band.jpg" />
+                  <HeroMedia src="/video/hero-band.mp4" poster="/photos/hero-band.jpg" alt="Band measuring stress daily" />
                 </div>
               </Reveal>
             </Parallax>

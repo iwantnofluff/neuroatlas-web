@@ -32,7 +32,7 @@ export function NeuroWaveVisual({ className }: { className?: string }) {
     <div className={cn("relative size-full overflow-hidden", className)}>
       <Image
         src="/photos/neuroscience-wrist.png"
-        alt="A hand touching the NeuroAtlas band on a wrist, with a heartbeat waveform above"
+        alt="Hand on band, heartbeat waveform"
         fill
         sizes="(min-width: 1024px) 40vw, 90vw"
         className="object-cover"

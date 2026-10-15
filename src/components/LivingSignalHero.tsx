@@ -85,7 +85,7 @@ export function LivingSignalHero() {
       >
         <Image
           src="/photos/the-science-hero.png"
-          alt="The NA·01 band on a raised wrist, its woven strap lit in blue"
+          alt="Neuroscience behind stress management"
           fill
           priority
           sizes="100vw"

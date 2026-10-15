@@ -123,7 +123,7 @@ function StressTile() {
   return (
     <Tile row>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/figma/vitals/stress-ring.svg" alt="" width={40} height={40} className="size-[23.88cqw] shrink-0" />
+      <img src="/figma/vitals/stress-ring.svg" alt="Stress score ring" width={40} height={40} className="size-[23.88cqw] shrink-0" />
       <div className="flex flex-col gap-[1.79cqw] whitespace-nowrap">
         <Label>Stress</Label>
         <p className="text-[10.75cqw] leading-[12.36cqw]" style={{ color: VALUE, ...valueGlow }}>

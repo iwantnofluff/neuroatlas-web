@@ -27,7 +27,7 @@ export function FounderStorySection() {
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl card-glass-light">
                 <Image
                   src="/photos/founder-vanshika-dhoot.jpg"
-                  alt="Vanshika Dhoot, founder of NeuroAtlas"
+                  alt="Vanshika Dhoot, founder"
                   fill
                   sizes="(min-width: 1152px) 551px, (min-width: 768px) 50vw, 100vw"
                   className="object-cover object-[50%_28%]"

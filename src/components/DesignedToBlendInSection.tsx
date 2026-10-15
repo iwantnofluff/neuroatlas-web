@@ -86,7 +86,7 @@ export function DesignedToBlendInSection() {
         >
           <Image
             src="/photos/designed-to-blend-in.png"
-            alt="Close-up of the NA·01 band's slim module set into its woven strap"
+            alt="Lightweight screenless stress band"
             fill
             sizes="100vw"
             className="object-cover"

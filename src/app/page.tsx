@@ -117,7 +117,7 @@ export default function Home() {
                 <SpotlightPhoto
                   srcGray="/photos/band-bw-wrist.jpg"
                   srcColor="/photos/band-color-wrist.png"
-                  alt="The NA·01 band worn on the wrist"
+                  alt="Stress band worn on wrist"
                   radius={160}
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="h-full w-full"
@@ -286,7 +286,7 @@ export default function Home() {
            it rather than sitting invisibly behind it. */}
         <Image
           src="/photos/homepage_bottom.png"
-          alt="The NA·01 band standing upright on a dark display plinth"
+          alt="Stress reset in two minutes"
           fill
           sizes="100vw"
           className="-z-10 object-cover object-[41%_50%] md:object-center"
@@ -365,7 +365,7 @@ export default function Home() {
            original light one. */}
         <Image
           src="/photos/homepage_last.png"
-          alt=""
+          alt="Composure under pressure"
           fill
           sizes="100vw"
           className="-z-10 object-cover object-center"
