@@ -50,6 +50,8 @@ export function BuiltToReadYouScene({
 
   return (
     <Canvas
+      role="img"
+      aria-label="3D model of the NA·01 band"
       ref={frameloopRef}
       frameloop={frameloop}
       // z-0, explicit — guarantees this paints above the text layer's

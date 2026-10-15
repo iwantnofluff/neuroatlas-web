@@ -11,7 +11,7 @@ export function LogoMark({ className }: { className?: string }) {
       viewBox="72 498 598 605"
       fill="currentColor"
       role="img"
-      aria-label="NeuroAtlas mark"
+      aria-label="NeuroAtlas logo"
       className={className}
     >
       <path

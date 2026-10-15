@@ -220,6 +220,7 @@ export function Footer() {
               <a
                 key={item.href}
                 href={item.href}
+                aria-label={item.ariaLabel}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-cream"

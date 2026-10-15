@@ -81,19 +81,18 @@ export function DesignedToBlendInSection() {
            placeholder used keeps the headline legible throughout and
            still reads as premium rather than a flat, unfiltered photo. */}
         <motion.div
-          aria-hidden="true"
           style={{ clipPath }}
           className="absolute inset-0 overflow-hidden border border-white/10"
         >
           <Image
             src="/photos/designed-to-blend-in.png"
-            alt=""
+            alt="Lightweight screenless stress band"
             fill
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-navy/60" />
-          <div className="banner-text-scrim" />
+          <div aria-hidden="true" className="absolute inset-0 bg-navy/60" />
+          <div aria-hidden="true" className="banner-text-scrim" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,color-mix(in_oklab,var(--color-gold)_14%,transparent),transparent_70%)]"

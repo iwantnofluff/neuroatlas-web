@@ -45,6 +45,8 @@ export function BandScrollScene({
 
   return (
     <Canvas
+      role="img"
+      aria-label="3D model of the NA·01 band, turning as you scroll"
       ref={frameloopRef}
       frameloop={frameloop}
       // Confined to the bottom ~72% of the viewport (was full-bleed

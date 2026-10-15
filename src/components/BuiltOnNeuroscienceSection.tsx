@@ -31,7 +31,7 @@ export function BuiltOnNeuroscienceSection() {
     <section className="dark-glow relative flex min-h-[85svh] items-center overflow-hidden bg-navy-soft text-cream">
       <Image
         src="/photos/built-with-evidence.png"
-        alt=""
+        alt="Research behind stress tools"
         fill
         sizes="100vw"
         className="object-cover object-[62%_50%] md:object-center"

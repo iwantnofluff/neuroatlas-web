@@ -69,6 +69,7 @@ export default function HowItWorksPage() {
         subhead="Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds."
         ctas={[]}
         heroImage="/photos/how-it-works-hero.png"
+        heroImageAlt="Tracking stress beyond the numbers"
       />
       <HeroBoundary />
 
@@ -225,7 +226,7 @@ export default function HowItWorksPage() {
         <div className="absolute inset-0 -z-10 lg:left-auto lg:w-[62%]">
           <Image
             src="/photos/pattern-recognition.png"
-            alt="A hand wearing the NeuroAtlas band, arm raised"
+            alt="Arm raised wearing stress band"
             fill
             sizes="(min-width: 1024px) 62vw, 100vw"
             className="object-cover object-[60%_42%] lg:object-[50%_46%]"
