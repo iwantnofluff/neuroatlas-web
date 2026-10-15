@@ -5,13 +5,19 @@ import { JournalGrid } from "@/components/JournalGrid";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { getArticles } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
-import { pageMetadata } from "@/lib/seo";
+import { NOT_YET_INDEXABLE, pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata(
-  "Journal - NeuroAtlas",
-  "Explore ideas on focus, pressure and composure, and what we’re learning as we build NeuroAtlas.",
-  "/journal"
-);
+/** An empty journal (category tabs and no articles) stays out of search
+ *  results until the first article is published, then indexes itself. */
+export async function generateMetadata() {
+  const articles = await getArticles();
+  const metadata = pageMetadata(
+    "Journal - NeuroAtlas",
+    "Explore ideas on focus, pressure and composure, and what we’re learning as we build NeuroAtlas.",
+    "/journal"
+  );
+  return articles.length ? metadata : { ...metadata, robots: NOT_YET_INDEXABLE };
+}
 
 export default async function JournalPage() {
   const articles = await getArticles();

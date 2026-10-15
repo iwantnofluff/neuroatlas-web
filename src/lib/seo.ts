@@ -15,6 +15,10 @@ const SHARE_IMAGE = {
   alt: "NeuroAtlas - The First Stress Management Band",
 };
 
+/** For a page that is linked from the site but has no final content yet:
+ *  search engines may follow its links but must not index it. */
+export const NOT_YET_INDEXABLE = { index: false, follow: true } as const;
+
 export function pageMetadata(title: string, description: string | undefined, path: string): Metadata {
   const url = `${siteUrl}${path}`;
   return {
