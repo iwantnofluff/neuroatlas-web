@@ -139,3 +139,38 @@ export async function recordContactEnquiry(enquiry: { email: string; name?: stri
     },
   });
 }
+
+/**
+ * Records a request for the organisation overview as a "Requested
+ * Organisation Overview" event on the requester's profile (created if new,
+ * with role as `title` and organisation as `organization`). A Klaviyo flow
+ * triggered by this metric emails the overview document. No marketing
+ * consent is given. Needs the API key's Events scope.
+ */
+export async function recordOverviewRequest(request: { email: string; name?: string; organisation?: string; role?: string }) {
+  await klaviyo("/events", apiKey(), {
+    data: {
+      type: "event",
+      attributes: {
+        properties: {
+          name: request.name ?? "",
+          organisation: request.organisation ?? "",
+          role: request.role ?? "",
+          source: "for-organisations",
+        },
+        metric: { data: { type: "metric", attributes: { name: "Requested Organisation Overview" } } },
+        profile: {
+          data: {
+            type: "profile",
+            attributes: {
+              email: request.email,
+              ...splitName(request.name),
+              ...(request.role && { title: request.role }),
+              ...(request.organisation && { organization: request.organisation }),
+            },
+          },
+        },
+      },
+    },
+  });
+}

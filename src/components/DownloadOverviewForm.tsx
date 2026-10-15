@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import { Reveal } from "@/components/Reveal";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
+import { useFormSubmit } from "@/lib/useFormSubmit";
+import { cn } from "@/lib/utils";
 
 const FIELDS = [
   { id: "name", label: "Name", type: "text", autoComplete: "name" },
@@ -12,23 +14,14 @@ const FIELDS = [
 ] as const;
 
 /**
- * "Download The Overview" — /for-organisations' own lead-capture form.
- * No backend/CMS exists anywhere in this codebase yet (confirmed: no
- * src/app/api route of any kind). Footer.tsx's own newsletter signup
- * already accepts that reality and swaps to a confirmation message on
- * submit rather than actually sending anything — this follows that
- * exact same established convention rather than inventing a new one,
- * just scaled up to four fields.
+ * "Download The Overview": /for-organisations' lead-capture form. Posts to
+ * /api/overview, which records a "Requested Organisation Overview" event in
+ * Klaviyo; a Klaviyo flow on that event emails the overview document.
  */
 export function DownloadOverviewForm() {
-  const [submitted, setSubmitted] = useState(false);
+  const { status, submitting, onSubmit } = useFormSubmit("/api/overview");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
-  if (submitted) {
+  if (status === "done") {
     return (
       <Reveal
         y={12}
@@ -42,7 +35,7 @@ export function DownloadOverviewForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto grid max-w-md gap-4 text-left">
+    <form onSubmit={onSubmit} className="mx-auto grid max-w-md gap-4 text-left">
       {FIELDS.map((field) => (
         <div key={field.id}>
           <label
@@ -61,13 +54,20 @@ export function DownloadOverviewForm() {
           />
         </div>
       ))}
+      <FormHoneypot id="overview-company-website" />
+      {status === "error" && (
+        <p role="alert" className="text-pretty text-sm text-[#f0a0ae]">
+          {FORM_ERROR_MESSAGE}
+        </p>
+      )}
       <ShimmerButton
         type="submit"
+        disabled={submitting}
         background="color-mix(in oklab, var(--color-cream) 30%, transparent)"
         shimmerColor="var(--color-cream)"
-        className="mt-2 w-full text-sm tracking-wide text-cream"
+        className={cn("mt-2 w-full text-sm tracking-wide text-cream", submitting && "cursor-not-allowed opacity-60")}
       >
-        Send Overview
+        {submitting ? "Sending..." : "Send Overview"}
       </ShimmerButton>
     </form>
   );
