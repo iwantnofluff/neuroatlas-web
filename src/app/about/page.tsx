@@ -24,7 +24,7 @@ export const metadata = pageMetadata(
 const STATUS_ITEMS = [
   { label: "London", detail: "Headquartered" },
   { label: "India Pilot", detail: "Running now", live: true },
-  { label: "2026", detail: "Public launch" },
+  { label: "2027", detail: "Public launch" },
 ];
 
 export default function AboutPage() {
@@ -132,7 +132,7 @@ export default function AboutPage() {
           - kept as one section, matching the brief's own "Status & CTA"
           grouping ("...before leading into the final Join The Waitlist
           button"). The India pilot mention carries the pulsing live
-          indicator; London and the 2026 launch date sit alongside it as
+          indicator; London and the 2027 launch date sit alongside it as
           a small milestone strip (the brief's own "optional milestone
           or timeline treatment"). */}
       <section className="dark-glow bg-navy-soft text-cream">
