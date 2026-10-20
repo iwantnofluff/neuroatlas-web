@@ -5,8 +5,7 @@ import { siteUrl } from "@/lib/nav";
  *  endpoints; everything else is open. */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/studio", "/api/"] },
+    rules: { userAgent: "*", disallow: ["/studio", "/api/"] },
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
   };
 }
