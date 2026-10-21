@@ -19,9 +19,12 @@ const PAGES: { path: string; priority: number; changeFrequency: "weekly" | "mont
 // /legal/privacy-policy and /legal/terms-of-use go back in here once their
 // final text replaces the placeholder (they are noindex until then).
 
-/** Static pages plus every published journal article from Sanity,
- *  refreshed hourly so new posts reach Google without a redeploy. */
-export const revalidate = 3600;
+/** Static pages plus every published journal article from Sanity. It
+ *  refreshes every minute, the same as the article pages themselves, so a
+ *  newly published post is in the sitemap as soon as its page is live, with
+ *  no redeploy. Article lastmod is the last edit in Sanity, so updates to an
+ *  existing post are signalled too. */
+export const revalidate = 60;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getArticles().catch(() => []);
@@ -36,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : []),
     ...articles.map((article) => ({
       url: `${siteUrl}/journal/${article.slug}`,
-      lastModified: article.publishedAt ? new Date(article.publishedAt) : undefined,
+      lastModified: new Date(article.updatedAt ?? article.publishedAt),
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),

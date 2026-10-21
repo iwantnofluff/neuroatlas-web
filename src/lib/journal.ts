@@ -12,6 +12,7 @@ const ARTICLE_PROJECTION = /* groq */ `{
   category,
   "author": author->name,
   publishedAt,
+  "updatedAt": _updatedAt,
   "body": body[_type == "block"]{"text": pt::text(@)}.text,
   "image": mainImage,
   seo{
@@ -50,6 +51,7 @@ function toArticle(raw: RawArticle, featured: boolean): Article {
     category: raw.category,
     author: raw.author ?? "NeuroAtlas",
     publishedAt: raw.publishedAt,
+    updatedAt: raw.updatedAt,
     body: raw.body ?? [],
     image: raw.image,
     featured,
