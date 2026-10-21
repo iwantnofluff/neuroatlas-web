@@ -20,6 +20,8 @@ export type Article = {
   category: ArticleCategory;
   author: string;
   publishedAt: string;
+  /** When the article was last edited in Sanity. */
+  updatedAt?: string;
   body: string[];
   image: SanityImageSource;
   featured?: boolean;
