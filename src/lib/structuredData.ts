@@ -1,4 +1,4 @@
-import { contactEmail, siteUrl } from "@/lib/nav";
+import { contactEmail, siteUrl, socialLinks } from "@/lib/nav";
 
 export const ORGANIZATION_ID = `${siteUrl}/#organization`;
 const WEBSITE_ID = `${siteUrl}/#website`;
@@ -12,8 +12,9 @@ const LOGO = {
 };
 
 /** Every fact here is one the site itself states (description, London
- *  headquarters, founder, contact address). Add `sameAs` with the real
- *  Instagram and LinkedIn profile URLs once they exist. */
+ *  headquarters, founder, contact address). `sameAs` lists the official
+ *  social profiles, the same links as the footer, so search engines tie
+ *  them to this organisation. */
 const organization = {
   "@type": "Organization",
   "@id": ORGANIZATION_ID,
@@ -25,6 +26,7 @@ const organization = {
   email: contactEmail,
   founder: { "@type": "Person", name: "Vanshika Dhoot" },
   address: { "@type": "PostalAddress", addressLocality: "London", addressCountry: "GB" },
+  sameAs: socialLinks.map((link) => link.href),
 };
 
 const website = {
