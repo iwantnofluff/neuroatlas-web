@@ -6,6 +6,8 @@ import { DesignedToBlendInSection } from "@/components/DesignedToBlendInSection"
 import { SignalVsNoiseSection } from "@/components/SignalVsNoiseSection";
 import { ClosingCurtainSection } from "@/components/ClosingCurtainSection";
 import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { bandStructuredData } from "@/lib/structuredData";
 
 export const metadata = pageMetadata(
   "The NA·01 band - NeuroAtlas",
@@ -20,6 +22,7 @@ export const metadata = pageMetadata(
 export default function BandPage() {
   return (
     <main>
+      <JsonLd data={bandStructuredData} />
       <BandScrollShowcase />
       <HeroBoundary />
 

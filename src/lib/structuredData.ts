@@ -46,3 +46,42 @@ export const siteStructuredData = {
 
 /** Reference to the organisation for other schema (e.g. an article's publisher). */
 export const organizationReference = { "@type": "Organization", "@id": ORGANIZATION_ID, name: "NeuroAtlas", logo: LOGO };
+
+const BAND_ID = `${siteUrl}/band#product`;
+
+/**
+ * The NA·01 band as a Product. It is not on sale yet (pilot and waitlist
+ * only), so there is deliberately no `offers`: no price is marked up until
+ * one is confirmed. Without offers, reviews or ratings Google shows no
+ * product rich result, but the entity and its brand are still understood.
+ */
+export const bandStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": BAND_ID,
+  name: "NA·01",
+  alternateName: "NA·01 Neural Band",
+  description: "Lightweight, screenless, and made to disappear into your day. Charges quickly, when it needs it.",
+  brand: { "@id": ORGANIZATION_ID },
+  manufacturer: { "@id": ORGANIZATION_ID },
+  url: `${siteUrl}/band`,
+  image: [`${siteUrl}/photos/hero-band.jpg`, `${siteUrl}/photos/designed-to-blend-in.png`, `${siteUrl}/photos/band-color-wrist.png`],
+};
+
+/**
+ * The companion app. It comes with the band rather than being sold on its
+ * own, so it has no `offers` either; `softwareRequirements` names the band
+ * it needs.
+ */
+export const appStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "@id": `${siteUrl}/inside-the-app#app`,
+  name: "NeuroAtlas",
+  description: "NeuroAtlas brings together targeted tools for performance, stress and wellness, so you can choose what fits the moment.",
+  applicationCategory: "HealthApplication",
+  operatingSystem: "iOS, Android",
+  url: `${siteUrl}/inside-the-app`,
+  publisher: { "@id": ORGANIZATION_ID },
+  softwareRequirements: "NA·01 band",
+};
