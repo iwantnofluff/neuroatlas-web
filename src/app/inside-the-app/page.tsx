@@ -9,6 +9,8 @@ import { JournalScreen } from "@/components/JournalScreen";
 import { SleepDetailCard } from "@/components/SleepDetailCard";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { appStructuredData } from "@/lib/structuredData";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
@@ -41,6 +43,7 @@ export const metadata = pageMetadata(
 export default function InsideTheAppPage() {
   return (
     <main>
+      <JsonLd data={appStructuredData} />
       {/* 1. Hero — one section, not two independent top-level siblings:
          the headline block and the phone-mockup media below it are one
          logical hero beat (this page's own "1. Hero" comment already
