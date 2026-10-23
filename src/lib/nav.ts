@@ -51,8 +51,8 @@ export const legalNav: NavLink[] = [
 ];
 
 export const socialLinks: (NavLink & { ariaLabel: string })[] = [
-  { label: "Instagram", href: "https://instagram.com", ariaLabel: "Instagram profile" },
-  { label: "LinkedIn", href: "https://linkedin.com", ariaLabel: "LinkedIn profile" },
+  { label: "Instagram", href: "https://www.instagram.com/neuroatlas.co/", ariaLabel: "Instagram profile" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/neuroatlasgroup/", ariaLabel: "LinkedIn profile" },
 ];
 
 export const contactEmail = "hello@neuroatlas.org.uk";

@@ -8,6 +8,7 @@ import { ArticleHeroImage } from "@/components/ArticleHeroImage";
 import { getAllArticleSlugs, getArticleBySlug } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
 import { siteUrl } from "@/lib/nav";
+import { organizationReference } from "@/lib/structuredData";
 
 export async function generateStaticParams() {
   const slugs = await getAllArticleSlugs();
@@ -78,11 +79,7 @@ export default async function ArticlePage({
     image: [ogImage],
     author: { "@type": "Person", name: article.author },
     datePublished: article.publishedAt,
-    publisher: {
-      "@type": "Organization",
-      name: "NeuroAtlas",
-      logo: { "@type": "ImageObject", url: `${siteUrl}/brand/logo-mark.svg` },
-    },
+    publisher: organizationReference,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
   };
 
