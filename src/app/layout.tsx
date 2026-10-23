@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { SiteChrome } from "@/components/SiteChrome";
+import { siteStructuredData } from "@/lib/structuredData";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { siteUrl } from "@/lib/nav";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           aria-hidden="true"
           className="grain-overlay pointer-events-none fixed inset-0 z-0"
         />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteStructuredData) }} />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
