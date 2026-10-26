@@ -85,3 +85,45 @@ export const appStructuredData = {
   publisher: { "@id": ORGANIZATION_ID },
   softwareRequirements: "NA·01 band",
 };
+
+type ArticleForSchema = {
+  title: string;
+  standfirst: string;
+  author: string;
+  publishedAt: string;
+  updatedAt?: string;
+  faqs: { question: string; answer: string }[];
+};
+
+/**
+ * A journal post as a BlogPosting, plus an FAQPage when the post has an
+ * FAQ block. FAQPage is only emitted when the questions are rendered on the
+ * page too: search engines ignore FAQ markup for content readers can't see.
+ */
+export function articleStructuredData(article: ArticleForSchema, url: string, image: string) {
+  const posting = {
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    headline: article.title,
+    description: article.standfirst,
+    image: [image],
+    author: { "@type": "Person", name: article.author },
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt ?? article.publishedAt,
+    publisher: organizationReference,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    inLanguage: "en-GB",
+  };
+  const faqPage = article.faqs.length
+    ? {
+        "@type": "FAQPage",
+        "@id": `${url}#faq`,
+        mainEntity: article.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
+      }
+    : null;
+  return { "@context": "https://schema.org", "@graph": faqPage ? [posting, faqPage] : [posting] };
+}

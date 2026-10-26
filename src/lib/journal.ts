@@ -13,6 +13,7 @@ const ARTICLE_PROJECTION = /* groq */ `{
   "author": author->name,
   publishedAt,
   "updatedAt": _updatedAt,
+  "faqs": coalesce(faqs[defined(question) && defined(answer)]{question, answer}, []),
   "body": body[_type == "block"]{"text": pt::text(@)}.text,
   "image": mainImage,
   seo{
@@ -52,6 +53,7 @@ function toArticle(raw: RawArticle, featured: boolean): Article {
     author: raw.author ?? "NeuroAtlas",
     publishedAt: raw.publishedAt,
     updatedAt: raw.updatedAt,
+    faqs: raw.faqs ?? [],
     body: raw.body ?? [],
     image: raw.image,
     featured,

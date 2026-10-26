@@ -22,6 +22,7 @@ export type Article = {
   publishedAt: string;
   /** When the article was last edited in Sanity. */
   updatedAt?: string;
+  faqs: { question: string; answer: string }[];
   body: string[];
   image: SanityImageSource;
   featured?: boolean;

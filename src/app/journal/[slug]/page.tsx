@@ -8,7 +8,9 @@ import { ArticleHeroImage } from "@/components/ArticleHeroImage";
 import { getAllArticleSlugs, getArticleBySlug } from "@/lib/journal";
 import { urlForImage } from "@/lib/sanity/image";
 import { siteUrl } from "@/lib/nav";
-import { organizationReference } from "@/lib/structuredData";
+import { articleStructuredData } from "@/lib/structuredData";
+import { JsonLd } from "@/components/JsonLd";
+import { ArticleFaq } from "@/components/ArticleFaq";
 
 export async function generateStaticParams() {
   const slugs = await getAllArticleSlugs();
@@ -72,24 +74,10 @@ export default async function ArticlePage({
   const ogImage =
     article.seo?.ogImage ??
     urlForImage(article.image).width(1200).height(630).fit("crop").url();
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: article.title,
-    image: [ogImage],
-    author: { "@type": "Person", name: article.author },
-    datePublished: article.publishedAt,
-    publisher: organizationReference,
-    mainEntityOfPage: { "@type": "WebPage", "@id": url },
-  };
-
   return (
     <main className="bg-cream">
       <ReadingProgressBar />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={articleStructuredData(article, url, ogImage)} />
       <div className="mx-auto max-w-2xl px-6 pt-32 pb-20 md:pt-40 lg:pt-48">
         <Reveal y={20}>
           <Link
@@ -136,6 +124,8 @@ export default async function ArticlePage({
             </Reveal>
           ))}
         </div>
+
+        <ArticleFaq faqs={article.faqs} />
       </div>
     </main>
   );

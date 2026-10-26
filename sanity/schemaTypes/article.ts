@@ -105,6 +105,27 @@ export const article = defineType({
       group: "content",
     }),
     defineField({
+      name: "faqs",
+      title: "FAQs",
+      description:
+        "Optional. Shown under the article and marked up for search engines as an FAQ. Each answer should stand on its own.",
+      type: "array",
+      group: "content",
+      validation: (Rule) => Rule.max(10),
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "faq",
+          title: "Question",
+          fields: [
+            defineField({ name: "question", title: "Question", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "answer", title: "Answer", type: "text", rows: 3, validation: (Rule) => Rule.required() }),
+          ],
+          preview: { select: { title: "question", subtitle: "answer" } },
+        }),
+      ],
+    }),
+    defineField({
       name: "publishedAt",
       title: "Published At",
       type: "datetime",
