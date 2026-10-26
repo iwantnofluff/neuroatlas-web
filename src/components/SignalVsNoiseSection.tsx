@@ -187,16 +187,39 @@ export function SignalVsNoiseSection() {
   const appOpacity = useTransform(scrollYProgress, (p) => appEased(p));
   const appY = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 120 * (1 - appEased(p))));
 
+  const precisionCopy = (
+    <>
+      <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
+        Precision, Not Guesswork
+      </h2>
+      <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-cream/75">
+        Every reading is checked against your own resting baseline, not
+        a general average, then filtered to separate real stress from
+        caffeine, a workout, or the cold. What shows up on your
+        dashboard is your signal, not noise.
+      </p>
+    </>
+  );
+
   return (
-    // 400vh -> 260vh — per an explicit "too much scrolling to reveal"
-    // pass, kept more conservative than this codebase's other pinned
-    // tracks: this one sequences SIX staged beats across the same
-    // progress range (noise fade, gold line, wipe grow, scene swap,
-    // wipe fade, app card), including one deliberately tight window
-    // (SCENE_SWAP_START/END, a 0.02-wide near-instant cut) — a more
-    // aggressive cut risked compressing that swap into single-digit
-    // pixels. At 260vh it's still ~5vh (~47px), consistent with it
-    // already reading as a quick cut rather than a gradual fade.
+    <>
+      {/* Reduced motion (and search crawlers, see useSafeReducedMotion)
+          skip the scene swap, so the first scene gets its own block here
+          instead of sitting at opacity 0 behind the second. */}
+      {reduceMotion && (
+        <section className="bg-[#0b1016] px-6 py-24 text-center">
+          {precisionCopy}
+        </section>
+      )}
+      {/* 400vh -> 260vh — per an explicit "too much scrolling to reveal"
+          pass, kept more conservative than this codebase's other pinned
+          tracks: this one sequences SIX staged beats across the same
+          progress range (noise fade, gold line, wipe grow, scene swap,
+          wipe fade, app card), including one deliberately tight window
+          (SCENE_SWAP_START/END, a 0.02-wide near-instant cut) — a more
+          aggressive cut risked compressing that swap into single-digit
+          pixels. At 260vh it's still ~5vh (~47px), consistent with it
+          already reading as a quick cut rather than a gradual fade. */}
     <div ref={wrapperRef} className={cn(!reduceMotion && "h-[260vh]")}>
       <motion.div
         data-visual-section="signal-vs-noise"
@@ -213,15 +236,7 @@ export function SignalVsNoiseSection() {
             <NoiseElement key={i} shape={shape} progress={scrollYProgress} reduceMotion={reduceMotion} />
           ))}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <h2 className="text-balance font-serif font-normal uppercase tracking-normal text-3xl leading-tight text-cream lg:text-4xl">
-              Precision, Not Guesswork
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-cream/75">
-              Every reading is checked against your own resting baseline, not
-              a general average, then filtered to separate real stress from
-              caffeine, a workout, or the cold. What shows up on your
-              dashboard is your signal, not noise.
-            </p>
+            {precisionCopy}
           </div>
         </motion.div>
 
@@ -295,5 +310,6 @@ export function SignalVsNoiseSection() {
         />
       </motion.div>
     </div>
+    </>
   );
 }

@@ -32,5 +32,21 @@ function useMounted() {
 export function useSafeReducedMotion() {
   const reduceMotion = useReducedMotion();
   const mounted = useMounted();
-  return mounted ? Boolean(reduceMotion) : false;
+  return mounted ? Boolean(reduceMotion) || isSearchCrawler() : false;
+}
+
+const SEARCH_CRAWLER =
+  /Googlebot|Google-InspectionTool|Storebot-Google|AdsBot-Google|bingbot|DuckDuckBot|Applebot|YandexBot|Baiduspider|facebookexternalhit|LinkedInBot|Twitterbot|GPTBot|ClaudeBot|PerplexityBot/i;
+
+/**
+ * Search engines render pages in one very tall viewport without scrolling,
+ * and most sections here are sized in svh, so they grow with that viewport
+ * and push content out of view. Scroll and in-view animations would then
+ * leave that text at opacity 0 for the crawler. Crawlers get the same
+ * static, fully visible end state reduced-motion visitors get: identical
+ * content, just without the motion. Lighthouse is deliberately not listed,
+ * so performance runs still measure the real visitor experience.
+ */
+function isSearchCrawler() {
+  return typeof navigator !== "undefined" && SEARCH_CRAWLER.test(navigator.userAgent);
 }
