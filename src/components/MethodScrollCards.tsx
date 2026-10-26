@@ -159,6 +159,7 @@ function MethodCard({
       // `initial` is always captured fresh and correct.
       key={skipMotion ? "settled" : "fan"}
       initial={{ opacity: 0, rotate: startRotate, x: startX }}
+      animate={reduceMotion ? { opacity: 1, rotate: restRotate, x: 0 } : undefined}
       whileInView={{ opacity: 1, rotate: restRotate, x: 0 }}
       // amount: 0.15, not margin: "-80px" — see Reveal.tsx's own
       // comment: a negative rootMargin delays the trigger rather than

@@ -78,6 +78,7 @@ export function Reveal({
       className={className}
       data-visual-section={sectionName}
       initial={{ opacity: 0, y }}
+      animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{
