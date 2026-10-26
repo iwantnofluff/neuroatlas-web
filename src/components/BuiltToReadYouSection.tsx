@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useNearViewport } from "@/lib/useNearViewport";
 import dynamic from "next/dynamic";
 import { motion, useMotionValue, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -123,6 +124,9 @@ export function BuiltToReadYouSection() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // The 3D engine (~1 MB of JavaScript) loads only once this section is
+  // within 1200px of the screen, not during the homepage's first load.
+  const sceneNear = useNearViewport(wrapperRef);
   // offset ["start start", "end end"] — was ["start end", "end end"], a
   // real, confirmed bug this replaces: with a 180vh wrapper and a 100vh
   // viewport, "start end" maps the full 0–1 progress range across the
@@ -265,11 +269,13 @@ export function BuiltToReadYouSection() {
           </motion.div>
         </div>
 
-        <BuiltToReadYouScene
-          reduceMotion={reduceMotion}
-          progress={scrollYProgress}
-          isMobile={isMobile}
-        />
+        {sceneNear && (
+          <BuiltToReadYouScene
+            reduceMotion={reduceMotion}
+            progress={scrollYProgress}
+            isMobile={isMobile}
+          />
+        )}
 
         {/* In front of the canvas (z-index 10). text-gold-soft/70, not
             text-cream/80 — same softened tint as the headline above,

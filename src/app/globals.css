@@ -837,6 +837,6 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .hero-enter {
-    animation: hero-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--hero-enter-delay, 0s) both;
+    animation: hero-enter var(--hero-enter-duration, 0.5s) cubic-bezier(0.22, 1, 0.36, 1) var(--hero-enter-delay, 0s) both;
   }
 }

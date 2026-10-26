@@ -19,7 +19,7 @@ import { siteUrl } from "@/lib/nav";
 // and every h1/h2 className across the app) forces font-normal rather
 // than leaving weight unset.
 const boowie = localFont({
-  src: "../../public/fonts/BOOWIE.ttf",
+  src: "../../public/fonts/BOOWIE.woff2",
   variable: "--font-boowie",
   weight: "400",
   display: "swap",
@@ -36,7 +36,7 @@ const boowie = localFont({
 // weight. Add each missing weight here the same way, e.g.:
 //   { path: "../../public/fonts/Mont-Medium.ttf", weight: "500", style: "normal" }
 const mont = localFont({
-  src: [{ path: "../../public/fonts/Mont-Book.ttf", weight: "400", style: "normal" }],
+  src: [{ path: "../../public/fonts/Mont-Book.woff2", weight: "400", style: "normal" }],
   variable: "--font-mont",
   display: "swap",
 });

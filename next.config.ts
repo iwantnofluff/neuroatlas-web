@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sanity", "@sanity/vision"],
   images: {
     remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    // AVIF first (roughly 20-30% smaller than WebP for these photos), WebP
+    // for browsers without AVIF support.
+    formats: ["image/avif", "image/webp"],
   },
   // Media in /public (photos, hero video, band model, icons) is served by
   // Vercel's CDN, which drops its copy on every deploy. Browsers otherwise

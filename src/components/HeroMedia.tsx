@@ -82,7 +82,6 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
           disablePictureInPicture
           disableRemotePlayback
           controls={false}
-          poster={poster}
           onPlaying={() => setPlaying(true)}
           className={cn(
             "hero-video absolute inset-0 size-full object-cover transition-opacity duration-700",

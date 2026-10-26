@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { HeroBoundary } from "@/components/HeroBoundary";
@@ -121,34 +122,28 @@ export function LivingSignalHero() {
         />
 
         <div className="relative z-10 mx-auto max-w-3xl">
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="eyebrow"
+          <p
+            className="hero-enter eyebrow"
+            style={{ "--hero-enter-delay": "0s", "--hero-enter-y": "8px", "--hero-enter-duration": "0.5s" } as CSSProperties}
           >
             The Science
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+          </p>
+          <h1
             // Same 4-step progression as Hero.tsx's own headline (see its
             // comment) — text-4xl/5xl/6xl/7xl, one dedicated size per
             // breakpoint, rather than 640–1023px plateauing at one value.
-            className="mt-6 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
+            className="hero-enter mt-6 text-balance font-serif font-normal uppercase tracking-normal text-4xl leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
+            style={{ "--hero-enter-delay": "0.1s", "--hero-enter-y": "12px", "--hero-enter-duration": "0.6s" } as CSSProperties}
           >
             The Evidence Behind It
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75"
+          </h1>
+          <p
+            className="hero-enter mx-auto mt-6 max-w-xl text-pretty text-lg text-cream/75"
+            style={{ "--hero-enter-delay": "0.4s", "--hero-enter-y": "8px", "--hero-enter-duration": "0.5s" } as CSSProperties}
           >
             Every protocol maps to established neuroscience &amp;
             psychology, not a wellness trend.
-          </motion.p>
+          </p>
         </div>
       </section>
       <HeroBoundary />
