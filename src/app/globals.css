@@ -822,3 +822,21 @@
     animation: none;
   }
 }
+
+/* Hero entrance (eyebrow, headline words, subhead, CTAs, scroll cue).
+   Pure CSS so it starts on the first paint instead of waiting for
+   JavaScript to load: the headline is the page's largest paint, and the
+   JS version held it at opacity 0 for 1-2 s on a mid-range phone. Each
+   element sets its own --hero-enter-delay and --hero-enter-y. Reduced
+   motion shows everything at rest. */
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-enter-y, 0px));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: hero-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--hero-enter-delay, 0s) both;
+  }
+}
