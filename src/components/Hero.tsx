@@ -1,7 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
-import { motion } from "framer-motion";
+import { Fragment, type CSSProperties } from "react";
 import { ChevronDown } from "lucide-react";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { ShimmerLink } from "@/components/ui/shimmer-button";
@@ -22,21 +21,6 @@ const DEFAULT_CTAS: HeroCta[] = [
 // see HeroMedia.tsx for the <video> swap this one prop drives.
 const HERO_VIDEO_SRC: string | undefined = "/video/hero-band.mp4";
 
-const wordContainer = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
-  },
-};
-
-const wordItem = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
 
 type HeroCta = { label: string; href: string };
 
@@ -122,6 +106,7 @@ export function Hero({
   // so every other page's existing single-string headline renders
   // byte-for-byte the same as before this existed.
   const lines = headline.split("\n").map((line) => line.split(" "));
+  const lineOffsets = lines.map((_, li) => lines.slice(0, li).reduce((n, line) => n + line.length, 0));
   // Same convention, applied to the subhead below — see that prop's own
   // doc comment for why a forced break also drops max-w-xl.
   const subheadSegments = subhead.split("\n");
@@ -199,14 +184,12 @@ export function Hero({
          /for-organisations, and /privacy. */}
       <div className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center lg:pt-24">
         {eyebrow && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="eyebrow"
+          <p
+            className="hero-enter eyebrow"
+            style={{ "--hero-enter-delay": "0s", "--hero-enter-y": "8px" } as CSSProperties}
           >
             {eyebrow}
-          </motion.p>
+          </p>
         )}
 
         {/* No text-balance here — a real, confirmed no-op this note
@@ -223,10 +206,7 @@ export function Hero({
            own flex-wrap context, so words can still only wrap within
            the line they were assigned to, never drift across the
            forced break. */}
-        <motion.h1
-          initial="hidden"
-          animate="visible"
-          variants={wordContainer}
+        <h1
           // 4 distinct steps (text-4xl/5xl/6xl/7xl), one per breakpoint,
           // not the previous 3 (5xl/6xl/7xl) spread across 4 — that left
           // the 640–1023px range (foldables through tablets) plateaued at
@@ -245,22 +225,19 @@ export function Hero({
               className="flex flex-wrap justify-center gap-x-[0.28em] gap-y-1"
             >
               {words.map((word, i) => (
-                <motion.span
+                <span
                   key={`${word}-${i}`}
-                  variants={wordItem}
-                  className={cn(word === emphasisWord && "text-gold")}
+                  className={cn("hero-enter", word === emphasisWord && "text-gold")}
+                  style={{ "--hero-enter-delay": `${0.1 + (lineOffsets[li] + i) * 0.06}s`, "--hero-enter-y": "14px" } as CSSProperties}
                 >
                   {word}
-                </motion.span>
+                </span>
               ))}
             </span>
           ))}
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+        <p
           // No whitespace-nowrap (this used to force one line) — its
           // clamp() floor (0.7rem) is a fixed minimum font size with no
           // further room to shrink, so any subhead longer than the
@@ -274,9 +251,11 @@ export function Hero({
           // prop's own doc comment) — the parent's own max-w-3xl is
           // still there as a real ceiling, this isn't unbounded.
           className={cn(
+            "hero-enter",
             "mx-auto mt-6 text-pretty text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75",
             subheadSegments.length === 1 && "max-w-xl"
           )}
+          style={{ "--hero-enter-delay": "0.5s", "--hero-enter-y": "8px" } as CSSProperties}
         >
           {subheadSegments.map((segment, i) => (
             <Fragment key={i}>
@@ -295,29 +274,25 @@ export function Hero({
               {segment}
             </Fragment>
           ))}
-        </motion.p>
+        </p>
 
         {tagline && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.58 }}
+          <p
             // Reuses the same small-caps/gold treatment as the eyebrow
             // above the headline (`.eyebrow`, see globals.css) rather
             // than a bespoke style — this tagline reads as the same
             // KIND of short label, just positioned lower.
-            className="eyebrow mt-6"
+            className="hero-enter eyebrow mt-6"
+            style={{ "--hero-enter-delay": "0.58s", "--hero-enter-y": "8px" } as CSSProperties}
           >
             {tagline}
-          </motion.p>
+          </p>
         )}
 
         {ctas.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-4"
+          <div
+            className="hero-enter mt-10 flex flex-wrap items-center justify-center gap-4"
+            style={{ "--hero-enter-delay": "0.65s", "--hero-enter-y": "8px" } as CSSProperties}
           >
             {ctas.map((cta) => (
               <ShimmerLink
@@ -330,7 +305,7 @@ export function Hero({
                 {cta.label}
               </ShimmerLink>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
 
@@ -342,12 +317,10 @@ export function Hero({
          Android and integrated-GPU laptops. Same 0 → 6px → 0 over 1.8s,
          measured against the Framer version; reduced motion holds it at
          rest via the stylesheet's own media query. */}
-      <motion.div
+      <div
         aria-hidden="true"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
-        className="relative mb-8 flex justify-center"
+        className="hero-enter relative mb-8 flex justify-center"
+        style={{ "--hero-enter-delay": "1s", "--hero-enter-y": "0px" } as CSSProperties}
       >
         {/* A real, confirmed fidelity bug this replaces: a bare icon at
            text-cream/50 with no container at all read as faded/washed
@@ -364,7 +337,7 @@ export function Hero({
         <div className="hero-scroll-cue flex size-11 items-center justify-center rounded-full border border-cream/40 text-cream transition-[border-color,background-color] duration-300 hover:border-cream hover:bg-cream/5">
           <ChevronDown className="size-5" />
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
