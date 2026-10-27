@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { SiteChrome } from "@/components/SiteChrome";
 import { siteStructuredData } from "@/lib/structuredData";
 import { JsonLd } from "@/components/JsonLd";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { siteUrl } from "@/lib/nav";
@@ -49,6 +50,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+const GA_MEASUREMENT_ID = "G-CMQ0GR9ZVL";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -72,6 +75,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={siteStructuredData} />
         <SiteChrome>{children}</SiteChrome>
       </body>
+      {/* Only the live site reports to Google Analytics; preview deployments
+          and local builds don't. Loads after hydration, so it doesn't
+          compete with the first paint. */}
+      {process.env.NEXT_PUBLIC_VERCEL_ENV === "production" && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }
