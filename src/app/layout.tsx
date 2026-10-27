@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import { SiteChrome } from "@/components/SiteChrome";
 import { siteStructuredData } from "@/lib/structuredData";
 import { JsonLd } from "@/components/JsonLd";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { siteUrl } from "@/lib/nav";
@@ -51,6 +51,8 @@ export const metadata: Metadata = {
 };
 
 const GA_MEASUREMENT_ID = "G-CMQ0GR9ZVL";
+const GTM_CONTAINER_ID = "GTM-WL7ZKDVQ";
+const isLiveSite = process.env.NEXT_PUBLIC_VERCEL_ENV === "production";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -67,7 +69,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          (not the broader overscroll-none) scopes this to the X axis
          only, matching the actual reported gesture - Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
+      {isLiveSite && <GoogleTagManager gtmId={GTM_CONTAINER_ID} />}
       <body className="min-h-full flex flex-col overscroll-x-none">
+        {isLiveSite && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        )}
         <div
           aria-hidden="true"
           className="grain-overlay pointer-events-none fixed inset-0 z-0"
@@ -75,10 +88,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={siteStructuredData} />
         <SiteChrome>{children}</SiteChrome>
       </body>
-      {/* Only the live site reports to Google Analytics; preview deployments
-          and local builds don't. Loads after hydration, so it doesn't
-          compete with the first paint. */}
-      {process.env.NEXT_PUBLIC_VERCEL_ENV === "production" && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
+      {/* Only the live site loads Google Tag Manager and Google Analytics;
+          preview deployments and local builds don't. Both load after
+          hydration, so they don't compete with the first paint. */}
+      {isLiveSite && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }
