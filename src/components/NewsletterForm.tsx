@@ -7,7 +7,7 @@ import { useFormSubmit } from "@/lib/useFormSubmit";
 import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 
 export function NewsletterForm() {
-  const { status, submitting, onSubmit } = useFormSubmit("/api/newsletter", { source: "journal" });
+  const { status, submitting, onSubmit } = useFormSubmit("/api/newsletter", { event: "newsletter_signup", location: "journal" }, { source: "journal" });
 
   if (status === "done") {
     return (

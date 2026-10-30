@@ -66,6 +66,10 @@ export function saveConsent(choice: ConsentChoice) {
   setState({ choice, settingsOpen: false });
 }
 
+export function hasAnalyticsConsent() {
+  return getState().choice?.analytics ?? false;
+}
+
 export function openConsentSettings() {
   delete document.documentElement.dataset.consent;
   setState({ settingsOpen: true });
