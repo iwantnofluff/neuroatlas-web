@@ -852,3 +852,10 @@
     animation: hero-enter var(--hero-enter-duration, 0.5s) cubic-bezier(0.22, 1, 0.36, 1) var(--hero-enter-delay, 0s) both;
   }
 }
+
+/* Set before first paint by the inline script in layout.tsx when a saved
+   cookie choice exists, so returning visitors never see the banner flash
+   in the server-rendered HTML before React takes over. */
+:root[data-consent="saved"] .cookie-banner {
+  display: none;
+}

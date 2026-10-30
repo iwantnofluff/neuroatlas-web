@@ -3,7 +3,8 @@ import localFont from "next/font/local";
 import { SiteChrome } from "@/components/SiteChrome";
 import { siteStructuredData } from "@/lib/structuredData";
 import { JsonLd } from "@/components/JsonLd";
-import { GoogleTagManager } from "@next/third-parties/google";
+import { ConsentTags } from "@/components/ConsentTags";
+import { SAVED_CONSENT_SCRIPT } from "@/lib/consent";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { siteUrl } from "@/lib/nav";
@@ -58,7 +59,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={cn("h-full", "antialiased", boowie.variable, mont.variable)}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SAVED_CONSENT_SCRIPT }} />
+        <noscript>
+          <style>{".cookie-banner{display:none}"}</style>
+        </noscript>
+      </head>
       {/* overscroll-x-none - a diagonal/horizontal trackpad scroll
          gesture (easy to trigger by accident on this site's own
          scroll-jacked pinned sections, e.g. MethodScrollCards' fan,
@@ -68,22 +76,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          (not the broader overscroll-none) scopes this to the X axis
          only, matching the actual reported gesture - Y-axis
          overscroll (pull-to-refresh, rubber-banding) is untouched. */}
-      {/* Only the live site loads Google Tag Manager (and the Google
-          Analytics tag set up inside it); preview deployments and local
-          builds don't. It loads after hydration, so it doesn't compete with
-          the first paint. */}
-      {isLiveSite && <GoogleTagManager gtmId={GTM_CONTAINER_ID} />}
       <body className="min-h-full flex flex-col overscroll-x-none">
-        {isLiveSite && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        )}
+        {/* Google Tag Manager, and the Google Analytics tag inside it, load
+            only on the live site and only after the visitor opts in. There
+            is no <noscript> fallback: without JavaScript no one can give
+            consent, so nothing may load. */}
+        <ConsentTags containerId={GTM_CONTAINER_ID} enabled={isLiveSite} />
         <div
           aria-hidden="true"
           className="grain-overlay pointer-events-none fixed inset-0 z-0"

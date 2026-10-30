@@ -8,6 +8,7 @@ import { LogoMark } from "@/components/LogoMark";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useFormSubmit } from "@/lib/useFormSubmit";
+import { openConsentSettings } from "@/lib/consent";
 import { useTouchSpotlight } from "@/lib/useTouchSpotlight";
 import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 import { cn } from "@/lib/utils";
@@ -211,6 +212,9 @@ export function Footer() {
                 {item.label}
               </Link>
             ))}
+            <button type="button" onClick={openConsentSettings} className="tap-area cursor-pointer hover:text-cream">
+              Cookie Settings
+            </button>
             <a href={`mailto:${contactEmail}`} className="tap-area hover:text-cream">
               {contactEmail}
             </a>
