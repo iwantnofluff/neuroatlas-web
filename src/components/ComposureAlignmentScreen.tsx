@@ -157,6 +157,8 @@ export function ComposureAlignmentScreen({ className }: { className?: string }) 
             key={metric.id}
             alt=""
             src={metric.ringSrc}
+            loading="lazy"
+            decoding="async"
             className={cn(
               "absolute block max-w-none transition-[filter,opacity] duration-300",
               active !== null && active !== metric.id && "opacity-40"

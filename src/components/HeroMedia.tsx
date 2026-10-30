@@ -30,6 +30,11 @@ type HeroMediaProps = {
   /** Describes the still (the poster under the video, or `image`). Leave it
    *  out for purely atmospheric backgrounds, which stay decorative. */
   alt?: string;
+  /** For a copy placed further down a page (e.g. inside /about). The still
+   *  loads lazily and the video downloads nothing until it scrolls into
+   *  view, then plays only while it is on screen. */
+  belowFold?: boolean;
+  sizes?: string;
 };
 
 /**
@@ -39,7 +44,7 @@ type HeroMediaProps = {
  * its own component so that swap never touches Hero.tsx's layout — see
  * HERO_VIDEO_SRC at the top of Hero.tsx.
  */
-export function HeroMedia({ src, poster, image, className, reduceMotion: reduceMotionProp, alt = "" }: HeroMediaProps) {
+export function HeroMedia({ src, poster, image, className, reduceMotion: reduceMotionProp, alt = "", belowFold = false, sizes = "100vw" }: HeroMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useSafeReducedMotion();
   const reduceMotion = reduceMotionProp ?? prefersReducedMotion;
@@ -56,10 +61,19 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
     if (reduceMotion) {
       video.pause();
       video.currentTime = 0;
-    } else {
-      video.play().catch(() => {});
+      return;
     }
-  }, [reduceMotion]);
+    if (!belowFold) {
+      video.play().catch(() => {});
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    });
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [reduceMotion, belowFold]);
 
   if (src) {
     // The poster is a real image underneath, and the video fades in only
@@ -69,23 +83,23 @@ export function HeroMedia({ src, poster, image, className, reduceMotion: reduceM
     return (
       <div aria-hidden={alt ? undefined : true} className={cn("absolute inset-0 overflow-hidden", className)}>
         {poster && (
-          <Image src={poster} alt={alt} fill priority sizes="100vw" className="object-cover" />
+          <Image src={poster} alt={alt} fill priority={!belowFold} sizes={sizes} className="object-cover" />
         )}
         <video
           ref={videoRef}
           aria-hidden="true"
-          autoPlay
+          autoPlay={!belowFold}
           muted
           loop
           playsInline
-          preload="auto"
+          preload={belowFold ? "none" : "auto"}
           disablePictureInPicture
           disableRemotePlayback
           controls={false}
           onPlaying={() => setPlaying(true)}
           className={cn(
             "hero-video absolute inset-0 size-full object-cover transition-opacity duration-700",
-            playing || reduceMotion ? "opacity-100" : "opacity-0"
+            playing || (reduceMotion && !belowFold) ? "opacity-100" : "opacity-0"
           )}
         >
           <source src={src} />
