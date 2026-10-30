@@ -233,6 +233,8 @@ export function EmotionalWheelScreen({ className }: { className?: string }) {
               <img
                 alt=""
                 src={PETAL_ASSETS[i]}
+                loading="lazy"
+                decoding="async"
                 width={92}
                 height={138}
                 className={cn(
@@ -257,7 +259,7 @@ export function EmotionalWheelScreen({ className }: { className?: string }) {
            near the middle of the wheel). */}
         <div className="pointer-events-none absolute top-1/2 left-1/2 size-[29.9%] -translate-x-1/2 -translate-y-1/2">
           <div className="absolute inset-[-284.09%]">
-            <img alt="" src="/wheel/center-glow.svg" width={627} height={627} className="block size-full max-w-none" />
+            <img alt="" src="/wheel/center-glow.svg" loading="lazy" decoding="async" width={627} height={627} className="block size-full max-w-none" />
           </div>
         </div>
 
