@@ -12,7 +12,7 @@ const FIELDS = [
 ] as const;
 
 export function ContactForm() {
-  const { status, submitting, onSubmit } = useFormSubmit("/api/contact");
+  const { status, submitting, onSubmit } = useFormSubmit("/api/contact", { event: "contact_enquiry", location: "contact-page" });
 
   if (status === "done") {
     return (

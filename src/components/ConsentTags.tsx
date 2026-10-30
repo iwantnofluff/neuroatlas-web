@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useJournalVisitTracking } from "@/lib/analytics";
 import { useConsent, type ConsentChoice } from "@/lib/consent";
 
 declare global {
@@ -48,6 +50,7 @@ function loadTagManager(containerId: string) {
 export function ConsentTags({ containerId, enabled }: { containerId: string; enabled: boolean }) {
   const { choice } = useConsent();
   const loaded = useRef(false);
+  useJournalVisitTracking(usePathname());
 
   useEffect(() => {
     if (!enabled || !choice) return;
