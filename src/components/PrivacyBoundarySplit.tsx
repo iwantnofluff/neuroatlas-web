@@ -66,7 +66,7 @@ export function PrivacyBoundarySplit() {
             />
           ))}
         </div>
-        <p className="mt-4 text-pretty text-sm text-cream/60">
+        <p className="mt-4 text-pretty text-base md:text-sm text-cream/60">
           Aggregate trends across the whole team. No individual is ever
           identifiable.
         </p>

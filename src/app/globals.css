@@ -52,6 +52,18 @@
   }
 }
 
+/* Widens a small link's touch area by 6px above and below and 8px each
+   side without moving anything, so text links stacked 12px apart get a
+   32px-tall target that meets its neighbour instead of overlapping it. */
+@utility tap-area {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -6px -8px;
+  }
+}
+
 /*
   NeuroAtlas brand tokens.
   Luxury, calm, whitespace-rich: deep navy + champagne gold on a warm cream field.
@@ -839,4 +851,11 @@
   .hero-enter {
     animation: hero-enter var(--hero-enter-duration, 0.5s) cubic-bezier(0.22, 1, 0.36, 1) var(--hero-enter-delay, 0s) both;
   }
+}
+
+/* Set before first paint by the inline script in layout.tsx when a saved
+   cookie choice exists, so returning visitors never see the banner flash
+   in the server-rendered HTML before React takes over. */
+:root[data-consent="saved"] .cookie-banner {
+  display: none;
 }

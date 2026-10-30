@@ -212,7 +212,7 @@ function MethodCard({
       <span className="eyebrow">Stress Age</span>
       <p className="mt-3 font-serif text-6xl leading-none font-normal text-cream tabular-nums">{step.age}</p>
       <h3 className="mt-6 text-pretty text-base font-medium text-cream">{step.title}</h3>
-      <p className="mt-2 text-pretty text-sm text-cream/70">{step.body}</p>
+      <p className="mt-2 text-pretty text-base md:text-sm text-cream/70">{step.body}</p>
       <p className="mt-auto pt-6">
         <span
           className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs tracking-wide"

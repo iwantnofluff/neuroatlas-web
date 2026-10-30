@@ -113,7 +113,7 @@ export default function ForOrganisationsPage() {
                   suffix={stat.suffix}
                   className="font-serif text-4xl font-normal uppercase tracking-normal text-gold"
                 />
-                <p className="mt-3 text-pretty text-sm text-cream/70">{stat.label}</p>
+                <p className="mt-3 text-pretty text-base md:text-sm text-cream/70">{stat.label}</p>
                 <p className="mt-3 text-pretty text-xs text-cream/40">
                   Source: {stat.source}
                 </p>

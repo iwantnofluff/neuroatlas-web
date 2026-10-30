@@ -421,7 +421,7 @@ export function BeyondHeartSection() {
             >
               <span className="eyebrow">{`0${i + 1}`}</span>
               <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-cream">{ring.label}</h3>
-              <p className="mt-3 text-pretty text-sm text-cream/70">{ring.body}</p>
+              <p className="mt-3 text-pretty text-base md:text-sm text-cream/70">{ring.body}</p>
             </Reveal>
           ))}
         </div>

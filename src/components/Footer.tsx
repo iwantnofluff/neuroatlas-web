@@ -8,6 +8,7 @@ import { LogoMark } from "@/components/LogoMark";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useFormSubmit } from "@/lib/useFormSubmit";
+import { openConsentSettings } from "@/lib/consent";
 import { useTouchSpotlight } from "@/lib/useTouchSpotlight";
 import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 import { cn } from "@/lib/utils";
@@ -92,7 +93,7 @@ function FooterLinkColumn({ label, hrefs }: { label: string; hrefs: string[] }) 
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-sm text-cream/60 transition-colors hover:text-gold"
+              className="tap-area text-sm text-cream/60 transition-colors hover:text-gold"
             >
               {link.label}
             </Link>
@@ -147,7 +148,7 @@ export function Footer() {
               <LogoMark className="h-7 w-7" />
               NeuroAtlas
             </span>
-            <p className="mt-4 max-w-xs text-pretty text-sm text-cream/60">
+            <p className="mt-4 max-w-xs text-pretty text-base md:text-sm text-cream/60">
               Know when pressure is building, and reset before it takes over.
             </p>
           </div>
@@ -159,7 +160,7 @@ export function Footer() {
             <p className="text-xs tracking-[0.2em] text-cream/40 uppercase">
               Stay Ahead Of Stress
             </p>
-            <p className="mt-4 max-w-sm text-pretty text-sm text-cream/60">
+            <p className="mt-4 max-w-sm text-pretty text-base md:text-sm text-cream/60">
               One email a month. No noise, just what&rsquo;s useful.
             </p>
             {newsletter.status === "done" ? (
@@ -205,13 +206,16 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-6 border-t border-cream/10 pt-8 text-sm text-cream/50 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
             {legalNav.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-cream">
+              <Link key={item.href} href={item.href} className="tap-area hover:text-cream">
                 {item.label}
               </Link>
             ))}
-            <a href={`mailto:${contactEmail}`} className="hover:text-cream">
+            <button type="button" onClick={openConsentSettings} className="tap-area cursor-pointer hover:text-cream">
+              Cookie Settings
+            </button>
+            <a href={`mailto:${contactEmail}`} className="tap-area hover:text-cream">
               {contactEmail}
             </a>
           </div>
@@ -223,7 +227,7 @@ export function Footer() {
                 aria-label={item.ariaLabel}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-cream"
+                className="tap-area hover:text-cream"
               >
                 {item.label}
               </a>

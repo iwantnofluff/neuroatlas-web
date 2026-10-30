@@ -406,7 +406,7 @@ function MobileSignalCard({
       className="absolute inset-0 rounded-2xl border border-white/10 bg-navy-soft/95 p-4 text-left shadow-[0_16px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-md"
     >
       <p className="text-balance font-serif font-normal uppercase tracking-normal text-base leading-snug text-cream">{signal.label}</p>
-      <p className="mt-0.5 text-pretty text-xs text-cream/70">{signal.body}</p>
+      <p className="mt-0.5 text-pretty text-base md:text-xs text-cream/70">{signal.body}</p>
     </motion.div>
   );
 }
@@ -491,23 +491,13 @@ export function BandScrollShowcase() {
             reduceMotion={reduceMotion}
           />
         ))}
-        {/* h-[112px] — just tall enough for one card's own real content
-           (a serif label + up to a 2-line text-xs body + p-4), confirmed
-           via screenshot at 390px wide; every MobileSignalCard fills
-           this exact rect (`absolute inset-0`), so the box never grows
-           past one card no matter how many signals reveal into it.
-           bottom-[218px] (was bottom-44/176px) — a direct "keep equal
-           distance between all the elements in this section" request,
-           paired with BandScrollScene's own bottom-[77px] fix: with the
-           model's own daylight above and below it now equalized at
-           ~97px each (see that file's own comment), the old 176px left
-           this stack's own gap up to the model at ~97px but its gap
-           down to the subtext/CTA at only ~34px — the same "closer to
-           one neighbor than the other" problem, just one level down.
-           218px (its own bottom edge sitting 626px from the top of an
-           844px-tall test viewport, confirmed via screenshot) splits
-           the same ~76px evenly on both sides of this stack instead. */}
-        <div className="pointer-events-none absolute inset-x-6 bottom-[218px] z-10 h-[112px] xl:hidden">
+        {/* Sized to the longest card: a serif label plus a 3-line 16px body
+           (4 lines below 360px wide), plus p-4. Every MobileSignalCard
+           fills this rect (`absolute inset-0`), so it never grows past one
+           card. bottom-[208px] keeps the gap to the model above and to the
+           subtext and CTA below roughly equal (~66px each on an 844px-tall
+           viewport). */}
+        <div className="pointer-events-none absolute inset-x-6 bottom-[208px] z-10 h-[132px] max-[359px]:h-[156px] xl:hidden">
           {signals.map((s) => (
             <MobileSignalCard
               key={s.label}
