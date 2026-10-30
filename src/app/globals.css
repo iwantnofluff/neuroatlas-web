@@ -52,6 +52,18 @@
   }
 }
 
+/* Widens a small link's touch area by 6px above and below and 8px each
+   side without moving anything, so text links stacked 12px apart get a
+   32px-tall target that meets its neighbour instead of overlapping it. */
+@utility tap-area {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -6px -8px;
+  }
+}
+
 /*
   NeuroAtlas brand tokens.
   Luxury, calm, whitespace-rich: deep navy + champagne gold on a warm cream field.

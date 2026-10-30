@@ -238,21 +238,13 @@ export function Hero({
         </h1>
 
         <p
-          // No whitespace-nowrap (this used to force one line) — its
-          // clamp() floor (0.7rem) is a fixed minimum font size with no
-          // further room to shrink, so any subhead longer than the
-          // homepage's own (the one this was originally tuned against)
-          // simply overflowed off the edge of a narrow viewport instead
-          // of shrinking further. Confirmed live on /the-science and
-          // /how-it-works, both genuinely longer than the homepage's:
-          // real clipped text, not hypothetical. max-w-xl + wrapping is
-          // what every other subtext on this site already does safely.
-          // Dropped only when the subhead has a manual break (see that
-          // prop's own doc comment) — the parent's own max-w-3xl is
-          // still there as a real ceiling, this isn't unbounded.
+          // Wraps rather than shrinking, so phones keep 16px body text.
+          // max-w-xl is dropped only when the subhead has a manual break
+          // (see that prop's doc comment); the parent's max-w-3xl still
+          // caps the width.
           className={cn(
             "hero-enter",
-            "mx-auto mt-6 text-pretty text-[clamp(0.7rem,2.6vw,1.125rem)] text-cream/75",
+            "mx-auto mt-6 text-pretty text-base sm:text-lg text-cream/75",
             subheadSegments.length === 1 && "max-w-xl"
           )}
           style={{ "--hero-enter-delay": "0.5s", "--hero-enter-y": "8px" } as CSSProperties}

@@ -58,7 +58,7 @@ function ResearchCardContent({ card }: { card: (typeof RESEARCH_CARDS)[number] }
         {card.index}
       </span>
       <h3 className="mt-3 text-balance font-serif font-normal uppercase tracking-normal text-xl text-navy">{card.field}</h3>
-      <p className="mt-3 text-pretty text-sm text-mist">{card.note}</p>
+      <p className="mt-3 text-pretty text-base md:text-sm text-mist">{card.note}</p>
       {/* "Backed by" — the short, at-a-glance citation. The full
          bibliographic reference lives in a shared "References" list
          on the page itself (see page.tsx), not repeated here — this

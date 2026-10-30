@@ -68,7 +68,7 @@ export function ClarityProtocolScreen({ className }: { className?: string }) {
           <button type="button" aria-label="Back" className="text-cream/70 transition-colors hover:text-cream">
             <ArrowLeft className="size-[6.11cqw]" />
           </button>
-          <div className="flex items-center gap-[2.5cqw]">
+          <div className="flex items-center gap-[7cqw]">
             <button type="button" aria-label="Info" className="text-gold-soft/80 transition-colors hover:text-gold-soft">
               <Info className="size-[6.11cqw]" />
             </button>

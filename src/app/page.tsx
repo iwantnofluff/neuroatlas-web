@@ -233,7 +233,7 @@ export default function Home() {
                 key={point}
                 as="li"
                 delay={i * 0.1}
-                className="card-glass-light px-5 py-6 text-sm text-ink/85 transition-colors duration-300 hover:border-gold-deep/50"
+                className="card-glass-light px-5 py-6 text-base md:text-sm text-ink/85 transition-colors duration-300 hover:border-gold-deep/50"
               >
                 {point}
               </Reveal>

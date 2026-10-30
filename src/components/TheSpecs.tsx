@@ -670,7 +670,7 @@ export function TheSpecs() {
                 <h3 className="mt-3 text-xs font-medium tracking-[-0.04em] text-gold uppercase">
                   {spec.label}
                 </h3>
-                <p className="mt-2 text-pretty text-sm leading-snug text-cream/70">{spec.detail}</p>
+                <p className="mt-2 text-pretty text-base md:text-sm leading-snug text-cream/70">{spec.detail}</p>
               </div>
             );
           })}
