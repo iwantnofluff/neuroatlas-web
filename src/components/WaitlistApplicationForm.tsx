@@ -26,7 +26,11 @@ const LABEL_CLASS = "text-xs tracking-[0.15em] text-cream/60 uppercase";
  * with an inline error, so nothing they typed is lost.
  */
 export function WaitlistApplicationForm() {
-  const { status, submitting, onSubmit } = useFormSubmit("/api/waitlist", { source: "waitlist-page" });
+  const { status, submitting, onSubmit } = useFormSubmit(
+    "/api/waitlist",
+    { event: "waitlist_signup", location: "waitlist-page" },
+    { source: "waitlist-page" }
+  );
 
   if (status === "done") {
     return (

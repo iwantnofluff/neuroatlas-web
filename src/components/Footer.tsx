@@ -109,7 +109,7 @@ const WORDMARK_CLASSNAME =
 
 export function Footer() {
   const reduceMotion = useSafeReducedMotion();
-  const newsletter = useFormSubmit("/api/newsletter", { source: "footer" });
+  const newsletter = useFormSubmit("/api/newsletter", { event: "newsletter_signup", location: "footer" }, { source: "footer" });
   const wordmarkRef = useRef<HTMLDivElement>(null);
 
   // Starts well off-canvas (not 0,0) so nothing is lit before the

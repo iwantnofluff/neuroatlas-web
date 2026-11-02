@@ -7,7 +7,7 @@ import { useFormSubmit } from "@/lib/useFormSubmit";
 import { FormHoneypot, FORM_ERROR_MESSAGE } from "@/components/FormHoneypot";
 
 export function WaitlistForm() {
-  const { status, submitting, onSubmit } = useFormSubmit("/api/waitlist", { source: "pricing" });
+  const { status, submitting, onSubmit } = useFormSubmit("/api/waitlist", { event: "waitlist_signup", location: "pricing" }, { source: "pricing" });
 
   if (status === "done") {
     return (
