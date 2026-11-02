@@ -8,8 +8,8 @@ import { RESEARCH_CARDS } from "@/lib/researchCitations";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "The science - NeuroAtlas",
-  "Every protocol maps to established neuroscience & psychology, not a wellness trend.",
+  "The Neuroscience of Stress Recovery | NeuroAtlas",
+  "Review the evidence behind NeuroAtlas. Our active resets are built on proven neuroscience, psychology, and autonomic nervous system regulation.",
   "/the-science"
 );
 

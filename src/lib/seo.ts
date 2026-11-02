@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { siteUrl } from "@/lib/nav";
 
 /**
- * Page metadata with matching search and share tags. Each page's
- * description is its own hero line, verbatim. A page that sets its own
+ * Page metadata with matching search and share tags. Titles and
+ * descriptions are the SEO team's approved copy, verbatim. A page that sets its own
  * openGraph drops the file-based image, so the default share image
  * (app/opengraph-image.tsx) is listed explicitly; journal articles use
  * their cover image instead.

@@ -12,8 +12,8 @@ import { AppTeaserVitals } from "@/components/AppTeaserVitals";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "NeuroAtlas - The First Stress Management Band",
-  "Know when pressure is building, and reset before it takes over.",
+  "The Only Stress Management Band | NeuroAtlas",
+  "Meet NeuroAtlas, the first screenless stress management band. Track HRV, manage pressure in real-time, and lower your Stress Age with proven neuroscience.",
   ""
 );
 

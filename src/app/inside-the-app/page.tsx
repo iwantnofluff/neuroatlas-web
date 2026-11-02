@@ -14,8 +14,8 @@ import { appStructuredData } from "@/lib/structuredData";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
-  "Inside the app - NeuroAtlas",
-  "Every reading turns into something you can act on. The app reads your data, runs the right reset, and shows you it worked.",
+  "The NeuroAtlas App: Stress Tracking & Recovery",
+  "Turn biometric data into action. The NeuroAtlas app tracks your Stress Age and Cognitive Load, providing 2-minute guided tools to reset your nervous system.",
   "/inside-the-app"
 );
 

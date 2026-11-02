@@ -6,8 +6,8 @@ import { ShimmerLink } from "@/components/ui/shimmer-button";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "FAQ - NeuroAtlas",
-  "Whether you're exploring NeuroAtlas for yourself or your organisation, start here.",
+  "Frequently Asked Questions | NeuroAtlas",
+  "Find answers about the NeuroAtlas stress band, app, pricing, corporate pilots, and how our biometric tracking differs from standard wellness wearables.",
   "/faq"
 );
 

@@ -7,8 +7,8 @@ import { pageMetadata } from "@/lib/seo";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
-  "Pricing and plans - NeuroAtlas",
-  "NeuroAtlas is currently rolling out to select organizations and individuals. Secure your place on the waitlist to get early access to the NA·01 band and the full protocol library.",
+  "Pricing & Waitlist | NeuroAtlas",
+  "Join the NeuroAtlas waitlist for early access to the world's first stress management band. View individual and corporate plans to start managing your stress.",
   "/pricing"
 );
 

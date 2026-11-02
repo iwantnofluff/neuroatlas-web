@@ -11,8 +11,8 @@ import { pageMetadata } from "@/lib/seo";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
-  "For organisations - NeuroAtlas",
-  "Pressure affects decisions long before it shows up as a resignation letter or a sick day. NeuroAtlas gives leadership a way to see that pattern early and act on it.",
+  "Corporate Wellness & Stress Management | NeuroAtlas",
+  "Equip your team with NeuroAtlas. Help high performers manage pressure, improve cognitive load, and track aggregate wellness trends with our enterprise dashboard.",
   "/for-organisations"
 );
 

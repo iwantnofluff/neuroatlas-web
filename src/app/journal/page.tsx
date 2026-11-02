@@ -12,8 +12,8 @@ import { NOT_YET_INDEXABLE, pageMetadata } from "@/lib/seo";
 export async function generateMetadata() {
   const articles = await getArticles();
   const metadata = pageMetadata(
-    "Journal - NeuroAtlas",
-    "Explore ideas on focus, pressure and composure, and what we’re learning as we build NeuroAtlas.",
+    "Journal: Stress & Performance Insights | NeuroAtlas",
+    "Read the NeuroAtlas Journal for expert insights on neuroscience, emotional regulation, and practical strategies to manage stress and boost recovery capacity.",
     "/journal"
   );
   return articles.length ? metadata : { ...metadata, robots: NOT_YET_INDEXABLE };
