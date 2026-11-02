@@ -7,8 +7,8 @@ import { TextLink } from "@/components/TextLink";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "Privacy and your data - NeuroAtlas",
-  "This is not small print you have to go looking for. Protecting your data is built into how NeuroAtlas works, not something we promise to remember.",
+  "Data Privacy & Security | NeuroAtlas",
+  "Your data belongs to you. Read our privacy policy to see how NeuroAtlas protects your biometric data. We never share personal information without permission.",
   "/privacy"
 );
 

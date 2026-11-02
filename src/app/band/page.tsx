@@ -10,8 +10,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { bandStructuredData } from "@/lib/structuredData";
 
 export const metadata = pageMetadata(
-  "The NA·01 band - NeuroAtlas",
-  "Lightweight, screenless, and made to disappear into your day. Charges quickly, when it needs it.",
+  "The NA·01 Stress Management Band | NeuroAtlas",
+  "Meet the screenless NeuroAtlas band. Quietly and precisely track your heart rate, HRV, and stress levels all day without the distraction of notifications.",
   "/band"
 );
 

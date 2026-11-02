@@ -10,8 +10,8 @@ import { pageMetadata } from "@/lib/seo";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
-  "About us - NeuroAtlas",
-  "NeuroAtlas exists because the people carrying the highest stakes were never given a real tool for the pressure that comes with it.",
+  "About NeuroAtlas: Our Mission & Vision",
+  "Founded by Vanshika Dhoot, NeuroAtlas bridges the gap between tracking stress and managing it. Read about our vision to help people thrive under pressure.",
   "/about"
 );
 

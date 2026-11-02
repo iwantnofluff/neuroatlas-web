@@ -6,8 +6,8 @@ import { contactEmail } from "@/lib/nav";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
-  "Contact - NeuroAtlas",
-  "Send us your question and we'll get back to you by email.",
+  "Contact NeuroAtlas | Get in Touch",
+  "Have questions about the NeuroAtlas band, enterprise pilots, or media inquiries? Contact our team today and start taking control of your daily stress levels.",
   "/contact"
 );
 

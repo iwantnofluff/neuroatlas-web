@@ -15,8 +15,8 @@ import { pageMetadata } from "@/lib/seo";
 import { InlineLink } from "@/components/InlineLink";
 
 export const metadata = pageMetadata(
-  "How it works - NeuroAtlas",
-  "Most tools show you the data and stop there. Seeing the numbers is only the start. NeuroAtlas helps you understand what's happening, and see how your system responds.",
+  "How NeuroAtlas Works: Measure & Manage Stress",
+  "See exactly how the NeuroAtlas band and app work together. Measure physiological signals, use 2-minute resets, and verify your stress recovery in real-time.",
   "/how-it-works"
 );
 
